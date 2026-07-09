@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "forge",
+    "scribe"
+]
+resolver = "2"
