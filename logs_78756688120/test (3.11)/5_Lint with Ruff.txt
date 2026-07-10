@@ -1,0 +1,932 @@
+﻿2026-07-10T16:20:41.1660381Z ##[group]Run ruff check .
+2026-07-10T16:20:41.1660715Z [36;1mruff check .[0m
+2026-07-10T16:20:41.1694875Z shell: /usr/bin/bash -e {0}
+2026-07-10T16:20:41.1695395Z env:
+2026-07-10T16:20:41.1695674Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-07-10T16:20:41.1696141Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-07-10T16:20:41.1696976Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-07-10T16:20:41.1697426Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-07-10T16:20:41.1697829Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-07-10T16:20:41.1698232Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-07-10T16:20:41.1698570Z ##[endgroup]
+2026-07-10T16:20:41.1983764Z F401 [*] `time` imported but unused
+2026-07-10T16:20:41.1984802Z   --> examples/lsl_receiver.py:16:8
+2026-07-10T16:20:41.1985555Z    |
+2026-07-10T16:20:41.1986074Z 14 | """
+2026-07-10T16:20:41.1986963Z 15 |
+2026-07-10T16:20:41.1987535Z 16 | import time
+2026-07-10T16:20:41.1988184Z    |        ^^^^
+2026-07-10T16:20:41.1988733Z 17 | import json
+2026-07-10T16:20:41.1989263Z 18 | try:
+2026-07-10T16:20:41.1989792Z    |
+2026-07-10T16:20:41.1990350Z help: Remove unused import: `time`
+2026-07-10T16:20:41.1990870Z 
+2026-07-10T16:20:41.1991241Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.1991959Z  --> examples/simulate_brainflow_client.py:4:17
+2026-07-10T16:20:41.1992831Z   |
+2026-07-10T16:20:41.1993313Z 2 | import time
+2026-07-10T16:20:41.1993849Z 3 | import sys
+2026-07-10T16:20:41.1994372Z 4 | import numpy as np
+2026-07-10T16:20:41.1994896Z   |                 ^^
+2026-07-10T16:20:41.1995405Z 5 |
+2026-07-10T16:20:41.1996267Z 6 | # We'll mock the brainflow imports for now if they aren't available, but we expect to run this inside the venv
+2026-07-10T16:20:41.1997642Z   |
+2026-07-10T16:20:41.1998142Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.1998625Z 
+2026-07-10T16:20:41.1998940Z E722 Do not use bare `except`
+2026-07-10T16:20:41.1999587Z   --> examples/simulate_brainflow_client.py:70:9
+2026-07-10T16:20:41.2000238Z    |
+2026-07-10T16:20:41.2000734Z 68 |                 board.stop_stream()
+2026-07-10T16:20:41.2001392Z 69 |                 board.release_session()
+2026-07-10T16:20:41.2002012Z 70 |         except:
+2026-07-10T16:20:41.2002573Z    |         ^^^^^^
+2026-07-10T16:20:41.2003096Z 71 |             pass
+2026-07-10T16:20:41.2004780Z    |
+2026-07-10T16:20:41.2005075Z 
+2026-07-10T16:20:41.2008204Z F401 [*] `neuroshield.core.config.ExperimentConfig` imported but unused
+2026-07-10T16:20:41.2009376Z   --> neuroshield/__main__.py:75:41
+2026-07-10T16:20:41.2009975Z    |
+2026-07-10T16:20:41.2010421Z 73 | def cmd_run(args):
+2026-07-10T16:20:41.2011080Z 74 |     """Execute a simulation experiment."""
+2026-07-10T16:20:41.2012126Z 75 |     from neuroshield.core.config import ExperimentConfig, load_config, config_from_cli_args
+2026-07-10T16:20:41.2013179Z    |                                         ^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2014027Z 76 |     from neuroshield.core.coordinator import Coordinator
+2026-07-10T16:20:41.2014782Z    |
+2026-07-10T16:20:41.2015535Z help: Remove unused import: `neuroshield.core.config.ExperimentConfig`
+2026-07-10T16:20:41.2016335Z 
+2026-07-10T16:20:41.2017027Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2017809Z    --> neuroshield/__main__.py:127:11
+2026-07-10T16:20:41.2018482Z     |
+2026-07-10T16:20:41.2019463Z 125 |     print(" NeuroShield — Virtual Neurosecurity Laboratory")
+2026-07-10T16:20:41.2020333Z 126 |     print("=" * 60)
+2026-07-10T16:20:41.2020984Z 127 |     print(f" Version: 0.2.0")
+2026-07-10T16:20:41.2021648Z     |           ^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2022320Z 128 |     print(f" Python:  {sys.version.split()[0]}")
+2026-07-10T16:20:41.2023016Z 129 |     print()
+2026-07-10T16:20:41.2023336Z     |
+2026-07-10T16:20:41.2023661Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2023972Z 
+2026-07-10T16:20:41.2024223Z F841 Local variable `info` is assigned to but never used
+2026-07-10T16:20:41.2025176Z    --> neuroshield/core/attack.py:357:21
+2026-07-10T16:20:41.2025623Z     |
+2026-07-10T16:20:41.2025924Z 355 |                 try:
+2026-07-10T16:20:41.2027021Z 356 |                     # Resolve class/factory from PluginRegistry
+2026-07-10T16:20:41.2027720Z 357 |                     info = registry.get("attacks", step.attack_type)
+2026-07-10T16:20:41.2028283Z     |                     ^^^^
+2026-07-10T16:20:41.2028857Z 358 |                     step._modifier_instance = registry.create(
+2026-07-10T16:20:41.2029468Z 359 |                         "attacks", step.attack_type,
+2026-07-10T16:20:41.2029949Z     |
+2026-07-10T16:20:41.2030323Z help: Remove assignment to unused variable `info`
+2026-07-10T16:20:41.2030699Z 
+2026-07-10T16:20:41.2030875Z F401 [*] `typing.Type` imported but unused
+2026-07-10T16:20:41.2031390Z  --> neuroshield/core/attack_factory.py:2:26
+2026-07-10T16:20:41.2031738Z   |
+2026-07-10T16:20:41.2031932Z 1 | import numpy as np
+2026-07-10T16:20:41.2032179Z 2 | from typing import List, Type
+2026-07-10T16:20:41.2032442Z   |                          ^^^^
+2026-07-10T16:20:41.2032739Z 3 | from neuroshield.core.attack import ISignalModifier
+2026-07-10T16:20:41.2033112Z 4 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2033400Z   |
+2026-07-10T16:20:41.2033606Z help: Remove unused import: `typing.Type`
+2026-07-10T16:20:41.2033805Z 
+2026-07-10T16:20:41.2033910Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2034220Z    --> neuroshield/core/coordinator.py:332:23
+2026-07-10T16:20:41.2034491Z     |
+2026-07-10T16:20:41.2034670Z 330 |                 )
+2026-07-10T16:20:41.2034900Z 331 |             elif attack_name == "drift":
+2026-07-10T16:20:41.2035255Z 332 |                 print(f"[NeuroShield] Injecting Signal Drift Attack")
+2026-07-10T16:20:41.2035630Z     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2035961Z 333 |                 self.attack_engine.add_modifier(
+2026-07-10T16:20:41.2036437Z 334 |                     SignalDriftAttack(target_channels, self.config.attacks.drift_rate_uv_per_sec)
+2026-07-10T16:20:41.2037587Z     |
+2026-07-10T16:20:41.2037921Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2038217Z 
+2026-07-10T16:20:41.2038336Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2038647Z    --> neuroshield/core/coordinator.py:337:23
+2026-07-10T16:20:41.2038924Z     |
+2026-07-10T16:20:41.2039104Z 335 |                 )
+2026-07-10T16:20:41.2039355Z 336 |             elif attack_name == "impedance":
+2026-07-10T16:20:41.2039754Z 337 |                 print(f"[NeuroShield] Injecting Impedance Spike Attack")
+2026-07-10T16:20:41.2040159Z     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2040501Z 338 |                 self.attack_engine.add_modifier(
+2026-07-10T16:20:41.2040984Z 339 |                     ImpedanceSpikeAttack(target_channels, self.config.attacks.spike_impedance_kohm)
+2026-07-10T16:20:41.2041425Z     |
+2026-07-10T16:20:41.2041628Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2041801Z 
+2026-07-10T16:20:41.2041914Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2042221Z    --> neuroshield/core/coordinator.py:342:23
+2026-07-10T16:20:41.2042494Z     |
+2026-07-10T16:20:41.2042673Z 340 |                 )
+2026-07-10T16:20:41.2042916Z 341 |             elif attack_name == "suppression":
+2026-07-10T16:20:41.2043301Z 342 |                 print(f"[NeuroShield] Injecting Signal Suppression Attack")
+2026-07-10T16:20:41.2043708Z     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2044044Z 343 |                 self.attack_engine.add_modifier(
+2026-07-10T16:20:41.2044528Z 344 |                     SignalSuppressionAttack(target_channels, self.config.attacks.attenuation_factor)
+2026-07-10T16:20:41.2044978Z     |
+2026-07-10T16:20:41.2045178Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2045347Z 
+2026-07-10T16:20:41.2045457Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2045961Z    --> neuroshield/core/coordinator.py:411:15
+2026-07-10T16:20:41.2046232Z     |
+2026-07-10T16:20:41.2046876Z 409 |     def _setup_lsl_streamer(self):
+2026-07-10T16:20:41.2047285Z 410 |         """Initialize LSL Streamer instead of Web UI."""
+2026-07-10T16:20:41.2047734Z 411 |         print(f"[NeuroShield] Bypassing Web UI. Initializing LSL Streamer...")
+2026-07-10T16:20:41.2048170Z     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2048470Z 412 |         try:
+2026-07-10T16:20:41.2048751Z 413 |             from neuroshield.core.lsl_streamer import LSLStreamer
+2026-07-10T16:20:41.2049078Z     |
+2026-07-10T16:20:41.2049271Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2049444Z 
+2026-07-10T16:20:41.2049547Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2049846Z    --> neuroshield/core/coordinator.py:631:19
+2026-07-10T16:20:41.2050115Z     |
+2026-07-10T16:20:41.2050379Z 629 |         print(f" Mean Confidence: {summary['average_confidence']:.2f}")
+2026-07-10T16:20:41.2050783Z 630 |         if self.config.security.enabled:
+2026-07-10T16:20:41.2051137Z 631 |             print(f" Security Shield: ACTIVE (IDS/IPS Enabled)")
+2026-07-10T16:20:41.2051489Z     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2051895Z 632 |             print(f" Blocked Attacks: {summary.get('blocked_attacks_count', 0)}")
+2026-07-10T16:20:41.2052328Z 633 |         print(f" Seed:            {self.config.seed}")
+2026-07-10T16:20:41.2052623Z     |
+2026-07-10T16:20:41.2052812Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2052983Z 
+2026-07-10T16:20:41.2053117Z F841 [*] Local variable `e` is assigned to but never used
+2026-07-10T16:20:41.2053439Z    --> neuroshield/core/engine.py:197:37
+2026-07-10T16:20:41.2053691Z     |
+2026-07-10T16:20:41.2054090Z 195 |                     raw_data = self.dataset_reader.read_chunk(self.dataset_sample_position, num_samples_per_chunk)
+2026-07-10T16:20:41.2054660Z 196 |                     self.dataset_sample_position += num_samples_per_chunk
+2026-07-10T16:20:41.2055026Z 197 |                 except Exception as e:
+2026-07-10T16:20:41.2055301Z     |                                     ^
+2026-07-10T16:20:41.2055581Z 198 |                     # End of file or read error
+2026-07-10T16:20:41.2055886Z 199 |                     if self._loop_dataset:
+2026-07-10T16:20:41.2056146Z     |
+2026-07-10T16:20:41.2056357Z help: Remove assignment to unused variable `e`
+2026-07-10T16:20:41.2056894Z 
+2026-07-10T16:20:41.2057080Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2057566Z    --> neuroshield/core/engine.py:207:31
+2026-07-10T16:20:41.2057844Z     |
+2026-07-10T16:20:41.2058150Z 205 |                             raw_data = np.full((num_channels, num_samples_per_chunk), np.nan)
+2026-07-10T16:20:41.2058537Z 206 |                     else:
+2026-07-10T16:20:41.2058858Z 207 |                         print(f"[ReplayEngine] Dataset exhausted, stopping.")
+2026-07-10T16:20:41.2059259Z     |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2059597Z 208 |                         self.running = False
+2026-07-10T16:20:41.2059893Z 209 |                         break
+2026-07-10T16:20:41.2060129Z     |
+2026-07-10T16:20:41.2060328Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2060498Z 
+2026-07-10T16:20:41.2060610Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2060913Z   --> neuroshield/core/lsl_streamer.py:42:15
+2026-07-10T16:20:41.2061183Z    |
+2026-07-10T16:20:41.2061473Z 41 |         print(f"[LSL] Started NeuroShield_EEG ({num_channels}ch @ {srate}Hz)")
+2026-07-10T16:20:41.2061912Z 42 |         print(f"[LSL] Started NeuroShield_Telemetry (Markers)")
+2026-07-10T16:20:41.2062263Z    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2062535Z 43 |
+2026-07-10T16:20:41.2062763Z 44 |     def push_eeg_chunk(self, chunk_data: np.ndarray):
+2026-07-10T16:20:41.2063293Z    |
+2026-07-10T16:20:41.2063480Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2063646Z 
+2026-07-10T16:20:41.2063756Z F401 [*] `typing.Tuple` imported but unused
+2026-07-10T16:20:41.2064159Z  --> neuroshield/core/ml_decoder.py:2:20
+2026-07-10T16:20:41.2064417Z   |
+2026-07-10T16:20:41.2064594Z 1 | import numpy as np
+2026-07-10T16:20:41.2064816Z 2 | from typing import Tuple
+2026-07-10T16:20:41.2065043Z   |                    ^^^^^
+2026-07-10T16:20:41.2065245Z 3 |
+2026-07-10T16:20:41.2065425Z 4 | class MLTremorDecoder:
+2026-07-10T16:20:41.2065641Z   |
+2026-07-10T16:20:41.2065841Z help: Remove unused import: `typing.Tuple`
+2026-07-10T16:20:41.2066030Z 
+2026-07-10T16:20:41.2066137Z F401 [*] `typing.Dict` imported but unused
+2026-07-10T16:20:41.2066418Z  --> neuroshield/core/physics.py:4:20
+2026-07-10T16:20:41.2067052Z   |
+2026-07-10T16:20:41.2067233Z 2 | import os
+2026-07-10T16:20:41.2067424Z 3 | import logging
+2026-07-10T16:20:41.2067636Z 4 | from typing import Dict, Any
+2026-07-10T16:20:41.2067887Z   |                    ^^^^
+2026-07-10T16:20:41.2068094Z 5 |
+2026-07-10T16:20:41.2068310Z 6 | logger = logging.getLogger("PhysicsEngine")
+2026-07-10T16:20:41.2068598Z   |
+2026-07-10T16:20:41.2068799Z help: Remove unused import: `typing.Dict`
+2026-07-10T16:20:41.2068991Z 
+2026-07-10T16:20:41.2069108Z E713 [*] Test for membership should be `not in`
+2026-07-10T16:20:41.2069415Z   --> neuroshield/core/physics.py:93:61
+2026-07-10T16:20:41.2069673Z    |
+2026-07-10T16:20:41.2069886Z 91 |                 twin.tissue_damage_risk = "HIGH"
+2026-07-10T16:20:41.2070207Z 92 |                 twin.clinical_alert_active = True
+2026-07-10T16:20:41.2070677Z 93 |                 if twin.clinical_status == "Nominal" or not "Physics Violation" in twin.clinical_status:
+2026-07-10T16:20:41.2071203Z    |                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2071665Z 94 |                     twin.clinical_status = f"Physics Violation (Sim): {violation_msg}"
+2026-07-10T16:20:41.2072084Z 95 |                     twin.hazard_state = "WARNING"
+2026-07-10T16:20:41.2072381Z    |
+2026-07-10T16:20:41.2072568Z help: Convert to `not in`
+2026-07-10T16:20:41.2072722Z 
+2026-07-10T16:20:41.2072836Z F401 [*] `typing.Optional` imported but unused
+2026-07-10T16:20:41.2073142Z  --> neuroshield/core/protocol.py:4:27
+2026-07-10T16:20:41.2073398Z   |
+2026-07-10T16:20:41.2073567Z 2 | import hmac
+2026-07-10T16:20:41.2073760Z 3 | import hashlib
+2026-07-10T16:20:41.2074000Z 4 | from typing import Tuple, Optional, Dict, Any
+2026-07-10T16:20:41.2074305Z   |                           ^^^^^^^^
+2026-07-10T16:20:41.2074534Z 5 |
+2026-07-10T16:20:41.2074719Z 6 | class ProtocolError(Exception):
+2026-07-10T16:20:41.2074962Z   |
+2026-07-10T16:20:41.2075140Z help: Remove unused import
+2026-07-10T16:20:41.2075287Z 
+2026-07-10T16:20:41.2075391Z F401 [*] `typing.Dict` imported but unused
+2026-07-10T16:20:41.2075677Z  --> neuroshield/core/protocol.py:4:37
+2026-07-10T16:20:41.2075922Z   |
+2026-07-10T16:20:41.2076091Z 2 | import hmac
+2026-07-10T16:20:41.2076280Z 3 | import hashlib
+2026-07-10T16:20:41.2076713Z 4 | from typing import Tuple, Optional, Dict, Any
+2026-07-10T16:20:41.2077117Z   |                                     ^^^^
+2026-07-10T16:20:41.2077363Z 5 |
+2026-07-10T16:20:41.2077552Z 6 | class ProtocolError(Exception):
+2026-07-10T16:20:41.2077799Z   |
+2026-07-10T16:20:41.2077977Z help: Remove unused import
+2026-07-10T16:20:41.2078125Z 
+2026-07-10T16:20:41.2078225Z F401 [*] `typing.Any` imported but unused
+2026-07-10T16:20:41.2078519Z  --> neuroshield/core/protocol.py:4:43
+2026-07-10T16:20:41.2078765Z   |
+2026-07-10T16:20:41.2078929Z 2 | import hmac
+2026-07-10T16:20:41.2079119Z 3 | import hashlib
+2026-07-10T16:20:41.2079357Z 4 | from typing import Tuple, Optional, Dict, Any
+2026-07-10T16:20:41.2079656Z   |                                           ^^^
+2026-07-10T16:20:41.2079904Z 5 |
+2026-07-10T16:20:41.2080091Z 6 | class ProtocolError(Exception):
+2026-07-10T16:20:41.2080334Z   |
+2026-07-10T16:20:41.2080685Z help: Remove unused import
+2026-07-10T16:20:41.2080833Z 
+2026-07-10T16:20:41.2081004Z F841 Local variable `header_partial` is assigned to but never used
+2026-07-10T16:20:41.2081489Z    --> neuroshield/core/protocol.py:105:9
+2026-07-10T16:20:41.2081750Z     |
+2026-07-10T16:20:41.2081988Z 103 |         """Pack payload into a binary telemetry frame."""
+2026-07-10T16:20:41.2082338Z 104 |         # Header without length initially
+2026-07-10T16:20:41.2082674Z 105 |         header_partial = struct.pack(">B", self.PREAMBLE)
+2026-07-10T16:20:41.2082985Z     |         ^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2083202Z 106 |         
+2026-07-10T16:20:41.2083398Z 107 |         if secure_mode:
+2026-07-10T16:20:41.2083615Z     |
+2026-07-10T16:20:41.2083859Z help: Remove assignment to unused variable `header_partial`
+2026-07-10T16:20:41.2084104Z 
+2026-07-10T16:20:41.2084204Z F401 [*] `typing.List` imported but unused
+2026-07-10T16:20:41.2084496Z  --> neuroshield/core/threat_intel.py:3:41
+2026-07-10T16:20:41.2084754Z   |
+2026-07-10T16:20:41.2084928Z 1 | import os
+2026-07-10T16:20:41.2085109Z 2 | import sys
+2026-07-10T16:20:41.2085332Z 3 | from typing import Optional, Dict, Any, List
+2026-07-10T16:20:41.2085629Z   |                                         ^^^^
+2026-07-10T16:20:41.2085893Z 4 | from pathlib import Path
+2026-07-10T16:20:41.2086113Z   |
+2026-07-10T16:20:41.2086311Z help: Remove unused import: `typing.List`
+2026-07-10T16:20:41.2086774Z 
+2026-07-10T16:20:41.2086927Z E402 Module level import not at top of file
+2026-07-10T16:20:41.2087312Z   --> neuroshield/core/threat_intel.py:11:1
+2026-07-10T16:20:41.2087576Z    |
+2026-07-10T16:20:41.2087767Z  9 |     sys.path.insert(0, qtara_src)
+2026-07-10T16:20:41.2088013Z 10 |
+2026-07-10T16:20:41.2088199Z 11 | from qtara.core import TaraLoader
+2026-07-10T16:20:41.2088458Z    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2088685Z 12 |
+2026-07-10T16:20:41.2088873Z 13 | class ThreatIntelligence:
+2026-07-10T16:20:41.2089101Z    |
+2026-07-10T16:20:41.2089197Z 
+2026-07-10T16:20:41.2089293Z F401 [*] `time` imported but unused
+2026-07-10T16:20:41.2089558Z  --> neuroshield/core/twin.py:1:8
+2026-07-10T16:20:41.2089793Z   |
+2026-07-10T16:20:41.2089966Z 1 | import time
+2026-07-10T16:20:41.2090154Z   |        ^^^^
+2026-07-10T16:20:41.2090360Z 2 | import threading
+2026-07-10T16:20:41.2090603Z 3 | from typing import Dict, Any, List, Optional
+2026-07-10T16:20:41.2090879Z   |
+2026-07-10T16:20:41.2091070Z help: Remove unused import: `time`
+2026-07-10T16:20:41.2091244Z 
+2026-07-10T16:20:41.2091355Z F401 [*] `typing.Optional` imported but unused
+2026-07-10T16:20:41.2091646Z  --> neuroshield/core/twin.py:3:37
+2026-07-10T16:20:41.2091879Z   |
+2026-07-10T16:20:41.2092045Z 1 | import time
+2026-07-10T16:20:41.2092233Z 2 | import threading
+2026-07-10T16:20:41.2092470Z 3 | from typing import Dict, Any, List, Optional
+2026-07-10T16:20:41.2092758Z   |                                     ^^^^^^^^
+2026-07-10T16:20:41.2093009Z 4 | import os
+2026-07-10T16:20:41.2093195Z 5 | import json
+2026-07-10T16:20:41.2093380Z   |
+2026-07-10T16:20:41.2093597Z help: Remove unused import: `typing.Optional`
+2026-07-10T16:20:41.2093810Z 
+2026-07-10T16:20:41.2093955Z F841 [*] Local variable `e` is assigned to but never used
+2026-07-10T16:20:41.2094285Z   --> neuroshield/core/twin.py:96:29
+2026-07-10T16:20:41.2094533Z    |
+2026-07-10T16:20:41.2094782Z 94 |                     for region in atlas_data.get("brain_regions", []):
+2026-07-10T16:20:41.2095167Z 95 |                         self.brain_regions[region["id"]] = region
+2026-07-10T16:20:41.2095482Z 96 |         except Exception as e:
+2026-07-10T16:20:41.2095725Z    |                             ^
+2026-07-10T16:20:41.2095994Z 97 |             pass # Fails gracefully if not found
+2026-07-10T16:20:41.2096273Z    |
+2026-07-10T16:20:41.2096670Z help: Remove assignment to unused variable `e`
+2026-07-10T16:20:41.2096923Z 
+2026-07-10T16:20:41.2097018Z F821 Undefined name `np`
+2026-07-10T16:20:41.2097264Z    --> neuroshield/core/twin.py:289:45
+2026-07-10T16:20:41.2097514Z     |
+2026-07-10T16:20:41.2097881Z 287 |         self.history.append(state_copy)
+2026-07-10T16:20:41.2098144Z 288 |
+2026-07-10T16:20:41.2098449Z 289 |     def simulate_adc_saturation(self, data: np.ndarray) -> np.ndarray:
+2026-07-10T16:20:41.2098950Z     |                                             ^^
+2026-07-10T16:20:41.2099210Z 290 |         """
+2026-07-10T16:20:41.2099469Z 291 |         Simulates ADS1299 ADC input amplifier saturation.
+2026-07-10T16:20:41.2099773Z     |
+2026-07-10T16:20:41.2099867Z 
+2026-07-10T16:20:41.2099960Z F821 Undefined name `np`
+2026-07-10T16:20:41.2100201Z    --> neuroshield/core/twin.py:289:60
+2026-07-10T16:20:41.2100447Z     |
+2026-07-10T16:20:41.2100656Z 287 |         self.history.append(state_copy)
+2026-07-10T16:20:41.2100916Z 288 |
+2026-07-10T16:20:41.2101200Z 289 |     def simulate_adc_saturation(self, data: np.ndarray) -> np.ndarray:
+2026-07-10T16:20:41.2101593Z     |                                                            ^^
+2026-07-10T16:20:41.2101872Z 290 |         """
+2026-07-10T16:20:41.2102127Z 291 |         Simulates ADS1299 ADC input amplifier saturation.
+2026-07-10T16:20:41.2102431Z     |
+2026-07-10T16:20:41.2102522Z 
+2026-07-10T16:20:41.2102619Z F821 Undefined name `np`
+2026-07-10T16:20:41.2102852Z    --> neuroshield/core/twin.py:317:56
+2026-07-10T16:20:41.2103104Z     |
+2026-07-10T16:20:41.2103287Z 315 |         return data
+2026-07-10T16:20:41.2103500Z 316 |
+2026-07-10T16:20:41.2103814Z 317 |     def verify_electrode_impedances(self, signal_data: np.ndarray) -> bool:
+2026-07-10T16:20:41.2104233Z     |                                                        ^^
+2026-07-10T16:20:41.2104518Z 318 |         """
+2026-07-10T16:20:41.2104857Z 319 |         Active biosensing check using a simulated micro-current impedance probe.
+2026-07-10T16:20:41.2105255Z     |
+2026-07-10T16:20:41.2105352Z 
+2026-07-10T16:20:41.2105460Z F401 [*] `asyncio` imported but unused
+2026-07-10T16:20:41.2105744Z  --> neuroshield/mcp_server.py:1:8
+2026-07-10T16:20:41.2105990Z   |
+2026-07-10T16:20:41.2106172Z 1 | import asyncio
+2026-07-10T16:20:41.2106381Z   |        ^^^^^^^
+2026-07-10T16:20:41.2106998Z 2 | from mcp.server.fastmcp import FastMCP
+2026-07-10T16:20:41.2107331Z 3 | from typing import List, Optional, Dict
+2026-07-10T16:20:41.2107599Z   |
+2026-07-10T16:20:41.2107794Z help: Remove unused import: `asyncio`
+2026-07-10T16:20:41.2107970Z 
+2026-07-10T16:20:41.2108078Z F401 [*] `typing.List` imported but unused
+2026-07-10T16:20:41.2108379Z  --> neuroshield/plugins/ble/attacks.py:2:20
+2026-07-10T16:20:41.2108647Z   |
+2026-07-10T16:20:41.2108819Z 1 | import random
+2026-07-10T16:20:41.2109026Z 2 | from typing import List
+2026-07-10T16:20:41.2109254Z   |                    ^^^^
+2026-07-10T16:20:41.2109622Z 3 | from neuroshield.plugins.ble.emulator import VirtualBLELink, VirtualBLEClient
+2026-07-10T16:20:41.2110084Z 4 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2110365Z   |
+2026-07-10T16:20:41.2110565Z help: Remove unused import: `typing.List`
+2026-07-10T16:20:41.2110762Z 
+2026-07-10T16:20:41.2110858Z F401 [*] `time` imported but unused
+2026-07-10T16:20:41.2111135Z  --> neuroshield/plugins/ble/emulator.py:1:8
+2026-07-10T16:20:41.2111400Z   |
+2026-07-10T16:20:41.2111572Z 1 | import time
+2026-07-10T16:20:41.2111759Z   |        ^^^^
+2026-07-10T16:20:41.2111950Z 2 | import numpy as np
+2026-07-10T16:20:41.2112299Z 3 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2112575Z   |
+2026-07-10T16:20:41.2112766Z help: Remove unused import: `time`
+2026-07-10T16:20:41.2112942Z 
+2026-07-10T16:20:41.2113034Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.2113314Z  --> neuroshield/plugins/ble/emulator.py:2:17
+2026-07-10T16:20:41.2113579Z   |
+2026-07-10T16:20:41.2113748Z 1 | import time
+2026-07-10T16:20:41.2113942Z 2 | import numpy as np
+2026-07-10T16:20:41.2114146Z   |                 ^^
+2026-07-10T16:20:41.2114381Z 3 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2114654Z   |
+2026-07-10T16:20:41.2114842Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.2115162Z 
+2026-07-10T16:20:41.2115263Z F401 [*] `typing.Any` imported but unused
+2026-07-10T16:20:41.2115562Z  --> neuroshield/plugins/ble/emulator.py:3:32
+2026-07-10T16:20:41.2115940Z   |
+2026-07-10T16:20:41.2116111Z 1 | import time
+2026-07-10T16:20:41.2116306Z 2 | import numpy as np
+2026-07-10T16:20:41.2116789Z 3 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2117164Z   |                                ^^^
+2026-07-10T16:20:41.2117403Z 4 |
+2026-07-10T16:20:41.2117594Z 5 | class GATTCharacteristic:
+2026-07-10T16:20:41.2117819Z   |
+2026-07-10T16:20:41.2118003Z help: Remove unused import
+2026-07-10T16:20:41.2118152Z 
+2026-07-10T16:20:41.2118260Z F401 [*] `typing.Optional` imported but unused
+2026-07-10T16:20:41.2118565Z  --> neuroshield/plugins/ble/emulator.py:3:37
+2026-07-10T16:20:41.2118827Z   |
+2026-07-10T16:20:41.2118990Z 1 | import time
+2026-07-10T16:20:41.2119179Z 2 | import numpy as np
+2026-07-10T16:20:41.2119415Z 3 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2119703Z   |                                     ^^^^^^^^
+2026-07-10T16:20:41.2119943Z 4 |
+2026-07-10T16:20:41.2120125Z 5 | class GATTCharacteristic:
+2026-07-10T16:20:41.2120357Z   |
+2026-07-10T16:20:41.2120532Z help: Remove unused import
+2026-07-10T16:20:41.2120678Z 
+2026-07-10T16:20:41.2120877Z F401 [*] `neuroshield.core.utils.calculate_bandpower` imported but unused
+2026-07-10T16:20:41.2121302Z  --> neuroshield/plugins/clinical/closed_loop.py:5:51
+2026-07-10T16:20:41.2121593Z   |
+2026-07-10T16:20:41.2121780Z 3 | from typing import List, Dict, Any
+2026-07-10T16:20:41.2122071Z 4 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2122472Z 5 | from neuroshield.core.utils import calculate_rms, calculate_bandpower
+2026-07-10T16:20:41.2122871Z   |                                                   ^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2123148Z 6 |
+2026-07-10T16:20:41.2123332Z 7 | class IClinicalEvaluator(ABC):
+2026-07-10T16:20:41.2123571Z   |
+2026-07-10T16:20:41.2123854Z help: Remove unused import: `neuroshield.core.utils.calculate_bandpower`
+2026-07-10T16:20:41.2124155Z 
+2026-07-10T16:20:41.2124247Z F401 [*] `time` imported but unused
+2026-07-10T16:20:41.2124557Z  --> neuroshield/plugins/clinical/dbs_emulator.py:2:8
+2026-07-10T16:20:41.2124854Z   |
+2026-07-10T16:20:41.2125032Z 1 | import numpy as np
+2026-07-10T16:20:41.2125242Z 2 | import time
+2026-07-10T16:20:41.2125430Z   |        ^^^^
+2026-07-10T16:20:41.2125636Z 3 | from typing import List, Dict, Any
+2026-07-10T16:20:41.2125935Z 4 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2126218Z   |
+2026-07-10T16:20:41.2126408Z help: Remove unused import: `time`
+2026-07-10T16:20:41.2126833Z 
+2026-07-10T16:20:41.2126989Z F841 Local variable `phase` is assigned to but never used
+2026-07-10T16:20:41.2127380Z    --> neuroshield/plugins/clinical/dbs_emulator.py:138:13
+2026-07-10T16:20:41.2127693Z     |
+2026-07-10T16:20:41.2127912Z 136 |             phase = np.angle(fft_vals[peak_idx])
+2026-07-10T16:20:41.2128202Z 137 |         else:
+2026-07-10T16:20:41.2128414Z 138 |             phase = 0.0
+2026-07-10T16:20:41.2128641Z     |             ^^^^^
+2026-07-10T16:20:41.2128877Z 139 |
+2026-07-10T16:20:41.2129069Z 140 |         # 3. Decision loop
+2026-07-10T16:20:41.2129296Z     |
+2026-07-10T16:20:41.2129518Z help: Remove assignment to unused variable `phase`
+2026-07-10T16:20:41.2129739Z 
+2026-07-10T16:20:41.2129847Z E701 Multiple statements on one line (colon)
+2026-07-10T16:20:41.2130171Z   --> neuroshield/plugins/clinical/qif_atlas.py:79:45
+2026-07-10T16:20:41.2130461Z    |
+2026-07-10T16:20:41.2130648Z 77 |                     # Extract Severity
+2026-07-10T16:20:41.2130972Z 78 |                     sev_str = obj.get("x_qif_severity", "low").lower()
+2026-07-10T16:20:41.2131351Z 79 |                     if sev_str == "critical": base_niss = 9.0
+2026-07-10T16:20:41.2131666Z    |                                             ^
+2026-07-10T16:20:41.2131966Z 80 |                     elif sev_str == "high": base_niss = 7.4
+2026-07-10T16:20:41.2132306Z 81 |                     elif sev_str == "medium": base_niss = 5.0
+2026-07-10T16:20:41.2132748Z    |
+2026-07-10T16:20:41.2132843Z 
+2026-07-10T16:20:41.2132956Z E701 Multiple statements on one line (colon)
+2026-07-10T16:20:41.2133408Z   --> neuroshield/plugins/clinical/qif_atlas.py:80:43
+2026-07-10T16:20:41.2133696Z    |
+2026-07-10T16:20:41.2133924Z 78 |                     sev_str = obj.get("x_qif_severity", "low").lower()
+2026-07-10T16:20:41.2134286Z 79 |                     if sev_str == "critical": base_niss = 9.0
+2026-07-10T16:20:41.2134620Z 80 |                     elif sev_str == "high": base_niss = 7.4
+2026-07-10T16:20:41.2134924Z    |                                           ^
+2026-07-10T16:20:41.2135233Z 81 |                     elif sev_str == "medium": base_niss = 5.0
+2026-07-10T16:20:41.2135551Z 82 |                     else: base_niss = 3.0
+2026-07-10T16:20:41.2135808Z    |
+2026-07-10T16:20:41.2135904Z 
+2026-07-10T16:20:41.2136020Z E701 Multiple statements on one line (colon)
+2026-07-10T16:20:41.2136342Z   --> neuroshield/plugins/clinical/qif_atlas.py:81:45
+2026-07-10T16:20:41.2136794Z    |
+2026-07-10T16:20:41.2137013Z 79 |                     if sev_str == "critical": base_niss = 9.0
+2026-07-10T16:20:41.2137357Z 80 |                     elif sev_str == "high": base_niss = 7.4
+2026-07-10T16:20:41.2137693Z 81 |                     elif sev_str == "medium": base_niss = 5.0
+2026-07-10T16:20:41.2138001Z    |                                             ^
+2026-07-10T16:20:41.2138282Z 82 |                     else: base_niss = 3.0
+2026-07-10T16:20:41.2138535Z    |
+2026-07-10T16:20:41.2138628Z 
+2026-07-10T16:20:41.2138740Z E701 Multiple statements on one line (colon)
+2026-07-10T16:20:41.2139059Z   --> neuroshield/plugins/clinical/qif_atlas.py:82:25
+2026-07-10T16:20:41.2139346Z    |
+2026-07-10T16:20:41.2139561Z 80 |                     elif sev_str == "high": base_niss = 7.4
+2026-07-10T16:20:41.2139899Z 81 |                     elif sev_str == "medium": base_niss = 5.0
+2026-07-10T16:20:41.2140214Z 82 |                     else: base_niss = 3.0
+2026-07-10T16:20:41.2140481Z    |                         ^
+2026-07-10T16:20:41.2140707Z 83 |                     
+2026-07-10T16:20:41.2140953Z 84 |                     # Extract Pathways (Bands)
+2026-07-10T16:20:41.2141224Z    |
+2026-07-10T16:20:41.2141325Z 
+2026-07-10T16:20:41.2141440Z F401 [*] `dataclasses.field` imported but unused
+2026-07-10T16:20:41.2141781Z  --> neuroshield/plugins/clinical/qif_registry.py:4:36
+2026-07-10T16:20:41.2142075Z   |
+2026-07-10T16:20:41.2142250Z 2 | import os
+2026-07-10T16:20:41.2142438Z 3 | import logging
+2026-07-10T16:20:41.2142660Z 4 | from dataclasses import dataclass, field
+2026-07-10T16:20:41.2142938Z   |                                    ^^^^^
+2026-07-10T16:20:41.2143219Z 5 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2143491Z   |
+2026-07-10T16:20:41.2143703Z help: Remove unused import: `dataclasses.field`
+2026-07-10T16:20:41.2143917Z 
+2026-07-10T16:20:41.2144017Z F401 [*] `typing.Any` imported but unused
+2026-07-10T16:20:41.2144338Z  --> neuroshield/plugins/clinical/qif_registry.py:5:32
+2026-07-10T16:20:41.2144628Z   |
+2026-07-10T16:20:41.2144797Z 3 | import logging
+2026-07-10T16:20:41.2145020Z 4 | from dataclasses import dataclass, field
+2026-07-10T16:20:41.2145322Z 5 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2145603Z   |                                ^^^
+2026-07-10T16:20:41.2145838Z 6 |
+2026-07-10T16:20:41.2146036Z 7 | logger = logging.getLogger("QIFRegistry")
+2026-07-10T16:20:41.2146304Z   |
+2026-07-10T16:20:41.2146614Z help: Remove unused import: `typing.Any`
+2026-07-10T16:20:41.2146808Z 
+2026-07-10T16:20:41.2146912Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2147233Z   --> neuroshield/plugins/datasets/edf_reader.py:35:23
+2026-07-10T16:20:41.2147524Z    |
+2026-07-10T16:20:41.2147707Z 33 |         if not HAS_PYEDFLIB:
+2026-07-10T16:20:41.2147954Z 34 |             if fallback_on_error:
+2026-07-10T16:20:41.2148357Z 35 |                 print(f"[EDFReader] pyedflib not installed. Falling back to MockEEGReader.")
+2026-07-10T16:20:41.2148965Z    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2149527Z 36 |                 self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
+2026-07-10T16:20:41.2149916Z 37 |             else:
+2026-07-10T16:20:41.2150111Z    |
+2026-07-10T16:20:41.2150304Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2150474Z 
+2026-07-10T16:20:41.2150584Z F401 [*] `typing.Optional` imported but unused
+2026-07-10T16:20:41.2150934Z  --> neuroshield/plugins/datasets/eeg_sample_reader.py:4:37
+2026-07-10T16:20:41.2151244Z   |
+2026-07-10T16:20:41.2151413Z 2 | import os
+2026-07-10T16:20:41.2151603Z 3 | import numpy as np
+2026-07-10T16:20:41.2151845Z 4 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2152134Z   |                                     ^^^^^^^^
+2026-07-10T16:20:41.2152459Z 5 | from neuroshield.plugins.datasets import IDatasetReader
+2026-07-10T16:20:41.2152781Z   |
+2026-07-10T16:20:41.2152991Z help: Remove unused import: `typing.Optional`
+2026-07-10T16:20:41.2153198Z 
+2026-07-10T16:20:41.2153313Z F401 [*] `typing.Optional` imported but unused
+2026-07-10T16:20:41.2153645Z  --> neuroshield/plugins/datasets/fif_reader.py:2:37
+2026-07-10T16:20:41.2153933Z   |
+2026-07-10T16:20:41.2154107Z 1 | import numpy as np
+2026-07-10T16:20:41.2154347Z 2 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2154631Z   |                                     ^^^^^^^^
+2026-07-10T16:20:41.2154952Z 3 | from neuroshield.plugins.datasets import IDatasetReader
+2026-07-10T16:20:41.2155383Z 4 | from neuroshield.plugins.datasets.mock_reader import MockEEGReader
+2026-07-10T16:20:41.2155741Z   |
+2026-07-10T16:20:41.2155944Z help: Remove unused import: `typing.Optional`
+2026-07-10T16:20:41.2156141Z 
+2026-07-10T16:20:41.2156247Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2156703Z   --> neuroshield/plugins/datasets/fif_reader.py:35:23
+2026-07-10T16:20:41.2156996Z    |
+2026-07-10T16:20:41.2157180Z 33 |         if not HAS_MNE:
+2026-07-10T16:20:41.2157413Z 34 |             if fallback_on_error:
+2026-07-10T16:20:41.2157818Z 35 |                 print(f"[FIFReader] mne-python not installed. Falling back to MockEEGReader.")
+2026-07-10T16:20:41.2158300Z    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2158751Z 36 |                 self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
+2026-07-10T16:20:41.2159139Z 37 |             else:
+2026-07-10T16:20:41.2159334Z    |
+2026-07-10T16:20:41.2159524Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2159690Z 
+2026-07-10T16:20:41.2159805Z F401 [*] `typing.Optional` imported but unused
+2026-07-10T16:20:41.2160130Z  --> neuroshield/plugins/datasets/mne_reader.py:3:37
+2026-07-10T16:20:41.2160423Z   |
+2026-07-10T16:20:41.2160600Z 1 | import numpy as np
+2026-07-10T16:20:41.2160801Z 2 | import os
+2026-07-10T16:20:41.2161023Z 3 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2161315Z   |                                     ^^^^^^^^
+2026-07-10T16:20:41.2161640Z 4 | from neuroshield.plugins.datasets import IDatasetReader
+2026-07-10T16:20:41.2162079Z 5 | from neuroshield.plugins.datasets.mock_reader import MockEEGReader
+2026-07-10T16:20:41.2162439Z   |
+2026-07-10T16:20:41.2162652Z help: Remove unused import: `typing.Optional`
+2026-07-10T16:20:41.2162849Z 
+2026-07-10T16:20:41.2162957Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2163274Z   --> neuroshield/plugins/datasets/mne_reader.py:34:23
+2026-07-10T16:20:41.2163563Z    |
+2026-07-10T16:20:41.2163742Z 32 |         if not HAS_MNE:
+2026-07-10T16:20:41.2163977Z 33 |             if fallback_on_error:
+2026-07-10T16:20:41.2164381Z 34 |                 print(f"[MNEReader] mne-python not installed. Falling back to MockEEGReader.")
+2026-07-10T16:20:41.2164856Z    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2165443Z 35 |                 self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
+2026-07-10T16:20:41.2165830Z 36 |             else:
+2026-07-10T16:20:41.2166135Z    |
+2026-07-10T16:20:41.2166330Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2166633Z 
+2026-07-10T16:20:41.2166785Z F841 Local variable `eeg_data` is assigned to but never used
+2026-07-10T16:20:41.2167171Z   --> neuroshield/plugins/devices/emotiv_emulator.py:49:17
+2026-07-10T16:20:41.2167476Z    |
+2026-07-10T16:20:41.2167824Z 47 |                 eeg_data = np.pad(base_eeg, (0, self.num_channels - len(base_eeg)), mode='reflect')
+2026-07-10T16:20:41.2168242Z 48 |             else:
+2026-07-10T16:20:41.2168485Z 49 |                 eeg_data = base_eeg[:self.num_channels]
+2026-07-10T16:20:41.2168777Z    |                 ^^^^^^^^
+2026-07-10T16:20:41.2168998Z 50 |             
+2026-07-10T16:20:41.2169259Z 51 |             self.packet_counter = (self.packet_counter + 1) % 128
+2026-07-10T16:20:41.2169579Z    |
+2026-07-10T16:20:41.2169819Z help: Remove assignment to unused variable `eeg_data`
+2026-07-10T16:20:41.2170048Z 
+2026-07-10T16:20:41.2170143Z F401 [*] `time` imported but unused
+2026-07-10T16:20:41.2170456Z  --> neuroshield/plugins/devices/hardware_bridge.py:3:8
+2026-07-10T16:20:41.2170752Z   |
+2026-07-10T16:20:41.2170923Z 1 | import socket
+2026-07-10T16:20:41.2171121Z 2 | import threading
+2026-07-10T16:20:41.2171321Z 3 | import time
+2026-07-10T16:20:41.2171506Z   |        ^^^^
+2026-07-10T16:20:41.2171697Z 4 | import numpy as np
+2026-07-10T16:20:41.2171911Z 5 | from typing import List
+2026-07-10T16:20:41.2172127Z   |
+2026-07-10T16:20:41.2172316Z help: Remove unused import: `time`
+2026-07-10T16:20:41.2172487Z 
+2026-07-10T16:20:41.2172590Z F401 [*] `typing.List` imported but unused
+2026-07-10T16:20:41.2172919Z  --> neuroshield/plugins/devices/hardware_bridge.py:5:20
+2026-07-10T16:20:41.2173225Z   |
+2026-07-10T16:20:41.2173402Z 3 | import time
+2026-07-10T16:20:41.2173599Z 4 | import numpy as np
+2026-07-10T16:20:41.2173815Z 5 | from typing import List
+2026-07-10T16:20:41.2174051Z   |                    ^^^^
+2026-07-10T16:20:41.2174255Z 6 |
+2026-07-10T16:20:41.2174440Z 7 | class HardwareBridge:
+2026-07-10T16:20:41.2174660Z   |
+2026-07-10T16:20:41.2174858Z help: Remove unused import: `typing.List`
+2026-07-10T16:20:41.2175052Z 
+2026-07-10T16:20:41.2175143Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.2175444Z  --> neuroshield/plugins/devices/muse_emulator.py:3:17
+2026-07-10T16:20:41.2175732Z   |
+2026-07-10T16:20:41.2228132Z 1 | import threading
+2026-07-10T16:20:41.2228532Z 2 | import time
+2026-07-10T16:20:41.2228917Z 3 | import numpy as np
+2026-07-10T16:20:41.2229287Z   |                 ^^
+2026-07-10T16:20:41.2229699Z 4 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2230292Z 5 | from neuroshield.plugins.devices import IDeviceWrapper
+2026-07-10T16:20:41.2230804Z   |
+2026-07-10T16:20:41.2231101Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.2231375Z 
+2026-07-10T16:20:41.2231542Z F841 Local variable `eeg_data` is assigned to but never used
+2026-07-10T16:20:41.2231972Z   --> neuroshield/plugins/devices/muse_emulator.py:44:13
+2026-07-10T16:20:41.2232287Z    |
+2026-07-10T16:20:41.2232483Z 42 |             # Read state from twin
+2026-07-10T16:20:41.2232768Z 43 |             state = self.twin.get_state()
+2026-07-10T16:20:41.2233112Z 44 |             eeg_data = state["cortical_lfp"][:self.num_channels]
+2026-07-10T16:20:41.2233438Z    |             ^^^^^^^^
+2026-07-10T16:20:41.2233649Z 45 |             
+2026-07-10T16:20:41.2233938Z 46 |             # Form Muse packet (Timestamp, PacketId, TP9, AF7, AF8, TP10)
+2026-07-10T16:20:41.2234281Z    |
+2026-07-10T16:20:41.2234516Z help: Remove assignment to unused variable `eeg_data`
+2026-07-10T16:20:41.2234745Z 
+2026-07-10T16:20:41.2235073Z F401 `brainflow` imported but unused; consider using `importlib.util.find_spec` to test for availability
+2026-07-10T16:20:41.2235636Z   --> neuroshield/plugins/devices/openbci_board.py:9:12
+2026-07-10T16:20:41.2235947Z    |
+2026-07-10T16:20:41.2236457Z  8 | try:
+2026-07-10T16:20:41.2237035Z  9 |     import brainflow
+2026-07-10T16:20:41.2237279Z    |            ^^^^^^^^^
+2026-07-10T16:20:41.2237802Z 10 |     from brainflow.board_shim import BoardShim, BoardIds, BrainFlowInputParams
+2026-07-10T16:20:41.2238229Z 11 |     HAS_BRAINFLOW = True
+2026-07-10T16:20:41.2238456Z    |
+2026-07-10T16:20:41.2238650Z help: Remove unused import: `brainflow`
+2026-07-10T16:20:41.2238835Z 
+2026-07-10T16:20:41.2238948Z F401 [*] `typing.Dict` imported but unused
+2026-07-10T16:20:41.2239292Z   --> neuroshield/plugins/devices/openbci_emulator.py:8:26
+2026-07-10T16:20:41.2239602Z    |
+2026-07-10T16:20:41.2239779Z  6 | import threading
+2026-07-10T16:20:41.2239985Z  7 | import time
+2026-07-10T16:20:41.2240221Z  8 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2240514Z    |                          ^^^^
+2026-07-10T16:20:41.2240755Z  9 | import numpy as np
+2026-07-10T16:20:41.2241016Z 10 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2241308Z    |
+2026-07-10T16:20:41.2241494Z help: Remove unused import
+2026-07-10T16:20:41.2241639Z 
+2026-07-10T16:20:41.2241747Z F401 [*] `typing.Any` imported but unused
+2026-07-10T16:20:41.2242086Z   --> neuroshield/plugins/devices/openbci_emulator.py:8:32
+2026-07-10T16:20:41.2242393Z    |
+2026-07-10T16:20:41.2242568Z  6 | import threading
+2026-07-10T16:20:41.2242776Z  7 | import time
+2026-07-10T16:20:41.2243006Z  8 | from typing import List, Dict, Any, Optional
+2026-07-10T16:20:41.2243291Z    |                                ^^^
+2026-07-10T16:20:41.2243543Z  9 | import numpy as np
+2026-07-10T16:20:41.2243798Z 10 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2244077Z    |
+2026-07-10T16:20:41.2244255Z help: Remove unused import
+2026-07-10T16:20:41.2244395Z 
+2026-07-10T16:20:41.2244491Z F401 [*] `os` imported but unused
+2026-07-10T16:20:41.2244763Z  --> neuroshield/plugins/devices/pieeg.py:1:8
+2026-07-10T16:20:41.2245034Z   |
+2026-07-10T16:20:41.2245204Z 1 | import os
+2026-07-10T16:20:41.2245387Z   |        ^^
+2026-07-10T16:20:41.2245567Z 2 | import time
+2026-07-10T16:20:41.2245760Z 3 | import threading
+2026-07-10T16:20:41.2245959Z   |
+2026-07-10T16:20:41.2246143Z help: Remove unused import: `os`
+2026-07-10T16:20:41.2246303Z 
+2026-07-10T16:20:41.2246404Z F821 Undefined name `Optional`
+2026-07-10T16:20:41.2246958Z    --> neuroshield/plugins/devices/pieeg.py:129:27
+2026-07-10T16:20:41.2247245Z     |
+2026-07-10T16:20:41.2247435Z 127 |         self._prepared = False
+2026-07-10T16:20:41.2247690Z 128 |         self._streaming = False
+2026-07-10T16:20:41.2248007Z 129 |         self.read_thread: Optional[threading.Thread] = None
+2026-07-10T16:20:41.2248334Z     |                           ^^^^^^^^
+2026-07-10T16:20:41.2248571Z 130 |         
+2026-07-10T16:20:41.2248882Z 131 |         # Buffer for EEG data (32 channels total to match Brainflow output shape)
+2026-07-10T16:20:41.2249259Z     |
+2026-07-10T16:20:41.2249352Z 
+2026-07-10T16:20:41.2249463Z E402 Module level import not at top of file
+2026-07-10T16:20:41.2249782Z    --> neuroshield/plugins/devices/pieeg.py:260:1
+2026-07-10T16:20:41.2250061Z     |
+2026-07-10T16:20:41.2250244Z 258 |             return data
+2026-07-10T16:20:41.2250468Z 259 |
+2026-07-10T16:20:41.2250723Z 260 | from neuroshield.plugins.devices import IDeviceWrapper
+2026-07-10T16:20:41.2251077Z     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2251340Z 261 |
+2026-07-10T16:20:41.2251556Z 262 | class PiEEGBoardWrapper(IDeviceWrapper):
+2026-07-10T16:20:41.2251837Z     |
+2026-07-10T16:20:41.2251931Z 
+2026-07-10T16:20:41.2252239Z F401 `brainflow` imported but unused; consider using `importlib.util.find_spec` to test for availability
+2026-07-10T16:20:41.2252768Z  --> neuroshield/plugins/devices/synthetic.py:7:12
+2026-07-10T16:20:41.2253057Z   |
+2026-07-10T16:20:41.2253246Z 5 | # Graceful check for brainflow
+2026-07-10T16:20:41.2253489Z 6 | try:
+2026-07-10T16:20:41.2253680Z 7 |     import brainflow
+2026-07-10T16:20:41.2253901Z   |            ^^^^^^^^^
+2026-07-10T16:20:41.2254401Z 8 |     from brainflow.board_shim import BoardShim, BoardIds, BrainFlowInputParams
+2026-07-10T16:20:41.2254813Z 9 |     HAS_BRAINFLOW = True
+2026-07-10T16:20:41.2255141Z   |
+2026-07-10T16:20:41.2255341Z help: Remove unused import: `brainflow`
+2026-07-10T16:20:41.2255523Z 
+2026-07-10T16:20:41.2255622Z F401 [*] `os` imported but unused
+2026-07-10T16:20:41.2255909Z  --> neuroshield/plugins/reports/generator.py:3:8
+2026-07-10T16:20:41.2256191Z   |
+2026-07-10T16:20:41.2256359Z 1 | import json
+2026-07-10T16:20:41.2256900Z 2 | import time
+2026-07-10T16:20:41.2257103Z 3 | import os
+2026-07-10T16:20:41.2257280Z   |        ^^
+2026-07-10T16:20:41.2257486Z 4 | from typing import Dict, Any, List
+2026-07-10T16:20:41.2257828Z 5 | from jinja2 import Environment, BaseLoader, select_autoescape
+2026-07-10T16:20:41.2258152Z   |
+2026-07-10T16:20:41.2258337Z help: Remove unused import: `os`
+2026-07-10T16:20:41.2258497Z 
+2026-07-10T16:20:41.2258606Z F541 [*] f-string without any placeholders
+2026-07-10T16:20:41.2258932Z    --> neuroshield/plugins/reports/generator.py:553:23
+2026-07-10T16:20:41.2259218Z     |
+2026-07-10T16:20:41.2259420Z 551 |         if summary.get("security_active"):
+2026-07-10T16:20:41.2259753Z 552 |             md.append("## Neuro Security Shield Audit")
+2026-07-10T16:20:41.2260179Z 553 |             md.append(f"- **Security Status:** `ACTIVE` (IDS/IPS Enabled)")
+2026-07-10T16:20:41.2260575Z     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2261035Z 554 |             md.append(f"- **Blocked Intrusions:** `{summary.get('blocked_attacks_count', 0)}`")
+2026-07-10T16:20:41.2261504Z 555 |             if summary.get("blocked_mtu_abuses", 0) > 0:
+2026-07-10T16:20:41.2261795Z     |
+2026-07-10T16:20:41.2261990Z help: Remove extraneous `f` prefix
+2026-07-10T16:20:41.2262165Z 
+2026-07-10T16:20:41.2262255Z F401 [*] `sys` imported but unused
+2026-07-10T16:20:41.2262541Z  --> neuroshield/plugins/reports/web_server.py:6:8
+2026-07-10T16:20:41.2262832Z   |
+2026-07-10T16:20:41.2262999Z 4 | import json
+2026-07-10T16:20:41.2263186Z 5 | import os
+2026-07-10T16:20:41.2263369Z 6 | import sys
+2026-07-10T16:20:41.2263554Z   |        ^^^
+2026-07-10T16:20:41.2263748Z 7 | import urllib.parse
+2026-07-10T16:20:41.2263977Z 8 | from typing import Dict, Any
+2026-07-10T16:20:41.2264210Z   |
+2026-07-10T16:20:41.2264399Z help: Remove unused import: `sys`
+2026-07-10T16:20:41.2264568Z 
+2026-07-10T16:20:41.2264670Z F401 [*] `typing.Any` imported but unused
+2026-07-10T16:20:41.2264978Z  --> neuroshield/plugins/reports/ws_server.py:4:25
+2026-07-10T16:20:41.2265257Z   |
+2026-07-10T16:20:41.2265429Z 2 | import threading
+2026-07-10T16:20:41.2265640Z 3 | import urllib.parse
+2026-07-10T16:20:41.2265874Z 4 | from typing import Set, Any, Optional
+2026-07-10T16:20:41.2266135Z   |                         ^^^
+2026-07-10T16:20:41.2266361Z 5 | import websockets
+2026-07-10T16:20:41.2266811Z   |
+2026-07-10T16:20:41.2267022Z help: Remove unused import: `typing.Any`
+2026-07-10T16:20:41.2267220Z 
+2026-07-10T16:20:41.2267312Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.2267585Z  --> tests/test_attack_scenarios.py:2:17
+2026-07-10T16:20:41.2267847Z   |
+2026-07-10T16:20:41.2268019Z 1 | import unittest
+2026-07-10T16:20:41.2268221Z 2 | import numpy as np
+2026-07-10T16:20:41.2268424Z   |                 ^^
+2026-07-10T16:20:41.2268620Z 3 | import sys
+2026-07-10T16:20:41.2268803Z 4 | import os
+2026-07-10T16:20:41.2268984Z   |
+2026-07-10T16:20:41.2269168Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.2269342Z 
+2026-07-10T16:20:41.2269432Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.2269688Z  --> tests/test_ble_emulator.py:2:17
+2026-07-10T16:20:41.2269923Z   |
+2026-07-10T16:20:41.2270089Z 1 | import unittest
+2026-07-10T16:20:41.2270294Z 2 | import numpy as np
+2026-07-10T16:20:41.2270498Z   |                 ^^
+2026-07-10T16:20:41.2270737Z 3 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2271244Z 4 | from neuroshield.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
+2026-07-10T16:20:41.2271866Z   |
+2026-07-10T16:20:41.2272048Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.2272325Z 
+2026-07-10T16:20:41.2272422Z F401 [*] `tempfile` imported but unused
+2026-07-10T16:20:41.2272703Z  --> tests/test_core_infrastructure.py:7:8
+2026-07-10T16:20:41.2272960Z   |
+2026-07-10T16:20:41.2273123Z 5 | import unittest
+2026-07-10T16:20:41.2273311Z 6 | import os
+2026-07-10T16:20:41.2273492Z 7 | import tempfile
+2026-07-10T16:20:41.2273676Z   |        ^^^^^^^^
+2026-07-10T16:20:41.2273859Z 8 | import json
+2026-07-10T16:20:41.2274047Z 9 | import numpy as np
+2026-07-10T16:20:41.2274248Z   |
+2026-07-10T16:20:41.2274444Z help: Remove unused import: `tempfile`
+2026-07-10T16:20:41.2274629Z 
+2026-07-10T16:20:41.2274716Z F401 [*] `json` imported but unused
+2026-07-10T16:20:41.2274983Z  --> tests/test_core_infrastructure.py:8:8
+2026-07-10T16:20:41.2275244Z   |
+2026-07-10T16:20:41.2275410Z 6 | import os
+2026-07-10T16:20:41.2275603Z 7 | import tempfile
+2026-07-10T16:20:41.2275801Z 8 | import json
+2026-07-10T16:20:41.2275983Z   |        ^^^^
+2026-07-10T16:20:41.2276172Z 9 | import numpy as np
+2026-07-10T16:20:41.2276370Z   |
+2026-07-10T16:20:41.2276844Z help: Remove unused import: `json`
+2026-07-10T16:20:41.2277081Z 
+2026-07-10T16:20:41.2277176Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.2277460Z   --> tests/test_core_infrastructure.py:9:17
+2026-07-10T16:20:41.2277727Z    |
+2026-07-10T16:20:41.2277903Z  7 | import tempfile
+2026-07-10T16:20:41.2278103Z  8 | import json
+2026-07-10T16:20:41.2278298Z  9 | import numpy as np
+2026-07-10T16:20:41.2278504Z    |                 ^^
+2026-07-10T16:20:41.2278694Z 10 |
+2026-07-10T16:20:41.2278859Z 11 | import sys
+2026-07-10T16:20:41.2279041Z    |
+2026-07-10T16:20:41.2279224Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.2279397Z 
+2026-07-10T16:20:41.2279723Z E712 Avoid equality comparisons to `True`; use `CryptoEmulator.validate_x509_cert(valid_cert):` for truth checks
+2026-07-10T16:20:41.2280245Z   --> tests/test_crypto.py:12:12
+2026-07-10T16:20:41.2280475Z    |
+2026-07-10T16:20:41.2280665Z 10 |         "signature": "VALID_ROOT_CA_SIG"
+2026-07-10T16:20:41.2280928Z 11 |     }
+2026-07-10T16:20:41.2281252Z 12 |     assert CryptoEmulator.validate_x509_cert(valid_cert) == True
+2026-07-10T16:20:41.2281627Z    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2281902Z 13 |     
+2026-07-10T16:20:41.2282095Z 14 |     invalid_cert = valid_cert.copy()
+2026-07-10T16:20:41.2282353Z    |
+2026-07-10T16:20:41.2282635Z help: Replace with `CryptoEmulator.validate_x509_cert(valid_cert)`
+2026-07-10T16:20:41.2282908Z 
+2026-07-10T16:20:41.2283003Z F401 [*] `json` imported but unused
+2026-07-10T16:20:41.2283268Z  --> tests/test_dataset_manager.py:4:8
+2026-07-10T16:20:41.2283515Z   |
+2026-07-10T16:20:41.2283682Z 2 | import os
+2026-07-10T16:20:41.2283872Z 3 | import tempfile
+2026-07-10T16:20:41.2284067Z 4 | import json
+2026-07-10T16:20:41.2284243Z   |        ^^^^
+2026-07-10T16:20:41.2284438Z 5 | import numpy as np
+2026-07-10T16:20:41.2284636Z   |
+2026-07-10T16:20:41.2284826Z help: Remove unused import: `json`
+2026-07-10T16:20:41.2285002Z 
+2026-07-10T16:20:41.2285098Z F401 [*] `numpy` imported but unused
+2026-07-10T16:20:41.2285362Z  --> tests/test_dbs_emulator.py:2:17
+2026-07-10T16:20:41.2285597Z   |
+2026-07-10T16:20:41.2285767Z 1 | import unittest
+2026-07-10T16:20:41.2285962Z 2 | import numpy as np
+2026-07-10T16:20:41.2286167Z   |                 ^^
+2026-07-10T16:20:41.2286417Z 3 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2287082Z 4 | from neuroshield.plugins.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
+2026-07-10T16:20:41.2287544Z   |
+2026-07-10T16:20:41.2287731Z help: Remove unused import: `numpy`
+2026-07-10T16:20:41.2287899Z 
+2026-07-10T16:20:41.2288102Z F401 [*] `neuroshield.core.utils.calculate_bandpower` imported but unused
+2026-07-10T16:20:41.2288502Z   --> tests/test_neuroshield.py:13:51
+2026-07-10T16:20:41.2288752Z    |
+2026-07-10T16:20:41.2289072Z 11 | )
+2026-07-10T16:20:41.2289313Z 12 | from neuroshield.core.engine import ReplayEngine
+2026-07-10T16:20:41.2289734Z 13 | from neuroshield.core.utils import calculate_rms, calculate_bandpower
+2026-07-10T16:20:41.2290251Z    |                                                   ^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2290529Z 14 |
+2026-07-10T16:20:41.2290734Z 15 | class TestDigitalTwin(unittest.TestCase):
+2026-07-10T16:20:41.2291006Z    |
+2026-07-10T16:20:41.2291294Z help: Remove unused import: `neuroshield.core.utils.calculate_bandpower`
+2026-07-10T16:20:41.2291587Z 
+2026-07-10T16:20:41.2291820Z F401 [*] `neuroshield.plugins.devices.pieeg.PiEEGSpiBoard` imported but unused
+2026-07-10T16:20:41.2292243Z  --> tests/test_pieeg_emulator.py:4:47
+2026-07-10T16:20:41.2292491Z   |
+2026-07-10T16:20:41.2292672Z 2 | import numpy as np
+2026-07-10T16:20:41.2292882Z 3 | import time
+2026-07-10T16:20:41.2293301Z 4 | from neuroshield.plugins.devices.pieeg import PiEEGSpiBoard, PiEEGBoardWrapper, HAS_HARDWARE_LIBS
+2026-07-10T16:20:41.2293819Z   |                                               ^^^^^^^^^^^^^
+2026-07-10T16:20:41.2294090Z 5 |
+2026-07-10T16:20:41.2294331Z 6 | class TestPiEEGHardwareEmulator(unittest.TestCase):
+2026-07-10T16:20:41.2294633Z   |
+2026-07-10T16:20:41.2294821Z help: Remove unused import
+2026-07-10T16:20:41.2294967Z 
+2026-07-10T16:20:41.2295205Z F401 [*] `neuroshield.plugins.devices.pieeg.HAS_HARDWARE_LIBS` imported but unused
+2026-07-10T16:20:41.2295639Z  --> tests/test_pieeg_emulator.py:4:81
+2026-07-10T16:20:41.2295884Z   |
+2026-07-10T16:20:41.2296060Z 2 | import numpy as np
+2026-07-10T16:20:41.2296269Z 3 | import time
+2026-07-10T16:20:41.2296818Z 4 | from neuroshield.plugins.devices.pieeg import PiEEGSpiBoard, PiEEGBoardWrapper, HAS_HARDWARE_LIBS
+2026-07-10T16:20:41.2297363Z   |                                                                                 ^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2297683Z 5 |
+2026-07-10T16:20:41.2297922Z 6 | class TestPiEEGHardwareEmulator(unittest.TestCase):
+2026-07-10T16:20:41.2298227Z   |
+2026-07-10T16:20:41.2298405Z help: Remove unused import
+2026-07-10T16:20:41.2298555Z 
+2026-07-10T16:20:41.2298774Z F401 [*] `neuroshield.plugins.datasets.edf_reader.EDFReader` imported but unused
+2026-07-10T16:20:41.2299192Z  --> tests/test_plugins.py:6:68
+2026-07-10T16:20:41.2299418Z   |
+2026-07-10T16:20:41.2299582Z 4 | import os
+2026-07-10T16:20:41.2299815Z 5 | from neuroshield.core.twin import DigitalTwin
+2026-07-10T16:20:41.2300250Z 6 | from neuroshield.plugins.datasets.edf_reader import MockEEGReader, EDFReader
+2026-07-10T16:20:41.2300683Z   |                                                                    ^^^^^^^^^
+2026-07-10T16:20:41.2301072Z 7 | from neuroshield.plugins.datasets.csv_reader import CSVReader
+2026-07-10T16:20:41.2301555Z 8 | from neuroshield.plugins.devices.synthetic import SyntheticBoardWrapper
+2026-07-10T16:20:41.2301936Z   |
+2026-07-10T16:20:41.2302254Z help: Remove unused import: `neuroshield.plugins.datasets.edf_reader.EDFReader`
+2026-07-10T16:20:41.2302584Z 
+2026-07-10T16:20:41.2302691Z E402 Module level import not at top of file
+2026-07-10T16:20:41.2302992Z   --> tests/test_websocket_streaming.py:12:1
+2026-07-10T16:20:41.2303266Z    |
+2026-07-10T16:20:41.2303456Z 10 |     os.environ.pop(key, None)
+2026-07-10T16:20:41.2303689Z 11 |
+2026-07-10T16:20:41.2303992Z 12 | from neuroshield.plugins.reports.ws_server import NeuroWebSocketServer
+2026-07-10T16:20:41.2304410Z    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-07-10T16:20:41.2304686Z 13 |
+2026-07-10T16:20:41.2304912Z 14 | class TestWebSocketStreaming(unittest.TestCase):
+2026-07-10T16:20:41.2305204Z    |
+2026-07-10T16:20:41.2305302Z 
+2026-07-10T16:20:41.2305377Z Found 80 errors.
+2026-07-10T16:20:41.2305778Z [*] 60 fixable with the `--fix` option (6 hidden fixes can be enabled with the `--unsafe-fixes` option).
+2026-07-10T16:20:41.2317889Z ##[error]Process completed with exit code 1.
