@@ -1,31 +1,16 @@
-# Environments
-.env
+# Version Control
+.git/
+.github/
+
+# Python Environments & Cache
+__pycache__/
 .venv/
 venv/
 env/
 ENV/
-
-# Python Cache
-__pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
-.pytest_cache/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Project specific dynamic output
-neuroshield_run_*
-
-# Local planning notes
-plans/
-
-# Local References
-openbci_reference/
-*.log
 
 # Rust Build Artifacts
 target/
@@ -33,8 +18,19 @@ runemate/target/
 **/target/
 **/.fingerprint/
 
+# IDEs & Editor configs
+.vscode/
+.idea/
+.settings/
+*.swp
+*.swo
+
 # Project specific / Large data
+openbci_reference/
+plans/
 experiments/
+neuroshield_run_*
+*.log
 
 # Large media and datasets
 *.csv

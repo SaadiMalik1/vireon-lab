@@ -1,8 +1,18 @@
 import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
+import os
+
 from neuroshield.core.twin import DigitalTwin
 from neuroshield.core.utils import calculate_rms
 from neuroshield.core.event_bus import EventBus, Event
+from neuroshield.core.threat_intel import ThreatIntelligence
+
+try:
+    import torch
+    import torch.nn as nn
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
 
 
 def calculate_spectral_entropy(signal: np.ndarray) -> float:
@@ -89,6 +99,78 @@ class LinearAutoencoderIDS:
             
         return mean_error
 
+class DeepAutoencoderIDS:
+    """
+    A PyTorch-based Deep Autoencoder for non-linear anomaly detection on EEG data.
+    """
+    def __init__(self, input_dim: int, hidden_dim: int = 4, learning_rate: float = 0.001):
+        if not TORCH_AVAILABLE:
+            raise RuntimeError("PyTorch is not available.")
+        
+        self.model = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, input_dim)
+        )
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+        self.criterion = nn.MSELoss()
+        self.is_fitted = False
+        self.reconstruction_errors: List[float] = []
+
+    def fit_step(self, data: np.ndarray):
+        # data shape: (num_channels, num_samples)
+        obs = torch.tensor(data.T, dtype=torch.float32)
+        
+        self.model.train()
+        self.optimizer.zero_grad()
+        output = self.model(obs)
+        loss = self.criterion(output, obs)
+        loss.backward()
+        self.optimizer.step()
+        self.is_fitted = True
+
+    def detect(self, data: np.ndarray) -> float:
+        if not self.is_fitted:
+            self.fit_step(data)
+            return 0.0
+            
+        obs = torch.tensor(data.T, dtype=torch.float32)
+        self.model.eval()
+        with torch.no_grad():
+            reconstruction = self.model(obs)
+            errors = torch.mean((obs - reconstruction) ** 2, dim=1).numpy()
+            
+        mean_error = float(np.mean(errors))
+        self.reconstruction_errors.append(mean_error)
+        if len(self.reconstruction_errors) > 100:
+            self.reconstruction_errors.pop(0)
+            
+        return mean_error
+
+
+class CoherenceEngine:
+    """
+    Implements the QIF Coherence (Cs) metric for cross-modal validation.
+    If a primary cortical stimulation occurs (e.g. visual phosphene), a corresponding
+    autonomic response (e.g. pupil dilation) should follow. If missing, trust drops.
+    """
+    def __init__(self):
+        self.baseline_pupil = 4.0
+        self.coherence_score = 1.0
+
+    def evaluate(self, primary_active: bool, secondary_val: float) -> float:
+        if primary_active:
+            if secondary_val < 4.2:
+                # Spoofed signal! Stimulation is happening but body isn't reacting
+                self.coherence_score = max(0.0, self.coherence_score - 0.2)
+            else:
+                self.coherence_score = min(1.0, self.coherence_score + 0.05)
+        else:
+            # Recovery to baseline
+            self.coherence_score = min(1.0, self.coherence_score + 0.01)
+            
+        return self.coherence_score
+
 
 class NeuroIDS:
     """
@@ -124,13 +206,20 @@ class NeuroIDS:
         self.cusum_pos: Dict[int, float] = {}
         self.cusum_neg: Dict[int, float] = {}
         
-        # Structural Anomaly Detector
-        self.autoencoder = LinearAutoencoderIDS()
-        self.ae_threshold = 50.0 # Threshold for reconstruction error
+        if TORCH_AVAILABLE:
+            self.autoencoder = DeepAutoencoderIDS(input_dim=self.twin.num_channels)
+        else:
+            self.autoencoder = LinearAutoencoderIDS()
+            
+        self.ae_threshold = 0.5
+        self.coherence_engine = CoherenceEngine()
+        
+        # Initialize Threat Intelligence for logging
+        registry_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../neurosecurity/datalake/qtara-registrar.json'))
+        self.threat_intel = ThreatIntelligence(registry_path)
 
         # Detection logs
         self.detections: List[Dict[str, Any]] = []
-
     def analyze_signal(self, data: np.ndarray) -> List[str]:
         anomalies = []
         n_channels = data.shape[0]
@@ -188,6 +277,15 @@ class NeuroIDS:
         # Update autoencoder model slowly
         if ae_error <= self.ae_threshold:
             self.autoencoder.fit_step(data)
+
+        # 5. QIF Cross-Modal Coherence (Cs) Check
+        # If stimulation is running, the twin's secondary markers must match
+        is_stimulating = self.twin.stimulation_enabled and self.twin.stimulation_amplitude_ma > 0
+        cs_score = self.coherence_engine.evaluate(is_stimulating, self.twin.autonomic_pupil_dilation_mm)
+        
+        if cs_score < 0.5:
+            anomalies.append("COHERENCE_FAILURE_ANOMALY")
+            self._log_detection("COHERENCE_FAILURE_ANOMALY", -1, cs_score)
 
         unique_anomalies = list(set(anomalies))
         if unique_anomalies and self.event_bus:
@@ -261,14 +359,64 @@ class NeuroIDS:
         return anomalies
 
     def _log_detection(self, anomaly_type: str, channel: int, value: float):
+        tara_id = None
+        mitre_id = None
+        severity = "Medium"
+        description = anomaly_type
+        
+        # Heuristic mapping for basic anomalies
+        if anomaly_type == "HIGH_NOISE_ANOMALY":
+            tara_id = "QIF-T2102"
+        elif anomaly_type == "COHERENCE_FAILURE_ANOMALY":
+            tara_id = "QIF-T2201"
+        elif anomaly_type == "PATHOLOGICAL_SYNCHRONIZATION_ATTACK":
+            tara_id = "QIF-T2301"
+        elif anomaly_type == "SPECTRAL_SPOOFING_ANOMALY":
+            tara_id = "QIF-T2202"
+        elif anomaly_type == "SIGNAL_SUPPRESSION_ANOMALY":
+            tara_id = "QIF-T2101"
+            
+        if tara_id and hasattr(self.threat_intel, "loader") and self.threat_intel.loader:
+            tech = self.threat_intel.loader.get_technique(tara_id)
+            if tech:
+                if tech.mitre and tech.mitre.tactics:
+                    mitre_id = tech.mitre.tactics[0]
+                severity = tech.severity
+                description = tech.name
+            
+        # Brain Region Mapping
+        brain_region_id = None
+        brain_region_name = None
+        # Simple heuristic mapping for now, assuming front channels are PFC and back are V1/PPC
+        if channel in [0, 1]:
+            brain_region_id = "pfc"
+        elif channel in [2, 3]:
+            brain_region_id = "m1"
+        elif channel in [4, 5]:
+            brain_region_id = "ppc"
+        else:
+            brain_region_id = "v1"
+            
+        if self.twin and hasattr(self.twin, "brain_regions") and brain_region_id in self.twin.brain_regions:
+            brain_region_name = self.twin.brain_regions[brain_region_id].get("name")
+            
         log_entry = {
             "timestamp": self.twin.get_sim_clock(),
             "anomaly_type": anomaly_type,
             "channel": channel,
             "value": round(value, 2),
-            "confidence": 0.95 if anomaly_type != "PATHOLOGICAL_SYNCHRONIZATION_ATTACK" else 0.85
+            "confidence": 0.95 if anomaly_type != "PATHOLOGICAL_SYNCHRONIZATION_ATTACK" else 0.85,
+            "tara_id": tara_id,
+            "mitre_id": mitre_id,
+            "severity": severity,
+            "description": description,
+            "brain_region_id": brain_region_id,
+            "brain_region_name": brain_region_name
         }
         self.detections.append(log_entry)
+        
+        # Print for visibility
+        print(f"[NeuroIDS] Detection: {anomaly_type} on Ch{channel} (Region: {brain_region_name}) -> TARA: {tara_id} ({description}) | Severity: {severity}")
 
 
 class NeuroIPS:

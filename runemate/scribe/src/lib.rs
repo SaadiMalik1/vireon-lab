@@ -5,6 +5,6 @@ pub mod memory;
 pub mod error;
 
 pub fn execute_bytecode(bytecode: &[u8]) -> Result<(), error::ScribeError> {
-    // Scribe execution engine entry point
-    Ok(())
+    let mut ctx = interpreter::ScribeContext::new();
+    ctx.execute(bytecode)
 }

@@ -254,11 +254,22 @@ def register_builtin_plugins(registry: PluginRegistry) -> None:
         plugin_class=MockEEGReader,
         version="1.0.0"
     ))
+    
+    from neuroshield.plugins.datasets.eeg_sample_reader import EEGSampleReader
+    registry.register(PluginInfo(
+        name="eeg_sample",
+        category="datasets",
+        description="Reads dataset metadata from datalake eeg-samples.json",
+        plugin_class=EEGSampleReader,
+        version="1.0.0"
+    ))
 
     # --- Device Wrappers ---
     from neuroshield.plugins.devices.synthetic import SyntheticBoardWrapper
     from neuroshield.plugins.devices.pieeg import PiEEGBoardWrapper
     from neuroshield.plugins.devices.openbci_board import OpenBCICytonWrapper, OpenBCIGanglionWrapper
+    from neuroshield.plugins.devices.muse_emulator import MuseEmulator
+    from neuroshield.plugins.devices.emotiv_emulator import EmotivEpocEmulator
 
     registry.register(PluginInfo(
         name="synthetic",
@@ -296,6 +307,22 @@ def register_builtin_plugins(registry: PluginRegistry) -> None:
         category="devices",
         description="Lab Streaming Layer (LSL) Inlet Wrapper",
         plugin_class=LSLDeviceWrapper,
+        version="1.0.0"
+    ))
+    
+    registry.register(PluginInfo(
+        name="muse",
+        category="devices",
+        description="Muse Headset Emulator (4-channel)",
+        plugin_class=MuseEmulator,
+        version="1.0.0"
+    ))
+    
+    registry.register(PluginInfo(
+        name="emotiv",
+        category="devices",
+        description="Emotiv Epoc+ Headset Emulator (14-channel)",
+        plugin_class=EmotivEpocEmulator,
         version="1.0.0"
     ))
 

@@ -76,6 +76,27 @@ function injectAttack(attack) {
     postControl({ active_attack: attack });
 }
 
+async function compileRunemate() {
+    const code = document.getElementById('runemate-code').value;
+    try {
+        const response = await fetch('/api/runemate/compile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source: code })
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+            console.log('Runemate Code Compiled:', data.bytecode);
+            alert('Runemate bytecode execution dispatched! Hex: ' + data.bytecode + '\nMonitoring coherence...');
+        } else {
+            console.error('Runemate Compile Error:', data.error);
+            alert('Compile Error:\n' + data.error);
+        }
+    } catch (e) {
+        console.error('Runemate compilation failed:', e);
+    }
+}
+
 let paramTimeout = null;
 let paramUpdates = {};
 
@@ -366,6 +387,73 @@ function handleTelemetryState(state) {
         if (signalBuffer.length > maxSamples) {
             signalBuffer.splice(0, signalBuffer.length - maxSamples);
         }
+    }
+
+    // Update Active Threat Intel
+    const threatIntelContainer = document.getElementById('active-threat-intel');
+    if (state.threat_intel && state.threat_intel.tara_id) {
+        threatIntelContainer.classList.remove('hidden');
+        document.getElementById('threat-tier').textContent = `Physics: ${state.threat_intel.physics_tier}`;
+        document.getElementById('threat-name').textContent = state.threat_intel.name;
+        document.getElementById('threat-desc').textContent = state.threat_intel.description;
+        document.getElementById('threat-id').textContent = `TARA: ${state.threat_intel.tara_id}`;
+        document.getElementById('threat-niss').textContent = `NISS Score: ${state.threat_intel.niss_score.toFixed(1)}`;
+    } else {
+        threatIntelContainer.classList.add('hidden');
+    }
+
+    // Process security logs
+    const logsContainer = document.getElementById('security-logs-container');
+    const logCountBadge = document.getElementById('log-count-badge');
+    
+    if (state.security_logs && state.security_logs.length > 0) {
+        logCountBadge.textContent = `${state.security_logs.length} events`;
+        logsContainer.innerHTML = '';
+        
+        state.security_logs.slice().reverse().forEach(log => {
+            const entry = document.createElement('div');
+            entry.className = 'bg-black/40 border-l-2 p-3 rounded text-xs log-entry-enter';
+            
+            let colorClass = 'border-amber-500 text-amber-400';
+            if (log.severity === 'CRITICAL') {
+                colorClass = 'border-rose-500 text-rose-400';
+            } else if (log.severity === 'WARNING') {
+                colorClass = 'border-amber-500 text-amber-400';
+            } else if (log.severity === 'INFO') {
+                colorClass = 'border-blue-400 text-blue-400';
+            }
+            entry.className = `bg-black/40 border-l-2 p-3 rounded text-xs log-entry-enter ${colorClass.split(' ')[0]}`;
+            
+            let html = `
+                <div class="flex justify-between items-start mb-1">
+                    <span class="font-bold tracking-wider uppercase ${colorClass.split(' ')[1]}">${log.type}</span>
+                    <span class="text-[10px] text-slate-500 font-mono">${log.timestamp.toFixed(3)}s</span>
+                </div>
+                <div class="text-slate-300 font-mono">${log.details}</div>
+            `;
+            
+            if (log.tara_id || log.brain_region) {
+                html += `<div class="mt-2 flex flex-wrap gap-2">`;
+                if (log.tara_id) {
+                    html += `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400 border border-slate-700">TARA: ${log.tara_id}</span>`;
+                }
+                if (log.brain_region) {
+                    html += `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400 border border-slate-700">Region: ${log.brain_region}</span>`;
+                }
+                html += `</div>`;
+            }
+            
+            entry.innerHTML = html;
+            logsContainer.appendChild(entry);
+        });
+    } else {
+        logCountBadge.textContent = '0 events';
+        logsContainer.innerHTML = `
+            <div class="text-center text-slate-500 text-sm py-10 italic flex flex-col items-center">
+                <svg class="w-8 h-8 opacity-20 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                No anomalies detected. System secure.
+            </div>
+        `;
     }
 }
 

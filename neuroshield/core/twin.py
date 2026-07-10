@@ -1,6 +1,8 @@
 import time
 import threading
 from typing import Dict, Any, List, Optional
+import os
+import json
 from neuroshield.core.physics import PhysicsEngine
 
 
@@ -14,7 +16,9 @@ class DigitalTwin:
 
     def __init__(self, device_id: str = "virtual_openbci_board",
                  sample_rate: int = 250, num_channels: int = 8, hardware_mode: bool = False):
-        self.lock = threading.Lock()
+        self.hardware_lock = threading.Lock()
+        self.clinical_lock = threading.Lock()
+        self.therapy_lock = threading.Lock()
         
         self.physics_engine = PhysicsEngine()
         self.hardware_mode = hardware_mode
@@ -61,6 +65,12 @@ class DigitalTwin:
         self.amplifier_gain = 24              # ADS1299 default gain
         self.communication_sessions = 0       # Active communication session count
         self.amplifier_saturated = False
+        
+        # OSI of Mind (QIF) Additions
+        self.funnel_origin = "Ring 4: Cortical"
+        self.autonomic_pupil_dilation_mm = 4.0 # Baseline pupil dilation in mm
+        self.brain_regions: Dict[str, Any] = {}
+        self._load_brain_atlas()
 
         # Simulation clock (monotonic, not wall-clock)
         self._sim_clock: float = 0.0
@@ -71,11 +81,26 @@ class DigitalTwin:
         # Log initial state
         self._log_state_change("Initialization")
 
+    def _load_brain_atlas(self):
+        """Loads QIF Brain-BCI Atlas to map device channels to brain regions."""
+        try:
+            atlas_path = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 
+                "../../neurosecurity/datalake/qif-brain-bci-atlas.json"
+            ))
+            if os.path.exists(atlas_path):
+                with open(atlas_path, "r", encoding="utf-8") as f:
+                    atlas_data = json.load(f)
+                    for region in atlas_data.get("brain_regions", []):
+                        self.brain_regions[region["id"]] = region
+        except Exception as e:
+            pass # Fails gracefully if not found
+
     # --- Simulation Clock & Battery Sag Emulation ---
 
     def set_sim_clock(self, t: float):
         """Set the simulation clock. Called by the ReplayEngine each tick."""
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             dt = t - self._sim_clock
             self._sim_clock = t
             if dt > 0:
@@ -124,7 +149,7 @@ class DigitalTwin:
     # --- State Accessors ---
 
     def get_state(self) -> Dict[str, Any]:
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             return {
                 "device_id": self.device_id,
                 "connected": self.connected,
@@ -153,6 +178,8 @@ class DigitalTwin:
                 "ble_pairing_state": self.ble_pairing_state,
                 "amplifier_gain": self.amplifier_gain,
                 "communication_sessions": self.communication_sessions,
+                "funnel_origin": self.funnel_origin,
+                "autonomic_pupil_dilation_mm": round(self.autonomic_pupil_dilation_mm, 2),
                 "sim_clock": round(self._sim_clock, 3),
             }
 
@@ -163,7 +190,7 @@ class DigitalTwin:
         Return a complete frozen state copy suitable for serialization.
         Used to save/restore experiment states for reproducibility.
         """
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             return {
                 "device_id": self.device_id,
                 "connected": self.connected,
@@ -191,6 +218,8 @@ class DigitalTwin:
                 "ble_pairing_state": self.ble_pairing_state,
                 "amplifier_gain": self.amplifier_gain,
                 "communication_sessions": self.communication_sessions,
+                "funnel_origin": self.funnel_origin,
+                "autonomic_pupil_dilation_mm": self.autonomic_pupil_dilation_mm,
                 "sim_clock": self._sim_clock,
                 "history": list(self.history),
             }
@@ -199,7 +228,7 @@ class DigitalTwin:
         """
         Restore state from a snapshot. Used for experiment replay.
         """
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             self.device_id = snap.get("device_id", self.device_id)
             self.connected = snap.get("connected", self.connected)
             self.battery_level = snap.get("battery_level", self.battery_level)
@@ -224,8 +253,10 @@ class DigitalTwin:
             self.flash_utilization_pct = snap.get("flash_utilization_pct", self.flash_utilization_pct)
             self.memory_usage_pct = snap.get("memory_usage_pct", self.memory_usage_pct)
             self.ble_pairing_state = snap.get("ble_pairing_state", self.ble_pairing_state)
-            self.amplifier_gain = snap.get("amplifier_gain", self.amplifier_gain)
-            self.communication_sessions = snap.get("communication_sessions", self.communication_sessions)
+            self.amplifier_gain = snap.get("amplifier_gain", 24)
+            self.communication_sessions = snap.get("communication_sessions", 0)
+            self.funnel_origin = snap.get("funnel_origin", "Ring 4: Cortical")
+            self.autonomic_pupil_dilation_mm = snap.get("autonomic_pupil_dilation_mm", 4.0)
             self._sim_clock = snap.get("sim_clock", self._sim_clock)
             self.history = snap.get("history", self.history)
 
@@ -263,7 +294,7 @@ class DigitalTwin:
         import numpy as np
         saturated = bool(np.any(np.abs(data) >= 1000.0))
         
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if saturated != self.amplifier_saturated:
                 self.amplifier_saturated = saturated
                 if saturated:
@@ -291,7 +322,7 @@ class DigitalTwin:
         import numpy as np
         channel_vars = np.var(signal_data, axis=1)
         
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             for ch in range(self.num_channels):
                 var = channel_vars[ch]
                 if var > 100000.0:
@@ -309,7 +340,7 @@ class DigitalTwin:
             return all(2.0 <= imp <= 15.0 for imp in self.electrode_impedances.values())
 
     def update_impedance(self, ch: int, val: float):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock:
             if ch in self.electrode_impedances:
                 old_val = self.electrode_impedances[ch]
                 if abs(old_val - val) > 0.01:
@@ -317,13 +348,13 @@ class DigitalTwin:
                     self._log_state_change(f"Impedance update: ch {ch} -> {val:.2f} kOhm")
 
     def set_connection(self, status: bool):
-        with self.lock:
+        with self.hardware_lock:
             if self.connected != status:
                 self.connected = status
                 self._log_state_change(f"Connection status changed to: {status}")
 
     def update_decoder_confidence(self, conf: float):
-        with self.lock:
+        with self.hardware_lock:
             # Clip between 0.0 and 1.0
             conf = max(0.0, min(1.0, conf))
             if abs(self.decoder_confidence - conf) > 0.01:
@@ -331,7 +362,7 @@ class DigitalTwin:
                 self._log_state_change(f"Decoder confidence updated: {conf:.2f}")
 
     def enable_fallback_mode(self, active: bool):
-        with self.lock:
+        with self.hardware_lock:
             if self.fallback_mode_active != active:
                 self.fallback_mode_active = active
                 if active:
@@ -345,7 +376,7 @@ class DigitalTwin:
                     self._log_state_change("Safe Fallback Mode Deactivated")
 
     def update_therapy(self, enabled: bool):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if self.fallback_mode_active:
                 self.stimulation_enabled = True
                 return
@@ -354,7 +385,7 @@ class DigitalTwin:
                 self._log_state_change(f"Stimulation therapy {'enabled' if enabled else 'disabled'}")
 
     def update_stimulation_params(self, amplitude: float, frequency: float):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if self.fallback_mode_active:
                 self.stimulation_amplitude_ma = self.fallback_amplitude_ma
                 self.stimulation_frequency_hz = self.fallback_frequency_hz
@@ -365,26 +396,26 @@ class DigitalTwin:
                 self._log_state_change(f"Stimulation parameters updated: {amplitude} mA @ {frequency} Hz")
 
     def set_clinical_alert(self, active: bool, status: str):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if self.clinical_alert_active != active or self.clinical_status != status:
                 self.clinical_alert_active = active
                 self.clinical_status = status
                 self._log_state_change(f"Clinical alert status: active={active}, status={status}")
 
     def update_battery(self, level: float):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             level = max(0.0, min(100.0, level))
             if abs(self.battery_level - level) > 0.1:
                 self.battery_level = level
                 self._log_state_change(f"Battery level: {level:.1f}%")
 
     def get_history(self) -> List[Dict[str, Any]]:
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             return list(self.history)
 
     def update_clinical_risk(self, hazard_state: str, iso_severity: str, tissue_damage_risk: str, clinical_action: str,
                              dsm5_diagnosis: str = "UNKNOWN", diagnostic_cluster: str = "UNKNOWN", niss_score: float = 0.0):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if (self.hazard_state != hazard_state or
                 self.iso_severity != iso_severity or
                 self.tissue_damage_risk != tissue_damage_risk or
@@ -405,13 +436,13 @@ class DigitalTwin:
     # --- Extended State Mutators ---
 
     def update_temperature(self, temp_c: float):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if abs(self.temperature_celsius - temp_c) > 0.05:
                 self.temperature_celsius = temp_c
                 self._log_state_change(f"Temperature: {temp_c:.1f}°C")
 
     def update_ble_pairing_state(self, state: str):
-        with self.lock:
+        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
             if self.ble_pairing_state != state:
                 self.ble_pairing_state = state
                 self._log_state_change(f"BLE pairing state: {state}")

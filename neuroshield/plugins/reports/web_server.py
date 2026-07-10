@@ -182,6 +182,38 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     if self.ips is not None:
                         self.ips.blocked_attacks_count += 1
                 self.send_error(400, f"Bad Request: {e}")
+        elif self.path == "/api/runemate/compile":
+            if not self._check_cors() or not self._check_rate_limit():
+                return
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                params = json.loads(post_data.decode('utf-8'))
+                source_code = params.get("source", "")
+                
+                # Execute runemate forge compiler
+                import subprocess
+                # Write to temp file
+                import tempfile
+                with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+                    f.write(source_code)
+                    tmp_name = f.name
+                    
+                cmd = f"cargo run --bin forge < {tmp_name}"
+                result = subprocess.run(cmd, shell=True, cwd="/home/ronin/Documents/n2/runemate", capture_output=True, text=True)
+                os.unlink(tmp_name)
+                
+                if result.returncode != 0:
+                    self.send_json({"status": "error", "error": result.stderr})
+                else:
+                    hex_bytecode = result.stdout.strip()
+                    # Trigger a benign coherence test via twin
+                    self.twin.update_stimulation_params(5.0, 130.0) # Active stim
+                    self.twin.autonomic_pupil_dilation_mm = 4.5 # Coherent response
+                    
+                    self.send_json({"status": "success", "bytecode": hex_bytecode})
+            except Exception as e:
+                self.send_error(400, f"Bad Request: {e}")
         else:
             self.send_error(404, "Not Found")
 

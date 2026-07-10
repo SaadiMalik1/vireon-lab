@@ -303,6 +303,14 @@ class Coordinator:
                 if tara_intel:
                     state["threat_intel"] = tara_intel
             
+            if hasattr(self, 'ids') and self.ids:
+                state["security_logs"] = list(self.ids.detections)
+                
+            if hasattr(self, 'ips') and self.ips:
+                state["blocked_attacks_count"] = self.ips.blocked_attacks_count
+                state["clamping_active"] = self.ips.clamping_active
+                state["blocked_mtu_abuses"] = self.ips.blocked_mtu_abuses
+                
             if self._simulation_context.get("nsp_mode", False) and self.nsp_wrapper:
                 state = self.nsp_wrapper.encrypt_payload(state)
                 

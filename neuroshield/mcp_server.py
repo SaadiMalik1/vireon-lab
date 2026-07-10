@@ -26,8 +26,12 @@ def _verify_capability(session_token: str, required_capability: str) -> bool:
     return required_capability in caps or "root.override" in caps
 
 @mcp.tool()
-def authenticate_session(biomarker_hash: str, role: str = "patient") -> str:
+def mock_authenticate_session(biomarker_hash: str, role: str = "patient") -> str:
     """
+    WARNING: This is a MOCK authentication function. It does not perform real
+    Post-Quantum Cryptography (PQKC) or actual biomarker validation. It is solely
+    for simulating the authentication flow in the digital twin environment.
+    
     Simulates Post-Quantum Key Exchange and Biomarker MFA authentication.
     
     Args:
@@ -104,7 +108,7 @@ def run_simulation(
     REQUIRES authentication with the 'simulation.run' capability.
     
     Args:
-        session_token: A valid token generated via authenticate_session.
+        session_token: A valid token generated via mock_authenticate_session.
         duration_sec: How long to run the simulation in seconds.
         attacks: List of signal/firmware attacks.
         secure_mode: Whether the IDS/IPS security shield is active.
