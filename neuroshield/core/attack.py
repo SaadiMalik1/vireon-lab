@@ -98,38 +98,38 @@ class SignalSuppressionAttack(ISignalModifier):
 
 class AdversarialOptimizerAttack(ISignalModifier):
     """
-    Uses a lightweight Genetic Algorithm (via numpy) to optimize an injection waveform
-    that maximizes power in the pathological beta band (13-30 Hz) while trying to keep
-    the overall RMS below standard detection thresholds.
+    Uses a True Online Genetic Algorithm to optimize an injection waveform
+    that maximizes power in the pathological beta band (13-30 Hz) on the Digital Twin.
+    It evaluates one gene per simulation block, measuring real-world twin state,
+    and persisting learning across the simulation timeline.
     """
     def __init__(self, target_channels: List[int], population_size: int = 10, target_rms_limit: float = 100.0):
         self.target_channels = target_channels
         self.population_size = population_size
         self.target_rms_limit = target_rms_limit
-        # Genes: [amplitude, frequency (13-30), phase]
-        self.population = np.random.rand(population_size, 3)
+        # Genes: [amplitude, frequency (13-30)]
+        self.population = np.random.rand(population_size, 2)
         self.population[:, 0] *= 50.0  # Amplitude up to 50
         self.population[:, 1] = 13.0 + self.population[:, 1] * 17.0  # Frequency 13-30 Hz
-        self.population[:, 2] *= 2 * np.pi  # Phase
+        
+        self.fitness_scores = np.zeros(population_size)
+        self.current_gene_idx = 0
+        self.generation = 0
+        self.historical_best_fitness = 0.0
+        
         self.best_genes = self.population[0]
         self.time_counter = 0.0
+        self.current_phase = 0.0 # Maintain continuous phase state across blocks
+        self._last_injected = False
 
-    def _fitness(self, gene, sample_rate, num_samples):
-        # Generate short test signal
-        t = np.arange(num_samples) / sample_rate
-        amp, freq, phase = gene
-        signal = amp * np.sin(2 * np.pi * freq * t + phase)
-        rms = np.sqrt(np.mean(signal**2))
-        if rms > self.target_rms_limit:
-            return 0.0 # Penalize heavily if over RMS limit
-        # Reward energy in beta band
-        return amp
-
-    def _evolve(self, sample_rate, num_samples):
-        fitness_scores = np.array([self._fitness(g, sample_rate, num_samples) for g in self.population])
-        # Select best half
-        sorted_idx = np.argsort(fitness_scores)[::-1]
-        best_half = self.population[sorted_idx[:self.population_size // 2]]
+    def _evolve(self):
+        # Select best half based on actual recorded fitness
+        sorted_idx = np.argsort(self.fitness_scores)[::-1]
+        best_fitness = self.fitness_scores[sorted_idx[0]]
+        if best_fitness > self.historical_best_fitness:
+            self.historical_best_fitness = best_fitness
+            
+        best_half = self.population[sorted_idx[:max(1, self.population_size // 2)]]
         self.best_genes = best_half[0]
         
         # Mutate to fill rest
@@ -137,26 +137,48 @@ class AdversarialOptimizerAttack(ISignalModifier):
         new_population[:len(best_half)] = best_half
         for i in range(len(best_half), self.population_size):
             parent = best_half[np.random.randint(0, len(best_half))]
-            mutation = np.random.normal(0, 0.1, 3)
+            mutation = np.random.normal(0, 0.1, 2)
             mutation[0] *= 10.0 # Amplitude mutation
             mutation[1] *= 2.0  # Freq mutation
-            new_population[i] = np.clip(parent + mutation, [0.0, 13.0, 0.0], [self.target_rms_limit * 1.414, 30.0, 2*np.pi])
+            new_population[i] = np.clip(parent + mutation, [0.0, 13.0], [self.target_rms_limit * 1.414, 30.0])
         self.population = new_population
+        self.fitness_scores = np.zeros(self.population_size)
+        self.current_gene_idx = 0
+        self.generation += 1
 
     def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
         num_samples = data.shape[1]
-        self._evolve(sample_rate, num_samples)
+        
+        # 1. Evaluate fitness of the PREVIOUS gene based on twin's current physical state
+        if self._last_injected:
+            current_state = twin.get_state()
+            # Fitness is directly tied to the twin's real-world beta power, ensuring
+            # the GA learns how to evade the IDS/IPS in the environment.
+            beta_power = current_state.get("beta_power", 0.0)
+            self.fitness_scores[self.current_gene_idx] = beta_power
+            
+            self.current_gene_idx += 1
+            if self.current_gene_idx >= self.population_size:
+                self._evolve()
+                
+        # 2. Inject Current gene to evaluate
+        amp, freq = self.population[self.current_gene_idx]
         
         mutated_data = data.copy()
-        amp, freq, phase = self.best_genes
-        t = self.time_counter + np.arange(num_samples) / sample_rate
-        attack_signal = amp * np.sin(2 * np.pi * freq * t + phase)
+        t = np.arange(num_samples) / sample_rate
+        attack_signal = amp * np.sin(2 * np.pi * freq * t + self.current_phase)
+        
+        # Advance continuous phase for the next block to ensure C0 continuity
+        self.current_phase += 2 * np.pi * freq * (num_samples / sample_rate)
+        self.current_phase %= 2 * np.pi
+        
         self.time_counter += num_samples / sample_rate
 
         for ch in self.target_channels:
             if ch in eeg_channels:
                 mutated_data[ch, :] += attack_signal
 
+        self._last_injected = True
         return mutated_data
 
 
@@ -222,27 +244,28 @@ class FramingDesynchronizationAttack(ISignalModifier):
     """
     def __init__(self, target_channels: List[int], inject_start_byte: bool = True):
         self.target_channels = target_channels
-        
-        # Cyton scale factor = 0.02235174 uV per count
-        # To get 0xA0A0A0 (Start Byte injection): 
-        # 0xA0A0A0 in 24-bit signed = 10526880 - 16777216 = -6250336
-        # Target uV = -6250336 * 0.02235174 = -139705.8624
-        
-        # To get 0xC0C0C0 (End Byte injection):
-        # 0xC0C0C0 in 24-bit signed = 12632256 - 16777216 = -4144960
-        # Target uV = -4144960 * 0.02235174 = -92641.1354
-        
-        if inject_start_byte:
-            self.injection_uv = -139705.8624
-        else:
-            self.injection_uv = -92641.1354
+        self.inject_start_byte = inject_start_byte
 
     def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
         mutated_data = data.copy()
+        
+        # Calculate dynamic scaling based on the DigitalTwin ADC params
+        # VREF and Gain dictate the scale factor.
+        scale_factor = (1000000.0 * twin.adc_vref) / (twin.adc_gain * ((2 ** (twin.adc_resolution_bits - 1)) - 1))
+        
+        # 0xA0A0A0 in 24-bit signed = 10526880 - 16777216 = -6250336
+        # 0xC0C0C0 in 24-bit signed = 12632256 - 16777216 = -4144960
+        if self.inject_start_byte:
+            target_counts = -6250336
+        else:
+            target_counts = -4144960
+            
+        injection_uv = target_counts * scale_factor
+
         for ch in self.target_channels:
             if ch in eeg_channels:
-                # Overwrite entire signal with the exact framing bytes payload
-                mutated_data[ch, :] = self.injection_uv
+                # Overwrite entire signal with the dynamically calculated framing bytes payload
+                mutated_data[ch, :] = injection_uv
         return mutated_data
 
 

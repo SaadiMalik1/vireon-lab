@@ -4,6 +4,10 @@ from typing import List, Optional, Dict
 import json
 import uuid
 import hashlib
+import hmac
+import base64
+import os
+import secrets
 
 from neuroshield.core.coordinator import Coordinator
 from neuroshield.core.plugin_registry import PluginRegistry, register_builtin_plugins
@@ -17,16 +21,25 @@ mcp = FastMCP("NeuroShield-Neural-Terminal")
 # In the Runemate architecture, access is governed by cryptographically 
 # verifiable capability tokens mapped to Neurorights.
 
-ACTIVE_SESSIONS: Dict[str, List[str]] = {}
+SERVER_SECRET = secrets.token_bytes(32)
 
 def _verify_capability(session_token: str, required_capability: str) -> bool:
-    if session_token not in ACTIVE_SESSIONS:
+    try:
+        raw = base64.b64decode(session_token)
+        if b"|" not in raw:
+            return False
+        payload_bytes, sig = raw.rsplit(b"|", 1)
+        expected_sig = hmac.new(SERVER_SECRET, payload_bytes, hashlib.sha256).digest()
+        if not hmac.compare_digest(sig, expected_sig):
+            return False
+        payload = json.loads(payload_bytes.decode())
+        caps = payload.get("c", [])
+        return required_capability in caps or "root.override" in caps
+    except Exception:
         return False
-    caps = ACTIVE_SESSIONS[session_token]
-    return required_capability in caps or "root.override" in caps
 
 @mcp.tool()
-def mock_authenticate_session(biomarker_hash: str, role: str = "patient") -> str:
+def mock_authenticate_session(biomarker_hash: str, role: str = "patient", auth_signature: Optional[str] = None) -> str:
     """
     WARNING: This is a MOCK authentication function. It does not perform real
     Post-Quantum Cryptography (PQKC) or actual biomarker validation. It is solely
@@ -37,13 +50,24 @@ def mock_authenticate_session(biomarker_hash: str, role: str = "patient") -> str
     Args:
         biomarker_hash: A simulated hash of the user's EEG/P300 signature.
         role: "patient" or "clinician" to determine capability scope.
+        auth_signature: Cryptographic signature required for clinician role escalation.
         
     Returns:
         JSON string containing the session token and granted capabilities.
     """
-    # Simulate a PQKC key exchange generating a session token
-    session_token = "pq_" + hashlib.sha256(str(uuid.uuid4()).encode() + biomarker_hash.encode()).hexdigest()[:16]
-    
+    # Enforce cryptographic signature for clinician role escalation
+    if role == "clinician":
+        # In a real system, this would be a proper PKI or asymmetric signature verification.
+        # For the simulation, we use an environment variable to simulate the PKI validation 
+        # without hardcoding symmetric secrets.
+        expected_sig = os.environ.get("CLINICIAN_PUB_KEY")
+        if not expected_sig:
+            # Fallback for local simulation testing only
+            expected_sig = hashlib.sha256(b"simulated_pki_key" + biomarker_hash.encode()).hexdigest()
+            
+        if not auth_signature or auth_signature != expected_sig:
+            return json.dumps({"error": "Role Escalation Denied: Invalid or missing cryptographic signature for clinician."})
+
     # Map roles to Neuroright-based capabilities
     if role == "patient":
         capabilities = [
@@ -58,7 +82,11 @@ def mock_authenticate_session(biomarker_hash: str, role: str = "patient") -> str
     else:
         return json.dumps({"error": f"Unknown role: {role}"})
         
-    ACTIVE_SESSIONS[session_token] = capabilities
+    # Simulate a PQKC key exchange generating a secure session token
+    # using a stateless JWT-like signed token system with HMAC
+    payload = json.dumps({"b": biomarker_hash, "r": role, "c": capabilities})
+    sig = hmac.new(SERVER_SECRET, payload.encode(), hashlib.sha256).digest()
+    session_token = base64.b64encode(payload.encode() + b"|" + sig).decode()
     
     return json.dumps({
         "status": "Authentication Successful",

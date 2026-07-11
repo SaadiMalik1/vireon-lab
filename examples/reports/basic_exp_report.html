@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShield Software Audit & Clinical Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(17, 25, 40, 0.75);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--panel-bg), rgba(20, 10, 40, 0.4));
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .title-area h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .meta-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.25rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        .meta-badge span {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple));
+        }
+
+        .card.alert-active::before {
+            background: var(--accent-red);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .chart-section {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-cyan);
+        }
+
+        .svg-chart {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .table-section {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .table-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-nominal {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-alert {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title-area">
+                <h1>NeuroShield Virtual Lab</h1>
+                <div class="subtitle">System Security & Clinical Integrity Report</div>
+            </div>
+            <div class="meta-badge">
+                Generated: <span>2026-07-10 21:53:45 PKT</span><br>
+                Device ID: <span>virtual_synthetic_board</span>
+            </div>
+        </header>
+
+        <div class="grid-3">
+            <div class="card ">
+                <div class="card-title">Clinical Status</div>
+                <div class="card-value" style="color: var(--accent-green);">
+                    Nominal
+                </div>
+                <div class="card-desc">Current alert state of the clinical stimulation system</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Decoder Confidence</div>
+                <div class="card-value" style="color: var(--accent-cyan);">
+                    0.98
+                </div>
+                <div class="card-desc">Mean model output (Nominal threshold is &ge; 0.70)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Stimulation Therapy</div>
+                <div class="card-value" style="color: var(--accent-cyan);">
+                    ACTIVE
+                </div>
+                <div class="card-desc">
+                    
+                    Delivering 2.0 mA @ 130.0 Hz
+                    
+                </div>
+            </div>
+            
+            
+            <div class="card" style="border-color: var(--accent-green);">
+                <div class="card-title">Security Shield</div>
+                <div class="card-value" style="color: var(--accent-green);">
+                    ACTIVE
+                </div>
+                <div class="card-desc">Intrusions Blocked: <strong>142</strong></div>
+            </div>
+            
+        </div>
+        
+        <!-- ISO 14971 Risk Evaluation -->
+        <div class="card" style="margin-bottom: 2rem; border-color: var(--border-color);">
+            <div class="card-title">ISO 14971 Risk Evaluation</div>
+            <div style="display: flex; gap: 2.5rem; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Clinical Hazard State</div>
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent-cyan);">NOMINAL</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">ISO 14971 Severity</div>
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent-green);">NEGLIGIBLE</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Tissue Damage Risk</div>
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary);">NONE</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Mitigation Action</div>
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent-purple);">MONITOR</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-title">Decoder Confidence Timeline</div>
+            
+        <svg viewBox="0 0 1000 300" width="100%" class="svg-chart" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="glowGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#06b6d4" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#a855f7" stop-opacity="1"/>
+                </linearGradient>
+                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.00"/>
+                </linearGradient>
+            </defs>
+            
+            <!-- Axis lines -->
+            <line x1="60" y1="40" x2="60" y2="260" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+            <line x1="60" y1="260" x2="940" y2="260" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+            
+            <!-- Grid Lines -->
+            <line x1="60" y1="40" x2="940" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4" />
+            <line x1="60" y1="260" x2="940" y2="260" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+            
+            <!-- Threshold Line (0.70 Confidence) -->
+            <line x1="60" y1="106.0" x2="940" y2="106.0" stroke="#f59e0b" stroke-opacity="0.6" stroke-width="2" stroke-dasharray="5 5" />
+            <text x="945" y="110.0" fill="#f59e0b" font-family="'Space Grotesk', sans-serif" font-size="11">0.70 Limit</text>
+
+            <!-- Text Labels -->
+            <text x="50" y="44" fill="#9ca3af" font-family="'Space Grotesk', sans-serif" font-size="11" text-anchor="end">1.0</text>
+            <text x="50" y="264" fill="#9ca3af" font-family="'Space Grotesk', sans-serif" font-size="11" text-anchor="end">0.0</text>
+            <text x="60" y="280" fill="#9ca3af" font-family="'Space Grotesk', sans-serif" font-size="11">Start (0s run)</text>
+            <text x="940" y="280" fill="#9ca3af" font-family="'Space Grotesk', sans-serif" font-size="11" text-anchor="end">End</text>
+            
+            <!-- Gradient Area -->
+            <path d="M 60 260 L 60.0 40.0 L 102.9 44.4 L 102.9 44.4 L 102.9 44.4 L 940.0 44.4 L 940.0 44.4 L 940.0 44.4 L 940.0 260 Z" fill="url(#areaGrad)" />
+            
+            <!-- Main Signal line -->
+            <path d="M 60.0 40.0 L 102.9 44.4 L 102.9 44.4 L 102.9 44.4 L 940.0 44.4 L 940.0 44.4 L 940.0 44.4 " fill="none" stroke="url(#glowGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            
+            <!-- Data Points -->
+            <circle cx="60.0" cy="40.0" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/><circle cx="102.9" cy="44.4" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/><circle cx="102.9" cy="44.4" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/><circle cx="102.9" cy="44.4" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/><circle cx="940.0" cy="44.4" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/><circle cx="940.0" cy="44.4" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/><circle cx="940.0" cy="44.4" r="4" fill="#06b6d4" stroke="#0b0f19" stroke-width="2"/>
+        </svg>
+        
+        </div>
+
+        <div class="table-section">
+            <div class="table-title">System Audit Log & State Transitions</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Event / Action</th>
+                        <th>Connection</th>
+                        <th>Mean Impedance</th>
+                        <th>Confidence</th>
+                        <th>Therapy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>Initialization</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                1.00
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-alert">
+                                Suspended
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>Decoder confidence updated: 0.98</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                0.98
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-alert">
+                                Suspended
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>Stimulation therapy enabled</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                0.98
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>Stimulation parameters updated: 2.0 mA @ 130.0 Hz</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                0.98
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>ADC Saturation: Dynamic range limit exceeded, signal clipped to rails.</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                0.98
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>Clinical alert status: active=False, status=Nominal</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                0.98
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>05:00:00</td>
+                        <td>Clinical risk updated: state=NOMINAL, severity=NEGLIGIBLE, dsm5=UNKNOWN</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                ON
+                            </span>
+                        </td>
+                        <td>5.0 kΩ</td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                0.98
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-nominal">
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

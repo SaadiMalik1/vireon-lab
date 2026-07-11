@@ -1,0 +1,30 @@
+# NeuroShield Example Configuration
+name = "Basic Signal Injection Experiment"
+duration_sec = 10.0
+interval_sec = 0.004  # 250Hz simulation rate
+seed = 42
+
+[device]
+type = "synthetic"
+sample_rate = 250
+num_channels = 8
+
+[dataset]
+# If path is empty, uses synthetic nominal brainwaves
+path = ""
+loop = true
+
+[security]
+enabled = true
+rms_high_threshold = 120.0
+rms_low_threshold = 0.5
+beta_power_threshold = 35.0
+
+[attacks]
+# Active attacks to inject during the simulation
+active = ["noise"]
+noise_level_uv = 150.0  # Above 120.0 threshold to trigger IDS
+
+[output]
+report_prefix = "examples/reports/basic_exp"
+no_report = false

@@ -62,9 +62,14 @@ class DigitalTwin:
         self.flash_utilization_pct = 0.0      # Internal flash usage
         self.memory_usage_pct = 0.0           # RAM usage
         self.ble_pairing_state = "UNPAIRED"   # "UNPAIRED", "PAIRING", "PAIRED", "BONDED"
-        self.amplifier_gain = 24              # ADS1299 default gain
         self.communication_sessions = 0       # Active communication session count
         self.amplifier_saturated = False
+        
+        # ADC Hardware Profile
+        self.adc_vref = 4.5
+        self.adc_gain = 24.0
+        self.adc_resolution_bits = 24
+        self.amplifier_gain = 24              # ADS1299 default gain
         
         # OSI of Mind (QIF) Additions
         self.funnel_origin = "Ring 4: Cortical"

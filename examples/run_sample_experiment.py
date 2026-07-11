@@ -1,0 +1,33 @@
+import os
+import sys
+
+# Ensure NeuroShield can be imported if run from the project root
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from neuroshield.core.config import load_config
+from neuroshield.core.coordinator import Coordinator
+
+def main():
+    # 1. Load the experiment TOML configuration
+    config_path = os.path.join(os.path.dirname(__file__), "basic_experiment.toml")
+    print(f"Loading configuration from {config_path}...")
+    config = load_config(config_path)
+
+    # 2. Ensure report output directory exists
+    os.makedirs(os.path.dirname(config.output.report_prefix), exist_ok=True)
+
+    # 3. Initialize the Coordinator
+    coordinator = Coordinator(config)
+    
+    # 4. Setup and Run the virtual laboratory
+    coordinator.setup()
+    try:
+        coordinator.run()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # 5. Teardown compiles the reports automatically
+        coordinator.teardown()
+
+if __name__ == "__main__":
+    main()

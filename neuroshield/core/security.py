@@ -15,27 +15,31 @@ except ImportError:
     TORCH_AVAILABLE = False
 
 
-def calculate_spectral_entropy(signal: np.ndarray) -> float:
+def calculate_spectral_features(signal: np.ndarray) -> Tuple[float, float]:
     """
-    Computes normalized spectral entropy of a 1D signal to detect concentrated spectral spikes.
-    Nominal brainwaves are broadband and have high entropy.
-    Single-frequency spoofed sine waves have very low entropy.
+    Computes normalized spectral entropy and Spectral Crest Factor of a 1D signal.
     """
     n = len(signal)
     if n <= 1:
-        return 1.0
+        return 1.0, 1.0
     fft_vals = np.fft.rfft(signal)
     psd = np.abs(fft_vals) ** 2
     psd_sum = np.sum(psd)
     if psd_sum == 0:
-        return 0.0
+        return 0.0, 1.0
+        
     psd_norm = psd / psd_sum
-    psd_norm = psd_norm[psd_norm > 0]
-    entropy = -np.sum(psd_norm * np.log2(psd_norm))
+    psd_norm_nz = psd_norm[psd_norm > 0]
+    entropy = -np.sum(psd_norm_nz * np.log2(psd_norm_nz))
     max_entropy = np.log2(len(psd))
-    if max_entropy == 0:
-        return 1.0
-    return float(entropy / max_entropy)
+    entropy_norm = float(entropy / max_entropy) if max_entropy > 0 else 1.0
+    
+    # Crest factor: peak power / average power
+    peak_power = np.max(psd)
+    avg_power = np.mean(psd)
+    crest_factor = float(peak_power / avg_power) if avg_power > 0 else 1.0
+    
+    return entropy_norm, crest_factor
 
 
 class LinearAutoencoderIDS:
@@ -50,42 +54,31 @@ class LinearAutoencoderIDS:
         self.mean: Optional[np.ndarray] = None
         self.is_fitted = False
         self.reconstruction_errors: List[float] = []
+        self.calibration_buffer = []
 
-    def fit_step(self, data: np.ndarray):
-        """Online PCA via Oja's rule or similar stochastic gradient descent, simplified."""
-        # For a block of data [channels, time], we learn spatial covariance
-        # data shape: (num_channels, num_samples)
-        # We treat each time step as an observation: (num_samples, num_channels)
+    def calibrate(self, data: np.ndarray):
+        """Offline batch calibration to establish a mathematically stable baseline via Eigendecomposition."""
         obs = data.T
-        if self.mean is None:
-            self.mean = np.mean(obs, axis=0)
-            self.components = np.random.randn(self.n_components, obs.shape[1])
-            self.components /= np.linalg.norm(self.components, axis=1, keepdims=True)
-            self.is_fitted = True
-        else:
-            # Dynamic EWMA baseline update to track natural signal drift
-            self.mean = 0.999 * self.mean + 0.001 * np.mean(obs, axis=0)
-
-        # Vectorized batch update (Batch Oja's rule approximation)
+        self.mean = np.mean(obs, axis=0)
         obs_c = obs - self.mean
-        n_samples = max(1, obs_c.shape[0])
-        
-        y = obs_c @ self.components.T
-        reconstruction = y @ self.components
-        error = obs_c - reconstruction
-        
-        # Batch update components
-        self.components += self.lr * (y.T @ error) / n_samples
-        
-        # Orthonormalize
-        q, _ = np.linalg.qr(self.components.T)
-        self.components = q.T
+        cov = np.cov(obs_c, rowvar=False)
+        # Using eigh for symmetric matrix
+        vals, vecs = np.linalg.eigh(cov)
+        # Top n_components
+        self.components = vecs[:, -self.n_components:].T
+        self.is_fitted = True
 
     def detect(self, data: np.ndarray) -> float:
-        if not self.is_fitted or self.components is None or self.mean is None:
-            self.fit_step(data)
+        if not self.is_fitted:
+            self.calibration_buffer.append(data)
+            # Buffer initial data for batch calibration
+            if len(self.calibration_buffer) >= 100:
+                stacked_data = np.concatenate(self.calibration_buffer, axis=1)
+                self.calibrate(stacked_data)
+                self.calibration_buffer = []
             return 0.0
         
+        # Frozen Inference Phase: No online SGD adaptation to anomalies
         obs = data.T
         x_c = obs - self.mean
         y = x_c @ self.components.T
@@ -116,24 +109,61 @@ class DeepAutoencoderIDS:
         self.criterion = nn.MSELoss()
         self.is_fitted = False
         self.reconstruction_errors: List[float] = []
+        self.calibration_buffer = []
 
-    def fit_step(self, data: np.ndarray):
-        # data shape: (num_channels, num_samples)
+    def calibrate(self, data: np.ndarray):
+        """Offline batch calibration phase with validation split and early stopping."""
         obs = torch.tensor(data.T, dtype=torch.float32)
         
-        self.model.train()
-        self.optimizer.zero_grad()
-        output = self.model(obs)
-        loss = self.criterion(output, obs)
-        loss.backward()
-        self.optimizer.step()
+        # 80/20 train/val split
+        n_samples = obs.size(0)
+        split_idx = int(0.8 * n_samples)
+        
+        train_data = obs[:split_idx]
+        val_data = obs[split_idx:]
+        
+        best_val_loss = float('inf')
+        patience = 5
+        patience_counter = 0
+        
+        # Train for multiple epochs on the buffered baseline data
+        for _ in range(50):
+            self.model.train()
+            self.optimizer.zero_grad()
+            output = self.model(train_data)
+            loss = self.criterion(output, train_data)
+            loss.backward()
+            self.optimizer.step()
+            
+            # Validation
+            if split_idx < n_samples:
+                self.model.eval()
+                with torch.no_grad():
+                    val_output = self.model(val_data)
+                    val_loss = self.criterion(val_output, val_data).item()
+                    
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    patience_counter = 0
+                else:
+                    patience_counter += 1
+                    
+                if patience_counter >= patience:
+                    # Early stopping triggered
+                    break
         self.is_fitted = True
 
     def detect(self, data: np.ndarray) -> float:
         if not self.is_fitted:
-            self.fit_step(data)
+            self.calibration_buffer.append(data)
+            # Buffer initial data for batch calibration
+            if len(self.calibration_buffer) >= 100:
+                stacked_data = np.concatenate(self.calibration_buffer, axis=1)
+                self.calibrate(stacked_data)
+                self.calibration_buffer = []
             return 0.0
             
+        # Frozen Inference Phase: No online SGD adaptation to anomalies
         obs = torch.tensor(data.T, dtype=torch.float32)
         self.model.eval()
         with torch.no_grad():
@@ -228,55 +258,64 @@ class NeuroIDS:
             ch_signal = data[ch, :]
             rms = calculate_rms(ch_signal)
 
+            # Initialize EWMA baseline if needed
+            if self.dynamic_baseline_enabled and ch not in self.rms_ewma:
+                # If the first packet is already anomalously high, we shouldn't trust it as baseline
+                if rms < self.rms_high_threshold:
+                    self.rms_ewma[ch] = rms
+                else:
+                    self.rms_ewma[ch] = self.rms_high_threshold / 2.0  # Safe nominal default
+                self.rms_var[ch] = 1.0
+                self.cusum_pos[ch] = 0.0
+                self.cusum_neg[ch] = 0.0
+
             # 1. Detect extreme noise injections (jamming/saturation)
+            # Check static absolute bounds first
             if rms > self.rms_high_threshold:
                 anomalies.append("HIGH_NOISE_ANOMALY")
                 self._log_detection("HIGH_NOISE_ANOMALY", ch, rms)
+            # Check dynamic 3-sigma statistical bound
+            elif self.dynamic_baseline_enabled and ch in self.rms_ewma:
+                std_dev = np.sqrt(self.rms_var[ch]) if self.rms_var[ch] > 0 else 1.0
+                if rms > self.rms_ewma[ch] + 3.0 * std_dev and rms > self.rms_low_threshold * 2:
+                    anomalies.append("HIGH_NOISE_ANOMALY")
+                    self._log_detection("HIGH_NOISE_ANOMALY", ch, rms)
+
             # 2. Detect signal suppression (attenuation/grounding attacks)
-            elif rms < self.rms_low_threshold:
+            if rms < self.rms_low_threshold:
                 anomalies.append("SIGNAL_SUPPRESSION_ANOMALY")
                 self._log_detection("SIGNAL_SUPPRESSION_ANOMALY", ch, rms)
                 
-            # 2b. Dynamic Baseline & CUSUM slow-drift detection
-            if self.dynamic_baseline_enabled:
-                if ch not in self.rms_ewma:
-                    self.rms_ewma[ch] = rms
-                    self.rms_var[ch] = 1.0
+            # 2b. Dynamic Baseline & CUSUM slow-drift detection update
+            if self.dynamic_baseline_enabled and ch in self.rms_ewma:
+                diff = rms - self.rms_ewma[ch]
+                self.rms_ewma[ch] += self.ewma_alpha * diff
+                self.rms_var[ch] = (1 - self.ewma_alpha) * (self.rms_var[ch] + self.ewma_alpha * diff**2)
+                
+                std_dev = np.sqrt(self.rms_var[ch]) if self.rms_var[ch] > 0 else 1.0
+                z_score = diff / std_dev
+                
+                self.cusum_pos[ch] = max(0.0, self.cusum_pos[ch] + z_score - self.cusum_k)
+                self.cusum_neg[ch] = max(0.0, self.cusum_neg[ch] - z_score - self.cusum_k)
+                
+                if self.cusum_pos[ch] > self.cusum_h or self.cusum_neg[ch] > self.cusum_h:
+                    anomalies.append("SLOW_DRIFT_ANOMALY")
+                    self._log_detection("SLOW_DRIFT_ANOMALY", ch, rms)
+                    # Reset to avoid alarm fatigue
                     self.cusum_pos[ch] = 0.0
                     self.cusum_neg[ch] = 0.0
-                else:
-                    diff = rms - self.rms_ewma[ch]
-                    self.rms_ewma[ch] += self.ewma_alpha * diff
-                    self.rms_var[ch] = (1 - self.ewma_alpha) * (self.rms_var[ch] + self.ewma_alpha * diff**2)
-                    
-                    std_dev = np.sqrt(self.rms_var[ch]) if self.rms_var[ch] > 0 else 1.0
-                    z_score = diff / std_dev
-                    
-                    self.cusum_pos[ch] = max(0.0, self.cusum_pos[ch] + z_score - self.cusum_k)
-                    self.cusum_neg[ch] = max(0.0, self.cusum_neg[ch] - z_score - self.cusum_k)
-                    
-                    if self.cusum_pos[ch] > self.cusum_h or self.cusum_neg[ch] > self.cusum_h:
-                        anomalies.append("SLOW_DRIFT_ANOMALY")
-                        self._log_detection("SLOW_DRIFT_ANOMALY", ch, rms)
-                        # Reset to avoid alarm fatigue
-                        self.cusum_pos[ch] = 0.0
-                        self.cusum_neg[ch] = 0.0
             
-            # 3. Detect single-frequency spoofing via spectral entropy
-            entropy = calculate_spectral_entropy(ch_signal)
-            if entropy < 0.20:
+            # 3. Detect spoofing via spectral entropy and Crest Factor (defeats noise padding)
+            entropy, crest_factor = calculate_spectral_features(ch_signal)
+            if entropy < 0.20 or crest_factor > 15.0:
                 anomalies.append("SPECTRAL_SPOOFING_ANOMALY")
-                self._log_detection("SPECTRAL_SPOOFING_ANOMALY", ch, entropy)
+                self._log_detection("SPECTRAL_SPOOFING_ANOMALY", ch, crest_factor)
 
         # 4. Detect structural deviations using autoencoder
         ae_error = self.autoencoder.detect(data)
         if ae_error > self.ae_threshold:
             anomalies.append("STRUCTURAL_DEVIATION_ANOMALY")
             self._log_detection("STRUCTURAL_DEVIATION_ANOMALY", -1, ae_error)
-            
-        # Update autoencoder model slowly
-        if ae_error <= self.ae_threshold:
-            self.autoencoder.fit_step(data)
 
         # 5. QIF Cross-Modal Coherence (Cs) Check
         # If stimulation is running, the twin's secondary markers must match
@@ -414,6 +453,8 @@ class NeuroIDS:
             "brain_region_name": brain_region_name
         }
         self.detections.append(log_entry)
+        if len(self.detections) > 1000:
+            self.detections.pop(0)
         
         # Print for visibility
         print(f"[NeuroIDS] Detection: {anomaly_type} on Ch{channel} (Region: {brain_region_name}) -> TARA: {tara_id} ({description}) | Severity: {severity}")
@@ -438,6 +479,7 @@ class NeuroIPS:
         self.blocked_attacks_count = 0
         self.clamping_active = False
         self.stim_history: List[Tuple[float, float, float]] = []
+        self.accumulated_thermal_dose = 0.0
 
     def sanitize_stimulation_write(self, amplitude: float, frequency: float) -> Tuple[float, float]:
         """
@@ -469,19 +511,29 @@ class NeuroIPS:
                 return self.stim_history[-1][1], self.stim_history[-1][2]
             return 0.0, 0.0
 
-        # Calculate cumulative charge factor
-        self.stim_history.append((current_time, amplitude, frequency))
-        self.stim_history = [x for x in self.stim_history if current_time - x[0] <= 10.0]
-        
-        total_charge = 0.0
-        if len(self.stim_history) > 1:
-            for i in range(1, len(self.stim_history)):
-                dt = self.stim_history[i][0] - self.stim_history[i-1][0]
-                if dt > 0:
-                    avg_intensity = (abs(self.stim_history[i][1]) * abs(self.stim_history[i][2]) + abs(self.stim_history[i-1][1]) * abs(self.stim_history[i-1][2])) / 2.0
-                    total_charge += avg_intensity * dt
+        # Calculate Leaky Integrator Thermal Dose (Pennes Bioheat Equation approximation)
+        dt = 0.0
+        power_injected = 0.0
+        if len(self.stim_history) > 0:
+            dt = current_time - self.stim_history[-1][0]
+            last_amp = self.stim_history[-1][1]
+            last_freq = self.stim_history[-1][2]
+            # Power injected by the PREVIOUS pulse over the interval dt
+            power_injected = abs(last_amp) * abs(last_freq)
 
-        if total_charge > self.max_cumulative_charge:
+        self.stim_history.append((current_time, amplitude, frequency))
+        # Keep recent history for coherence checks, though leaky integrator doesn't strictly need it all
+        self.stim_history = [x for x in self.stim_history if current_time - x[0] <= 10.0]
+
+        if dt > 0:
+            # Dissipation factor (tau = 60 seconds thermal relaxation time)
+            tau_dissipation = 60.0
+            decay_factor = np.exp(-dt / tau_dissipation)
+
+            # Update Leaky Integrator
+            self.accumulated_thermal_dose = (self.accumulated_thermal_dose * decay_factor) + (power_injected * dt)
+
+        if self.accumulated_thermal_dose > self.max_cumulative_charge:
             self.blocked_attacks_count += 1
             self.clamping_active = True
             self.twin.set_clinical_alert(True, "IPS: Cumulative Charge Threat Detected")
@@ -495,7 +547,7 @@ class NeuroIPS:
                 self.event_bus.publish(Event(
                     topic="ips.cumulative_charge_clamped",
                     data={
-                        "total_charge": total_charge,
+                        "accumulated_thermal_dose": self.accumulated_thermal_dose,
                         "limit": self.max_cumulative_charge,
                         "sim_clock": current_time
                     },
@@ -530,15 +582,20 @@ class NeuroIPS:
                 self.twin.set_clinical_alert(True, "IPS Clamped: Coherence Delta Rate Limit")
                 self.stim_history[-1] = (current_time, amplitude, frequency)
                 
-            # 2. Clinical state coherence (Cannot increase stimulation if beta power is low)
+            # 2. Clinical state coherence (Cannot increase stimulation if beta power is low, OR if IDS anomalies are active)
             if len(self.ids.history_beta_power) > 0:
                 last_beta = self.ids.history_beta_power[-1]
-                if last_beta < 15.0 and amplitude > last_amp:
+                # Cross-reference with active anomalies to prevent beta inflation evasion
+                active_anomalies = self.ids.detections[-5:] # check recent detections
+                has_active_anomaly = any(d["timestamp"] >= current_time - 3.0 for d in active_anomalies)
+                
+                if (last_beta < 15.0 or has_active_anomaly) and amplitude > last_amp:
                     amplitude = last_amp
                     self.clamping_active = True
                     coherence_clamped = True
                     self.blocked_attacks_count += 1
-                    self.twin.set_clinical_alert(True, "IPS Clamped: Coherence State Check Failed")
+                    msg = "IPS Clamped: Coherence State Untrusted (Anomaly Active)" if has_active_anomaly else "IPS Clamped: Coherence State Check Failed"
+                    self.twin.set_clinical_alert(True, msg)
                     self.stim_history[-1] = (current_time, amplitude, frequency)
 
         if coherence_clamped:

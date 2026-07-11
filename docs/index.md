@@ -4,9 +4,9 @@ Welcome to the official documentation for **NeuroShield**, an advanced Virtual L
 
 ## Overview
 
-The rapid advancement of invasive and non-invasive BCIs introduces unprecedented security and ethical risks—from "neural ransomware" to unauthorized cognitive state inference. NeuroShield is built to model these threats safely in a digital environment before they manifest in clinical reality. 
+The rapid advancement of invasive and non-invasive BCIs introduces unprecedented security and ethical risks—from theoretical "neural ransomware" (stimulation leakage) to cognitive state inference vulnerabilities. NeuroShield is built to model these threats safely in a digital environment before they manifest in clinical reality. 
 
-NeuroShield is not just a simulator; it is mathematically and ethically aligned with the **OSI of Mind** framework and the **Quantified Interconnection Framework (QIF)**.
+NeuroShield is an evolving research platform and reference implementation; it is mathematically and ethically aligned with the **OSI of Mind** framework and the **Quantified Interconnection Framework (QIF)** originally proposed in the [qinnovates/neurosecurity](https://github.com/qinnovates/neurosecurity) repository.
 
 ### Core Features
 
@@ -26,6 +26,7 @@ This documentation is divided into extensive standalone guides:
 - **[Security & Threat Modeling](security_and_threats.md)**: Comprehensive explanation of the NeuroIDS, the Coherence Engine, and how the qTARA Threat Intelligence is parsed.
 - **[API & Interfaces](api.md)**: Guide to the CLI arguments, Model Context Protocol (MCP) server, and WebSocket/LSL telemetry streams.
 - **[QIF Derivation Log](QIF-DERIVATION-LOG.md)**: The central architectural decision record tracing changes back to the original OSI of Mind governance.
+- **[Glossary & Formal Definitions](glossary.md)**: Mathematical and structural bounds defining the scope of theoretical attacks (e.g. Neural Ransomware, Bifurcation Forcing) simulated by this platform.
 
 ---
 
