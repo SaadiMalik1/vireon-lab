@@ -92,17 +92,21 @@ class LinearAutoencoderIDS:
             
         return mean_error
 
-class LSTMAutoencoderModel(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int = 8):
-        super().__init__()
-        self.encoder = nn.LSTM(input_size=input_dim, hidden_size=hidden_dim, num_layers=1, batch_first=True)
-        self.decoder = nn.LSTM(input_size=hidden_dim, hidden_size=input_dim, num_layers=1, batch_first=True)
-        
-    def forward(self, x):
-        # x shape: (batch_size, sequence_length, input_dim)
-        encoded, _ = self.encoder(x)
-        decoded, _ = self.decoder(encoded)
-        return decoded
+if TORCH_AVAILABLE:
+    class LSTMAutoencoderModel(nn.Module):
+        def __init__(self, input_dim: int, hidden_dim: int = 8):
+            super().__init__()
+            self.encoder = nn.LSTM(input_size=input_dim, hidden_size=hidden_dim, num_layers=1, batch_first=True)
+            self.decoder = nn.LSTM(input_size=hidden_dim, hidden_size=input_dim, num_layers=1, batch_first=True)
+            
+        def forward(self, x):
+            # x shape: (batch_size, sequence_length, input_dim)
+            encoded, _ = self.encoder(x)
+            decoded, _ = self.decoder(encoded)
+            return decoded
+else:
+    class LSTMAutoencoderModel:
+        pass
 
 class DeepAutoencoderIDS:
     """
