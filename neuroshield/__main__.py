@@ -12,6 +12,7 @@ import sys
 import os
 import click
 import subprocess
+from neuroshield.core.validation import ValidationRunner
 
 # Ensure the project root is in Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -70,6 +71,13 @@ def ui(port, host):
         subprocess.run(["streamlit", "run", dashboard_path, "--server.port", str(port), "--server.address", host])
     except FileNotFoundError:
         click.secho("Error: Streamlit is not installed. Run `pip install streamlit`.", fg="red")
+
+
+@cli.command()
+def validate():
+    """Run the Automated Validation Suite."""
+    runner = ValidationRunner()
+    runner.run_all()
 
 
 @cli.command()

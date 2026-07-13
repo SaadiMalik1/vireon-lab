@@ -46,6 +46,9 @@ experiments/
 *.edf
 *.bdf
 *.gdf
+*.dat
+*.mat
+*.fif
 *.db
 *.sqlite
 *.sqlite3

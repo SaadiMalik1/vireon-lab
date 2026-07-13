@@ -1,7 +1,9 @@
 # NeuroShield: Virtual Laboratory for BCI Security
 
 [![CI](https://github.com/SaadiMalik1/neurosheild/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/neurosheild/actions/workflows/ci.yml)
-
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 **Audience**: Security Researchers, Academic Researchers, Developers
 
 ## What is NeuroShield?
@@ -32,30 +34,27 @@ NeuroShield is currently a **Research Prototype**. The core simulation loop is s
 
 ## Architecture Overview
 
-```text
-       CLI / Scripts
-             │
-             ▼
-      [ Coordinator ] ──────────────┐
-             │                      │
-             ▼                      │
-     [ Plugin Manager ]             │
-             │                      │
-             ▼                      ▼
-   [ Simulation Engine ] ◄──── [ Attack Framework ]
-             │
-             ▼
-     [ Digital Twin ]
-      ├─ Physics (Thermal/Battery)
-      ├─ Firmware (OTA/Execution)
-      └─ Signals (EEG/Biometrics)
-             │
-             ▼
-       [ Telemetry ]
-      (LSL / WebSockets)
-             │
-             ▼
-         [ Reports ]
+```mermaid
+graph TD
+    CLI[CLI / Scripts] --> Coordinator
+    
+    subgraph Engine
+        Coordinator --> ZTA[ZTA Policy Engine]
+        Coordinator --> PluginManager[Plugin Manager]
+        ZTA --> SimEngine[Simulation Engine]
+        PluginManager --> SimEngine
+        Attack[Attack Framework] --> SimEngine
+    end
+    
+    subgraph Physics & Physiology
+        SimEngine --> Twin[Digital Twin]
+        Twin --> Physics[Thermal & Battery Physics]
+        Twin --> Firmware[Firmware OTA & Execution]
+        Twin --> Signals[EEG & Biometric Signals]
+    end
+    
+    Twin --> Telemetry[Telemetry: LSL & WebSockets]
+    Telemetry --> Reports[Diagnostic Reports]
 ```
 
 ---
@@ -63,14 +62,16 @@ NeuroShield is currently a **Research Prototype**. The core simulation loop is s
 ## Core Components
 
 ### Implemented
-- **Digital Twin**: Models the physical state (battery, temperature) and clinical state (EEG, cognitive load) of the simulated patient.
+- **Digital Twin**: Simulates simplified representations of the physical state (battery, temperature) and clinical state (EEG, cognitive load) of the simulated patient.
 - **Simulation Engine**: A tick-based execution loop that drives the physics models and synchronizes component states.
-- **Coordinator**: The central orchestrator that applies ZTA policies, manages the event bus, and controls the simulation lifecycle.
+- **Coordinator**: The central orchestrator that manages the event bus, controls the simulation lifecycle, and routes requests to the Policy Engine.
+- **ZTA Policy Engine**: A context-aware authorization engine that dynamically degrades system trust during active attacks.
+- **NeuroIDS**: Prototype anomaly detection module.
+  - *Purpose*: Detect statistically abnormal telemetry.
+  - *Current implementation*: Linear Autoencoder (Numpy) and Deep Autoencoder (PyTorch).
 - **Plugin System**: An event-driven architecture allowing researchers to inject custom device models, telemetry outputs, or attack vectors without modifying the core engine.
 - **Attack Framework**: A registry of simulated adversarial behaviors, such as OTA Rollback manipulation and BLE MTU abuse.
 - **Reporting**: Automated generation of HTML and PDF diagnostic reports detailing anomalies and physiological state changes post-simulation.
-- **Zero-Trust Architecture (ZTA)**: A context-aware authorization engine that dynamically degrades system trust during active attacks.
-- **Prototype Anomaly Detection Module (NeuroIDS)**: An experimental machine learning module that falls back gracefully from a PyTorch-based Deep Autoencoder to a Numpy-based Linear Autoencoder.
 - **CLI**: The command-line interface for headless, reproducible simulation execution.
 - **Dashboard**: A real-time Streamlit diagnostic web interface for visualizing EEG traces and physical metrics.
 
@@ -81,6 +82,37 @@ NeuroShield is currently a **Research Prototype**. The core simulation loop is s
 ### Future Work
 - **Swarm Interference Emulator**: Cross-implant attack simulations (e.g., Pacemaker pivoting to DBS).
 - **Hardware-in-the-Loop (HIL)**: Integration with physical OpenBCI boards.
+
+---
+
+## Validation Status
+
+| Component | Status | Validation |
+| --- | --- | --- |
+| **Battery Model** | Prototype | Unit tested |
+| **EEG Generator** | Experimental | Synthetic only |
+| **BLE Simulator** | Stable | Integration tested |
+| **IDS** | Prototype | Internal benchmark |
+| **Thermal Model** | Prototype | Literature-derived |
+
+---
+
+## Roadmap
+
+**v0.2**
+- [x] Digital Twin physics and signals
+- [x] Coordinator and Policy Engine separation
+- [x] Extensible Plugin architecture
+
+**v0.3**
+- [ ] Automated reproducible benchmarks suite
+- [ ] Hardware-in-the-loop (HIL) integration
+- [ ] BLE packet fuzzing
+
+**v1.0**
+- [ ] Stable Python APIs
+- [ ] Documentation freeze
+- [ ] Research publication
 
 ---
 
@@ -104,13 +136,17 @@ pip install -r requirements.txt
 python3 -m neuroshield run --duration 10.0 --attack noise
 ```
 
-**2. Expected Workflow:**
-- The Coordinator initializes the Twin and IDS.
-- The simulation begins generating baseline EEG telemetry.
-- At t=5.0s, the "noise" attack injects targeted high-frequency interference.
-- The ZTA Policy Engine detects anomalous context and degrades trust.
-- Telemetry egress is halted; an alert is generated.
-- PDF diagnostic reports are generated in the root directory.
+**2. Expected Output:**
+```text
+Simulation started...
+Baseline telemetry OK.
+[t=5.0s] Attack injected: NOISE
+[NeuroIDS] Anomaly detected (confidence: 0.92)
+[ZTA] Trust score degraded: 0.8 -> 0.4
+[ZTA] Telemetry egress halted.
+Simulation complete.
+Report generated: reports/session.pdf
+```
 
 **3. Launch the Web Dashboard:**
 ```bash
