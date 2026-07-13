@@ -23,10 +23,12 @@ NeuroShield is an evolving research platform and reference implementation; it is
 This documentation is divided into extensive standalone guides:
 
 - **[System Architecture](architecture.md)**: Deep dive into the Digital Twin physics engine, Coordinator orchestration, and Runemate Rust compiler.
-- **[Security & Threat Modeling](security_and_threats.md)**: Comprehensive explanation of the NeuroIDS, the Coherence Engine, and how the qTARA Threat Intelligence is parsed.
-- **[API & Interfaces](api.md)**: Guide to the CLI arguments, Model Context Protocol (MCP) server, and WebSocket/LSL telemetry streams.
+- **[Threat Modeling](threat-model/README.md)**: Comprehensive explanation of the NeuroIDS, Attack Surface, and how the qTARA Threat Intelligence is parsed.
+- **[API & Interfaces](api.md)**: Python API reference, CLI commands, and Telemetry structures.
+- **[Plugin Development Guide](plugin-development.md)**: How to write custom Attack and Device plugins via the Event Bus.
 - **[QIF Derivation Log](QIF-DERIVATION-LOG.md)**: The central architectural decision record tracing changes back to the original OSI of Mind governance.
-- **[Glossary & Formal Definitions](glossary.md)**: Mathematical and structural bounds defining the scope of theoretical attacks (e.g. Neural Ransomware, Bifurcation Forcing) simulated by this platform.
+- **[Glossary & Formal Definitions](glossary.md)**: Mathematical and structural bounds defining the scope of theoretical attacks.
+- **[Frequently Asked Questions](FAQ.md)**: Troubleshooting installation, dashboards, and stream capturing.
 
 ---
 

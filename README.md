@@ -1,7 +1,6 @@
 # NeuroShield: Virtual Laboratory for BCI Security
 
 [![CI](https://github.com/SaadiMalik1/neurosheild/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/neurosheild/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-80%25-green.svg)]()
 
 **Audience**: Security Researchers, Academic Researchers, Developers
 
@@ -9,7 +8,9 @@
 NeuroShield is an extensible cyber-physical simulation framework for research, validation, and security assessment of neurotechnology systems, including Implantable Brain-Computer Interfaces (BCI), Deep Brain Stimulators (DBS), and Vagus Nerve Stimulators (VNS). It simulates the complex interaction between malicious firmware/RF commands, device physics (battery, thermal constraints), and physiological tissue responses (EEG traces).
 
 ## Why does it exist?
-As neurotechnology transitions from clinical labs to commercial availability, the attack surface for "neural ransomware", stimulation leakage, and cognitive state inference expands. NeuroShield exists to model these threats safely in a digital environment before they manifest in clinical reality, adhering mathematically and ethically to the OSI of Mind and Quantified Interconnection Framework (QIF).
+As neurotechnology transitions from clinical labs to commercial availability, the attack surface expands. NeuroShield exists to model threats—such as unauthorized stimulation, telemetry manipulation, device denial-of-service, state inference, firmware compromise, and wireless protocol abuse—safely in a digital environment before they manifest in clinical reality. 
+
+NeuroShield is influenced by the principles proposed in the OSI of Mind and Quantified Interconnection Framework (QIF), which are currently under active development.
 
 ## Who Should Use It?
 - **Academic Researchers**: To model the physiological impact of adversarial stimuli without human subjects.
@@ -29,19 +30,53 @@ NeuroShield is currently a **Research Prototype**. The core simulation loop is s
 
 ---
 
-## Features
+## Architecture Overview
+
+```text
+       CLI / Scripts
+             │
+             ▼
+      [ Coordinator ] ──────────────┐
+             │                      │
+             ▼                      │
+     [ Plugin Manager ]             │
+             │                      │
+             ▼                      ▼
+   [ Simulation Engine ] ◄──── [ Attack Framework ]
+             │
+             ▼
+     [ Digital Twin ]
+      ├─ Physics (Thermal/Battery)
+      ├─ Firmware (OTA/Execution)
+      └─ Signals (EEG/Biometrics)
+             │
+             ▼
+       [ Telemetry ]
+      (LSL / WebSockets)
+             │
+             ▼
+         [ Reports ]
+```
+
+---
+
+## Core Components
 
 ### Implemented
-- **Digital Twin Physics Engine**: Simulates battery drain, thermal limits, and electrode impedance.
-- **Coordinator & Event Bus**: Orchestrates real-time telemetry streaming (LSL) and attack injection.
-- **Zero-Trust Architecture (ZTA)**: Context-aware authorization engine that degrades trust during active attacks.
-- **Onboard NeuroIDS**: ML-based intrusion detection with graceful degradation (Deep Autoencoder -> Linear).
-- **OTA Rollback Emulation**: Anti-rollback verification of firmware versions using simulated efuses.
-- **Biometric Gating**: Verifies simulated neural signatures (e.g., N400 ERP) before executing high-risk commands.
+- **Digital Twin**: Models the physical state (battery, temperature) and clinical state (EEG, cognitive load) of the simulated patient.
+- **Simulation Engine**: A tick-based execution loop that drives the physics models and synchronizes component states.
+- **Coordinator**: The central orchestrator that applies ZTA policies, manages the event bus, and controls the simulation lifecycle.
+- **Plugin System**: An event-driven architecture allowing researchers to inject custom device models, telemetry outputs, or attack vectors without modifying the core engine.
+- **Attack Framework**: A registry of simulated adversarial behaviors, such as OTA Rollback manipulation and BLE MTU abuse.
+- **Reporting**: Automated generation of HTML and PDF diagnostic reports detailing anomalies and physiological state changes post-simulation.
+- **Zero-Trust Architecture (ZTA)**: A context-aware authorization engine that dynamically degrades system trust during active attacks.
+- **Prototype Anomaly Detection Module (NeuroIDS)**: An experimental machine learning module that falls back gracefully from a PyTorch-based Deep Autoencoder to a Numpy-based Linear Autoencoder.
+- **CLI**: The command-line interface for headless, reproducible simulation execution.
+- **Dashboard**: A real-time Streamlit diagnostic web interface for visualizing EEG traces and physical metrics.
 
 ### Experimental
-- **Runemate DSL**: Embedded Rust compiler for executing bounded, memory-safe clinical therapy scripts.
-- **End-to-End Encryption (E2EE)**: Symmetric key derivation for telemetry streams.
+- **Runemate DSL**: An embedded Rust compiler for executing bounded, memory-safe clinical therapy scripts.
+- **E2EE**: Symmetric key derivation and encryption layer for securing simulated telemetry streams.
 
 ### Future Work
 - **Swarm Interference Emulator**: Cross-implant attack simulations (e.g., Pacemaker pivoting to DBS).
@@ -49,21 +84,8 @@ NeuroShield is currently a **Research Prototype**. The core simulation loop is s
 
 ---
 
-## Architecture Overview
-NeuroShield operates on a tightly-coupled, three-pillar architecture:
-1. **The Digital Twin**: Models the physical state (battery, temperature) and clinical state (EEG, cognitive load).
-2. **The Emulator**: Models the firmware state, OTA update verification, and memory safety.
-3. **The Coordinator**: The central orchestrator that applies ZTA policies, injects attacks (e.g., Firmware Rollback, MTU Abuse), and emits telemetry.
-
-*See [docs/architecture.md](docs/architecture.md) for detailed flow diagrams.*
-
----
-
-## Installation
-
-### Prerequisites
-- Python 3.10+
-- Cargo/Rust (required for Runemate compilation)
+## Installation & Prerequisites
+See the [Installation Guide](INSTALL.md) for detailed instructions on Python virtual environments and Rust toolchains.
 
 ```bash
 git clone https://github.com/SaadiMalik1/neurosheild.git
@@ -108,23 +130,13 @@ neuroshield/
 └── main.py         # CLI entry point
 ```
 
-## Plugin System
-NeuroShield uses an extensible plugin architecture. New medical devices, attack vectors, or threat intelligence feeds can be added by implementing the base classes in `neuroshield/plugins/`.
-
----
-
-## Roadmap
-See [ROADMAP.md](ROADMAP.md) (coming in Milestone 2) for our quarterly objectives.
-
-## Known Limitations
-- EEG data is currently procedurally generated (synthetic); integrating real pre-recorded datasets is an experimental feature.
-- Deep Autoencoder inference adds significant latency (~50ms) to the event loop; not suitable for hard-real-time physical deployments.
-
 ## Documentation Links
 - [Full Documentation Index](docs/index.md)
 - [System Architecture](docs/architecture.md)
-- [Security & Threats](docs/security_and_threats.md)
+- [Threat Modeling & Security](docs/threat-model/README.md)
 - [API Reference](docs/api.md)
+- [Plugin Development Guide](docs/plugin-development.md)
+- [Frequently Asked Questions](docs/FAQ.md)
 
 ---
 
@@ -139,6 +151,3 @@ NeuroShield is licensed under the MIT License - see the [LICENSE](LICENSE) file 
 
 ## Citation
 If you use NeuroShield in your research, please cite it using the provided [CITATION.cff](CITATION.cff) file.
-
-## Acknowledgments
-We drew heavy inspiration from the [qinnovates/neurosecurity](https://github.com/qinnovates/neurosecurity) repository and their Quantified Interconnection Framework (QIF).
