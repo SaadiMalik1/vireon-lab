@@ -4,21 +4,21 @@
 
 ## Python API (Core Modules)
 
-NeuroShield's core functionality is encapsulated within the `neuroshield.core` namespace. This reference provides an overview of the primary classes you will interact with when writing scripts or plugins.
+VIREON's core functionality is encapsulated within the `vireon.core` namespace. This reference provides an overview of the primary classes you will interact with when writing scripts or plugins.
 
-### `neuroshield.core.coordinator.Coordinator`
+### `vireon.core.coordinator.Coordinator`
 The central orchestrator of the simulation.
 - `__init__(config: Configuration, output_dir: str)`
 - `setup()`: Initializes the Digital Twin, Firmware Emulator, LSL Streamers, and ZTA Engine based on the provided configuration.
 - `run_simulation()`: Enters the blocking tick-based physics loop.
 - `simulate_firmware_update(payload: bytes) -> bool`: Simulates an OTA update. Internally calls the ZTA engine to evaluate trust before proceeding.
 
-### `neuroshield.core.zta.ZTAPolicyEngine`
+### `vireon.core.zta.ZTAPolicyEngine`
 The Zero-Trust authorization engine.
 - `__init__(thresholds: dict)`: Initializes action-specific trust thresholds.
 - `evaluate_request(action: str, context: TrustContext) -> AuthorizationDecision`: Evaluates if the current `TrustContext` meets the threshold for the requested action.
 
-### `neuroshield.core.twin.DigitalTwin`
+### `vireon.core.twin.DigitalTwin`
 Models the physiological and physical state of the patient/device.
 - `tick(time_delta: float, active_draw: float)`: Advances the state of the battery and tissue temperature based on power draw.
 - `set_clinical_alert(status: bool, reason: str)`: Flags an anomaly for the reporting engine.
@@ -27,12 +27,12 @@ Models the physiological and physical state of the patient/device.
 
 ## Command Line Interface (CLI)
 
-The `main.py` entry point exposes the NeuroShield CLI via `click`.
+The `main.py` entry point exposes the VIREON CLI via `click`.
 
 ### `run`
 Executes a headless simulation.
 ```bash
-python3 -m neuroshield run [OPTIONS]
+python3 -m vireon run [OPTIONS]
 ```
 - `--duration FLOAT`: Duration of the simulation in seconds (default: 10.0).
 - `--attack TEXT`: Pre-configured attack to inject (options: `mtu`, `noise`, `rollback`, `none`).
@@ -40,7 +40,7 @@ python3 -m neuroshield run [OPTIONS]
 ### `ui`
 Launches the Streamlit diagnostic dashboard.
 ```bash
-python3 -m neuroshield ui [OPTIONS]
+python3 -m vireon ui [OPTIONS]
 ```
 - `--port INTEGER`: Port to bind the dashboard to (default: 7777).
 
@@ -48,7 +48,7 @@ python3 -m neuroshield ui [OPTIONS]
 
 ## Telemetry Interfaces
 
-NeuroShield emits two data streams synchronously during a simulation run.
+VIREON emits two data streams synchronously during a simulation run.
 
 ### Lab Streaming Layer (LSL)
 - **Stream Name**: `NeuroShield_EEG`

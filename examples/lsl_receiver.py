@@ -1,13 +1,13 @@
 """
-NeuroShield LSL Receiver Example
+VIREON LSL Receiver Example
 
 This script demonstrates how an external frontend (like OpenBCI GUI, OpenViBE, 
-or a custom Python notebook) can subscribe to the NeuroShield Replay Engine 
+or a custom Python notebook) can subscribe to the VIREON Replay Engine 
 via the Lab Streaming Layer (LSL).
 
 Usage:
-1. Start NeuroShield in LSL mode:
-   python -m neuroshield web --lsl
+1. Start VIREON in LSL mode:
+   python -m vireon web --lsl
 
 2. Run this receiver:
    python examples/lsl_receiver.py
@@ -22,7 +22,7 @@ except ImportError:
     exit(1)
 
 def main():
-    print("Looking for NeuroShield LSL streams...")
+    print("Looking for VIREON LSL streams...")
     
     # Resolve the EEG/LFP data stream
     eeg_streams = resolve_byprop('name', 'NeuroShield_EEG')
@@ -40,7 +40,7 @@ def main():
         
     telemetry_inlet = StreamInlet(telemetry_streams[0])
     
-    print("Connected to NeuroShield! Listening for data...")
+    print("Connected to VIREON! Listening for data...")
     
     try:
         while True:

@@ -1,6 +1,6 @@
 import numpy as np
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.security import NeuroIDS
+from vireon.core.twin import DigitalTwin
+from vireon.core.security import NeuroIDS
 
 def test_autoencoder_and_cusum():
     twin = DigitalTwin()

@@ -1,4 +1,4 @@
-from neuroshield.core.protocol import RFFrameProcessor, ProtocolError, CryptoEmulator, CertificateError
+from vireon.core.protocol import RFFrameProcessor, ProtocolError, CryptoEmulator, CertificateError
 
 def test_x509_validation():
     valid_cert = {

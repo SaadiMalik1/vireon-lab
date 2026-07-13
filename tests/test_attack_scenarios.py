@@ -5,10 +5,10 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.event_bus import EventBus
-from neuroshield.core.attack import SignalAttackEngine, AttackStep, AttackScenario
-from neuroshield.core.plugin_registry import PluginRegistry, register_builtin_plugins
+from vireon.core.twin import DigitalTwin
+from vireon.core.event_bus import EventBus
+from vireon.core.attack import SignalAttackEngine, AttackStep, AttackScenario
+from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
 
 
 class TestAttackScenarios(unittest.TestCase):

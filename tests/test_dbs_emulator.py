@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.plugins.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
+from vireon.core.twin import DigitalTwin
+from vireon.plugins.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
 
 class TestDBSClosedLoop(unittest.TestCase):
     def setUp(self):

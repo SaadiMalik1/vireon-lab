@@ -2,12 +2,12 @@ import unittest
 import numpy as np
 import tempfile
 import os
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.plugins.datasets.edf_reader import MockEEGReader, EDFReader
-from neuroshield.plugins.datasets.csv_reader import CSVReader
-from neuroshield.plugins.devices.synthetic import SyntheticBoardWrapper
-from neuroshield.plugins.devices.pieeg import PiEEGBoardWrapper
-from neuroshield.plugins.clinical.closed_loop import ClosedLoopSimulator
+from vireon.core.twin import DigitalTwin
+from vireon.plugins.datasets.edf_reader import MockEEGReader, EDFReader
+from vireon.plugins.datasets.csv_reader import CSVReader
+from vireon.plugins.devices.synthetic import SyntheticBoardWrapper
+from vireon.plugins.devices.pieeg import PiEEGBoardWrapper
+from vireon.plugins.clinical.closed_loop import ClosedLoopSimulator
 
 class TestDatasetPlugins(unittest.TestCase):
     def test_mock_eeg_reader(self):

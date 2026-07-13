@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.attack_factory import AttackFactory
-from neuroshield.plugins.clinical.qif_registry import QIFRegistry
+from vireon.core.twin import DigitalTwin
+from vireon.core.attack_factory import AttackFactory
+from vireon.plugins.clinical.qif_registry import QIFRegistry
 
 class TestQIFAttacks(unittest.TestCase):
     def test_dynamic_attack_generation(self):

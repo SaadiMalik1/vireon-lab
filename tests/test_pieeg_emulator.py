@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import time
-from neuroshield.plugins.devices.pieeg import PiEEGSpiBoard, PiEEGBoardWrapper, HAS_HARDWARE_LIBS
+from vireon.plugins.devices.pieeg import PiEEGSpiBoard, PiEEGBoardWrapper, HAS_HARDWARE_LIBS
 
 class TestPiEEGHardwareEmulator(unittest.TestCase):
     def setUp(self):

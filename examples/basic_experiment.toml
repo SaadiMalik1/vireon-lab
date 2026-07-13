@@ -1,4 +1,4 @@
-# NeuroShield Example Configuration
+# VIREON Example Configuration
 name = "Basic Signal Injection Experiment"
 duration_sec = 10.0
 interval_sec = 0.004  # 250Hz simulation rate

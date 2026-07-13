@@ -2,9 +2,9 @@ import unittest
 import http.client
 import json
 import time
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.attack import SignalAttackEngine
-from neuroshield.plugins.reports.web_server import start_web_server, simulation_context
+from vireon.core.twin import DigitalTwin
+from vireon.core.attack import SignalAttackEngine
+from vireon.plugins.reports.web_server import start_web_server, simulation_context
 
 class TestWebUIRESTAPI(unittest.TestCase):
     def setUp(self):

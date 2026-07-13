@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.security import NeuroIDS, NeuroIPS
-from neuroshield.core.protocol import RFFrameProcessor, ProtocolError
+from vireon.core.twin import DigitalTwin
+from vireon.core.security import NeuroIDS, NeuroIPS
+from vireon.core.protocol import RFFrameProcessor, ProtocolError
 
 class TestBCIParadoxSolvers(unittest.TestCase):
     def setUp(self):

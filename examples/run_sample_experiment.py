@@ -1,11 +1,11 @@
 import os
 import sys
 
-# Ensure NeuroShield can be imported if run from the project root
+# Ensure VIREON can be imported if run from the project root
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from neuroshield.core.config import load_config
-from neuroshield.core.coordinator import Coordinator
+from vireon.core.config import load_config
+from vireon.core.coordinator import Coordinator
 
 def main():
     # 1. Load the experiment TOML configuration
