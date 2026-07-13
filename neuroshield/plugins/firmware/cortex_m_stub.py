@@ -40,6 +40,12 @@ class CortexMStub:
         self.registers["PC"] = self.FLASH_BASE
         self.registers["xPSR"] = 0x01000000
         
+        # Hardware Fuses (Immutable State)
+        self.efuses = {
+            "MIN_SVN": 1, # Minimum Security Version Number allowed to boot/flash
+            "DEBUG_LOCKED": True
+        }
+        
         # Security Monitor state
         self.crashed = False
         self.crash_reason = ""
@@ -90,6 +96,41 @@ class CortexMStub:
         else:
             self._trigger_fault(f"HardFault: Invalid Memory Access at 0x{address:08X}")
             return False
+
+    def process_ota_update(self, payload: bytes) -> bool:
+        """
+        Simulates Secure Bootloader processing an OTA update payload.
+        Expects a 4-byte header containing the SVN (Security Version Number).
+        Format: [SVN (4 bytes, little-endian)] + [Binary Payload...]
+        """
+        if self.crashed:
+            return False
+            
+        if len(payload) < 4:
+            self._trigger_fault("OTA Error: Payload too short to contain header.")
+            return False
+            
+        # Extract 4-byte SVN (little-endian unsigned int)
+        payload_svn = struct.unpack('<I', payload[:4])[0]
+        
+        # Anti-Rollback Check against hardware eFuses
+        if payload_svn < self.efuses["MIN_SVN"]:
+            self._trigger_fault(f"Secure Boot Fault: Anti-Rollback violation. " 
+                                f"Payload SVN ({payload_svn}) < MIN_SVN ({self.efuses['MIN_SVN']})")
+            return False
+            
+        # Simulate writing the rest of the payload to Flash memory
+        firmware_binary = payload[4:]
+        success = self.write_memory(self.FLASH_BASE, firmware_binary)
+        
+        if success:
+            print(f"[CortexMStub] OTA Update Successful. Flashed {len(firmware_binary)} bytes.")
+            # Update the eFuse to prevent future rollbacks if the new SVN is higher
+            if payload_svn > self.efuses["MIN_SVN"]:
+                print(f"[CortexMStub] Updating eFuse MIN_SVN: {self.efuses['MIN_SVN']} -> {payload_svn}")
+                self.efuses["MIN_SVN"] = payload_svn
+            
+        return success
 
     def _trigger_fault(self, reason: str):
         self.crashed = True

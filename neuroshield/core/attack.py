@@ -530,3 +530,34 @@ class NeuroPhishingAttack(ISignalModifier):
             twin.diagnostic_cluster = "COGNITIVE_WARFARE"
             
         return mutated_data
+
+class FirmwareRollbackAttack(ISignalModifier):
+    """
+    Simulates an Over-The-Air (OTA) Downgrade / Rollback Attack.
+    Attempts to push a malicious firmware payload containing an older
+    Security Version Number (SVN) to bypass anti-rollback protections.
+    This attack doesn't mutate the signal window, but triggers the
+    OTA process on the target twin/firmware.
+    """
+    def __init__(self, target_channels: List[int], payload_version: int = 0):
+        self.target_channels = target_channels
+        self.payload_version = payload_version
+        self.has_fired = False
+
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        if not self.has_fired:
+            import struct
+            # Construct a malicious payload: [Version header (4 bytes)] + [Overflow Payload]
+            # Version is lower than the expected minimum (e.g., SVN 0)
+            malicious_binary = b'A' * 600000 # Large buffer designed to cause overflow if executed
+            header = struct.pack('<I', self.payload_version)
+            full_payload = header + malicious_binary
+            
+            # Record the attempt on the Digital Twin's event log or directly via the firmware
+            twin.set_clinical_alert(True, f"Malicious OTA Downgrade Attempted (SVN {self.payload_version})")
+            
+            # The actual OTA simulation happens in the Coordinator by invoking the firmware stub.
+            # Here we just mark that the attack window triggered.
+            self.has_fired = True
+            
+        return data

@@ -74,6 +74,7 @@ class Coordinator:
         self.lsl_streamer = None
         self.threat_intel = None
         self.nsp_wrapper = None
+        self.zta_engine = None
 
         # Shared mutable simulation context for web UI control
         # (backward compat with existing web_server.py)
@@ -213,6 +214,11 @@ class Coordinator:
         from neuroshield.core.authentication import BiometricGate
         # Profile specific to the generated synthetic data (alpha ~ 10Hz)
         self.biometric_gate = BiometricGate(authorized_profile={"alpha_peak_hz": 10.0})
+
+        # 6.10 Zero-Trust Architecture Policy Engine
+        if getattr(self.config.security, 'enable_zta', False):
+            from neuroshield.core.zta import ZTAPolicyEngine
+            self.zta_engine = ZTAPolicyEngine(thresholds=getattr(self.config.security, 'zta_thresholds', {}))
 
         # 7. Web server & LSL
         if getattr(self.config.web, 'lsl_only', False):
@@ -520,8 +526,34 @@ class Coordinator:
         elif self.config.emulation.ble_attack == "mtu_abuse" and not self.config.security.enabled:
             MTUAbuseAttack(self.twin, abnormal_mtu=5).apply(self.ble_client, self.ble_link)
 
+    def _build_trust_context(self):
+        from neuroshield.core.zta import TrustContext
+        
+        # Determine biometric confidence
+        bio_conf = 1.0
+        if self.biometric_gate and not self.biometric_gate.is_unlocked:
+            bio_conf = 0.0
+        elif self.ids and self.ids.history_confidence:
+            bio_conf = self.ids.history_confidence[-1]
+
+        return TrustContext(
+            biometric_confidence=bio_conf,
+            firmware_healthy=not getattr(self.emulator, 'crashed', False) if self.emulator else True,
+            e2ee_established=self._simulation_context.get("e2ee_mode", False),
+            clinical_mode=True # Defaulting to True for simulation purposes
+        )
+
     def _simulation_callback(self, raw_data, eeg_channels, sample_rate):
-        """Unified simulation callback pipeline — replaces the inline closure in old main.py."""
+        """Unified callback executed every block by the ReplayEngine."""
+        
+        # 0. ZTA Telemetry Check
+        if self.zta_engine:
+            from neuroshield.core.zta import AuthorizationDecision
+            ctx = self._build_trust_context()
+            decision = self.zta_engine.evaluate_request("telemetry_read", ctx)
+            if decision == AuthorizationDecision.DENY:
+                # Do not emit telemetry if trust is too low
+                return
         import random
 
         num_samples = raw_data.shape[1]
@@ -658,10 +690,28 @@ class Coordinator:
                 
             self.lsl_streamer.push_telemetry(telemetry)
     def simulate_firmware_update(self, payload: bytes) -> bool:
-        """Simulates an OTA firmware update and checks for buffer overflows."""
+        """Simulates an OTA firmware update with anti-rollback support and ZTA checks."""
         if self.emulator:
             print(f"[Coordinator] Simulating OTA Firmware Update ({len(payload)} bytes)...")
-            success = self.emulator.write_memory(self.emulator.FLASH_BASE, payload)
+            
+            # ZTA Pre-Check
+            if self.zta_engine:
+                from neuroshield.core.zta import AuthorizationDecision
+                ctx = self._build_trust_context()
+                decision = self.zta_engine.evaluate_request("ota_update", ctx)
+                if decision == AuthorizationDecision.DENY:
+                    print("[Coordinator] ZTA Policy Engine blocked OTA Firmware Update (Trust score too low).")
+                    self.twin.set_clinical_alert(True, "ZTA Blocked OTA Update Attempt")
+                    return False
+            
+            # Check if require_signed_ota is configured (defaults to True for Phase 3)
+            require_signed_ota = getattr(self.config.security, 'require_signed_ota', True)
+            
+            if require_signed_ota:
+                success = self.emulator.process_ota_update(payload)
+            else:
+                success = self.emulator.write_memory(self.emulator.FLASH_BASE, payload)
+                
             if not success:
                 print(f"[Coordinator] FIRMWARE FAULT: {self.emulator.crash_reason}")
                 self.twin.set_clinical_alert(True, f"Firmware Fault: {self.emulator.crash_reason}")
