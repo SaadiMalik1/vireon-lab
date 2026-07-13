@@ -4,7 +4,6 @@ build-backend = "maturin"
 
 [tool.maturin]
 manifest-path = "runemate/python_ext/Cargo.toml"
-python-source = "."
 [project]
 name = "neuroshield"
 version = "0.2.0"
