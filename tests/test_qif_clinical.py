@@ -1,6 +1,6 @@
-from neuroshield.plugins.clinical.qif_atlas import QIFAtlas
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.plugins.clinical.dbs_emulator import ClosedLoopDBSController
+from vireon.plugins.clinical.qif_atlas import QIFAtlas
+from vireon.core.twin import DigitalTwin
+from vireon.plugins.clinical.dbs_emulator import ClosedLoopDBSController
 import numpy as np
 
 def test_qif_atlas_lookup():

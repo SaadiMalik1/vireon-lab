@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.security import NeuroIDS, NeuroIPS, BLELinkGuard
+from vireon.core.twin import DigitalTwin
+from vireon.core.security import NeuroIDS, NeuroIPS, BLELinkGuard
 
 class TestNeuroSecurityLayer(unittest.TestCase):
     def setUp(self):

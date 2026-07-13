@@ -1,5 +1,5 @@
 import unittest
-from neuroshield.core.twin import DigitalTwin
+from vireon.core.twin import DigitalTwin
 
 class TestCyberPhysicalRealism(unittest.TestCase):
     def test_simulation_mode_warning(self):

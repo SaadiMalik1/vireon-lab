@@ -1,4 +1,4 @@
-# NeuroShield Software Audit & Clinical Integrity Report
+# VIREON Software Audit & Clinical Integrity Report
 **Date:** 2026-07-10 21:53:45
 **Device ID:** virtual_synthetic_board
 

@@ -1,6 +1,6 @@
-# NeuroShield Derivation Log
+# VIREON Derivation Log
 
-This document serves as the single source of truth for architectural decisions in the NeuroShield platform, adopting the governance model of the original Quantified Interconnection Framework (QIF).
+This document serves as the single source of truth for architectural decisions in the VIREON platform, adopting the governance model of the original Quantified Interconnection Framework (QIF).
 
 ## Entry 001
 **Date:** 2026-07-09

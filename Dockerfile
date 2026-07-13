@@ -29,14 +29,14 @@ COPY . .
 RUN pip install --no-cache-dir -e .[all]
 
 # Create a non-root user and group
-RUN groupadd -r neuroshield && useradd -r -g neuroshield -d /app neuroshield && \
-    chown -R neuroshield:neuroshield /app
+RUN groupadd -r vireon && useradd -r -g vireon -d /app vireon && \
+    chown -R vireon:vireon /app
 
 # Switch to the non-root user
-USER neuroshield
+USER vireon
 
 # Expose the Web UI port
 EXPOSE 7777
 
 # Default command: Run the web UI securely on port 7777 and bind to all interfaces
-CMD ["python", "-m", "neuroshield", "ui", "--port", "7777", "--host", "0.0.0.0"]
+CMD ["python", "-m", "vireon", "ui", "--port", "7777", "--host", "0.0.0.0"]

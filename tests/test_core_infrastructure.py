@@ -1,5 +1,5 @@
 """
-Tests for the NeuroShield core infrastructure: EventBus, Config, PluginRegistry,
+Tests for the VIREON core infrastructure: EventBus, Config, PluginRegistry,
 and experiment reproducibility.
 """
 import unittest
@@ -11,12 +11,12 @@ import numpy as np
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from neuroshield.core.event_bus import EventBus, Event
-from neuroshield.core.config import ExperimentConfig, load_config, config_from_cli_args
-from neuroshield.core.plugin_registry import PluginRegistry, PluginInfo, register_builtin_plugins
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.core.engine import ReplayEngine
-from neuroshield.core.attack import SignalAttackEngine
+from vireon.core.event_bus import EventBus, Event
+from vireon.core.config import ExperimentConfig, load_config, config_from_cli_args
+from vireon.core.plugin_registry import PluginRegistry, PluginInfo, register_builtin_plugins
+from vireon.core.twin import DigitalTwin
+from vireon.core.engine import ReplayEngine
+from vireon.core.attack import SignalAttackEngine
 
 
 class TestEventBus(unittest.TestCase):
@@ -324,7 +324,7 @@ class TestReproducibility(unittest.TestCase):
         attack_engine = SignalAttackEngine(twin)
         engine = ReplayEngine(twin, attack_engine, seed=seed)
 
-        from neuroshield.plugins.clinical.closed_loop import ClosedLoopSimulator
+        from vireon.plugins.clinical.closed_loop import ClosedLoopSimulator
         clinical = ClosedLoopSimulator(twin)
 
         engine.add_callback(

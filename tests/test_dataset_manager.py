@@ -7,11 +7,11 @@ import numpy as np
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from neuroshield.plugins.datasets.mock_reader import MockEEGReader
-from neuroshield.plugins.datasets.edf_reader import EDFReader
-from neuroshield.plugins.datasets.csv_reader import CSVReader
-from neuroshield.plugins.datasets.fif_reader import FIFReader
-from neuroshield.plugins.datasets.dataset_index import DatasetIndexer
+from vireon.plugins.datasets.mock_reader import MockEEGReader
+from vireon.plugins.datasets.edf_reader import EDFReader
+from vireon.plugins.datasets.csv_reader import CSVReader
+from vireon.plugins.datasets.fif_reader import FIFReader
+from vireon.plugins.datasets.dataset_index import DatasetIndexer
 
 
 class TestDatasetManagement(unittest.TestCase):

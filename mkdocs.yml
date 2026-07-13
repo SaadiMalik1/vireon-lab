@@ -1,7 +1,7 @@
-site_name: NeuroShield
+site_name: VIREON
 site_description: Virtual Neurosecurity Laboratory for Reproducible Research
-repo_url: https://github.com/neuroshield/neuroshield
-repo_name: neuroshield/neuroshield
+repo_url: https://github.com/vireon/vireon
+repo_name: vireon/vireon
 
 theme:
   name: material

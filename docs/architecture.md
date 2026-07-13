@@ -1,6 +1,6 @@
-# NeuroShield Architecture
+# VIREON Architecture
 
-The NeuroShield platform is composed of distinct modules that interact strictly through defined interfaces. The architecture is designed to prioritize performance, state isolation, and accurate physical emulation, separating the "brain" (the digital twin) from the "nervous system" (the telemetry and coordination layer).
+The VIREON platform is composed of distinct modules that interact strictly through defined interfaces. The architecture is designed to prioritize performance, state isolation, and accurate physical emulation, separating the "brain" (the digital twin) from the "nervous system" (the telemetry and coordination layer).
 
 ## 1. Digital Twin (`twin.py`)
 
@@ -40,7 +40,7 @@ The `ExperimentConfig` is defined using a structured **Pydantic** model (`core/c
 
 ## 3. Runemate Compiler Stack (`compiler/`)
 
-NeuroShield incorporates **Runemate**, an embedded Rust-based Domain Specific Language (DSL) used for defining safe, deterministic clinical therapy scripts (e.g., stimulation pulses, UI layout instructions).
+VIREON incorporates **Runemate**, an embedded Rust-based Domain Specific Language (DSL) used for defining safe, deterministic clinical therapy scripts (e.g., stimulation pulses, UI layout instructions).
 
 The compiler is split into two isolated binaries to prevent untrusted input from crashing the embedded environment:
 
@@ -55,7 +55,7 @@ The compiler is split into two isolated binaries to prevent untrusted input from
 
 ## 4. Web Dashboard (`dashboard/app.py`)
 
-The NeuroShield platform includes an interactive dashboard built with **Streamlit** that pulls live telemetry from the Coordinator's WebSocket stream.
+The VIREON platform includes an interactive dashboard built with **Streamlit** that pulls live telemetry from the Coordinator's WebSocket stream.
 
 - **Real-Time Visualization**: Renders high-speed EEG traces utilizing Plotly.
 - **State Panels**: Displays live `DigitalTwin` physical states (battery, temp, impedance) and alerts.

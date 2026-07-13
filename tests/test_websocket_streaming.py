@@ -9,7 +9,7 @@ import os
 for key in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY']:
     os.environ.pop(key, None)
 
-from neuroshield.plugins.reports.ws_server import NeuroWebSocketServer
+from vireon.plugins.reports.ws_server import NeuroWebSocketServer
 
 class TestWebSocketStreaming(unittest.TestCase):
     def test_websocket_broadcast(self):

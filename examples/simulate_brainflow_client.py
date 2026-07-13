@@ -12,7 +12,7 @@ except ImportError:
     sys.exit(1)
 
 def main():
-    parser = argparse.ArgumentParser(description="NeuroShield BrainFlow Client Test")
+    parser = argparse.ArgumentParser(description="VIREON BrainFlow Client Test")
     parser.add_argument("--port", type=str, required=True, help="Virtual Cyton PTY port (e.g. /dev/pts/X)")
     args = parser.parse_args()
 

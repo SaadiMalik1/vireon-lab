@@ -1,12 +1,12 @@
-# NeuroShield Reference Platform
+# VIREON Reference Platform
 
-Welcome to the official documentation for **NeuroShield**, an advanced Virtual Laboratory for Brain-Computer Interface (BCI) Security and Neuroethics. NeuroShield provides a high-fidelity environment to simulate, analyze, and mitigate cyber-physical threats targeting next-generation neural interfaces.
+Welcome to the official documentation for **VIREON**, an advanced Virtual Laboratory for Brain-Computer Interface (BCI) Security and Neuroethics. VIREON provides a high-fidelity environment to simulate, analyze, and mitigate cyber-physical threats targeting next-generation neural interfaces.
 
 ## Overview
 
-The rapid advancement of invasive and non-invasive BCIs introduces unprecedented security and ethical risks—from theoretical "neural ransomware" (stimulation leakage) to cognitive state inference vulnerabilities. NeuroShield is built to model these threats safely in a digital environment before they manifest in clinical reality. 
+The rapid advancement of invasive and non-invasive BCIs introduces unprecedented security and ethical risks—from theoretical "neural ransomware" (stimulation leakage) to cognitive state inference vulnerabilities. VIREON is built to model these threats safely in a digital environment before they manifest in clinical reality. 
 
-NeuroShield is an evolving research platform and reference implementation; it is mathematically and ethically aligned with the **OSI of Mind** framework and the **Quantified Interconnection Framework (QIF)** originally proposed in the [qinnovates/neurosecurity](https://github.com/qinnovates/neurosecurity) repository.
+VIREON is an evolving research platform and reference implementation; it is mathematically and ethically aligned with the **OSI of Mind** framework and the **Quantified Interconnection Framework (QIF)** originally proposed in the [qinnovates/neurosecurity](https://github.com/qinnovates/neurosecurity) repository.
 
 ### Core Features
 
@@ -42,28 +42,28 @@ This documentation is divided into extensive standalone guides:
 
 ### Running the Virtual Laboratory
 
-NeuroShield can be launched directly via its CLI using `click`. The default mode runs a 10-second simulation:
+VIREON can be launched directly via its CLI using `click`. The default mode runs a 10-second simulation:
 
 ```bash
 # Run a 10-second simulation with an active noise attack
-python3 -m neuroshield run --duration 10.0 --attack noise
+python3 -m vireon run --duration 10.0 --attack noise
 ```
 
 ### Accessing the Web Dashboard
 
-NeuroShield serves a rich diagnostic dashboard built with Streamlit:
+VIREON serves a rich diagnostic dashboard built with Streamlit:
 
 1. Launch the dashboard:
    ```bash
-   python3 -m neuroshield ui --port 7777
+   python3 -m vireon ui --port 7777
    ```
 2. Open your browser and navigate to `http://localhost:7777`.
 3. View real-time EEG traces, Digital Twin physical metrics, and active qTARA Threat Intelligence alerts.
 
 ---
 
-*NeuroShield is an open-source project dedicated to the safe, transparent, and ethical advancement of neural engineering.*
+*VIREON is an open-source project dedicated to the safe, transparent, and ethical advancement of neural engineering.*
 
 ## Acknowledgments / Inspiration
 
-We would like to give a massive shout-out to the [qinnovates/neurosecurity](https://github.com/qinnovates/neurosecurity) repository! NeuroShield drew heavy inspiration from their foundational work. We built upon the architectural proposals, ethical frameworks, and advanced neurosecurity ideas described in their project to make this virtual laboratory a reality.
+We would like to give a massive shout-out to the [qinnovates/neurosecurity](https://github.com/qinnovates/neurosecurity) repository! VIREON drew heavy inspiration from their foundational work. We built upon the architectural proposals, ethical frameworks, and advanced neurosecurity ideas described in their project to make this virtual laboratory a reality.

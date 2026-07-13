@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
-from neuroshield.core.twin import DigitalTwin
-from neuroshield.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
-from neuroshield.plugins.ble.attacks import (
+from vireon.core.twin import DigitalTwin
+from vireon.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
+from vireon.plugins.ble.attacks import (
     PairingFailureAttack,
     GATTCorruptionAttack,
     MTUAbuseAttack,
@@ -18,7 +18,7 @@ class TestBLEGATTStack(unittest.TestCase):
     def test_gatt_database_structure(self):
         # Verify Device Info Service
         mfg = self.server.get_characteristic("180A", "2A29")
-        self.assertEqual(mfg.read(), b"NeuroShield Wearables")
+        self.assertEqual(mfg.read(), b"VIREON Wearables")
         
         # Verify Biosignal Service
         eeg_char = self.server.get_characteristic("FE8D", "2D30")

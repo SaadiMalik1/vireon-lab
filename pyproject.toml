@@ -5,14 +5,14 @@ build-backend = "maturin"
 [tool.maturin]
 manifest-path = "runemate/python_ext/Cargo.toml"
 [project]
-name = "neuroshield"
+name = "vireon"
 version = "0.2.0"
 description = "Virtual neurosecurity laboratory for reproducible BCI/DBS/VNS security research"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "NeuroShield Contributors"}
+    {name = "VIREON Contributors"}
 ]
 keywords = ["neurosecurity", "BCI", "EEG", "DBS", "simulation", "digital-twin", "security"]
 classifiers = [
@@ -49,22 +49,22 @@ dev = [
 reports = ["weasyprint>=60.0.0"]
 docs = ["mkdocs-material>=9.0.0"]
 all = [
-    "neuroshield[brainflow,edf,mne,science,lsl,dev,reports,docs]",
+    "vireon[brainflow,edf,mne,science,lsl,dev,reports,docs]",
 ]
 
 [project.scripts]
-neuroshield = "neuroshield.__main__:main"
+vireon = "vireon.__main__:main"
 
-[project.entry-points."neuroshield.plugins"]
+[project.entry-points."vireon.plugins"]
 # Example: my_plugin = "my_package:get_plugin_info"
 
 [project.urls]
-Repository = "https://github.com/neuroshield/neuroshield"
-Documentation = "https://neuroshield.readthedocs.io"
+Repository = "https://github.com/vireon/vireon"
+Documentation = "https://vireon.readthedocs.io"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["neuroshield*"]
+include = ["vireon*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
