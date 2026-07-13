@@ -1,0 +1,13 @@
+dataset:
+  id: bci_comp_iv
+  source: BCI Competition IV
+  url: https://www.bbci.de/competition/iv/
+  modality: EEG
+  electrodes: 22
+  sampling_rate: 250 Hz
+  subjects: 9
+  license: Academic Use
+  purpose:
+    - eeg_preprocessing_validation
+    - motor_imagery_classification_benchmark
+  status: pending_download

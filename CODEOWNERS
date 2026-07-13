@@ -1,0 +1,18 @@
+# These owners will be the default reviewers for pull requests in these directories.
+
+# Global owner
+*       @SaadiMalik1
+
+# Core engine and architecture
+/neuroshield/core/       @SaadiMalik1
+/docs/architecture.md    @SaadiMalik1
+
+# Security and Attacks
+/neuroshield/attacks/    @SaadiMalik1
+/docs/security*.md       @SaadiMalik1
+
+# Plugins and Firmware
+/neuroshield/plugins/    @SaadiMalik1
+
+# Rust compiler
+/runemate/               @SaadiMalik1
