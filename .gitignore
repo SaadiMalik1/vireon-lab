@@ -4,16 +4,21 @@
 venv/
 env/
 ENV/
+.ruff_venv/
 
-# Python Cache
+# Python Cache and Binaries
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+*.pyd
 .pytest_cache/
 
-# IDEs
+# IDEs and Tools
 .vscode/
 .idea/
+.agents/
+.gemini/
 *.swp
 *.swo
 

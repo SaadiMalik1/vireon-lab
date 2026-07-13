@@ -8,9 +8,12 @@ __pycache__/
 venv/
 env/
 ENV/
+.ruff_venv/
 .pytest_cache/
 *.py[cod]
 *$py.class
+*.so
+*.pyd
 
 # Rust Build Artifacts
 target/
@@ -22,6 +25,8 @@ runemate/target/
 .vscode/
 .idea/
 .settings/
+.agents/
+.gemini/
 *.swp
 *.swo
 
