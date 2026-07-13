@@ -61,6 +61,8 @@ class SecurityConfig(BaseModel):
     """Configuration for the IDS/IPS security layer."""
     enabled: bool = Field(default=False)
     nsp_enabled: bool = Field(default=False)
+    enable_zta: bool = Field(default=False)
+    zta_thresholds: dict = Field(default_factory=lambda: {"ota_update": 0.9, "telemetry_read": 0.5})
     rms_high_threshold: float = Field(default=120.0)
     rms_low_threshold: float = Field(default=0.5)
     beta_power_threshold: float = Field(default=35.0)
