@@ -1,0 +1,13 @@
+dataset:
+  id: mne_sample
+  source: MNE-Python
+  url: https://mne.tools/stable/datasets.html
+  modality: EEG/MEG
+  electrodes: 60 (EEG)
+  sampling_rate: 600 Hz
+  subjects: 1
+  license: Public Domain
+  purpose:
+    - ecosystem_interoperability
+    - auditory_visual_evoked_potentials
+  status: pending_download

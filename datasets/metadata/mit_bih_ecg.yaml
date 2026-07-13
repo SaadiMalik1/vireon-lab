@@ -1,0 +1,13 @@
+dataset:
+  id: mit_bih_ecg
+  source: PhysioNet
+  url: https://physionet.org/content/mitdb/1.0.0/
+  modality: ECG
+  electrodes: 2
+  sampling_rate: 360 Hz
+  subjects: 47 (using Record 100)
+  license: Open Data Commons
+  purpose:
+    - vagus_nerve_stimulator_simulation
+    - physiological_anomaly_detection
+  status: pending_download

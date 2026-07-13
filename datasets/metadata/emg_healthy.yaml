@@ -1,0 +1,13 @@
+dataset:
+  id: emg_healthy
+  source: PhysioNet
+  url: https://physionet.org/content/emgdb/1.0.0/
+  modality: EMG
+  electrodes: 1
+  sampling_rate: 4000 Hz
+  subjects: 3
+  license: Open Data Commons
+  purpose:
+    - motor_control_simulation
+    - high_frequency_telemetry_stress_test
+  status: pending_download

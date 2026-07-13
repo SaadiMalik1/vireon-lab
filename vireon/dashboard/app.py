@@ -1,0 +1,111 @@
+import streamlit as st
+import numpy as np
+import pandas as pd
+import time
+import threading
+import os
+import sys
+
+# Ensure vireon is in path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from vireon.core.twin import DigitalTwin
+from vireon.core.engine import ReplayEngine
+from vireon.core.security import LSTMAutoencoderIDS
+from vireon.core.threat_intel import ThreatIntelligence
+from vireon.core.attack import SignalAttackEngine
+from vireon.core.redteam import FeedbackMutatorEngine
+
+st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠")
+
+@st.cache_resource
+def init_system():
+    # Initialize components
+    twin = DigitalTwin(hardware_mode=False) # Start in synth mode
+    ids = LSTMAutoencoderIDS(threshold=0.08)
+    ti = ThreatIntelligence(registry_path="vireon/core/data/qtara_stub.json")
+    attack_engine = SignalAttackEngine(twin)
+    red_team = FeedbackMutatorEngine(attack_engine)
+    
+    # Pre-train/warmup IDS with some noise
+    for _ in range(50):
+        ids.detect(np.random.normal(0, 5, (8,)))
+        
+    engine = ReplayEngine(twin=twin, attack_engine=attack_engine, ids=ids, ti=ti, red_team_engine=red_team)
+    
+    # Create a background thread for the engine
+    engine_thread = threading.Thread(target=engine.run, daemon=True)
+    engine_thread.start()
+    
+    return twin, engine, attack_engine, ti
+
+twin, engine, attack_engine, ti = init_system()
+
+# --- Sidebar Controls ---
+st.sidebar.title("VIREON Control")
+
+st.sidebar.subheader("Therapy / Stimulation")
+stim_enabled = st.sidebar.checkbox("Enable Stimulation", value=twin.stimulation_enabled)
+amp_ma = st.sidebar.slider("Amplitude (mA)", 0.0, 10.0, float(twin.stimulation_amplitude_ma), 0.1)
+freq_hz = st.sidebar.slider("Frequency (Hz)", 0.0, 200.0, float(twin.stimulation_frequency_hz), 1.0)
+
+if stim_enabled != twin.stimulation_enabled:
+    twin.update_therapy(stim_enabled)
+if stim_enabled:
+    twin.update_stimulation_params(amp_ma, freq_hz)
+
+st.sidebar.subheader("Attack Injection")
+attack_options = ["none", "noise", "drift", "temporal_evasion", "session_replay"]
+selected_attack = st.sidebar.selectbox("Inject Attack", attack_options)
+
+if st.sidebar.button("Apply Attack"):
+    engine.inject_attack(selected_attack)
+
+# --- Main Dashboard ---
+st.title("VIREON Live Dashboard")
+
+# Fetch current state
+state = twin.get_state()
+
+# Metrics Row
+col1, col2, col3, col4, col5 = st.columns(5)
+col1.metric("Battery", f"{state['battery_level']:.1f}%")
+col2.metric("Neural Coherence", f"{state['neural_coherence']:.3f}")
+col3.metric("Beta Power", f"{state['beta_power']:.1f}")
+
+# Get the latest buffer from engine for plotting
+buffer = engine.get_buffer()
+if buffer is not None and buffer.shape[1] > 0:
+    anomaly_score = engine.last_anomaly_score
+    is_anomaly = anomaly_score > engine.ids.threshold
+    
+    col4.metric("Anomaly Score", f"{anomaly_score:.3f}", delta="High Risk!" if is_anomaly else "Normal", delta_color="inverse")
+    col5.metric("NISS Score", f"{state['niss_score']}")
+    
+    # EEG Plotting
+    st.subheader("Live EEG Stream (8 Channels)")
+    # Just take the last 100 samples to keep UI fast
+    plot_len = min(100, buffer.shape[1])
+    eeg_data = buffer[:, -plot_len:]
+    df = pd.DataFrame(eeg_data.T, columns=[f"Ch {i+1}" for i in range(8)])
+    st.line_chart(df)
+else:
+    st.info("Waiting for data buffer...")
+
+# Threat Intel Area
+st.subheader("Active Threat Intelligence")
+if state["clinical_alert_active"] and engine.active_attack != "none":
+    st.error(f"ALERT: {state['clinical_status']}")
+    
+    threat_info = ti.resolve_attack(engine.active_attack)
+    if threat_info:
+        st.write(f"**TARA ID**: {threat_info['tara_id']}")
+        st.write(f"**Name**: {threat_info['name']}")
+        st.write(f"**Severity**: {threat_info['severity']}")
+        st.write(f"**Description**: {threat_info['description']}")
+else:
+    st.success("System Nominal. No active threats detected.")
+
+# Auto-refresh mechanism
+time.sleep(0.5)
+st.rerun()

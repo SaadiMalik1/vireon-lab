@@ -1,0 +1,13 @@
+dataset:
+  id: siena_scalp_eeg
+  source: PhysioNet
+  url: https://physionet.org/content/siena-scalp-eeg/1.0.0/
+  modality: EEG
+  electrodes: 29
+  sampling_rate: 512 Hz
+  subjects: 14 (using PN00)
+  license: Open Data Commons
+  purpose:
+    - clinical_device_trace_validation
+    - high_density_eeg_replay
+  status: pending_download

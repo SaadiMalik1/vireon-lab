@@ -1,0 +1,13 @@
+dataset:
+  id: chb_mit_epilepsy
+  source: PhysioNet
+  url: https://physionet.org/content/chbmit/1.0.0/
+  modality: EEG
+  electrodes: 23
+  sampling_rate: 256 Hz
+  subjects: 22 (using chb01)
+  license: Open Data Commons
+  purpose:
+    - closed_loop_ids_detection
+    - abnormal_activity_baseline
+  status: pending_download

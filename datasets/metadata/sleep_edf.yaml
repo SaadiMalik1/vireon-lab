@@ -1,0 +1,13 @@
+dataset:
+  id: sleep_edf
+  source: PhysioNet
+  url: https://physionet.org/content/sleep-edfx/1.0.0/
+  modality: EEG
+  electrodes: 2
+  sampling_rate: 100 Hz
+  subjects: 197 (using SC4001)
+  license: Open Data Commons
+  purpose:
+    - long_term_battery_simulation
+    - artifact_removal_validation
+  status: pending_download

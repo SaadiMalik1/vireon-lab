@@ -1,0 +1,13 @@
+dataset:
+  id: apnea_ecg
+  source: PhysioNet
+  url: https://physionet.org/content/apnea-ecg/1.0.0/
+  modality: ECG
+  electrodes: 1
+  sampling_rate: 100 Hz
+  subjects: 70 (using a01)
+  license: Open Data Commons
+  purpose:
+    - cardiorespiratory_monitoring_validation
+    - multi_modal_anomaly_detection
+  status: pending_download

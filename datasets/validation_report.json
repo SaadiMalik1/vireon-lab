@@ -1,0 +1,72 @@
+[
+  {
+    "module": "synthetic_corpus",
+    "status": "validated",
+    "baseline_anomalies": 1,
+    "attacks_tested": 2,
+    "attacks_caught": [
+      "noise_attack",
+      "packet_loss"
+    ]
+  },
+  {
+    "file": "S001R01.edf",
+    "status": "validated",
+    "channels": 64,
+    "sample_rate_hz": 160,
+    "duration_seconds": 30.0,
+    "windows_analyzed": 20,
+    "false_positive_rate": 0.2,
+    "noise_injection_detection_rate": 1.0,
+    "signal_drift_detection_rate": 1.0,
+    "avg_latency_ms": 0.32
+  },
+  {
+    "file": "S001R04.edf",
+    "status": "validated",
+    "channels": 64,
+    "sample_rate_hz": 160,
+    "duration_seconds": 30.0,
+    "windows_analyzed": 20,
+    "false_positive_rate": 0.2,
+    "noise_injection_detection_rate": 1.0,
+    "signal_drift_detection_rate": 1.0,
+    "avg_latency_ms": 0.32
+  },
+  {
+    "file": "SC4001E0-PSG.edf",
+    "status": "validated",
+    "channels": 7,
+    "sample_rate_hz": 100,
+    "duration_seconds": 30.0,
+    "windows_analyzed": 20,
+    "false_positive_rate": 1.0,
+    "noise_injection_detection_rate": 1.0,
+    "signal_drift_detection_rate": 1.0,
+    "avg_latency_ms": 1.12
+  },
+  {
+    "file": "chb01_03.edf",
+    "status": "validated",
+    "channels": 23,
+    "sample_rate_hz": 256,
+    "duration_seconds": 30.0,
+    "windows_analyzed": 20,
+    "false_positive_rate": 0.3,
+    "noise_injection_detection_rate": 1.0,
+    "signal_drift_detection_rate": 1.0,
+    "avg_latency_ms": 0.95
+  },
+  {
+    "file": "PN00-1.edf",
+    "status": "validated",
+    "channels": 35,
+    "sample_rate_hz": 512,
+    "duration_seconds": 30.0,
+    "windows_analyzed": 20,
+    "false_positive_rate": 0.05,
+    "noise_injection_detection_rate": 1.0,
+    "signal_drift_detection_rate": 1.0,
+    "avg_latency_ms": 1.26
+  }
+]
