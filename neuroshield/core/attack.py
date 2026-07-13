@@ -495,3 +495,38 @@ class AttackScenario:
                             },
                             source="scenario_player"
                         ))
+
+class NeuroPhishingAttack(ISignalModifier):
+    """
+    Simulates Cognitive Warfare / Neuro-Phishing.
+    Adversarial injection of specific neural patterns (e.g. SSVEP or P300-like triggers)
+    to manipulate the user's emotional state or BCI cursor control.
+    """
+    def __init__(self, target_channels: List[int], manipulation_type: str = "emotional"):
+        self.target_channels = target_channels
+        self.manipulation_type = manipulation_type
+        self.time_counter = 0.0
+
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        mutated_data = data.copy()
+        num_samples = data.shape[1]
+        
+        # Inject an Alpha-band (10 Hz) driving frequency for emotional manipulation
+        # or a 15 Hz SSVEP pattern for BCI control hijacking.
+        freq = 10.0 if self.manipulation_type == "emotional" else 15.0
+        
+        t = self.time_counter + np.arange(num_samples) / sample_rate
+        trigger_wave = 25.0 * np.sin(2 * np.pi * freq * t)
+        self.time_counter += num_samples / sample_rate
+        
+        for ch in self.target_channels:
+            if ch in eeg_channels:
+                mutated_data[ch, :] += trigger_wave
+                
+        # Register the cognitive manipulation in the Digital Twin
+        twin.set_clinical_alert(True, f"Neuro-Phishing: {self.manipulation_type.upper()} manipulation detected")
+        if self.manipulation_type == "emotional":
+            twin.dsm5_diagnosis = "INDUCED_MANIA"
+            twin.diagnostic_cluster = "COGNITIVE_WARFARE"
+            
+        return mutated_data

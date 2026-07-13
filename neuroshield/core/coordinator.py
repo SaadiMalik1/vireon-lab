@@ -60,7 +60,12 @@ class Coordinator:
         self.ips = None
         self.link_guard = None
         self.emulator = None
+        self.fw_monitor = None
         self.ble_server = None
+        self.p300_analyzer = None
+        self.total_p300_leakage_events = 0
+        self.e2ee_channel = None
+        self.biometric_gate = None
         self.ble_link = None
         self.ble_client = None
         self.bridge = None
@@ -191,6 +196,24 @@ class Coordinator:
             from neuroshield.plugins.devices.nsp_wrapper import NSPCryptographicWrapper
             self.nsp_wrapper = NSPCryptographicWrapper(simulate_latency_ms=1.5)
 
+        # 6.6 Firmware Emulation
+        from neuroshield.plugins.firmware.cortex_m_stub import CortexMStub, FirmwareSecurityMonitor
+        self.emulator = CortexMStub()
+        self.fw_monitor = FirmwareSecurityMonitor(self.emulator)
+
+        # 6.7 P300 Leakage Analyzer
+        from neuroshield.core.privacy_leakage import P300Analyzer
+        self.p300_analyzer = P300Analyzer()
+
+        # 6.8 End-to-End Encryption (E2EE)
+        from neuroshield.core.e2ee import E2EEChannel
+        self.e2ee_channel = E2EEChannel()
+
+        # 6.9 Neuro-Biometric Authentication Gate
+        from neuroshield.core.authentication import BiometricGate
+        # Profile specific to the generated synthetic data (alpha ~ 10Hz)
+        self.biometric_gate = BiometricGate(authorized_profile={"alpha_peak_hz": 10.0})
+
         # 7. Web server & LSL
         if getattr(self.config.web, 'lsl_only', False):
             self._setup_lsl_streamer()
@@ -200,6 +223,14 @@ class Coordinator:
         # 8. BLE emulation
         if self.config.emulation.ble:
             self._setup_ble()
+
+        # 8.5 Privacy Engine
+        self.privacy_filter = None
+        self.privacy_tracker = None
+        if self.config.privacy.enabled:
+            from neuroshield.core.privacy import DifferentialPrivacyFilter, PrivacyBudgetTracker
+            self.privacy_filter = DifferentialPrivacyFilter(epsilon=self.config.privacy.epsilon)
+            self.privacy_tracker = PrivacyBudgetTracker(max_epsilon=10.0)
 
         # 9. Register the unified simulation callback
         self.engine.add_callback(self._simulation_callback)
@@ -298,7 +329,16 @@ class Coordinator:
             state = self.twin.get_state()
             # Send Channel 1 signal chunk as JSON-serializable list (Ch 0 is often package count)
             # Replace NaNs with 0.0 because standard JSON (and JS JSON.parse) cannot handle NaN
-            signal_list = data[1, :].tolist()
+            signal_chunk = data[1, :]
+            
+            # Apply Differential Privacy if enabled
+            if self.privacy_filter is not None:
+                # We need to reshape slightly or just pass the 1D array
+                signal_chunk = self.privacy_filter.filter_signal(signal_chunk.copy())
+                if self.privacy_tracker:
+                    self.privacy_tracker.consume(0.001)  # Nominal budget consumption per chunk
+                    
+            signal_list = signal_chunk.tolist()
             state["signal_chunk"] = [0.0 if np.isnan(x) else x for x in signal_list]
             
             active_attack = self._simulation_context.get("active_attack", "none")
@@ -570,9 +610,26 @@ class Coordinator:
         else:
             self.clinical_sim.process_signal(data_to_process, eeg_channels, sample_rate)
 
+        # 3.5 Biometric Authentication
+        if self._simulation_context.get("biometric_auth", False) and self.biometric_gate:
+            self.biometric_gate.authenticate_window(data_to_process, sample_rate)
+            if self.biometric_gate.is_locked:
+                print("[Coordinator] Egress blocked by BiometricGate.")
+                return
+
         # 4. Push final data to LSL if active
         if self.lsl_streamer:
-            self.lsl_streamer.push_eeg_chunk(data_to_process)
+            lsl_data = data_to_process
+            if self.privacy_filter is not None:
+                lsl_data = self.privacy_filter.filter_signal(lsl_data.copy())
+                if self.privacy_tracker:
+                    self.privacy_tracker.consume(0.001)
+                    
+            if self.p300_analyzer is not None:
+                leakage_report = self.p300_analyzer.scan_for_leakage(lsl_data)
+                self.total_p300_leakage_events += leakage_report["p300_events_detected"]
+                    
+            self.lsl_streamer.push_eeg_chunk(lsl_data)
             
             active_attack = self._simulation_context.get("active_attack", "none")
             telemetry = {
@@ -596,7 +653,20 @@ class Coordinator:
             if self._simulation_context.get("nsp_mode", False) and self.nsp_wrapper:
                 telemetry = self.nsp_wrapper.encrypt_payload(telemetry)
                 
+            if self._simulation_context.get("e2ee_mode", False) and self.e2ee_channel:
+                telemetry = {"e2ee_payload": self.e2ee_channel.encrypt_payload(telemetry)}
+                
             self.lsl_streamer.push_telemetry(telemetry)
+    def simulate_firmware_update(self, payload: bytes) -> bool:
+        """Simulates an OTA firmware update and checks for buffer overflows."""
+        if self.emulator:
+            print(f"[Coordinator] Simulating OTA Firmware Update ({len(payload)} bytes)...")
+            success = self.emulator.write_memory(self.emulator.FLASH_BASE, payload)
+            if not success:
+                print(f"[Coordinator] FIRMWARE FAULT: {self.emulator.crash_reason}")
+                self.twin.set_clinical_alert(True, f"Firmware Fault: {self.emulator.crash_reason}")
+            return success
+        return False
 
     def _compile_reports(self):
         """Generate audit reports after simulation."""
@@ -620,6 +690,7 @@ class Coordinator:
             summary["blocked_mtu_abuses"] = 0
             
         summary["nsp_active"] = self._simulation_context.get("nsp_mode", False)
+        summary["p300_leakage_events"] = self.total_p300_leakage_events
 
         from neuroshield.plugins.reports.generator import ReportGenerator
         import time
@@ -628,7 +699,7 @@ class Coordinator:
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         prefix_with_time = f"{self.config.output.report_prefix}_{timestamp}"
         
-        generator.compile_report(summary, prefix_with_time)
+        generator.compile_report(summary, prefix_with_time, anonymize_exports=self.config.privacy.anonymize_exports)
 
         print("\n" + "=" * 60)
         print(" SIMULATION COMPLETE")

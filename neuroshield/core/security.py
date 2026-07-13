@@ -3,6 +3,7 @@ from typing import List, Dict, Any, Tuple, Optional
 import os
 
 from neuroshield.core.twin import DigitalTwin
+from neuroshield.core.safety_envelope import SafetyEnvelope
 from neuroshield.core.utils import calculate_rms
 from neuroshield.core.event_bus import EventBus, Event
 from neuroshield.core.threat_intel import ThreatIntelligence
@@ -495,6 +496,7 @@ class NeuroIPS:
         self.clamping_active = False
         self.stim_history: List[Tuple[float, float, float]] = []
         self.accumulated_thermal_dose = 0.0
+        self.safety_envelope = SafetyEnvelope(max_amplitude_ma=max_stimulation_amplitude_ma)
 
     def sanitize_stimulation_write(self, amplitude: float, frequency: float) -> Tuple[float, float]:
         """
@@ -506,6 +508,23 @@ class NeuroIPS:
             amplitude = 0.0
         if math.isnan(frequency) or math.isinf(frequency):
             frequency = 0.0
+            
+        # Closed-Loop Safety Envelope check (ISO 14971 bounds)
+        is_safe, envelope_metrics = self.safety_envelope.evaluate(self.twin)
+        if not is_safe:
+            self.blocked_attacks_count += 1
+            self.clamping_active = True
+            self.twin.set_clinical_alert(True, f"IPS Block: Safety Envelope Breach ({envelope_metrics['hazard_state']})")
+            self.twin.update_clinical_risk(
+                hazard_state=envelope_metrics['hazard_state'],
+                iso_severity=envelope_metrics['iso_severity'],
+                tissue_damage_risk=envelope_metrics['tissue_damage_risk'],
+                clinical_action=envelope_metrics['clinical_action']
+            )
+            # Revert to safe mode or shutdown
+            if envelope_metrics['clinical_action'] == "FALLBACK_SAFE_MODE":
+                return min(amplitude, 0.5), min(frequency, 10.0)
+            return 0.0, 0.0
             
         current_time = self.twin.get_sim_clock()
         
@@ -733,6 +752,26 @@ class BLELinkGuard:
         self.event_bus = event_bus
         self.blocked_mtu_abuses = 0
         self.jamming_alerts = 0
+        self.blocked_spoofing_attempts = 0
+
+    def verify_connection(self, client_mac: str, is_paired: bool, bonding_db: dict) -> bool:
+        """
+        Defends against BLESA (BLE Spoofing Attack).
+        Requires devices with known MAC addresses to prove they possess the IRK/LTK (via is_paired).
+        If a device MAC is in bonding_db but is_paired is False, it's a spoofing attempt.
+        """
+        if client_mac in bonding_db:
+            if not is_paired:
+                self.blocked_spoofing_attempts += 1
+                self.twin.set_clinical_alert(True, f"BLE Link Guard: Blocked Spoofing (BLESA) from {client_mac}")
+                if self.event_bus:
+                    self.event_bus.publish(Event(
+                        topic="link_guard.spoofing_blocked",
+                        data={"mac": client_mac, "sim_clock": self.twin.get_sim_clock()},
+                        source="link_guard"
+                    ))
+                return False
+        return True
 
     def check_rf_environment(self):
         drop_rate = getattr(self.twin, "rf_packet_drop_rate", 0.0)

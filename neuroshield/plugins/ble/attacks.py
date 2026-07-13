@@ -50,3 +50,20 @@ class MalformedNotificationAttack:
     def apply(self) -> bytes:
         # Generate garbage bytes instead of structured EEG floats
         return bytes(bytearray(random.getrandbits(8) for _ in range(self.packet_size)))
+
+class BLESpoofingAttack:
+    """
+    Simulates a BLE Spoofing Attack (BLESA) / MITM.
+    The attacker clones the MAC address of a trusted device to inject malicious
+    commands or intercept telemetry.
+    """
+    def __init__(self, twin: DigitalTwin, spoofed_mac: str = "XX:XX:XX:XX:XX:XX"):
+        self.twin = twin
+        self.spoofed_mac = spoofed_mac
+
+    def apply(self, client: VirtualBLEClient, link: VirtualBLELink):
+        """Forces the client's MAC to the spoofed MAC and bypasses standard pairing."""
+        print(f"[BLESpoofingAttack] Spoofing MAC address: {self.spoofed_mac}")
+        client.client_mac = self.spoofed_mac
+        link.paired = False
+        self.twin.set_clinical_alert(True, f"BLESA MITM Attempt from {self.spoofed_mac}")

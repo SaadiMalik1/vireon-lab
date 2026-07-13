@@ -361,6 +361,41 @@ def register_builtin_plugins(registry: PluginRegistry) -> None:
         version="1.0.0"
     ))
 
+    try:
+        from neuroshield.attacks.adversarial_ml import (
+            FGSMAttack, PGDAttack, CWAttack, BackdoorTriggerInjector
+        )
+        registry.register(PluginInfo(
+            name="fgsm",
+            category="attacks",
+            description="Fast Gradient Sign Method adversarial noise",
+            plugin_class=FGSMAttack,
+            version="1.0.0"
+        ))
+        registry.register(PluginInfo(
+            name="pgd",
+            category="attacks",
+            description="Projected Gradient Descent adversarial attack",
+            plugin_class=PGDAttack,
+            version="1.0.0"
+        ))
+        registry.register(PluginInfo(
+            name="cw",
+            category="attacks",
+            description="Carlini & Wagner targeted frequency injection",
+            plugin_class=CWAttack,
+            version="1.0.0"
+        ))
+        registry.register(PluginInfo(
+            name="backdoor",
+            category="attacks",
+            description="Training-time data poisoning trigger injection",
+            plugin_class=BackdoorTriggerInjector,
+            version="1.0.0"
+        ))
+    except ImportError as e:
+        print(f"[PluginRegistry] Skipping adversarial_ml attacks: {e}")
+
     # --- Clinical ---
     from neuroshield.plugins.clinical.closed_loop import ClosedLoopSimulator
     from neuroshield.plugins.clinical.dbs_emulator import ClosedLoopDBSController

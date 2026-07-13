@@ -298,6 +298,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                     ACTIVE
                 </div>
                 <div class="card-desc">Intrusions Blocked: <strong>{{ summary.blocked_attacks_count }}</strong></div>
+                <div class="card-desc">MTU Abuses Blocked: <strong>{{ summary.blocked_mtu_abuses }}</strong></div>
+                {% if summary.p300_leakage_events is defined %}
+                <div class="card-desc">P300 Leakage Events: <strong>{{ summary.p300_leakage_events }}</strong></div>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -464,9 +468,18 @@ class ReportGenerator:
         """
         return svg_content
 
-    def compile_report(self, clinical_summary: Dict[str, Any], output_prefix: str):
+    def compile_report(self, clinical_summary: Dict[str, Any], output_prefix: str, anonymize_exports: bool = False):
         history = self.twin.get_history()
         
+        if anonymize_exports:
+            from neuroshield.core.anonymizer import NeuroDataAnonymizer
+            print("[ReportGenerator] Applying NeuroData Anonymization to exported telemetry...")
+            anonymizer = NeuroDataAnonymizer()
+            history = anonymizer.anonymize_export(history)
+            risk_score = anonymizer.scorer.score_risk(history)
+            clinical_summary["reid_risk_score"] = risk_score
+            print(f"[ReportGenerator] Re-identification Risk Score: {risk_score:.2f}")
+            
         # Prepare processed history timeline
         processed_history = []
         for item in history:
@@ -552,8 +565,9 @@ class ReportGenerator:
             md.append("## Neuro Security Shield Audit")
             md.append(f"- **Security Status:** `ACTIVE` (IDS/IPS Enabled)")
             md.append(f"- **Blocked Intrusions:** `{summary.get('blocked_attacks_count', 0)}`")
-            if summary.get("blocked_mtu_abuses", 0) > 0:
-                md.append(f"- **Blocked MTU Abuses:** `{summary['blocked_mtu_abuses']}`")
+            md.append(f"- **MTU Abuses Blocked:** `{summary.get('blocked_mtu_abuses', 0)}`")
+            if 'p300_leakage_events' in summary:
+                md.append(f"- **P300 Leakage Events:** `{summary.get('p300_leakage_events', 0)}`")
             md.append("")
         md.append("## ISO 14971 Medical Device Risk Classification")
         md.append(f"- **Clinical Hazard State:** `{summary.get('hazard_state', 'NOMINAL')}`")

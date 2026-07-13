@@ -65,12 +65,19 @@ class VirtualBLELink:
         self.latency_ms = 15.0  # Connection interval latency
 
 class VirtualBLEClient:
-    def __init__(self, link: VirtualBLELink):
+    def __init__(self, link: VirtualBLELink, client_mac: str = "AA:BB:CC:DD:EE:FF"):
         self.link = link
+        self.client_mac = client_mac
         self.notifications_enabled = False
         self.received_packets: List[bytes] = []
 
     def connect(self) -> bool:
+        # If the server has a link guard and a bonding database, check for BLESA
+        server = self.link.server
+        if hasattr(server, 'link_guard') and server.link_guard:
+            if not server.link_guard.verify_connection(self.client_mac, self.link.paired, getattr(server, 'bonding_db', {})):
+                return False
+        
         self.link.connected = True
         return True
 

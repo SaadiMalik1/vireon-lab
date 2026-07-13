@@ -97,6 +97,13 @@ class EmulationConfig(BaseModel):
     hardware_loopback: bool = Field(default=False)
 
 
+class PrivacyConfig(BaseModel):
+    """Configuration for data anonymization and differential privacy."""
+    enabled: bool = Field(default=False)
+    epsilon: float = Field(default=1.0)
+    anonymize_exports: bool = Field(default=False)
+
+
 class ExperimentConfig(BaseModel):
     """Complete experiment configuration — the root config object."""
     name: str = Field(default="default")
@@ -112,6 +119,7 @@ class ExperimentConfig(BaseModel):
     web: WebConfig = Field(default_factory=WebConfig)
     emulation: EmulationConfig = Field(default_factory=EmulationConfig)
     stix: StixConfig = Field(default_factory=StixConfig)
+    privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
 
 
 def load_config(path: str) -> ExperimentConfig:
