@@ -21,11 +21,15 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install maturin
         pip install -e .[all]
-        pip install ruff mypy
+        pip install ruff mypy pytest-cov
 
     - name: Lint with Ruff
       run: |
@@ -35,7 +39,10 @@ jobs:
       run: |
         mypy neuroshield/
 
-    - name: Test with pytest
+    - name: Test Python Core with pytest
       run: |
-        pip install pytest-cov
         pytest tests/ --cov=neuroshield --cov-report=xml --cov-report=term
+
+    - name: Test Rust Core (Runemate)
+      working-directory: ./runemate
+      run: cargo test

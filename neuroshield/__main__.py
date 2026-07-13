@@ -59,14 +59,15 @@ def run(config_file, duration, board, serial_port, dataset, attack, seed):
 
 @cli.command()
 @click.option('--port', type=int, default=7777, help='Port to run the Streamlit dashboard on')
-def ui(port):
+@click.option('--host', type=str, default='localhost', help='Host address to bind to (use 0.0.0.0 for Docker)')
+def ui(port, host):
     """Launch the interactive Streamlit Web UI."""
-    click.echo(f"[NeuroShield] Launching Dashboard on port {port}...")
+    click.echo(f"[NeuroShield] Launching Dashboard on {host}:{port}...")
     dashboard_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "dashboard", "app.py"))
     
     # Run streamlit as a subprocess
     try:
-        subprocess.run(["streamlit", "run", dashboard_path, "--server.port", str(port)])
+        subprocess.run(["streamlit", "run", dashboard_path, "--server.port", str(port), "--server.address", host])
     except FileNotFoundError:
         click.secho("Error: Streamlit is not installed. Run `pip install streamlit`.", fg="red")
 
@@ -76,20 +77,26 @@ def ui(port):
 @click.option('--output', '-o', type=click.Path(), help='Output bytecode file')
 def compile(source_file, output):
     """Compile a Runemate (.rme) script into secure bytecode."""
-    forge_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "runemate", "forge"))
-    
-    click.echo(f"[Runemate] Compiling {source_file}...")
-    
-    args = ["cargo", "run", "--", "compile", os.path.abspath(source_file)]
-    if output:
-        args.extend(["-o", os.path.abspath(output)])
-        
     try:
-        subprocess.run(args, cwd=forge_path, check=True)
-    except FileNotFoundError:
-        click.secho("Error: Cargo/Rust is not installed or not in PATH.", fg="red")
-    except subprocess.CalledProcessError:
-        click.secho("Compilation failed.", fg="red")
+        import neuroshield_runemate  # type: ignore
+    except ImportError:
+        click.secho("Error: neuroshield_runemate extension not found. Did you run `pip install -e .` with maturin?", fg="red")
+        return
+        
+    click.echo(f"[Runemate] Compiling {source_file}...")
+    with open(source_file, 'r') as f:
+        source_code = f.read()
+
+    try:
+        bytecode = neuroshield_runemate.compile_script(source_code)
+        if output:
+            with open(output, 'wb') as f:
+                f.write(bytes(bytecode))
+            click.echo(f"Saved bytecode to {output}")
+        else:
+            click.echo(f"Compiled successfully. {len(bytecode)} bytes.")
+    except Exception as e:
+        click.secho(f"Compilation failed: {e}", fg="red")
 
 
 @cli.command()

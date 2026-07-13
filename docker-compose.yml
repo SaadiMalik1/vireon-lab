@@ -10,4 +10,4 @@ services:
       - .:/app
     environment:
       - PYTHONUNBUFFERED=1
-    command: python -m neuroshield run --web-ui --secure-mode
+    command: python -m neuroshield ui --port 7777 --host 0.0.0.0

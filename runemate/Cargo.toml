@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "forge",
-    "scribe"
+    "scribe",
+    "python_ext"
 ]
 resolver = "2"

@@ -1,0 +1,15 @@
+[package]
+name = "python_ext"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "neuroshield_runemate"
+crate-type = ["cdylib"]
+
+[dependencies]
+forge = { path = "../forge" }
+scribe = { path = "../scribe" }
+pyo3 = { version = "0.20", features = ["extension-module"] }
+bincode = "1.3"
+serde = { version = "1.0", features = ["derive"] }

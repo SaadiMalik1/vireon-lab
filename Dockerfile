@@ -9,13 +9,18 @@ ENV PORT=7777
 # Set the working directory
 WORKDIR /app
 
-# Install system dependencies required for scientific libraries and weasyprint (optional)
+# Install system dependencies required for Rust, scientific libraries, and weasyprint
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     libpango-1.0-0 \
     libharfbuzz0b \
     libpangoft2-1.0-0 \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain (needed for Maturin/Runemate build)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Copy project files
 COPY . .
@@ -33,5 +38,5 @@ USER neuroshield
 # Expose the Web UI port
 EXPOSE 7777
 
-# Default command: Run the web UI securely on port 7777 (bound to all interfaces so Docker exposes it)
-CMD ["python", "-m", "neuroshield", "run", "--web-ui", "--secure-mode"]
+# Default command: Run the web UI securely on port 7777 and bind to all interfaces
+CMD ["python", "-m", "neuroshield", "ui", "--port", "7777", "--host", "0.0.0.0"]
