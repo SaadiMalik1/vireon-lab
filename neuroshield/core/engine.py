@@ -3,6 +3,10 @@ import threading
 import numpy as np
 from typing import Optional, List, Callable
 import concurrent.futures
+import logging
+
+logger = logging.getLogger(__name__)
+
 from neuroshield.core.twin import DigitalTwin
 from neuroshield.core.attack import SignalAttackEngine
 
@@ -25,11 +29,28 @@ class ReplayEngine:
                  device_wrapper=None,
                  dataset_reader=None,
                  seed: Optional[int] = None,
-                 loop_dataset: bool = True):
+                 loop_dataset: bool = True,
+                 ids=None,
+                 ti=None,
+                 red_team_engine=None):
         self.twin = twin
         self.attack_engine = attack_engine
         self.device_wrapper = device_wrapper
         self.dataset_reader = dataset_reader
+        self.ids = ids
+        self.ti = ti
+        self.red_team_engine = red_team_engine
+
+        self.last_anomaly_score = 0.0
+        self.active_attack = "none"
+
+        try:
+            import neuroshield_runemate
+            self.scribe = neuroshield_runemate.PyScribe()
+            print("[ReplayEngine] Runemate Scribe VM successfully loaded.")
+        except ImportError:
+            self.scribe = None
+            print("[ReplayEngine] Runemate Scribe VM not available (requires compilation with maturin).")
 
         self.running = False
         self.thread: Optional[threading.Thread] = None
@@ -62,6 +83,8 @@ class ReplayEngine:
 
         # Executor for running callbacks without blocking the timing loop
         self._executor: Optional[concurrent.futures.ThreadPoolExecutor] = None
+        
+        self._buffer_lock = threading.Lock()
 
     @property
     def rng(self) -> np.random.Generator:
@@ -133,14 +156,17 @@ class ReplayEngine:
         if self.device_wrapper is not None:
             eeg_channels = self.device_wrapper.get_eeg_channels()
             board = self.device_wrapper.get_board()
-            # Start streaming if brainflow board
+            # Start streaming
             try:
-                if board and not board.is_prepared():
-                    board.prepare_session()
-                if board and board.is_prepared():
-                    board.start_stream()
+                if hasattr(self.device_wrapper, "start_stream"):
+                    self.device_wrapper.start_stream()
+                else:
+                    if board and not board.is_prepared():
+                        board.prepare_session()
+                    if board and board.is_prepared():
+                        board.start_stream()
             except Exception as e:
-                print(f"[ReplayEngine] Warning starting board stream: {e}")
+                logger.error("Warning starting board stream", exc_info=True)
         else:
             eeg_channels = list(range(num_channels))
             board = None
@@ -176,8 +202,16 @@ class ReplayEngine:
 
             # Fetch data chunk
             raw_data = None
+            self._current_buffer = None
 
-            if board is not None:
+            if self.device_wrapper is not None and hasattr(self.device_wrapper, 'read_chunk'):
+                try:
+                    raw_data = self.device_wrapper.read_chunk(0, num_samples_per_chunk)
+                except Exception as e:
+                    logger.error("Device wrapper read error", exc_info=True)
+                    raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
+                    
+            elif board is not None:
                 try:
                     # Fetch from BrainFlow board
                     data_chunk = board.get_board_data()
@@ -186,7 +220,7 @@ class ReplayEngine:
                     else:
                         raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
                 except Exception as e:
-                    print(f"[ReplayEngine] Board read error: {e}")
+                    logger.error("Board read error", exc_info=True)
                     raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
 
             elif self.dataset_reader is not None:
@@ -216,9 +250,39 @@ class ReplayEngine:
             if raw_data is not None and len(raw_data.shape) == 2:
                 # Apply attacks
                 mutated_data = self.attack_engine.apply_attacks(raw_data, eeg_channels, sr)
+                
+                with self._buffer_lock:
+                    self._current_buffer = mutated_data
+
+                # Run IDS if present
+                if self.ids and mutated_data.shape[1] > 0:
+                    # Feed mean of the chunk to IDS for simplicity
+                    features = np.mean(mutated_data[:8, :], axis=1)
+                    if len(features) == 8:
+                        self.last_anomaly_score = self.ids.detect(features)
+                        
+                        # Update twin clinical state based on anomaly score
+                        if self.last_anomaly_score > self.ids.threshold:
+                            self.twin.set_clinical_alert(True, "IDS Anomaly Detected")
+                        else:
+                            self.twin.set_clinical_alert(False, "Nominal")
+
+                # Run Red Team feedback loop
+                if self.red_team_engine:
+                    self.red_team_engine.tick(self.last_anomaly_score, self.ids.threshold if self.ids else 1.0)
 
                 # Check connection status in digital twin
                 if self.twin.connected:
+                    # Run scribe VM if available
+                    if self.scribe:
+                        flattened = mutated_data.flatten().tolist()
+                        try:
+                            # Step the VM with current data
+                            # The VM can observe the data and possibly manipulate therapy parameters
+                            _ = self.scribe.execute_step(flattened)
+                        except Exception as e:
+                            logger.error("Scribe VM execution error", exc_info=True)
+
                     # Invoke clinical simulation callbacks concurrently to avoid GIL starvation
                     for cb in self.callbacks:
                         if self._executor:
@@ -226,10 +290,39 @@ class ReplayEngine:
             else:
                 print("[ReplayEngine] Received invalid shape or empty data.")
 
-        # Clean up board stream on stop
-        if board is not None:
+        # Cleanup loop resources
+        if self.device_wrapper is not None and hasattr(self.device_wrapper, "stop_stream"):
+            try:
+                self.device_wrapper.stop_stream()
+            except Exception as e:
+                logger.error("Error stopping device stream", exc_info=True)
+        elif board is not None:
             try:
                 board.stop_stream()
                 board.release_session()
             except Exception as e:
-                print(f"[ReplayEngine] Error releasing board session: {e}")
+                logger.error("Error releasing board session", exc_info=True)
+
+    def get_buffer(self) -> Optional[np.ndarray]:
+        with self._buffer_lock:
+            return getattr(self, "_current_buffer", None)
+
+    def inject_attack(self, attack_name: str):
+        """Used by the dashboard to inject attacks."""
+        self.active_attack = attack_name
+        # Clear existing
+        with self.attack_engine.lock:
+            self.attack_engine.modifiers.clear()
+            
+        if attack_name == "noise":
+            from neuroshield.core.attack import NoiseInjectionAttack
+            self.attack_engine.add_modifier(NoiseInjectionAttack(target_channels=[0, 1]))
+        elif attack_name == "drift":
+            from neuroshield.core.attack import SignalDriftAttack
+            self.attack_engine.add_modifier(SignalDriftAttack(target_channels=[0, 1]))
+        elif attack_name == "temporal_evasion":
+            from neuroshield.core.attack import TemporalEvasionAttack
+            self.attack_engine.add_modifier(TemporalEvasionAttack(target_channels=[0, 1]))
+        elif attack_name == "session_replay":
+            from neuroshield.core.attack import SessionReplayAttack
+            self.attack_engine.add_modifier(SessionReplayAttack(target_channels=[0, 1]))

@@ -6,6 +6,8 @@ pub struct ScribeContext {
     // Emulate visual phosphene buffers or log outputs
     pub rendered_shapes: u32,
     pub ip: usize,
+    pub memory: [u8; 256],
+    pub loop_stack: Vec<(usize, u8)>,
 }
 
 impl ScribeContext {
@@ -15,6 +17,8 @@ impl ScribeContext {
             current_freq: 0,
             rendered_shapes: 0,
             ip: 0,
+            memory: [0; 256],
+            loop_stack: Vec::new(),
         }
     }
 
@@ -49,6 +53,54 @@ impl ScribeContext {
                     let _low = bytecode[self.ip + 1] as u16;
                     // In a no_std embedded environment, wait would interact with hardware timers
                     self.ip += 2;
+                },
+                0x05 => { // READ_SENSOR
+                    if self.ip + 1 >= bytecode.len() { return Err(ScribeError::UnexpectedEndOfStream); }
+                    let _sensor = bytecode[self.ip];
+                    let addr = bytecode[self.ip + 1] as usize;
+                    if addr >= self.memory.len() {
+                        return Err(ScribeError::InvalidOpcode(0x05)); // Emulate memory out of bounds error
+                    }
+                    self.memory[addr] = 42; // Mock sensor value
+                    self.ip += 2;
+                },
+                0x06 => { // LOOP_START
+                    if self.ip >= bytecode.len() { return Err(ScribeError::UnexpectedEndOfStream); }
+                    let iters = bytecode[self.ip];
+                    if self.loop_stack.len() >= 16 {
+                        return Err(ScribeError::InvalidOpcode(0x06)); // Emulate stack overflow
+                    }
+                    self.loop_stack.push((self.ip + 1, iters));
+                    self.ip += 1;
+                },
+                0x07 => { // LOOP_END
+                    if let Some(mut top) = self.loop_stack.pop() {
+                        if top.1 > 1 {
+                            top.1 -= 1;
+                            self.ip = top.0;
+                            self.loop_stack.push(top);
+                        }
+                    } else {
+                        return Err(ScribeError::InvalidOpcode(0x07)); // Emulate stack underflow
+                    }
+                },
+                0x08 => { // JUMP_IF
+                    if self.ip + 3 >= bytecode.len() { return Err(ScribeError::UnexpectedEndOfStream); }
+                    let addr = bytecode[self.ip] as usize;
+                    let val = bytecode[self.ip + 1];
+                    let target_high = bytecode[self.ip + 2] as u16;
+                    let target_low = bytecode[self.ip + 3] as u16;
+                    let target = ((target_high << 8) | target_low) as usize;
+                    
+                    if addr >= self.memory.len() {
+                        return Err(ScribeError::InvalidOpcode(0x08)); // Memory out of bounds
+                    }
+                    
+                    if self.memory[addr] == val {
+                        self.ip = target;
+                    } else {
+                        self.ip += 4;
+                    }
                 },
                 0xFF => { // END
                     break;

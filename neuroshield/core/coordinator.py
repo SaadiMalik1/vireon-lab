@@ -10,6 +10,9 @@ import sys
 import time
 import numpy as np
 from typing import Optional, Dict, Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 from neuroshield.core.twin import DigitalTwin
 from neuroshield.core.engine import ReplayEngine
@@ -122,7 +125,7 @@ class Coordinator:
             registry_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "neurosecurity", "datalake", "qtara-registrar.json")
             self.threat_intel = ThreatIntelligence(registry_path)
         except Exception as e:
-            print(f"[NeuroShield] Could not initialize ThreatIntelligence: {e}")
+            logger.error(f"Could not initialize ThreatIntelligence", exc_info=True)
             self.threat_intel = None
 
         # Enable event logging for reproducibility
@@ -293,8 +296,10 @@ class Coordinator:
         if self.ws_server is not None:
             import json
             state = self.twin.get_state()
-            # Send Channel 0 signal chunk as JSON-serializable list
-            state["signal_chunk"] = data[0, :].tolist()
+            # Send Channel 1 signal chunk as JSON-serializable list (Ch 0 is often package count)
+            # Replace NaNs with 0.0 because standard JSON (and JS JSON.parse) cannot handle NaN
+            signal_list = data[1, :].tolist()
+            state["signal_chunk"] = [0.0 if np.isnan(x) else x for x in signal_list]
             
             active_attack = self._simulation_context.get("active_attack", "none")
             state["active_attack"] = active_attack
@@ -378,7 +383,7 @@ class Coordinator:
             else:
                 print(f"[NeuroShield] Warning: Unknown device type '{self.config.device.type}'")
         except Exception as e:
-            print(f"[NeuroShield] Error loading device module: {e}")
+            logger.error(f"Error loading device module", exc_info=True)
             sys.exit(1)
         return device_wrapper
 
@@ -414,7 +419,7 @@ class Coordinator:
             self.lsl_streamer = LSLStreamer(num_channels=self.twin.num_channels, srate=self.twin.sample_rate)
             self.config.duration_sec = 100000.0  # Run indefinitely in LSL mode
         except Exception as e:
-            print(f"[NeuroShield] Failed to start LSL Streamer: {e}")
+            logger.error(f"Failed to start LSL Streamer", exc_info=True)
 
     def _setup_web_server(self):
         """Start the Web UI dashboard."""
@@ -541,7 +546,8 @@ class Coordinator:
                 data_to_process = np.frombuffer(
                     reconstructed_bytes[:raw_data.nbytes], dtype=raw_data.dtype
                 ).copy().reshape(raw_data.shape)
-            except Exception:
+            except Exception as e:
+                logger.error("BLE packet reconstruction failed", exc_info=True)
                 data_to_process = np.random.normal(0, 500.0, raw_data.shape)
 
             if secure_active and self.ids and self.ips:
@@ -616,8 +622,13 @@ class Coordinator:
         summary["nsp_active"] = self._simulation_context.get("nsp_mode", False)
 
         from neuroshield.plugins.reports.generator import ReportGenerator
+        import time
+        
         generator = ReportGenerator(self.twin)
-        generator.compile_report(summary, self.config.output.report_prefix)
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        prefix_with_time = f"{self.config.output.report_prefix}_{timestamp}"
+        
+        generator.compile_report(summary, prefix_with_time)
 
         print("\n" + "=" * 60)
         print(" SIMULATION COMPLETE")

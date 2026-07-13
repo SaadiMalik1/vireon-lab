@@ -63,6 +63,8 @@ class ThreatIntelligence:
             "stimulation_leak": "QIF-T0002", # Neural ransomware
             "pairing_fail": "QIF-T0088",    # BLE pairing disruption
             "mtu_abuse": "QIF-T0089",       # Protocol MTU abuse
+            "temporal_evasion": "QIF-T0045",# High-frequency bursting
+            "session_replay": "QIF-T0050",  # Replay masking attack
         }
         
         tara_id = mapping.get(attack_name)

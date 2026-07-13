@@ -92,19 +92,27 @@ class LinearAutoencoderIDS:
             
         return mean_error
 
+class LSTMAutoencoderModel(nn.Module):
+    def __init__(self, input_dim: int, hidden_dim: int = 8):
+        super().__init__()
+        self.encoder = nn.LSTM(input_size=input_dim, hidden_size=hidden_dim, num_layers=1, batch_first=True)
+        self.decoder = nn.LSTM(input_size=hidden_dim, hidden_size=input_dim, num_layers=1, batch_first=True)
+        
+    def forward(self, x):
+        # x shape: (batch_size, sequence_length, input_dim)
+        encoded, _ = self.encoder(x)
+        decoded, _ = self.decoder(encoded)
+        return decoded
+
 class DeepAutoencoderIDS:
     """
-    A PyTorch-based Deep Autoencoder for non-linear anomaly detection on EEG data.
+    A PyTorch-based LSTM Deep Autoencoder for non-linear temporal anomaly detection on EEG data.
     """
-    def __init__(self, input_dim: int, hidden_dim: int = 4, learning_rate: float = 0.001):
+    def __init__(self, input_dim: int, hidden_dim: int = 8, learning_rate: float = 0.001):
         if not TORCH_AVAILABLE:
             raise RuntimeError("PyTorch is not available.")
         
-        self.model = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, input_dim)
-        )
+        self.model = LSTMAutoencoderModel(input_dim, hidden_dim)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
         self.criterion = nn.MSELoss()
         self.is_fitted = False
@@ -113,21 +121,23 @@ class DeepAutoencoderIDS:
 
     def calibrate(self, data: np.ndarray):
         """Offline batch calibration phase with validation split and early stopping."""
-        obs = torch.tensor(data.T, dtype=torch.float32)
+        # data is (channels, samples). We transpose to (samples, channels)
+        # For LSTM, we reshape to (1, seq_length, input_dim)
+        obs = torch.tensor(data.T, dtype=torch.float32).unsqueeze(0)
         
-        # 80/20 train/val split
-        n_samples = obs.size(0)
-        split_idx = int(0.8 * n_samples)
+        # Split sequence into train/val (not straightforward for 1 sequence, so we split across time)
+        seq_len = obs.size(1)
+        split_idx = int(0.8 * seq_len)
         
-        train_data = obs[:split_idx]
-        val_data = obs[split_idx:]
+        train_data = obs[:, :split_idx, :]
+        val_data = obs[:, split_idx:, :]
         
         best_val_loss = float('inf')
         patience = 5
         patience_counter = 0
         
         # Train for multiple epochs on the buffered baseline data
-        for _ in range(50):
+        for _ in range(100):
             self.model.train()
             self.optimizer.zero_grad()
             output = self.model(train_data)
@@ -136,7 +146,7 @@ class DeepAutoencoderIDS:
             self.optimizer.step()
             
             # Validation
-            if split_idx < n_samples:
+            if split_idx < seq_len:
                 self.model.eval()
                 with torch.no_grad():
                     val_output = self.model(val_data)
@@ -157,18 +167,19 @@ class DeepAutoencoderIDS:
         if not self.is_fitted:
             self.calibration_buffer.append(data)
             # Buffer initial data for batch calibration
-            if len(self.calibration_buffer) >= 100:
+            if len(self.calibration_buffer) >= 50:
                 stacked_data = np.concatenate(self.calibration_buffer, axis=1)
                 self.calibrate(stacked_data)
                 self.calibration_buffer = []
             return 0.0
             
-        # Frozen Inference Phase: No online SGD adaptation to anomalies
-        obs = torch.tensor(data.T, dtype=torch.float32)
+        # Frozen Inference Phase
+        obs = torch.tensor(data.T, dtype=torch.float32).unsqueeze(0)
         self.model.eval()
         with torch.no_grad():
             reconstruction = self.model(obs)
-            errors = torch.mean((obs - reconstruction) ** 2, dim=1).numpy()
+            # calculate MSE across feature dimension, then mean over sequence
+            errors = torch.mean((obs - reconstruction) ** 2, dim=2).squeeze(0).numpy()
             
         mean_error = float(np.mean(errors))
         self.reconstruction_errors.append(mean_error)

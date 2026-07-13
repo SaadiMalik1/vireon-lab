@@ -4,18 +4,34 @@ NeuroShield offers a robust suite of interfaces for controlling the virtual labo
 
 ## 1. Command Line Interface (CLI)
 
-The primary entry point for launching headless or UI-backed simulations is the Python CLI.
+The primary entry point for launching headless or UI-backed simulations is the Python CLI, built with `click`.
 
 ```bash
-python3 -m neuroshield run [OPTIONS]
+python3 -m neuroshield [COMMAND] [OPTIONS]
 ```
 
-### Key Arguments
+### Core Commands
+
+#### `run`
+Launch a headless simulation experiment.
+- `config_file`: Optional path to a TOML experiment config.
 - `--duration <seconds>`: Length of the simulation run.
-- `--secure-mode`: Activates the `NeuroIDS` and the associated threat intelligence processing. Without this flag, the platform acts only as a signal simulator.
-- `--no-report`: Bypasses the generation of the PDF executive summary at the end of the simulation.
-- `--lsl`: Bypasses the internal Web UI WebSocket server and instead broadcasts raw multiplexed EEG data directly to the Lab Streaming Layer (LSL). Useful for integrating with third-party software like OpenViBE.
-- `--board {synthetic,pieeg,cyton,muse}`: Defines the hardware profile of the Digital Twin (which determines channel count, ADC limits, and noise baselines).
+- `--board {synthetic,pieeg,cyton,ganglion,muse,emotiv}`: Defines the hardware profile.
+- `--dataset <path>`: Pre-recorded dataset to replay.
+- `--attack <string>`: Name of attack to inject.
+- `--seed <int>`: For deterministic reproducibility.
+
+#### `ui`
+Launch the interactive Streamlit Web UI.
+- `--port <int>`: Port to run the dashboard on (default 7777).
+
+#### `compile`
+Compile a Runemate (.rme) script into secure bytecode using the embedded Rust `Forge` compiler.
+- `source_file`: Path to `.rme` script.
+- `--output / -o`: Output bytecode file.
+
+#### `info`
+Display platform information and registered plugins.
 
 ## 2. Model Context Protocol (MCP) Server
 
@@ -42,12 +58,10 @@ Triggers the `Coordinator` to spin up a simulation run with specific attacks.
 NeuroShield broadcasts its state asynchronously while the ReplayEngine is ticking.
 
 ### WebSocket API
-When launched without the `--lsl` flag, the `Coordinator` spawns an asynchronous WebSocket server on `localhost:8050`.
+When launched without the `--lsl` flag, the `Coordinator` spawns an asynchronous WebSocket server on the configured web port + 1 (e.g., `7778` if Streamlit is on `7777`).
 
-The Web UI connects to this port and receives three types of JSON packets:
-- **`state`**: Physical metrics (battery, temp, impedance) and clinical status.
-- **`eeg`**: High-frequency multiplexed signal data arrays.
-- **`threat`**: Any `qTARA` enriched anomalies detected by the `NeuroIDS`.
+The Web UI connects to this port and receives real-time JSON packets:
+- **`state`**: Physical metrics (battery, temp, impedance), clinical status, fast signal chunks, and any `qTARA` enriched anomalies detected by the `NeuroIDS`.
 
 ### Lab Streaming Layer (LSL)
 When the `--lsl` flag is provided, the WebSocket server is disabled. Instead, NeuroShield creates a standard `StreamInfo` endpoint (`name='NeuroShield_Out', type='EEG'`). 

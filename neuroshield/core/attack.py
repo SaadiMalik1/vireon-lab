@@ -268,6 +268,84 @@ class FramingDesynchronizationAttack(ISignalModifier):
                 mutated_data[ch, :] = injection_uv
         return mutated_data
 
+class SessionReplayAttack(ISignalModifier):
+    """
+    Captures a clean segment of EEG data for `capture_duration_sec` and then 
+    continuously loops this recorded data over the target channels, effectively 
+    masking any subsequent real brain activity.
+    """
+    def __init__(self, target_channels: List[int], capture_duration_sec: float = 5.0):
+        self.target_channels = target_channels
+        self.capture_duration_sec = capture_duration_sec
+        self.captured_data = None
+        self.capture_time = 0.0
+        self.is_capturing = True
+        self.replay_index = 0
+
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        mutated_data = data.copy()
+        num_samples = data.shape[1]
+        dt = num_samples / sample_rate
+
+        if self.is_capturing:
+            if self.captured_data is None:
+                self.captured_data = data.copy()
+            else:
+                self.captured_data = np.hstack((self.captured_data, data.copy()))
+            
+            self.capture_time += dt
+            if self.capture_time >= self.capture_duration_sec:
+                self.is_capturing = False
+            return mutated_data
+            
+        else:
+            # Replay phase
+            replay_chunk = np.zeros_like(data)
+            cap_len = self.captured_data.shape[1]
+            
+            for i in range(num_samples):
+                replay_chunk[:, i] = self.captured_data[:, self.replay_index % cap_len]
+                self.replay_index += 1
+
+            for ch in self.target_channels:
+                if ch in eeg_channels:
+                    mutated_data[ch, :] = replay_chunk[ch, :]
+                    
+            return mutated_data
+
+class TemporalEvasionAttack(ISignalModifier):
+    """
+    A time-hopping attack that injects high-frequency malicious payloads in very short 
+    bursts, separated by clean intervals. Designed to evade windowed average-based IDSs.
+    """
+    def __init__(self, target_channels: List[int], burst_duration_sec: float = 0.1, quiet_duration_sec: float = 1.0, amplitude: float = 50.0):
+        self.target_channels = target_channels
+        self.burst_duration_sec = burst_duration_sec
+        self.quiet_duration_sec = quiet_duration_sec
+        self.amplitude = amplitude
+        self.time_counter = 0.0
+        
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        mutated_data = data.copy()
+        num_samples = data.shape[1]
+        
+        cycle_duration = self.burst_duration_sec + self.quiet_duration_sec
+        
+        t = self.time_counter + np.arange(num_samples) / sample_rate
+        self.time_counter += num_samples / sample_rate
+        
+        # Calculate which samples fall into the "burst" phase of the cycle
+        phase_in_cycle = t % cycle_duration
+        burst_mask = phase_in_cycle < self.burst_duration_sec
+        
+        if np.any(burst_mask):
+            payload = np.random.normal(0, self.amplitude, size=num_samples)
+            for ch in self.target_channels:
+                if ch in eeg_channels:
+                    mutated_data[ch, burst_mask] += payload[burst_mask]
+                    
+        return mutated_data
+
 
 class SignalAttackEngine:
     def __init__(self, twin: DigitalTwin, event_bus: Optional[EventBus] = None):

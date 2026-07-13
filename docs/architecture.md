@@ -32,8 +32,11 @@ The core of the simulation is a strict timing loop managed by the `ReplayEngine`
 
 ### Telemetry Dispatch
 The `Coordinator` is responsible for broadcasting the internal state of the `DigitalTwin` to external consumers:
-- **WebSocket Server (`asyncio`)**: Streams real-time `state`, `eeg`, and `threat` packets to the Web UI dashboard on port `8050`.
+- **WebSocket Server (`asyncio`)**: Streams real-time `state`, `eeg`, and `threat` packets to the external clients (like the Streamlit dashboard).
 - **Lab Streaming Layer (LSL)**: (Optional) Pushes raw multiplexed signal data to LSL streams for consumption by clinical BCI tools like OpenViBE.
+
+### Configuration
+The `ExperimentConfig` is defined using a structured **Pydantic** model (`core/config.py`), replacing loose dict structures, providing robust type validations for physical constants and security thresholds.
 
 ## 3. Runemate Compiler Stack (`compiler/`)
 
@@ -50,12 +53,12 @@ The compiler is split into two isolated binaries to prevent untrusted input from
    - Safely executes the compiled Staves bytecode inside the virtual environment.
    - Triggers physical changes in the `DigitalTwin` (e.g., increasing `stimulation_amplitude_ma`).
 
-## 4. Web Dashboard (`plugins/reports/web/`)
+## 4. Web Dashboard (`dashboard/app.py`)
 
-The NeuroShield platform includes a lightweight, zero-dependency HTML/JS dashboard that subscribes to the Coordinator's WebSocket stream.
+The NeuroShield platform includes an interactive dashboard built with **Streamlit** that pulls live telemetry from the Coordinator's WebSocket stream.
 
-- **Real-Time Canvas**: Renders high-speed EEG traces utilizing raw Canvas APIs for performance.
-- **State Panels**: Displays live `DigitalTwin` physical states (battery, temp, impedance).
-- **Threat Intel Panel**: Visualizes active detections and their mapped qTARA classifications. 
+- **Real-Time Visualization**: Renders high-speed EEG traces utilizing Plotly.
+- **State Panels**: Displays live `DigitalTwin` physical states (battery, temp, impedance) and alerts.
+- **Threat Intel Panel**: Visualizes active detections, **Red Team Engine** feedback scores, and their mapped qTARA classifications. 
 
-The dashboard provides a closed-loop environment where researchers can inject Runemate scripts via the UI and immediately observe the physiological response and any resulting IDS alerts.
+The dashboard provides a closed-loop environment where researchers can observe physiological responses, trigger runtime simulated attacks, and analyze the NeuroIDS mitigations interactively.

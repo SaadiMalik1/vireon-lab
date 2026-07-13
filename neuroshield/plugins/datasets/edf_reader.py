@@ -2,6 +2,9 @@ import numpy as np
 from typing import List, Dict, Any
 from neuroshield.plugins.datasets import IDatasetReader
 from neuroshield.plugins.datasets.mock_reader import MockEEGReader
+import logging
+
+logger = logging.getLogger(__name__)
 
 try:
     import pyedflib
@@ -32,7 +35,7 @@ class EDFReader(IDatasetReader):
 
         if not HAS_PYEDFLIB:
             if fallback_on_error:
-                print(f"[EDFReader] pyedflib not installed. Falling back to MockEEGReader.")
+                logger.warning("pyedflib not installed. Falling back to MockEEGReader.")
                 self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
             else:
                 raise ImportError("pyedflib is required to read EDF files but was not found.")
@@ -58,7 +61,7 @@ class EDFReader(IDatasetReader):
                 }
             except Exception as e:
                 if fallback_on_error:
-                    print(f"[EDFReader] Error reading {file_path}: {e}. Falling back to MockEEGReader.")
+                    logger.error(f"Error reading {file_path}. Falling back to MockEEGReader.", exc_info=True)
                     self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
                 else:
                     raise e
@@ -125,6 +128,7 @@ class EDFReader(IDatasetReader):
                 data[ch, :] = self.reader.readSignal(ch, start_sample, num_samples)
             except Exception:
                 # Handle end of file or read errors by zeroing
+                logger.debug("End of file or read error", exc_info=True)
                 data[ch, :] = 0.0
         return data
 
@@ -133,4 +137,4 @@ class EDFReader(IDatasetReader):
             try:
                 self.reader.close()
             except Exception:
-                pass
+                logger.debug("Failed to close EDF reader", exc_info=True)

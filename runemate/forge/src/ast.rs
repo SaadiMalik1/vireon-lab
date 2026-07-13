@@ -12,6 +12,10 @@ pub enum Statement {
     Shape(ShapeType, u8),
     Wait(u16),
     End,
+    ReadSensor(u8, u8),
+    LoopStart(u8),
+    LoopEnd,
+    JumpIf(u8, u8, u16),
 }
 
 #[derive(Debug)]

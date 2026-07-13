@@ -7,6 +7,10 @@ pub enum Token {
     Shape,
     Wait,
     End,
+    ReadSensor,
+    LoopStart,
+    LoopEnd,
+    JumpIf,
     Number(u16),
     Identifier(String),
 }
@@ -22,6 +26,10 @@ pub fn lex(source: &str) -> Result<Vec<Token>, ForgeError> {
             "SHAPE" => Token::Shape,
             "WAIT" => Token::Wait,
             "END" => Token::End,
+            "READ_SENSOR" => Token::ReadSensor,
+            "LOOP_START" => Token::LoopStart,
+            "LOOP_END" => Token::LoopEnd,
+            "JUMP_IF" => Token::JumpIf,
             _ => {
                 if let Ok(num) = word.parse::<u16>() {
                     Token::Number(num)

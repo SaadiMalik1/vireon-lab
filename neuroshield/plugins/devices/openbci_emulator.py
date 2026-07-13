@@ -7,6 +7,10 @@ import threading
 import time
 from typing import List, Dict, Any, Optional
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
+
 from neuroshield.core.twin import DigitalTwin
 
 class OpenBCICytonEmulator:
@@ -46,7 +50,7 @@ class OpenBCICytonEmulator:
                 attrs[1] &= ~termios.OPOST
                 termios.tcsetattr(self.slave_fd, termios.TCSANOW, attrs)
             except Exception as e:
-                print(f"[OpenBCIEmulator] Warning setting raw tty attributes: {e}")
+                logger.error("Warning setting raw tty attributes", exc_info=True)
             
             # Set non-blocking mode on master
             fl = fcntl.fcntl(self.master_fd, fcntl.F_GETFL)
@@ -79,14 +83,14 @@ class OpenBCICytonEmulator:
                 try:
                     os.close(self.master_fd)
                 except Exception:
-                    pass
+                    logger.debug("Failed to close master_fd during stop", exc_info=True)
                 self.master_fd = None
                 
             if self.slave_fd is not None:
                 try:
                     os.close(self.slave_fd)
                 except Exception:
-                    pass
+                    logger.debug("Failed to close slave_fd during stop", exc_info=True)
                 self.slave_fd = None
                 
             print("[OpenBCIEmulator] Virtual Cyton Serial Port closed.")
@@ -107,7 +111,7 @@ class OpenBCICytonEmulator:
             except Exception as e:
                 # Handle disconnect or close
                 if self.running:
-                    print(f"[OpenBCIEmulator] PTY read exception: {e}")
+                    logger.error("PTY read exception", exc_info=True)
                 break
 
     def _process_commands(self, buffer: bytes) -> bytes:
@@ -166,7 +170,7 @@ class OpenBCICytonEmulator:
             try:
                 os.write(self.master_fd, data)
             except Exception as e:
-                print(f"[OpenBCIEmulator] Error writing to master: {e}")
+                logger.error("Error writing to master", exc_info=True)
 
     def send_eeg_data(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int):
         """

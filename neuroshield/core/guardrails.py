@@ -66,9 +66,9 @@ class GuardrailValidator:
         Validates an entire ExperimentConfig before the coordinator starts.
         """
         # 1. Enforce functional bandwidth limits
-        num_channels = getattr(config.telemetry, "num_channels", 8)
-        sample_rate = getattr(config.telemetry, "sample_rate", 250)
-        resolution_bits = getattr(config.telemetry, "resolution_bits", 24)
+        num_channels = getattr(config.device, "num_channels", 8)
+        sample_rate = getattr(config.device, "sample_rate", 250)
+        resolution_bits = getattr(config.device, "resolution_bits", 24)
         
         self.validate_information_extraction(num_channels, sample_rate, resolution_bits)
         

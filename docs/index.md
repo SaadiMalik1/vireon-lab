@@ -40,22 +40,22 @@ This documentation is divided into extensive standalone guides:
 
 ### Running the Virtual Laboratory
 
-NeuroShield can be launched directly via its CLI. The default mode runs a 30-second simulation with the security shield enabled:
+NeuroShield can be launched directly via its CLI using `click`. The default mode runs a 10-second simulation:
 
 ```bash
-# Run a secure 10-second simulation with no physical outputs (headless verification)
-python3 -m neuroshield run --duration 10 --secure-mode --no-report
+# Run a 10-second simulation with an active noise attack
+python3 -m neuroshield run --duration 10.0 --attack noise
 ```
 
 ### Accessing the Web Dashboard
 
-When the simulation is active (and `--lsl` or `--no-report` is not bypassing the UI), NeuroShield serves a rich diagnostic dashboard:
+NeuroShield serves a rich diagnostic dashboard built with Streamlit:
 
-1. Launch a long-running simulation:
+1. Launch the dashboard:
    ```bash
-   python3 -m neuroshield run --duration 300 --secure-mode
+   python3 -m neuroshield ui --port 7777
    ```
-2. Open your browser and navigate to `http://localhost:8050`.
+2. Open your browser and navigate to `http://localhost:7777`.
 3. View real-time EEG traces, Digital Twin physical metrics, and active qTARA Threat Intelligence alerts.
 
 ---

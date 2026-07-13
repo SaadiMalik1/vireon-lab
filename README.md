@@ -8,6 +8,18 @@ Welcome to **NeuroShield**, an advanced Virtual Laboratory for Brain-Computer In
 
 For the full documentation, architecture details, and setup instructions, please see the [**docs/index.md**](docs/index.md) file.
 
+## Quickstart
+
+Run a headless simulation using the built-in CLI:
+```bash
+python3 -m neuroshield run --duration 10.0 --attack noise
+```
+
+Launch the interactive Streamlit dashboard:
+```bash
+python3 -m neuroshield ui --port 7777
+```
+
 ## Testing & CI/CD
 
 NeuroShield maintains a rigorous, high-coverage test suite to validate its complex digital twin physics engine and neurosecurity threat models. 

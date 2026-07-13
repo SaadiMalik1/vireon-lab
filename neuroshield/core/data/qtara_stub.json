@@ -35,6 +35,30 @@
         "hardware_temp_spike": true
       },
       "timeline": "real-time"
+    },
+    {
+      "id": "QIF-T0045",
+      "name": "Temporal Evasion Injection",
+      "description": "High-frequency bursting payloads designed to evade traditional windowed average anomaly detection.",
+      "severity": "High",
+      "physical_signatures": {
+        "band_power_skew": false,
+        "coherence_drop": true,
+        "hardware_temp_spike": false
+      },
+      "timeline": "sub-second"
+    },
+    {
+      "id": "QIF-T0050",
+      "name": "Session Replay Masking",
+      "description": "Captures a clean segment of EEG data and replays it over target channels to mask concurrent malicious activity.",
+      "severity": "Critical",
+      "physical_signatures": {
+        "band_power_skew": false,
+        "coherence_drop": false,
+        "hardware_temp_spike": false
+      },
+      "timeline": "real-time"
     }
   ],
   "meta": {

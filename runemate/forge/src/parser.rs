@@ -49,6 +49,30 @@ pub fn parse(tokens: Vec<Token>) -> Result<Ast, ForgeError> {
             Token::End => {
                 statements.push(Statement::End);
             },
+            Token::ReadSensor => {
+                if let (Some(Token::Number(sensor)), Some(Token::Number(addr))) = (iter.next(), iter.next()) {
+                    statements.push(Statement::ReadSensor(sensor as u8, addr as u8));
+                } else {
+                    return Err(ForgeError::ParserError("Expected sensor and address after READ_SENSOR".into()));
+                }
+            },
+            Token::LoopStart => {
+                if let Some(Token::Number(iters)) = iter.next() {
+                    statements.push(Statement::LoopStart(iters as u8));
+                } else {
+                    return Err(ForgeError::ParserError("Expected iterations after LOOP_START".into()));
+                }
+            },
+            Token::LoopEnd => {
+                statements.push(Statement::LoopEnd);
+            },
+            Token::JumpIf => {
+                if let (Some(Token::Number(addr)), Some(Token::Number(val)), Some(Token::Number(target))) = (iter.next(), iter.next(), iter.next()) {
+                    statements.push(Statement::JumpIf(addr as u8, val as u8, target as u16));
+                } else {
+                    return Err(ForgeError::ParserError("Expected address, value, and target after JUMP_IF".into()));
+                }
+            },
             _ => {
                 return Err(ForgeError::ParserError(format!("Unexpected token: {:?}", token)));
             }

@@ -4,6 +4,7 @@ from typing import Dict, Any, List, Optional
 import os
 import json
 from neuroshield.core.physics import PhysicsEngine
+from neuroshield.core.dynamics import KuramotoModel
 
 
 class DigitalTwin:
@@ -77,6 +78,9 @@ class DigitalTwin:
         self.brain_regions: Dict[str, Any] = {}
         self._load_brain_atlas()
 
+        # Continuous ODE Dynamics
+        self.neural_dynamics = KuramotoModel(num_oscillators=self.num_channels)
+
         # Simulation clock (monotonic, not wall-clock)
         self._sim_clock: float = 0.0
 
@@ -146,6 +150,10 @@ class DigitalTwin:
 
         # 4. Delegate physical constraint calculations (temp rise, leakage) to PhysicsEngine
         self.physics_engine.tick(self, dt)
+        
+        # 5. Step the ODE neural mass model
+        self.neural_dynamics.set_forcing(self.stimulation_amplitude_ma, self.stimulation_frequency_hz)
+        self.neural_dynamics.tick(dt, self._sim_clock)
 
     def get_sim_clock(self) -> float:
         """Return the current simulation clock value."""
@@ -186,6 +194,8 @@ class DigitalTwin:
                 "funnel_origin": self.funnel_origin,
                 "autonomic_pupil_dilation_mm": round(self.autonomic_pupil_dilation_mm, 2),
                 "sim_clock": round(self._sim_clock, 3),
+                "neural_coherence": round(self.neural_dynamics.coherence, 3),
+                "beta_power": round(self.neural_dynamics.beta_power, 2),
             }
 
     # --- Snapshot / Restore (for experiment reproducibility) ---
@@ -226,6 +236,8 @@ class DigitalTwin:
                 "funnel_origin": self.funnel_origin,
                 "autonomic_pupil_dilation_mm": self.autonomic_pupil_dilation_mm,
                 "sim_clock": self._sim_clock,
+                "neural_coherence": self.neural_dynamics.coherence,
+                "beta_power": self.neural_dynamics.beta_power,
                 "history": list(self.history),
             }
 
