@@ -6,12 +6,12 @@
 This document outlines the security assumptions, threat model of the repository itself, and the responsible disclosure policy for reporting vulnerabilities in the NeuroShield framework.
 
 ## Scope
-This policy applies to the NeuroShield engine, its core plugins, and the Runemate compiler. It does **not** cover vulnerabilities found in the third-party medical hardware simulated by NeuroShield (e.g., OpenBCI boards, Medtronic pacemakers).
+This policy applies to the NeuroShield engine, its core plugins, and the NeuroDSL compiler. It does **not** cover vulnerabilities found in the third-party medical hardware simulated by NeuroShield (e.g., OpenBCI boards, Medtronic pacemakers).
 
 ## Threat Model & Security Assumptions
 NeuroShield is a *research and simulation* tool. 
 - **Trust Boundary**: The local execution environment is assumed to be trusted. We do not currently sandbox the execution of user-provided Python plugins beyond standard OS permissions.
-- **Runemate DSL**: The embedded Rust compiler (`Runemate`) is designed to provide bounded memory safety for simulated clinical therapies, but is not intended to securely sandbox malicious arbitrary code execution on the host machine.
+- **NeuroDSL DSL**: The embedded Rust compiler (`NeuroDSL`) is designed to provide bounded memory safety for simulated clinical therapies, but is not intended to securely sandbox malicious arbitrary code execution on the host machine.
 - **Telemetry Egress**: LSL and WebSocket streams emitted by NeuroShield are unencrypted by default (unless ZTA/E2EE layers are explicitly enabled in the simulation config). They should not be exposed to untrusted networks.
 
 ## Supported Versions

@@ -36,7 +36,7 @@ impl PyScribe {
     }
 }
 
-/// Compiles a Runemate script string into bytecode.
+/// Compiles a NeuroDSL script string into bytecode.
 #[pyfunction]
 fn compile_script(source: &str) -> PyResult<Vec<u8>> {
     match forge::compile(source) {
@@ -46,7 +46,7 @@ fn compile_script(source: &str) -> PyResult<Vec<u8>> {
 }
 
 #[pymodule]
-fn vireon_runemate(_py: Python, m: &PyModule) -> PyResult<()> {
+fn vireon_neuro_dsl(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PyScribe>()?;
     m.add_function(wrap_pyfunction!(compile_script, m)?)?;
     Ok(())

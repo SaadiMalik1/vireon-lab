@@ -76,24 +76,24 @@ function injectAttack(attack) {
     postControl({ active_attack: attack });
 }
 
-async function compileRunemate() {
-    const code = document.getElementById('runemate-code').value;
+async function compileNeuroDSL() {
+    const code = document.getElementById('neuro_dsl-code').value;
     try {
-        const response = await fetch('/api/runemate/compile', {
+        const response = await fetch('/api/neuro_dsl/compile', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ source: code })
         });
         const data = await response.json();
         if (data.status === 'success') {
-            console.log('Runemate Code Compiled:', data.bytecode);
-            alert('Runemate bytecode execution dispatched! Hex: ' + data.bytecode + '\nMonitoring coherence...');
+            console.log('NeuroDSL Code Compiled:', data.bytecode);
+            alert('NeuroDSL bytecode execution dispatched! Hex: ' + data.bytecode + '\nMonitoring coherence...');
         } else {
-            console.error('Runemate Compile Error:', data.error);
+            console.error('NeuroDSL Compile Error:', data.error);
             alert('Compile Error:\n' + data.error);
         }
     } catch (e) {
-        console.error('Runemate compilation failed:', e);
+        console.error('NeuroDSL compilation failed:', e);
     }
 }
 

@@ -38,14 +38,14 @@ The `Coordinator` is responsible for broadcasting the internal state of the `Dig
 ### Configuration
 The `ExperimentConfig` is defined using a structured **Pydantic** model (`core/config.py`), replacing loose dict structures, providing robust type validations for physical constants and security thresholds.
 
-## 3. Runemate Compiler Stack (`compiler/`)
+## 3. NeuroDSL Compiler Stack (`compiler/`)
 
-VIREON incorporates **Runemate**, an embedded Rust-based Domain Specific Language (DSL) used for defining safe, deterministic clinical therapy scripts (e.g., stimulation pulses, UI layout instructions).
+VIREON incorporates **NeuroDSL**, an embedded Rust-based Domain Specific Language (DSL) used for defining safe, deterministic clinical therapy scripts (e.g., stimulation pulses, UI layout instructions).
 
 The compiler is split into two isolated binaries to prevent untrusted input from crashing the embedded environment:
 
 1. **Forge (The Frontend Compiler)**: 
-   - A high-level parser that takes human-readable Runemate scripts (e.g., `SET_AMP 5.0`) and compiles them into a rigid, bounds-checked binary format known as 'Staves'.
+   - A high-level parser that takes human-readable NeuroDSL scripts (e.g., `SET_AMP 5.0`) and compiles them into a rigid, bounds-checked binary format known as 'Staves'.
    - Validates memory limits and rejects malformed syntax before it reaches the simulation layer.
 
 2. **Scribe (The Embedded Interpreter)**: 

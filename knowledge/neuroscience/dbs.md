@@ -27,7 +27,7 @@ Unlike passive recording systems (e.g., EEG), an active stimulator introduces di
 - *Denning et al., "Neurosecurity: security and privacy for neural devices"* (Tracked in `knowledge/papers/must-read.md`).
 
 ## Open-source tools
-- **VIREON Runemate DSL**: Experimental framework for constrained therapeutic scripting.
+- **VIREON NeuroDSL DSL**: Experimental framework for constrained therapeutic scripting.
 
 ## Where VIREON uses this concept
 The **Digital Twin** inside VIREON mathematically models the thermal output and battery drain of a simulated DBS implant. The simulation engine tests whether malicious firmware inputs will violate safe operational bounds before clinical harm occurs.

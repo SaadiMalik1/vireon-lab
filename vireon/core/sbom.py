@@ -104,7 +104,7 @@ def _parse_toml_minimal(toml_path: str) -> Dict[str, Any]:
 
 def _parse_cargo_lock(project_root: str) -> List[Dict[str, str]]:
     """Parse Cargo.lock to extract Rust crate dependencies."""
-    lock_path = os.path.join(project_root, "runemate", "Cargo.lock")
+    lock_path = os.path.join(project_root, "neuro_dsl", "Cargo.lock")
     if not os.path.exists(lock_path):
         return []
 

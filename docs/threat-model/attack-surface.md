@@ -19,7 +19,7 @@ The streams (LSL and WebSockets) transmitting the patient's biological data.
 - **Vulnerabilities Simulated**: Eavesdropping, Cognitive State Inference (analyzing patterns in the unencrypted stream).
 - **Defenses Evaluated**: End-to-End Encryption (E2EE), Zero-Trust Architecture (ZTA) data egress blocking.
 
-## 4. Therapy Execution Engine (Runemate)
+## 4. Therapy Execution Engine (NeuroDSL)
 The embedded DSL interpreter responsible for safely executing clinical therapies.
 - **Vulnerabilities Simulated**: Memory corruption, Infinite loop execution causing battery drain.
-- **Defenses Evaluated**: Runemate Rust compiler memory bounds, Execution timeouts.
+- **Defenses Evaluated**: NeuroDSL Rust compiler memory bounds, Execution timeouts.

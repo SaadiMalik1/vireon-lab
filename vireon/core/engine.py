@@ -46,12 +46,12 @@ class ReplayEngine:
         self.active_attack = "none"
 
         try:
-            import vireon_runemate
-            self.scribe = vireon_runemate.PyScribe()
-            print("[ReplayEngine] Runemate Scribe VM successfully loaded.")
+            import vireon_neuro_dsl
+            self.scribe = vireon_neuro_dsl.PyScribe()
+            print("[ReplayEngine] NeuroDSL Scribe VM successfully loaded.")
         except ImportError:
             self.scribe = None
-            print("[ReplayEngine] Runemate Scribe VM not available (requires compilation with maturin).")
+            print("[ReplayEngine] NeuroDSL Scribe VM not available (requires compilation with maturin).")
 
         self.running = False
         self.thread: Optional[threading.Thread] = None

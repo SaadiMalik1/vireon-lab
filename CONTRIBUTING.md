@@ -12,7 +12,7 @@ These guidelines cover all contributions to the NeuroShield repository, includin
 
 ## Prerequisites
 - Python 3.10+
-- Rust toolchain (for Runemate development)
+- Rust toolchain (for NeuroDSL development)
 - Git
 
 ## How Can I Contribute?
