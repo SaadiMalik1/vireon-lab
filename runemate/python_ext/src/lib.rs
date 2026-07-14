@@ -1,11 +1,11 @@
 use pyo3::prelude::*;
 use pyo3::exceptions::{PyValueError, PyRuntimeError};
-use scribe::interpreter::Scribe;
-use scribe::isa::Opcode;
+use scribe::interpreter::ScribeContext;
 
 #[pyclass]
 pub struct PyScribe {
-    inner: Scribe,
+    inner: ScribeContext,
+    bytecode: Vec<u8>,
 }
 
 #[pymethods]
@@ -13,26 +13,22 @@ impl PyScribe {
     #[new]
     pub fn new() -> Self {
         PyScribe {
-            inner: Scribe::new(),
+            inner: ScribeContext::new(),
+            bytecode: Vec::new(),
         }
     }
 
     pub fn load_bytecode(&mut self, bytecode: &[u8]) -> PyResult<()> {
-        match bincode::deserialize::<Vec<Opcode>>(bytecode) {
-            Ok(instructions) => {
-                self.inner.load(instructions);
-                Ok(())
-            }
-            Err(e) => Err(PyValueError::new_err(format!("Deserialization error: {}", e))),
-        }
+        self.bytecode = bytecode.to_vec();
+        Ok(())
     }
 
     pub fn execute_step(&mut self, eeg_data: Vec<f32>) -> PyResult<Vec<f32>> {
-        if self.inner.pc >= self.inner.instructions.len() {
+        if self.bytecode.is_empty() {
             return Ok(eeg_data);
         }
 
-        if let Err(e) = self.inner.step() {
+        if let Err(e) = self.inner.execute(&self.bytecode) {
             return Err(PyRuntimeError::new_err(format!("Scribe execution error: {:?}", e)));
         }
 
