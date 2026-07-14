@@ -252,6 +252,7 @@ class NeuroSignalAssuranceEngine:
         self.cusum_pos: Dict[int, float] = {}
         self.cusum_neg: Dict[int, float] = {}
         
+        self.autoencoder: Any
         if TORCH_AVAILABLE:
             self.autoencoder = DeepAutoencoderIDS(input_dim=self.twin.num_channels)
         else:
@@ -400,7 +401,7 @@ class NeuroSignalAssuranceEngine:
             recent_mean = np.mean(self.history_beta_power[-5:])
             if recent_mean > self.beta_power_threshold:
                 anomalies.append("PATHOLOGICAL_SYNCHRONIZATION_ATTACK")
-                self._log_detection("PATHOLOGICAL_SYNCHRONIZATION_ATTACK", -1, recent_mean)
+                self._log_detection("PATHOLOGICAL_SYNCHRONIZATION_ATTACK", -1, float(recent_mean))
 
         if anomalies and self.event_bus:
             self.event_bus.publish(Event(

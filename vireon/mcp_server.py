@@ -175,16 +175,17 @@ def run_simulation(
     }
 
     # Initialize coordinator with the raw config
-    coordinator = Coordinator(raw_config)
-    coordinator.start_simulation()
+    from vireon.core.config import ExperimentConfig
+    config = ExperimentConfig(**raw_config)
+    coordinator = Coordinator(config)
+    coordinator.setup()
     
-    # Wait for the simulation to finish
-    import time
-    time.sleep(duration_sec + 1.0)
+    # Run the simulation (blocks for duration_sec)
+    coordinator.run()
     
     # Capture the final state of the digital twin
     final_state = coordinator.twin.get_state()
-    coordinator.stop_simulation()
+    coordinator.teardown()
     
     # Return key safety metrics
     return json.dumps({
