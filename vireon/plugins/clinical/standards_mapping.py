@@ -10,7 +10,8 @@ class QIFAtlas:
     """
 
     # Primary DSM-5-TR Diagnostic Clusters mapped to neural pathways
-    DSM5_MAPPINGS = {
+    from typing import Dict, Any
+    DSM5_MAPPINGS: Dict[str, Dict[str, Any]] = {
         "N7_PFC_M1": {
             "cluster": "Cognitive/Psychotic",
             "diagnoses": ["F20_SCHIZOPHRENIA_SPECTRUM", "F90_ADHD", "F32_MAJOR_DEPRESSION"],
@@ -146,16 +147,17 @@ class QIFAtlas:
         for pathway in technique["pathways"]:
             if pathway in cls.DSM5_MAPPINGS:
                 mapping = cls.DSM5_MAPPINGS[pathway]
-                if mapping["severity_multiplier"] >= max_multiplier:
-                    max_multiplier = mapping["severity_multiplier"]
-                    primary_cluster = mapping["cluster"]
+                multiplier = float(mapping["severity_multiplier"])
+                if multiplier >= max_multiplier:
+                    max_multiplier = multiplier
+                    primary_cluster = str(mapping["cluster"])
                     # Pick the first/most severe diagnosis for the primary pathway
-                    primary_diagnosis = mapping["diagnoses"][0]
+                    primary_diagnosis = str(mapping["diagnoses"][0])
 
         # Calculate final Neural Impact Severity Score (NISS)
         # NISS increases with duration of exposure (simulating persistent/personality drift)
         duration_factor = min(2.0, 1.0 + (duration_sec / 300.0))  # Caps at 2x after 5 minutes
-        niss_score = min(10.0, technique["base_niss"] * max_multiplier * duration_factor)
+        niss_score = min(10.0, float(technique["base_niss"]) * max_multiplier * duration_factor)
 
         # Map NISS to ISO 14971 Severity
         if niss_score >= 8.0:
