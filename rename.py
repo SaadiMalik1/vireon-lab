@@ -2,7 +2,7 @@ import os
 import re
 
 directories = ['vireon', 'tests', 'examples', 'scripts', 'docs']
-files_to_update = ['pyproject.toml', 'Dockerfile', 'mkdocs.yml', 'README.md', 'runemate/python_ext/Cargo.toml', 'runemate/python_ext/src/lib.rs', 'datasets/validation_report.json', 'vireon/__main__.py']
+files_to_update = ['pyproject.toml', 'Dockerfile', 'mkdocs.yml', 'README.md', 'neuro_dsl/python_ext/Cargo.toml', 'neuro_dsl/python_ext/src/lib.rs', 'datasets/validation_report.json', 'vireon/__main__.py']
 
 replacements = [
     (r'\bimport neuroshield\b', 'import vireon'),
@@ -10,7 +10,7 @@ replacements = [
     (r'\bneuroshield\.', 'vireon.'),
     (r'\bneuroshield\b', 'vireon'),
     (r'\bNeuroShield\b', 'VIREON'),
-    (r'\bneuroshield_runemate\b', 'vireon_runemate')
+    (r'\bneuroshield_neuro_dsl\b', 'vireon_neuro_dsl')
 ]
 
 def process_file(filepath):

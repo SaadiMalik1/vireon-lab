@@ -3,7 +3,7 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
-manifest-path = "runemate/python_ext/Cargo.toml"
+manifest-path = "neuro_dsl/python_ext/Cargo.toml"
 [project]
 name = "vireon"
 version = "0.2.0"

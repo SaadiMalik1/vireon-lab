@@ -84,19 +84,19 @@ def validate():
 @click.argument('source_file', type=click.Path(exists=True))
 @click.option('--output', '-o', type=click.Path(), help='Output bytecode file')
 def compile(source_file, output):
-    """Compile a Runemate (.rme) script into secure bytecode."""
+    """Compile a NeuroDSL (.rme) script into secure bytecode."""
     try:
-        import vireon_runemate  # type: ignore
+        import vireon_neuro_dsl  # type: ignore
     except ImportError:
-        click.secho("Error: vireon_runemate extension not found. Did you run `pip install -e .` with maturin?", fg="red")
+        click.secho("Error: vireon_neuro_dsl extension not found. Did you run `pip install -e .` with maturin?", fg="red")
         return
         
-    click.echo(f"[Runemate] Compiling {source_file}...")
+    click.echo(f"[NeuroDSL] Compiling {source_file}...")
     with open(source_file, 'r') as f:
         source_code = f.read()
 
     try:
-        bytecode = vireon_runemate.compile_script(source_code)
+        bytecode = vireon_neuro_dsl.compile_script(source_code)
         if output:
             with open(output, 'wb') as f:
                 f.write(bytes(bytecode))

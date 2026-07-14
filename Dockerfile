@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpangoft2-1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Rust toolchain (needed for Maturin/Runemate build)
+# Install Rust toolchain (needed for Maturin/NeuroDSL build)
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 

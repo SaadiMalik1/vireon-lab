@@ -5,9 +5,9 @@
 ## Installation & Setup
 
 ### 1. The simulation crashes with a `maturin` or `Rust` error.
-VIREON uses `maturin` to compile the `runemate` Rust extension on the fly during `pip install` (or during testing). 
+VIREON uses `maturin` to compile the `neuro_dsl` Rust extension on the fly during `pip install` (or during testing). 
 - Ensure you have the Rust toolchain installed (`cargo --version`).
-- Ensure you are building from the root of the repository where the `pyproject.toml` correctly points to the `runemate/` directory.
+- Ensure you are building from the root of the repository where the `pyproject.toml` correctly points to the `neuro_dsl/` directory.
 
 ### 2. I get a "libpango" error when the simulation finishes.
 VIREON uses `weasyprint` to generate the end-of-simulation PDF reports. This requires system-level Pango and Cairo libraries. 

@@ -8,7 +8,7 @@ NeuroShield supports Linux, macOS, and Windows Subsystem for Linux (WSL2). Nativ
 
 Before installing the Python package, ensure you have the required system dependencies.
 
-### Rust Toolchain (Required for Runemate DSL)
+### Rust Toolchain (Required for NeuroDSL DSL)
 NeuroShield uses an embedded Rust compiler to securely execute clinical scripts. You must have Cargo installed.
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

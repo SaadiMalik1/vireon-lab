@@ -101,7 +101,7 @@ vireon/
 ├── core/           # Coordinator, Engine, ZTA, IDS, Digital Twin
 ├── plugins/        # Firmware Emulators, BLE clients, Extensible datasets
 ├── tests/          # Pytest validation and manual verification scripts
-├── runemate/       # Embedded Rust DSL Compiler
+├── neuro_dsl/       # Embedded Rust DSL Compiler
 ├── docs/           # Technical, scientific, and API documentation
 └── main.py         # CLI entry point
 ```

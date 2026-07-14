@@ -171,7 +171,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     if self.ips is not None:
                         self.ips.blocked_attacks_count += 1
                 self.send_error(400, f"Bad Request: {e}")
-        elif self.path == "/api/runemate/compile":
+        elif self.path == "/api/neuro_dsl/compile":
             if not self._check_cors() or not self._check_rate_limit():
                 return
             content_length = int(self.headers['Content-Length'])
@@ -180,7 +180,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 params = json.loads(post_data.decode('utf-8'))
                 source_code = params.get("source", "")
                 
-                # Execute runemate forge compiler
+                # Execute neuro_dsl forge compiler
                 import subprocess
                 # Write to temp file
                 import tempfile
@@ -189,7 +189,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     tmp_name = f.name
                     
                 cmd = f"cargo run --bin forge < {tmp_name}"
-                result = subprocess.run(cmd, shell=True, cwd="/home/ronin/Documents/n2/runemate", capture_output=True, text=True)
+                result = subprocess.run(cmd, shell=True, cwd="/home/ronin/Documents/n2/neuro_dsl", capture_output=True, text=True)
                 os.unlink(tmp_name)
                 
                 if result.returncode != 0:

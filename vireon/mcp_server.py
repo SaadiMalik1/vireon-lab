@@ -14,9 +14,9 @@ from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
 mcp = FastMCP("VIREON-Neural-Terminal")
 
 # -----------------------------------------------------------------------------
-# RUNEMATE CAPABILITY SYSTEM (Simulated)
+# NEURO_DSL CAPABILITY SYSTEM (Simulated)
 # -----------------------------------------------------------------------------
-# In the Runemate architecture, access is governed by cryptographically 
+# In the NeuroDSL architecture, access is governed by cryptographically 
 # verifiable capability tokens mapped to Neurorights.
 
 SERVER_SECRET = secrets.token_bytes(32)
@@ -142,7 +142,7 @@ def run_simulation(
         dbs_mode: Enable the Deep Brain Stimulation closed-loop model.
         dbs_attack: Inject a DBS-specific attack.
     """
-    # Capability Check (Runemate Tier 3-4 Enforcement)
+    # Capability Check (NeuroDSL Tier 3-4 Enforcement)
     if not _verify_capability(session_token, "simulation.run"):
         return json.dumps({
             "error": "Permission Denied: Capability 'simulation.run' required.",

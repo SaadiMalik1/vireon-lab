@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "vireon_runemate"
+name = "vireon_neuro_dsl"
 crate-type = ["cdylib"]
 
 [dependencies]
