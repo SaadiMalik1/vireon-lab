@@ -7,7 +7,6 @@ such as Threat Models, SBOMs, Risk Management files, and static security checks.
 """
 
 import os
-import json
 from typing import Dict, Any
 
 class SPDFAuditor:

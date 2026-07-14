@@ -9,7 +9,7 @@ def test_x509_validation():
         "public_key": "pubkey_hex",
         "signature": "VALID_ROOT_CA_SIG"
     }
-    assert CryptoEmulator.validate_x509_cert(valid_cert) == True
+    assert CryptoEmulator.validate_x509_cert(valid_cert)
     
     invalid_cert = valid_cert.copy()
     invalid_cert["signature"] = "BAD_SIG"

@@ -10,7 +10,7 @@ from vireon.core.attack import (
     SignalSuppressionAttack
 )
 from vireon.core.engine import ReplayEngine
-from vireon.core.utils import calculate_rms, calculate_bandpower
+from vireon.core.utils import calculate_rms
 
 class TestDigitalTwin(unittest.TestCase):
     def setUp(self):

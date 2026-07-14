@@ -11,11 +11,9 @@ References:
   - NTIA SBOM minimum elements
 """
 
-import json
 import os
 import re
 import uuid
-import hashlib
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 

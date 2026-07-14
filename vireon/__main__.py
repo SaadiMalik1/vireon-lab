@@ -115,7 +115,7 @@ def info():
     click.echo("=" * 60)
     click.echo(" VIREON — Virtual Neurosecurity Laboratory")
     click.echo("=" * 60)
-    click.echo(f" Version: 0.3.0")
+    click.echo(" Version: 0.3.0")
     click.echo(f" Python:  {sys.version.split()[0]}")
     click.echo()
 

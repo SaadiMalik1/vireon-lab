@@ -18,8 +18,8 @@ from vireon.core.attack import ISignalModifier
 from vireon.core.twin import DigitalTwin
 
 try:
-    import torch
-    TORCH_AVAILABLE = True
+    import importlib.util
+    TORCH_AVAILABLE = importlib.util.find_spec('torch') is not None
 except ImportError:
     TORCH_AVAILABLE = False
 

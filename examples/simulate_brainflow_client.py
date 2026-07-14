@@ -1,7 +1,6 @@
 import argparse
 import time
 import sys
-import numpy as np
 
 # We'll mock the brainflow imports for now if they aren't available, but we expect to run this inside the venv
 try:
@@ -67,7 +66,7 @@ def main():
             if board and board.is_prepared():
                 board.stop_stream()
                 board.release_session()
-        except:
+        except Exception:
             pass
 
 if __name__ == "__main__":

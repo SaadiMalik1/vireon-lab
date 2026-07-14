@@ -14,7 +14,6 @@ References:
   - ISO 14971 Risk Management
 """
 
-import json
 import os
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional

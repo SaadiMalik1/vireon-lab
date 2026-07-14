@@ -8,7 +8,7 @@ and Clean-Label Backdoor insertion (trigger injection without label change).
 
 import numpy as np
 import random
-from typing import List, Tuple, Optional
+from typing import Tuple, Optional
 
 class DataPoisoner:
     """Base class for data poisoning techniques."""

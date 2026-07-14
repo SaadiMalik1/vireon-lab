@@ -1,13 +1,11 @@
 import unittest
 import struct
 from vireon.plugins.firmware.cortex_m_stub import CortexMStub
-from vireon.core.twin import DigitalTwin
 
 class TestOTARollback(unittest.TestCase):
     def test_valid_ota_update(self):
         """Test that an OTA update with a valid/newer SVN succeeds and updates the efuse."""
         stub = CortexMStub()
-        initial_svn = stub.efuses["MIN_SVN"]
         
         # SVN is 2, higher than MIN_SVN (1)
         payload_version = 2

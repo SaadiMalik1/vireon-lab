@@ -455,7 +455,7 @@ class AttackScenario:
                 step._started = True
                 try:
                     # Resolve class/factory from PluginRegistry
-                    info = registry.get("attacks", step.attack_type)
+                    _info = registry.get("attacks", step.attack_type)
                     step._modifier_instance = registry.create(
                         "attacks", step.attack_type,
                         target_channels=step.target_channels,
@@ -551,7 +551,7 @@ class FirmwareRollbackAttack(ISignalModifier):
             # Version is lower than the expected minimum (e.g., SVN 0)
             malicious_binary = b'A' * 600000 # Large buffer designed to cause overflow if executed
             header = struct.pack('<I', self.payload_version)
-            full_payload = header + malicious_binary
+            _full_payload = header + malicious_binary
             
             # Record the attempt on the Digital Twin's event log or directly via the firmware
             twin.set_clinical_alert(True, f"Malicious OTA Downgrade Attempted (SVN {self.payload_version})")
@@ -570,7 +570,8 @@ class ElectrodeSaturationAttack(ISignalModifier):
     def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
-            if ch in eeg_channels: mutated[ch, :] = 1e6 # Max ADC value representation
+            if ch in eeg_channels: 
+                mutated[ch, :] = 1e6 # Max ADC value representation
         return mutated
 
 class PacketLossAttack(ISignalModifier):
@@ -581,7 +582,8 @@ class PacketLossAttack(ISignalModifier):
         mutated = data.copy()
         mask = np.random.rand(data.shape[1]) < self.drop_prob
         for ch in self.target_channels:
-            if ch in eeg_channels: mutated[ch, mask] = 0.0
+            if ch in eeg_channels: 
+                mutated[ch, mask] = 0.0
         return mutated
 
 class TimingJitterAttack(ISignalModifier):
@@ -593,7 +595,8 @@ class TimingJitterAttack(ISignalModifier):
         for ch in self.target_channels:
             if ch in eeg_channels:
                 shift = int((self.jitter_ms / 1000.0) * sample_rate)
-                if shift > 0: mutated[ch, :] = np.roll(mutated[ch, :], shift)
+                if shift > 0: 
+                    mutated[ch, :] = np.roll(mutated[ch, :], shift)
         return mutated
 
 class DropoutAttack(ISignalModifier):
@@ -606,7 +609,8 @@ class DropoutAttack(ISignalModifier):
         if drop_samples > 0 and drop_samples < data.shape[1]:
             start_idx = np.random.randint(0, data.shape[1] - drop_samples)
             for ch in self.target_channels:
-                if ch in eeg_channels: mutated[ch, start_idx:start_idx+drop_samples] = 0.0
+                if ch in eeg_channels: 
+                    mutated[ch, start_idx:start_idx+drop_samples] = 0.0
         return mutated
 
 class ClippingAttack(ISignalModifier):
@@ -616,7 +620,8 @@ class ClippingAttack(ISignalModifier):
     def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
-            if ch in eeg_channels: mutated[ch, :] = np.clip(mutated[ch, :], -self.clip_value, self.clip_value)
+            if ch in eeg_channels: 
+                mutated[ch, :] = np.clip(mutated[ch, :], -self.clip_value, self.clip_value)
         return mutated
 
 class AmplifierSaturationAttack(ISignalModifier):
@@ -625,7 +630,8 @@ class AmplifierSaturationAttack(ISignalModifier):
     def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
-            if ch in eeg_channels: mutated[ch, :] = np.where(mutated[ch, :] > 0, 500.0, -500.0)
+            if ch in eeg_channels: 
+                mutated[ch, :] = np.where(mutated[ch, :] > 0, 500.0, -500.0)
         return mutated
 
 class EMIAttack(ISignalModifier):
@@ -638,7 +644,8 @@ class EMIAttack(ISignalModifier):
         self.time_counter += data.shape[1] / sample_rate
         emi = 200.0 * np.sin(2 * np.pi * 50.0 * t) + 100.0 * np.sin(2 * np.pi * 60.0 * t)
         for ch in self.target_channels:
-            if ch in eeg_channels: mutated[ch, :] += emi
+            if ch in eeg_channels: 
+                mutated[ch, :] += emi
         return mutated
 
 class MotionArtifactAttack(ISignalModifier):

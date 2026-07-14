@@ -1,6 +1,5 @@
-import time
-import threading
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
+import numpy as np
 import os
 import json
 from vireon.core.physics import PhysicsEngine
@@ -259,7 +258,6 @@ class DigitalTwin:
             self.decoder_confidence = snap.get("decoder_confidence", self.decoder_confidence)
             self.clinical_alert_active = snap.get("clinical_alert_active", self.clinical_alert_active)
             self.clinical_status = snap.get("clinical_status", self.clinical_status)
-            self.hazard_state = snap.get("hazard_state", self.hazard_state)
             self.iso_severity = snap.get("iso_severity", self.iso_severity)
             self.tissue_damage_risk = snap.get("tissue_damage_risk", self.tissue_damage_risk)
             self.clinical_action = snap.get("clinical_action", self.clinical_action)

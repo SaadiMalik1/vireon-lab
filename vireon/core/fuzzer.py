@@ -15,7 +15,6 @@ Strategies:
 """
 
 import os
-import struct
 import random
 import time
 import json
