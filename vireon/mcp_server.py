@@ -109,7 +109,7 @@ def get_available_plugins() -> str:
     registry = _get_registry()
     cats = registry.list_categories()
     
-    result = {"categories": {}}
+    result: dict[str, dict[str, list[dict[str, str]]]] = {"categories": {}}
     for cat in cats:
         plugins = registry._registry.get(cat, {})
         result["categories"][cat] = [

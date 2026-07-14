@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine
-from vireon.core.security import LSTMAutoencoderIDS
+from vireon.core.security import DeepAutoencoderIDS
 from vireon.core.threat_intel import ThreatIntelligence
 from vireon.core.attack import SignalAttackEngine
 from vireon.core.redteam import FeedbackMutatorEngine
@@ -22,7 +22,7 @@ st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠
 def init_system():
     # Initialize components
     twin = DigitalTwin(hardware_mode=False) # Start in synth mode
-    ids = LSTMAutoencoderIDS(threshold=0.08)
+    ids = DeepAutoencoderIDS(threshold=0.08)
     ti = ThreatIntelligence(registry_path="vireon/core/data/qtara_stub.json")
     attack_engine = SignalAttackEngine(twin)
     red_team = FeedbackMutatorEngine(attack_engine)

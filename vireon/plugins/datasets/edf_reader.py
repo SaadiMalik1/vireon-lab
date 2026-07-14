@@ -54,7 +54,7 @@ class EDFReader(IDatasetReader):
                     "patient_name": self.reader.getPatientName().strip(),
                     "patient_code": self.reader.getPatientCode().strip(),
                     "gender": self.reader.getGender().strip(),
-                    "birthdate": self.reader.getBirthdate().strip(),
+                    "birthdate": str(self.reader.getBirthdate()).strip(),
                     "start_datetime": str(self.reader.getStartdatetime()),
                     "duration_sec": self._duration_sec,
                     "total_samples": self._total_samples,

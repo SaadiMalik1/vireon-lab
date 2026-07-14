@@ -201,7 +201,7 @@ class ValidationRunner:
 
     def _load_synthetic(self) -> Dict:
         """Load synthetic attack traces."""
-        traces = {"baseline": None, "attacks": []}
+        traces: Dict[str, Any] = {"baseline": None, "attacks": []}
         baseline_path = self.synthetic_dir / "normal" / "clean_baseline.json"
         if baseline_path.exists():
             with open(baseline_path) as f:

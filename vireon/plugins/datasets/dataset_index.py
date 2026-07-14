@@ -110,6 +110,7 @@ class DatasetIndexer:
 
     def _extract_file_metadata(self, path: str, ext: str) -> Dict[str, Any]:
         """Load the file with the appropriate reader (no fallback) to fetch metadata."""
+        reader: Any = None
         if ext in (".edf", ".bdf"):
             reader = EDFReader(path, fallback_on_error=False)
         elif ext == ".csv":
@@ -131,7 +132,7 @@ class DatasetIndexer:
 
     def _parse_bids_structure(self, rel_path: str) -> Dict[str, Any]:
         """Extract BIDS tokens (sub, ses, task, run) from directory path or filename."""
-        bids = {
+        bids: Dict[str, Any] = {
             "is_bids": False,
             "subject": None,
             "session": None,

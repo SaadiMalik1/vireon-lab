@@ -16,7 +16,7 @@ from typing import Dict, Any
 class E2EEChannel:
     def __init__(self, key_rotation_interval_sec: float = 3600.0):
         self.key_rotation_interval_sec = key_rotation_interval_sec
-        self.session_key = None
+        self.session_key: Optional[bytes] = None
         self.key_established_time = 0.0
         self.packets_since_rotation = 0
 
@@ -80,7 +80,7 @@ class E2EEChannel:
         if len(raw) < 28:
             raise ValueError("Invalid AES-GCM payload size")
             
-            ciphertext = raw[12:-16]
+        ciphertext = raw[12:-16]
         
         # Simple XOR mock decryption
         plaintext = bytearray()

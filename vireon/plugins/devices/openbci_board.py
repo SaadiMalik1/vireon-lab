@@ -27,7 +27,7 @@ class OpenBCICytonWrapper(IDeviceWrapper):
             
         self.board_id = BoardIds.CYTON_BOARD
         self.board = BoardShim(self.board_id, params)
-        self.ring_buffer = None
+        self.ring_buffer: np.ndarray = np.empty((self.num_channels + 1, 0))
         self.lock = threading.Lock()
         self.num_channels = len(BoardShim.get_eeg_channels(self.board_id))
 
@@ -91,7 +91,7 @@ class OpenBCIGanglionWrapper(IDeviceWrapper):
             
         self.board_id = BoardIds.GANGLION_BOARD
         self.board = BoardShim(self.board_id, params)
-        self.ring_buffer = None
+        self.ring_buffer: np.ndarray = np.empty((self.num_channels + 1, 0))
         self.lock = threading.Lock()
         self.num_channels = len(BoardShim.get_eeg_channels(self.board_id))
 

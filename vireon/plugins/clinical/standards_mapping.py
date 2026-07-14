@@ -34,7 +34,7 @@ class QIFAtlas:
     }
 
     # Dynamic Attack Techniques from STIX 2.1 Bundle
-    ATTACK_TECHNIQUES = {}
+    ATTACK_TECHNIQUES: dict[str, dict[str, str]] = {}
     _stix_loaded = False
 
     @classmethod

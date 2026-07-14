@@ -19,7 +19,7 @@ class HardwareBridge:
         self.lock = threading.Lock()
         
         # Internal queue to buffer parsed microvolt samples
-        self.sample_buffer = []
+        self.sample_buffer: list[Any] = []
 
     def start(self):
         self.running = True

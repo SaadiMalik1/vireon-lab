@@ -9,7 +9,7 @@ from vireon.core.twin import DigitalTwin
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
 
 # Shared context containing active web controls
-simulation_context = {
+simulation_context: Dict[str, Any] = {
     "dbs_mode": False,
     "secure_mode": False,
     "nsp_mode": False,
@@ -34,7 +34,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
     next_seq_no = 0
 
     _rate_limit_lock = threading.Lock()
-    _ip_timestamps = {}
+    _ip_timestamps: Dict[str, list[float]] = {}
 
     @classmethod
     def get_processor(cls):
@@ -266,7 +266,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 attack_type = str(params["active_attack"]).lower()
                 simulation_context["active_attack"] = attack_type
             else:
-                attack_type = simulation_context["active_attack"]
+                attack_type = str(simulation_context["active_attack"])
             
             # Clear existing signal modifiers
             with self.attack_engine.lock if hasattr(self.attack_engine, 'lock') else threading.Lock():
@@ -281,13 +281,13 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     except ValueError as e:
                         print(f"Error loading standard attack: {e}")
                 elif attack_type == "noise":
-                    self.attack_engine.add_modifier(NoiseInjectionAttack([0, 1], noise_level_microvolts=simulation_context["noise_intensity"]))
+                    self.attack_engine.add_modifier(NoiseInjectionAttack([0, 1], noise_level_microvolts=float(simulation_context["noise_intensity"])))
                 elif attack_type == "drift":
-                    self.attack_engine.add_modifier(SignalDriftAttack([0, 1], rate=10.0))
+                    self.attack_engine.add_modifier(SignalDriftAttack([0, 1], drift_rate_uv_per_sec=10.0))
                 elif attack_type == "impedance":
-                    self.attack_engine.add_modifier(ImpedanceSpikeAttack([0, 1], spike_value=simulation_context["impedance_kohm"]))
+                    self.attack_engine.add_modifier(ImpedanceSpikeAttack([0, 1], spike_value_kohm=float(simulation_context["impedance_kohm"])))
                 elif attack_type == "suppression":
-                    self.attack_engine.add_modifier(SignalSuppressionAttack([0, 1], attenuation_factor=simulation_context["attenuation_factor"]))
+                    self.attack_engine.add_modifier(SignalSuppressionAttack([0, 1], attenuation_factor=float(simulation_context["attenuation_factor"])))
                     
             # Update DBS attacks
             if attack_type == "phase_shift":

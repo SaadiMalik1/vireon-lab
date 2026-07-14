@@ -145,7 +145,7 @@ class OpenBCICytonEmulator:
                 end_idx = buffer.find(b'X', i)
                 if end_idx != -1:
                     config_cmd = buffer[i:end_idx+1]
-                    print(f"[OpenBCIEmulator] Received channel configuration command: {config_cmd}")
+                    print(f"[OpenBCIEmulator] Received channel configuration command: {config_cmd!r}")
                     # Respond with standard ack $$$
                     self._write_to_client(b"$$$")
                     i = end_idx + 1

@@ -357,7 +357,7 @@ class ChallengeRunner:
         self.scoreboard = Scoreboard()
         self.start_time: Optional[float] = None
 
-    def list_challenges(self) -> List[Dict[str, str]]:
+    def list_challenges(self) -> List[Dict[str, Any]]:
         """List all available built-in challenges."""
         challenges = []
         for cid, builder in BUILTIN_CHALLENGES.items():

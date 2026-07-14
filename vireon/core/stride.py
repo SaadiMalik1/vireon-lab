@@ -64,7 +64,7 @@ def generate_stride_model(config: Any = None) -> Dict[str, Any]:
         by_category[t.stride_category].append(t.__dict__)
 
     # Risk summary
-    severity_counts = {}
+    severity_counts: dict[str, int] = {}
     for t in threats:
         severity_counts[t.severity] = severity_counts.get(t.severity, 0) + 1
 

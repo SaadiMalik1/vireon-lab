@@ -10,15 +10,15 @@ except ImportError:
     HAS_BRAINFLOW = False
 
     # Mock classes if brainflow is not installed
-    class BrainFlowInputParams:
+    class BrainFlowInputParams:  # type: ignore[no-redef]
         def __init__(self):
             self.serial_port = ""
             
-    class BoardIds:
+    class BoardIds:  # type: ignore[no-redef]
         SYNTHETIC_BOARD = -1
         PIEEG_BOARD = 100 # custom mock id
 
-    class BoardShim:
+    class BoardShim:  # type: ignore[no-redef]
         def __init__(self, board_id: int, params: BrainFlowInputParams):
             self.board_id = board_id
             self.params = params

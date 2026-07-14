@@ -1,5 +1,5 @@
 import numpy as np
-
+from typing import Any
 class KuramotoModel:
     """
     Continuous Differential Equation Model of Neural Dynamics based on the Kuramoto model.
@@ -47,7 +47,7 @@ class KuramotoModel:
         coupling = (self.K / self.N) * np.sum(np.sin(theta_diffs), axis=1)
         
         # Calculate external forcing term: F * sin(Omega * t - theta_i)
-        forcing = 0.0
+        forcing: Any = 0.0
         if self.forcing_amplitude > 0:
             forcing = self.forcing_amplitude * np.sin(self.forcing_omega * global_time - self.phases)
             

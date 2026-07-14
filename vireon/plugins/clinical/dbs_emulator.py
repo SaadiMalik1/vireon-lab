@@ -90,7 +90,7 @@ class ClosedLoopDBSController:
         self.lfp_generator = LFPGenerator(twin.sample_rate, twin.num_channels)
         self.feedback_buffer = np.zeros(0)
         self.stimulation_mode = "none" # "none", "suppress", "sync"
-        self.history_beta_power = []
+        self.history_beta_power: list[float] = []
         self.attack_duration_ticks = 0
 
     def process_lfp(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, attack_active: bool):

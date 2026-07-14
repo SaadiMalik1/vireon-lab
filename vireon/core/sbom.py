@@ -28,7 +28,7 @@ def _parse_pyproject_toml(project_root: str) -> Dict[str, Any]:
         import tomllib
     except ImportError:
         try:
-            import tomli as tomllib
+            import tomli as tomllib  # type: ignore[no-redef]
         except ImportError:
             # Manual minimal parser for [project] section
             return _parse_toml_minimal(toml_path)

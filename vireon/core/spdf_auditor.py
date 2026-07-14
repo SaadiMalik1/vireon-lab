@@ -17,7 +17,7 @@ class SPDFAuditor:
     def audit(self) -> Dict[str, Any]:
         print(f"[SPDFAuditor] Auditing project root: {self.project_root} for FDA 524B SPDF compliance...")
         
-        results = {
+        results: Dict[str, Any] = {
             "sbom_present": False,
             "threat_model_present": False,
             "architecture_doc_present": False,

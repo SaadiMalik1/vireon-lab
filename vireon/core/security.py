@@ -55,7 +55,7 @@ class LinearAutoencoderIDS:
         self.mean: Optional[np.ndarray] = None
         self.is_fitted = False
         self.reconstruction_errors: List[float] = []
-        self.calibration_buffer = []
+        self.calibration_buffer: list[np.ndarray] = []
 
     def calibrate(self, data: np.ndarray):
         """Offline batch calibration to establish a mathematically stable baseline via Eigendecomposition."""
@@ -106,7 +106,7 @@ if TORCH_AVAILABLE:
             decoded, _ = self.decoder(encoded)
             return decoded
 else:
-    class LSTMAutoencoderModel:
+    class LSTMAutoencoderModel:  # type: ignore[no-redef]
         pass
 
 class DeepAutoencoderIDS:
@@ -122,7 +122,7 @@ class DeepAutoencoderIDS:
         self.criterion = nn.MSELoss()
         self.is_fitted = False
         self.reconstruction_errors: List[float] = []
-        self.calibration_buffer = []
+        self.calibration_buffer: list[np.ndarray] = []
 
     def calibrate(self, data: np.ndarray):
         """Offline batch calibration phase with validation split and early stopping."""
@@ -260,7 +260,7 @@ class NeuroSignalAssuranceEngine:
         self.ae_threshold = 0.5
         self.coherence_engine = CoherenceEngine()
         
-        self.history_confidence = []
+        self.history_confidence: list[float] = []
         # Initialize Threat Intelligence for logging
         registry_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../neurosecurity/datalake/qtara-registrar.json'))
         self.threat_intel = ThreatIntelligence(registry_path)

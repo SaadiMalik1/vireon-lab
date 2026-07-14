@@ -277,7 +277,7 @@ class SessionReplayAttack(ISignalModifier):
     def __init__(self, target_channels: List[int], capture_duration_sec: float = 5.0):
         self.target_channels = target_channels
         self.capture_duration_sec = capture_duration_sec
-        self.captured_data = None
+        self.captured_data: Optional[np.ndarray] = None
         self.capture_time = 0.0
         self.is_capturing = True
         self.replay_index = 0
@@ -300,6 +300,7 @@ class SessionReplayAttack(ISignalModifier):
             
         else:
             # Replay phase
+            assert self.captured_data is not None
             replay_chunk = np.zeros_like(data)
             cap_len = self.captured_data.shape[1]
             
@@ -339,7 +340,7 @@ class TemporalEvasionAttack(ISignalModifier):
         burst_mask = phase_in_cycle < self.burst_duration_sec
         
         if np.any(burst_mask):
-            payload = np.random.normal(0, self.amplitude, size=num_samples)
+            payload = np.random.normal(0, self.amplitude, size=(int(num_samples),))
             for ch in self.target_channels:
                 if ch in eeg_channels:
                     mutated_data[ch, burst_mask] += payload[burst_mask]
@@ -655,7 +656,7 @@ class MotionArtifactAttack(ISignalModifier):
         mutated = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels:
-                artifact = np.random.normal(0, 150.0, size=data.shape[1])
+                artifact = np.random.normal(0, 150.0, size=(data.shape[1],))
                 # low-pass filter the artifact to simulate motion
                 artifact = np.convolve(artifact, np.ones(10)/10, mode='same')
                 mutated[ch, :] += artifact
