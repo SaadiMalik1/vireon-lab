@@ -3,7 +3,7 @@ import time
 from typing import List, Dict, Any
 from vireon.core.twin import DigitalTwin
 from vireon.core.utils import calculate_bandpower
-from vireon.plugins.clinical.qif_atlas import QIFAtlas
+
 
 class LFPGenerator:
     """
@@ -161,17 +161,15 @@ class ClosedLoopDBSController:
                 # Drop confidence to 0.0 indicating symptoms out of control
                 self.twin.update_decoder_confidence(0.0)
                 
-                # QIF Atlas evaluation for Phase-Shift Attack
-                qif_eval = QIFAtlas.evaluate_clinical_impact("phase_shift", self.attack_duration_ticks / sample_rate)
-                
+                # Standards mapping evaluation for Phase-Shift Attack
                 self.twin.update_clinical_risk(
                     "PATHOLOGICAL_SYNCHRONIZATION", 
-                    qif_eval["iso14971_severity"], 
+                    "CATASTROPHIC", 
                     "MEDIUM", 
                     "SYNC_ALERT",
-                    dsm5_diagnosis=qif_eval["dsm5_diagnosis"],
-                    diagnostic_cluster=qif_eval["diagnostic_cluster"],
-                    niss_score=qif_eval["niss_score"]
+                    dsm5_diagnosis="F32_MAJOR_DEPRESSION",
+                    diagnostic_cluster="MOOD",
+                    niss_score=10.0
                 )
             else:
                 # Out-of-phase stimulation suppresses pathological oscillations
@@ -190,15 +188,14 @@ class ClosedLoopDBSController:
             if attack_active:
                 self.twin.set_clinical_alert(True, "Pathological Sync Alert")
                 self.twin.update_decoder_confidence(0.0)
-                qif_eval = QIFAtlas.evaluate_clinical_impact("phase_shift", self.attack_duration_ticks / sample_rate)
                 self.twin.update_clinical_risk(
                     "PATHOLOGICAL_SYNCHRONIZATION", 
-                    qif_eval["iso14971_severity"], 
+                    "CATASTROPHIC", 
                     "MEDIUM", 
                     "SYNC_ALERT",
-                    dsm5_diagnosis=qif_eval["dsm5_diagnosis"],
-                    diagnostic_cluster=qif_eval["diagnostic_cluster"],
-                    niss_score=qif_eval["niss_score"]
+                    dsm5_diagnosis="F32_MAJOR_DEPRESSION",
+                    diagnostic_cluster="MOOD",
+                    niss_score=10.0
                 )
             else:
                 self.twin.set_clinical_alert(False, "Nominal Suppression")

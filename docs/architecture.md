@@ -27,7 +27,7 @@ The `Coordinator` is the orchestration layer that ties the simulation together.
 ### The ReplayEngine Loop
 The core of the simulation is a strict timing loop managed by the `ReplayEngine`. It:
 - Pushes synthetic or pre-recorded EEG data into the twin at the defined `sample_rate`.
-- Dispatches this data to the `NeuroIDS` for immediate threat analysis.
+- Dispatches this data to the `NeuroSignalAssuranceEngine` for immediate threat analysis.
 - Calculates physical constraints and battery usage based on elapsed `dt`.
 
 ### Telemetry Dispatch
@@ -61,4 +61,4 @@ The VIREON platform includes an interactive dashboard built with **Streamlit** t
 - **State Panels**: Displays live `DigitalTwin` physical states (battery, temp, impedance) and alerts.
 - **Threat Intel Panel**: Visualizes active detections, **Red Team Engine** feedback scores, and their mapped qTARA classifications. 
 
-The dashboard provides a closed-loop environment where researchers can observe physiological responses, trigger runtime simulated attacks, and analyze the NeuroIDS mitigations interactively.
+The dashboard provides a closed-loop environment where researchers can observe physiological responses, trigger runtime simulated attacks, and analyze the NeuroSignalAssuranceEngine mitigations interactively.

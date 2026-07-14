@@ -124,12 +124,11 @@ class Coordinator:
         )
         self.attack_engine = SignalAttackEngine(self.twin, self.event_bus)
 
-        # 1.5 Initialize Threat Intel (TARA Mapping)
+        # 1.5 Initialize Threat Intel (Standards Mapping)
         try:
             from vireon.core.threat_intel import ThreatIntelligence
-            # Default path to the neurosecurity submodule/directory
-            registry_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "neurosecurity", "datalake", "qtara-registrar.json")
-            self.threat_intel = ThreatIntelligence(registry_path)
+            self.threat_intel = ThreatIntelligence()
+
         except Exception as e:
             logger.error(f"Could not initialize ThreatIntelligence", exc_info=True)
             self.threat_intel = None
@@ -179,8 +178,8 @@ class Coordinator:
         # 6. Security layer
         if self.config.security.enabled or self.config.web.enabled:
             print("[VIREON] Initializing Neuro Security Layer (IDS/IPS Active)...")
-            from vireon.core.security import NeuroIDS, NeuroIPS, BLELinkGuard
-            self.ids = NeuroIDS(
+            from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS, BLELinkGuard
+            self.ids = NeuroSignalAssuranceEngine(
                 self.twin, self.event_bus,
                 rms_high_threshold=self.config.security.rms_high_threshold,
                 rms_low_threshold=self.config.security.rms_low_threshold,
@@ -287,7 +286,7 @@ class Coordinator:
                     # Terminal telemetry dashboard
                     sys.stdout.write("\033[H\033[J")
                     sys.stdout.write(format_telemetry_table(self.twin))
-                    if self.emulator:
+                    if self.emulator and hasattr(self.emulator, 'slave_name'):
                         sys.stdout.write(f"Virtual Cyton Port : {self.emulator.slave_name}\n")
                     sys.stdout.write(f"\nRemaining Time: {max(0.0, self.config.duration_sec - (time.time() - start_time)):.1f}s\n")
                     sys.stdout.write(f"Sim Clock: {self.engine.sim_clock:.1f}s | Speed: {self.engine.speed:.1f}x\n")
@@ -310,7 +309,7 @@ class Coordinator:
         print("\n[VIREON] Stopping replay engine...")
         if self.engine:
             self.engine.stop()
-        if self.emulator:
+        if self.emulator and hasattr(self.emulator, 'stop'):
             self.emulator.stop()
         if self.bridge:
             self.bridge.stop()
@@ -397,8 +396,8 @@ class Coordinator:
             elif attack_name == "stimulation_leak":
                 print("[VIREON] Injecting Stimulation Leak Attack")
                 if self.config.security.enabled:
-                    from vireon.core.security import NeuroIDS, NeuroIPS
-                    temp_ids = NeuroIDS(self.twin)
+                    from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
+                    temp_ids = NeuroSignalAssuranceEngine(self.twin)
                     temp_ips = NeuroIPS(self.twin, temp_ids)
                     amp, freq = temp_ips.sanitize_stimulation_write(10.0, 130.0)
                     self.twin.update_therapy(True)
@@ -673,7 +672,7 @@ class Coordinator:
                 "active_attack": active_attack
             }
             
-            # Map Active Attack to TARA Intel
+            # Map Active Attack to Threat Intel
             if self.threat_intel and active_attack != "none":
                 tara_intel = self.threat_intel.resolve_attack(active_attack)
                 if tara_intel:

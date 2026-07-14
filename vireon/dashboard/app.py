@@ -99,7 +99,14 @@ if state["clinical_alert_active"] and engine.active_attack != "none":
     
     threat_info = ti.resolve_attack(engine.active_attack)
     if threat_info:
-        st.write(f"**TARA ID**: {threat_info['tara_id']}")
+        if "cwe" in threat_info:
+            st.write(f"**CWE**: {threat_info['cwe']}")
+        if "stride" in threat_info:
+            st.write(f"**STRIDE**: {threat_info['stride']}")
+        if "mitre_attack" in threat_info:
+            st.write(f"**MITRE ATT&CK**: {threat_info['mitre_attack']}")
+        if "iso_14971_category" in threat_info:
+            st.write(f"**ISO 14971**: {threat_info['iso_14971_category']}")
         st.write(f"**Name**: {threat_info['name']}")
         st.write(f"**Severity**: {threat_info['severity']}")
         st.write(f"**Description**: {threat_info['description']}")

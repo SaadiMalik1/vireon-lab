@@ -1,0 +1,7 @@
+calibration_windows: 8
+crest_baseline: 14.5
+dataset_name: chbmit
+description: CHB-MIT Scalp EEG Database
+entropy_baseline: 0.88
+rms_baseline: 12.0
+sample_rate: 256

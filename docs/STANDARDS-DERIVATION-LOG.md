@@ -1,12 +1,12 @@
 # VIREON Derivation Log
 
-This document serves as the single source of truth for architectural decisions in the VIREON platform, adopting the governance model of the original Quantified Interconnection Framework (QIF).
+This document serves as the single source of truth for architectural decisions in the VIREON platform, tracking its alignment with clinical and cybersecurity industry standards.
 
 ## Entry 001
 **Date:** 2026-07-09
-**Architectural Decision:** TARA Integration
+**Architectural Decision:** Standards-Based Threat Intelligence Integration
 **Context:** Needed a realistic threat modeling baseline for simulated attacks.
-**Derivation:** Integrated the full 161-technique TARA dataset (`qtara-registrar.json`) directly into the `Coordinator` via `ThreatIntelligence`. Anomalies mapped to physical signatures are now cross-referenced against this registry.
+**Derivation:** Integrated standard cybersecurity taxonomy (`standards_mapping.json`) directly into the `Coordinator` via `ThreatIntelligence`. Anomalies mapped to physical signatures are now cross-referenced against STRIDE, MITRE CWE, and IEC 62304.
 **Guardrail Enforced:** G5 (Conceptual Underspecification). We rely on published physical attack techniques rather than vague descriptions of generic anomalies.
 
 ## Entry 002

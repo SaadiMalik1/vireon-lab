@@ -21,7 +21,7 @@ To accurately model cyber-physical attacks on medical implants, VIREON establish
 
 ## Epistemic Limits (Scientific Bounding)
 
-VIREON adheres to the *OSI of Mind* framework principles regarding scientific validity. We explicitly refuse to simulate "sci-fi" attacks.
+VIREON adheres to established industry standards regarding scientific validity. We explicitly refuse to simulate "sci-fi" attacks.
 
 ### In-Scope Attacks (Simulated)
 - **Denial of Service (DoS)**: Draining the battery via continuous stimulation or flooding the BLE stack.

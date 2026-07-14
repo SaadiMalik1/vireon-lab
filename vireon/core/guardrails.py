@@ -1,7 +1,7 @@
 """
 Neuroethics Guardrail Validation Engine
 
-Enforces the 8 Neuroethics Guardrails defined in QIF (osi-of-mind/GUARDRAILS.md)
+Enforces the 8 Neuroethics Guardrails defined in VIREON (docs/GUARDRAILS.md)
 at the technical level within the VIREON platform.
 """
 

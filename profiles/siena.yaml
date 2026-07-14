@@ -1,0 +1,7 @@
+calibration_windows: 5
+crest_baseline: 16.0
+dataset_name: siena
+description: Siena Scalp EEG Database
+entropy_baseline: 0.84
+rms_baseline: 14.2
+sample_rate: 512
