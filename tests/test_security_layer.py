@@ -1,12 +1,12 @@
 import unittest
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroIDS, NeuroIPS, BLELinkGuard
+from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS, BLELinkGuard
 
 class TestNeuroSecurityLayer(unittest.TestCase):
     def setUp(self):
         self.twin = DigitalTwin(num_channels=8)
-        self.ids = NeuroIDS(self.twin)
+        self.ids = NeuroSignalAssuranceEngine(self.twin)
         self.ips = NeuroIPS(self.twin, self.ids)
         self.link_guard = BLELinkGuard(self.twin)
 
@@ -23,7 +23,7 @@ class TestNeuroSecurityLayer(unittest.TestCase):
 
         # 3. Clean signal check
         # Instantiate fresh IDS to avoid stateful CUSUM/Autoencoder drift triggers
-        ids_fresh = NeuroIDS(self.twin)
+        ids_fresh = NeuroSignalAssuranceEngine(self.twin)
         clean_data = np.random.normal(0, 10.0, (8, 100))
         anomalies = ids_fresh.analyze_signal(clean_data)
         self.assertEqual(len(anomalies), 0)

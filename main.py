@@ -1,8 +1,8 @@
 """
-NeuroShield Legacy CLI Entry Point.
+VIREON Legacy CLI Entry Point.
 
 Delegates execution to the new Coordinator-based command-line interface
-in neuroshield.__main__. Provides full backward compatibility for legacy
+in vireon.__main__. Provides full backward compatibility for legacy
 options by auto-routing to the 'run' subcommand.
 """
 
@@ -12,7 +12,7 @@ import os
 # Ensure the root package is in Python path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from neuroshield.__main__ import main
+from vireon.__main__ import main
 
 if __name__ == "__main__":
     # If no subcommand is specified, default to the legacy 'run' subcommand

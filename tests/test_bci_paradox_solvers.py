@@ -1,14 +1,14 @@
 import unittest
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroIDS, NeuroIPS
+from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
 from vireon.core.protocol import RFFrameProcessor, ProtocolError
 
 class TestBCIParadoxSolvers(unittest.TestCase):
     def setUp(self):
         self.twin = DigitalTwin(num_channels=8)
         self.twin.fallback_mode_enabled = True
-        self.ids = NeuroIDS(self.twin)
+        self.ids = NeuroSignalAssuranceEngine(self.twin)
         self.ips = NeuroIPS(self.twin, self.ids)
 
     def test_active_impedance_probe(self):
