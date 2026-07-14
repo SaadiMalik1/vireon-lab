@@ -16,3 +16,4 @@ This document tracks systematic documentation updates across the VIREON project 
 | `docs/plugin-development.md` | Complete | Removed proprietary qTARA/QIF terminology and updated to use generic standards-based Threat Intelligence mapping. | 2026-07-14 |
 | `docs/glossary.md` | Complete | Removed OSI of Mind and qTARA sections; replaced QIF attack identifiers with generic terms aligned with STRIDE and standard clinical safety nomenclature. | 2026-07-14 |
 | `docs/design-decisions/0004-threat-model.md` | Complete | Removed OSI of Mind framework reference in favor of generic clinical and neuroethics guardrails terminology. | 2026-07-14 |
+| `knowledge/neuroscience/neuron-basics.md` | Complete | Drafted foundational entry on electrochemical neuron modeling from a neurosecurity/engineering perspective. | 2026-07-14 |
