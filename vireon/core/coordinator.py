@@ -6,16 +6,7 @@ import numpy as np
 import logging
 logger = logging.getLogger(__name__)
 
-"""
-VIREON Coordinator — Central orchestrator for the simulation pipeline.
-
-Replaces the monolithic main() function with a properly structured class
-that can be used both programmatically and from the CLI.
-"""
-
 from typing import Optional, Dict, Any
-
-
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
@@ -25,7 +16,12 @@ from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
 from vireon.core.utils import format_telemetry_table
 from vireon.plugins.clinical.closed_loop import ClosedLoopSimulator
 
+"""
+VIREON Coordinator — Central orchestrator for the simulation pipeline.
 
+Replaces the monolithic main() function with a properly structured class
+that can be used both programmatically and from the CLI.
+"""
 class Coordinator:
     """
     Orchestrates a VIREON simulation experiment.

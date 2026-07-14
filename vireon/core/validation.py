@@ -1,5 +1,11 @@
 import time
 import json
+import logging
+import struct
+from pathlib import Path
+import numpy as np
+from typing import Dict, List, Optional, Tuple
+
 """
 VIREON Automated Validation Suite
 
@@ -7,12 +13,6 @@ Loads real EEG datasets (EDF format) and synthetic attack traces,
 feeds them through the NeuroSignalAssuranceEngine pipeline, and produces computed
 benchmark metrics. Zero external dependencies beyond numpy.
 """
-import logging
-import struct
-from pathlib import Path
-import numpy as np
-from typing import Dict, List, Optional, Tuple
-
 logger = logging.getLogger(__name__)
 
 

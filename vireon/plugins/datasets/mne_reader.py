@@ -5,7 +5,8 @@ from vireon.plugins.datasets import IDatasetReader
 from vireon.plugins.datasets.mock_reader import MockEEGReader
 
 try:
-        HAS_MNE = True
+    import mne
+    HAS_MNE = True
 except ImportError:
     HAS_MNE = False
 

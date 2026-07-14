@@ -43,9 +43,9 @@ class EmotivEpocEmulator(IDeviceWrapper):
             # If twin doesn't have 14 channels, pad or truncate
             base_eeg = state["cortical_lfp"]
             if len(base_eeg) < self.num_channels:
-                eeg_data = np.pad(base_eeg, (0, self.num_channels - len(base_eeg)), mode='reflect')
+                _eeg_data = np.pad(base_eeg, (0, self.num_channels - len(base_eeg)), mode='reflect')
             else:
-                eeg_data = base_eeg[:self.num_channels]
+                _eeg_data = base_eeg[:self.num_channels]
             
             self.packet_counter = (self.packet_counter + 1) % 128
             

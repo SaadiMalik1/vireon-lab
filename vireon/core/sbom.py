@@ -1,4 +1,10 @@
 import json
+import os
+import re
+import uuid
+from datetime import datetime, timezone
+from typing import Dict, List, Any
+
 """
 VIREON SBOM Generator — CycloneDX 1.5 Software Bill of Materials.
 
@@ -11,16 +17,6 @@ References:
   - FDA "Cybersecurity in Medical Devices" (Feb 2026)
   - NTIA SBOM minimum elements
 """
-
-import os
-import re
-import uuid
-from datetime import datetime, timezone
-from typing import Dict, List, Any
-
-
-
-
 def _parse_pyproject_toml(project_root: str) -> Dict[str, Any]:
     """Parse pyproject.toml to extract project metadata and dependencies."""
     toml_path = os.path.join(project_root, "pyproject.toml")

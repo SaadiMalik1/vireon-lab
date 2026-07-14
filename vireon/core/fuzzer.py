@@ -1,4 +1,12 @@
 import struct
+import random
+import time
+import json
+from typing import List, Dict, Any, Optional, Tuple
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from vireon.core.protocol import RFFrameProcessor, ProtocolError
+
 """
 VIREON Protocol Fuzzer — Mutation-based fuzz testing for BCI telemetry frames.
 
@@ -14,19 +22,6 @@ Strategies:
   - Oversized payload: Frames exceeding expected length
   - Field mutation: Individual field corruption
 """
-
-import random
-import time
-import json
-from typing import List, Dict, Any, Optional, Tuple
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-
-
-
-from vireon.core.protocol import RFFrameProcessor, ProtocolError
-
-
 @dataclass
 class FuzzResult:
     """Result of a single fuzz test case."""
