@@ -1,10 +1,10 @@
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroIDS
+from vireon.core.security import NeuroSignalAssuranceEngine
 
 def test_autoencoder_and_cusum():
     twin = DigitalTwin()
-    ids = NeuroIDS(twin)
+    ids = NeuroSignalAssuranceEngine(twin)
     
     # Send nominal data (pink noise-like) to establish baseline
     for _ in range(50):

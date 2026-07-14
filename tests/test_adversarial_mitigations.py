@@ -1,13 +1,13 @@
 import unittest
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroIDS, NeuroIPS
+from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
 from vireon.core.protocol import RFFrameProcessor, ProtocolError
 
 class TestAdversarialMitigations(unittest.TestCase):
     def setUp(self):
         self.twin = DigitalTwin(num_channels=8)
-        self.ids = NeuroIDS(self.twin)
+        self.ids = NeuroSignalAssuranceEngine(self.twin)
         self.ips = NeuroIPS(self.twin, self.ids)
 
     def test_sequence_window_and_dynamic_keys(self):
