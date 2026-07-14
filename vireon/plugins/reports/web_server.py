@@ -3,7 +3,6 @@ import socketserver
 import threading
 import json
 import os
-import sys
 import urllib.parse
 from typing import Dict, Any
 from vireon.core.twin import DigitalTwin

@@ -132,15 +132,17 @@ class ClosedLoopDBSController:
         if len(beta_idx) > 0:
             peak_idx = beta_idx[np.argmax(np.abs(fft_vals[beta_idx]))]
             # Phase angle in radians (-pi to pi)
-            
+            pass
         else:
-            
+            pass
 
         # 3. Decision loop
         # If the security layer has shut off therapy due to detected sync, do not re-enable
         state_curr = self.twin.get_state()
         if state_curr["clinical_status"] == "IDS Suspend: Sync Detected":
             self.stimulation_mode = "none"
+        else:
+            pass
             self.twin.update_therapy(False)
             self.twin.update_stimulation_params(0.0, 0.0)
             return

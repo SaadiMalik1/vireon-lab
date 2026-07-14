@@ -1,7 +1,7 @@
 import asyncio
 import threading
 import urllib.parse
-from typing import Set, Any, Optional
+from typing import Set, Optional
 import websockets
 
 class NeuroWebSocketServer:

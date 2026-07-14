@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from vireon.plugins.datasets import IDatasetReader
 from vireon.plugins.datasets.mock_reader import MockEEGReader
 
@@ -32,7 +32,7 @@ class FIFReader(IDatasetReader):
 
         if not HAS_MNE:
             if fallback_on_error:
-                print(f"[FIFReader] mne-python not installed. Falling back to MockEEGReader.")
+                print("[FIFReader] mne-python not installed. Falling back to MockEEGReader.")
                 self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
             else:
                 raise ImportError("mne is required to read FIF files but was not found.")

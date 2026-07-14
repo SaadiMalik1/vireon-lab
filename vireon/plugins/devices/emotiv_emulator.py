@@ -18,7 +18,7 @@ class EmotivEpocEmulator(IDeviceWrapper):
         self.sample_rate = 128
         self.num_channels = 14
         self.channel_names = ["AF3", "F7", "F3", "FC5", "T7", "P7", "O1", "O2", "P8", "T8", "FC6", "F4", "F8", "AF4"]
-        self.
+
     def start(self):
         self.running = True
         self.thread = threading.Thread(target=self._stream_loop, daemon=True)

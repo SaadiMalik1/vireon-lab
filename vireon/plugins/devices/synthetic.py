@@ -4,7 +4,6 @@ from vireon.plugins.devices import IDeviceWrapper
 
 # Graceful check for brainflow
 try:
-    import brainflow
     from brainflow.board_shim import BoardShim, BoardIds, BrainFlowInputParams
     HAS_BRAINFLOW = True
 except ImportError:

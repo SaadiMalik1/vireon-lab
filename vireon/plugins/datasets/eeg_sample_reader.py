@@ -1,7 +1,7 @@
 import json
 import os
 import numpy as np
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from vireon.plugins.datasets import IDatasetReader
 
 class EEGSampleReader(IDatasetReader):

@@ -1,6 +1,5 @@
 import json
 import time
-import os
 from typing import Dict, Any, List
 from jinja2 import Environment, BaseLoader, select_autoescape
 from markupsafe import Markup
@@ -563,7 +562,7 @@ class ReportGenerator:
         md.append("")
         if summary.get("security_active"):
             md.append("## Neuro Security Shield Audit")
-            md.append(f"- **Security Status:** `ACTIVE` (IDS/IPS Enabled)")
+            md.append("- **Security Status:** `ACTIVE` (IDS/IPS Enabled)")
             md.append(f"- **Blocked Intrusions:** `{summary.get('blocked_attacks_count', 0)}`")
             md.append(f"- **MTU Abuses Blocked:** `{summary.get('blocked_mtu_abuses', 0)}`")
             if 'p300_leakage_events' in summary:

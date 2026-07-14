@@ -1,6 +1,5 @@
 import threading
 import time
-import numpy as np
 from vireon.core.twin import DigitalTwin
 from vireon.plugins.devices import IDeviceWrapper
 
@@ -41,7 +40,7 @@ class MuseEmulator(IDeviceWrapper):
             
             # Read state from twin
             state = self.twin.get_state()
-            eeg_data = state["cortical_lfp"][:self.num_channels]
+            _eeg_data = state["cortical_lfp"][:self.num_channels]
             
             # Form Muse packet (Timestamp, PacketId, TP9, AF7, AF8, TP10)
             self.packet_counter = (self.packet_counter + 1) % 65536

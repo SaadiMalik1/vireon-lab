@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 class GATTCharacteristic:
     def __init__(self, uuid: str, value: bytes = b"", permissions: List[str] = None):

@@ -133,7 +133,7 @@ class Coordinator:
             self.threat_intel = ThreatIntelligence()
 
         except Exception:
-            logger.error(\"Could not initialize ThreatIntelligence\", exc_info=True)
+            logger.error("Could not initialize ThreatIntelligence", exc_info=True)
             self.threat_intel = None
 
         # Enable event logging for reproducibility
@@ -377,22 +377,22 @@ class Coordinator:
 
         for attack_name in self.config.attacks.active:
             if attack_name == "noise":
-                print(\"[VIREON] Injecting Noise Attack (SD={self.config.attacks.noise_level_uv} uV)\")
+                print(f"[VIREON] Injecting Noise Attack (SD={self.config.attacks.noise_level_uv} uV)")
                 self.attack_engine.add_modifier(
                     NoiseInjectionAttack(target_channels, self.config.attacks.noise_level_uv)
                 )
             elif attack_name == "drift":
-                print(\"[VIREON] Injecting Signal Drift Attack\")
+                print("[VIREON] Injecting Signal Drift Attack")
                 self.attack_engine.add_modifier(
                     SignalDriftAttack(target_channels, self.config.attacks.drift_rate_uv_per_sec)
                 )
             elif attack_name == "impedance":
-                print(\"[VIREON] Injecting Impedance Spike Attack\")
+                print("[VIREON] Injecting Impedance Spike Attack")
                 self.attack_engine.add_modifier(
                     ImpedanceSpikeAttack(target_channels, self.config.attacks.spike_impedance_kohm)
                 )
             elif attack_name == "suppression":
-                print(\"[VIREON] Injecting Signal Suppression Attack\")
+                print("[VIREON] Injecting Signal Suppression Attack")
                 self.attack_engine.add_modifier(
                     SignalSuppressionAttack(target_channels, self.config.attacks.attenuation_factor)
                 )
@@ -431,7 +431,7 @@ class Coordinator:
             else:
                 print(f"[VIREON] Warning: Unknown device type '{self.config.device.type}'")
         except Exception:
-            logger.error(\"Error loading device module\", exc_info=True)
+            logger.error("Error loading device module", exc_info=True)
             sys.exit(1)
         return device_wrapper
 
@@ -467,7 +467,7 @@ class Coordinator:
             self.lsl_streamer = LSLStreamer(num_channels=self.twin.num_channels, srate=self.twin.sample_rate)
             self.config.duration_sec = 100000.0  # Run indefinitely in LSL mode
         except Exception:
-            logger.error(\"Failed to start LSL Streamer\", exc_info=True)
+            logger.error("Failed to start LSL Streamer", exc_info=True)
 
     def _setup_web_server(self):
         """Start the Web UI dashboard."""

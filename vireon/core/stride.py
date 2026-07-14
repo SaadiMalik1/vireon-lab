@@ -20,6 +20,8 @@ from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 
 
+
+
 @dataclass
 class ThreatEntry:
     """A single STRIDE threat entry."""

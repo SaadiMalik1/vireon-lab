@@ -1,8 +1,8 @@
-import os
 import time
 import threading
+from vireon.plugins.devices import IDeviceWrapper
 import numpy as np
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 # Dynamic mock of Raspberry Pi GPIO and spidev if not present
 try:
@@ -256,8 +256,6 @@ class PiEEGSpiBoard:
             data = np.column_stack(self.buffer)
             self.buffer.clear()
             return data
-
-from vireon.plugins.devices import IDeviceWrapper
 
 class PiEEGBoardWrapper(IDeviceWrapper):
     """

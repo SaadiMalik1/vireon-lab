@@ -1,8 +1,6 @@
 import socket
 import threading
-import time
 import numpy as np
-from typing import List
 
 class HardwareBridge:
     """

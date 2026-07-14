@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from vireon.plugins.datasets import IDatasetReader
 from vireon.plugins.datasets.mock_reader import MockEEGReader
 
@@ -30,7 +30,7 @@ class MNEReader(IDatasetReader):
 
         if not HAS_MNE:
             if fallback_on_error:
-                print(f"[MNEReader] mne-python not installed. Falling back to MockEEGReader.")
+                print("[MNEReader] mne-python not installed. Falling back to MockEEGReader.")
                 self.mock_reader = MockEEGReader(self._sample_rate, self._num_channels)
             else:
                 raise ImportError("mne is required to read these files but was not found.")

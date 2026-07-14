@@ -6,7 +6,7 @@ a micro-controller running VIREON firmware. Includes basic checks for
 memory corruption and buffer overflows during OTA updates or command handling.
 """
 
-from typing import Dict, Tuple, Optional
+from typing import Tuple
 import struct
 
 class CortexMStub:

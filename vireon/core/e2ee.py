@@ -80,7 +80,7 @@ class E2EEChannel:
         if len(raw) < 28:
             raise ValueError("Invalid AES-GCM payload size")
             
-                ciphertext = raw[12:-16]
+            ciphertext = raw[12:-16]
         
         # Simple XOR mock decryption
         plaintext = bytearray()

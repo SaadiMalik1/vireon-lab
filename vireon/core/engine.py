@@ -220,7 +220,7 @@ class ReplayEngine:
                         raw_data = data_chunk
                     else:
                         raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
-                except Exception:
+                except Exception as e:
                     logger.error(f"Board read error: {e}")
                     raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
 

@@ -168,7 +168,7 @@ class ValidationRunner:
         # 95% CI for FPR and Sensitivity (TPR)
         def calc_ci(p, n):
             if n == 0:
-            return 0.0
+                return 0.0
             return 1.96 * math.sqrt((p * (1 - p)) / n)
             
         fpr_ci = calc_ci(fpr, total_n)
@@ -382,10 +382,10 @@ class ValidationRunner:
         # Build numpy arrays from the synthetic JSON
         # The generator uses 'data' key for samples and 'fs' for sample rate
         baseline_raw = traces["baseline"].get("data", traces["baseline"].get("samples", []))
-                if not baseline_raw:
+        if not baseline_raw:
             return {"module": "synthetic", "status": "skipped", "error": "empty baseline"}
 
-                if isinstance(baseline_raw[0], list):
+        if isinstance(baseline_raw[0], list):
             data = np.array(baseline_raw).T
         else:
             data = np.array(baseline_raw).reshape(1, -1)

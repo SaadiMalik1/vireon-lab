@@ -5,13 +5,13 @@ import termios
 import tty
 import threading
 import time
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
 import numpy as np
 import logging
 
-logger = logging.getLogger(__name__)
-
 from vireon.core.twin import DigitalTwin
+
+logger = logging.getLogger(__name__)
 
 class OpenBCICytonEmulator:
     def __init__(self, twin: DigitalTwin):
@@ -49,7 +49,7 @@ class OpenBCICytonEmulator:
                 attrs[3] &= ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
                 attrs[1] &= ~termios.OPOST
                 termios.tcsetattr(self.slave_fd, termios.TCSANOW, attrs)
-            except Exception as e:
+            except Exception:
                 logger.error("Warning setting raw tty attributes", exc_info=True)
             
             # Set non-blocking mode on master
@@ -108,7 +108,7 @@ class OpenBCICytonEmulator:
             except BlockingIOError:
                 # No data available, sleep briefly
                 time.sleep(0.01)
-            except Exception as e:
+            except Exception:
                 # Handle disconnect or close
                 if self.running:
                     logger.error("PTY read exception", exc_info=True)
@@ -169,7 +169,7 @@ class OpenBCICytonEmulator:
         if self.master_fd is not None:
             try:
                 os.write(self.master_fd, data)
-            except Exception as e:
+            except Exception:
                 logger.error("Error writing to master", exc_info=True)
 
     def send_eeg_data(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int):
@@ -177,6 +177,7 @@ class OpenBCICytonEmulator:
         Receives real-time data chunks from the ReplayEngine, serializes them
         into 33-byte Cyton binary packets, and streams them to the client.
         """
+        
         with self.lock:
             if not self.streaming:
                 return
