@@ -15,7 +15,7 @@ We formally bound the VIREON threat model to the following constraints:
    - The Patient's physiological state is **trusted** but *influenceable*. The attacker cannot directly rewrite the EEG, but they can induce physical changes (e.g., over-stimulation) that manifest as EEG alterations.
 
 2. **Epistemic Limits**:
-   - Following the *OSI of Mind* framework, VIREON explicitly refuses to model "mind-reading" attacks (e.g., inferring complex language from simple motor EEG). Attacks are limited to scientifically validated phenomena: Denial of Service, Battery Depletion, Tissue Heating, and broad state inference (e.g., Sleep vs. Awake).
+   - In alignment with strict clinical and neuroethics guardrails, VIREON explicitly refuses to model "mind-reading" attacks (e.g., inferring complex language from simple motor EEG). Attacks are limited to scientifically validated phenomena: Denial of Service, Battery Depletion, Tissue Heating, and broad state inference (e.g., Sleep vs. Awake).
 
 ## Consequences
 

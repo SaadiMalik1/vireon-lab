@@ -16,7 +16,7 @@ simulation_context = {
     "nsp_mode": False,
     "hardware_mode": False,
     "dbs_attack": "", # "", "phase_shift"
-    "active_attack": "none", # "none", or QIF-TXXXX
+    "active_attack": "none", # "none", or standard internal identifier
     "noise_intensity": 50.0,
     "attenuation_factor": 0.1,
     "impedance_kohm": 60.0,
@@ -111,24 +111,14 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json(state)
         elif self.path == "/api/history":
             self.send_json(self.twin.get_history())
-        elif self.path == "/api/stix.json":
-            # Serve the offline copy of the TARA STIX bundle
-            stix_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "clinical", "data", "tara_stix.json")
-            if os.path.exists(stix_path):
-                with open(stix_path, "r", encoding="utf-8") as f:
+        elif self.path == "/api/standards_mapping.json":
+            mapping_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "core", "data", "standards_mapping.json")
+            if os.path.exists(mapping_path):
+                with open(mapping_path, "r", encoding="utf-8") as f:
                     bundle = json.load(f)
                 self.send_json(bundle)
             else:
-                self.send_error(404, "STIX offline bundle not found")
-        elif self.path == "/api/qif.json":
-            # Serve the unified offline QIF bundle
-            qif_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "clinical", "data", "qif.json")
-            if os.path.exists(qif_path):
-                with open(qif_path, "r", encoding="utf-8") as f:
-                    bundle = json.load(f)
-                self.send_json(bundle)
-            else:
-                self.send_error(404, "QIF unified bundle not found")
+                self.send_error(404, "Standards mapping bundle not found")
         elif self.path == "/" or self.path == "/index.html":
             # Inject WS Token dynamically into index.html
             full_path = self.translate_path(self.path)
@@ -251,8 +241,8 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if self.ips is not None:
                     amp, freq = self.ips.sanitize_stimulation_write(amp, freq)
                 else:
-                    from vireon.core.security import NeuroIDS, NeuroIPS
-                    temp_ids = NeuroIDS(self.twin)
+                    from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
+                    temp_ids = NeuroSignalAssuranceEngine(self.twin)
                     temp_ips = NeuroIPS(self.twin, temp_ids)
                     amp, freq = temp_ips.sanitize_stimulation_write(amp, freq)
                 
@@ -284,13 +274,13 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.attack_engine.modifiers.clear()
                 
                 # Apply new signal attacks using current context intensity values
-                if attack_type.startswith("qif-"):
+                if attack_type not in ["noise", "drift", "impedance", "suppression", "none", "", "phase_shift", "stimulation_leak"]:
                     from vireon.core.attack_factory import AttackFactory
                     try:
-                        dynamic_attack = AttackFactory.create_from_qif(attack_type.upper(), target_channels=[0, 1])
+                        dynamic_attack = AttackFactory.create_dynamic_attack(attack_type, target_channels=[0, 1])
                         self.attack_engine.add_modifier(dynamic_attack)
                     except ValueError as e:
-                        print(f"Error loading QIF attack: {e}")
+                        print(f"Error loading standard attack: {e}")
                 elif attack_type == "noise":
                     self.attack_engine.add_modifier(NoiseInjectionAttack([0, 1], noise_level_microvolts=simulation_context["noise_intensity"]))
                 elif attack_type == "drift":
@@ -314,8 +304,8 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     leak.apply()
                 else:
                     # If secure mode is active, clamp it safely
-                    from vireon.core.security import NeuroIDS, NeuroIPS
-                    temp_ids = NeuroIDS(self.twin)
+                    from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
+                    temp_ids = NeuroSignalAssuranceEngine(self.twin)
                     temp_ips = NeuroIPS(self.twin, temp_ids)
                     amp, freq = temp_ips.sanitize_stimulation_write(10.0, 130.0)
                     self.twin.update_therapy(True)

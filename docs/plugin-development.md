@@ -54,11 +54,11 @@ my_attack.apply(coordinator.ble_client, coordinator.ble_link)
 
 ## 4. Threat Intelligence Mapping
 
-If your custom attack maps to a known theoretical neurosecurity threat, you should tag it with a qTARA code so the NeuroIDS and reporting engine can categorize it correctly.
+If your custom attack maps to a known theoretical neurosecurity threat, you should tag it with a standard mapping identifier so the NeuroSignalAssuranceEngine and reporting engine can categorize it correctly against STRIDE or MITRE CWE.
 
 ```python
-# Inside your attack logic:
-coordinator.twin.set_clinical_alert(True, "QIF-T0004: Resource Exhaustion Detected")
+def execute(self, coordinator):
+    coordinator.twin.set_clinical_alert(True, "ATTACK-004: Resource Exhaustion Detected")
 ```
 
-See the [qTARA Registry](threat-model/qTARA-registry.md) for valid codes.
+See the [Standards Mapping Registry](validation/standards-mapping.md) for valid threat categories.

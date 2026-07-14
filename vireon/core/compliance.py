@@ -175,8 +175,8 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
     controls.append({
         "family": "intrusion_detection",
         "control_id": "NS-IDS-001",
-        "name": "NeuroIDS Signal Anomaly Detection",
-        "module": "vireon.core.security.NeuroIDS",
+        "name": "NeuroSignalAssuranceEngine Signal Anomaly Detection",
+        "module": "vireon.core.security.NeuroSignalAssuranceEngine",
         "status": "IMPLEMENTED",
         "evidence": "Multi-layer detection: RMS thresholds, spectral entropy, CUSUM drift, autoencoder, coherence",
     })
@@ -184,7 +184,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "family": "intrusion_detection",
         "control_id": "NS-IDS-002",
         "name": "Command Jitter Detection",
-        "module": "vireon.core.security.NeuroIDS.analyze_commands",
+        "module": "vireon.core.security.NeuroSignalAssuranceEngine.analyze_commands",
         "status": "IMPLEMENTED",
         "evidence": "Detects >5 parameter changes within 3-second window",
     })

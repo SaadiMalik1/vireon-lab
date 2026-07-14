@@ -1,0 +1,7 @@
+calibration_windows: 5
+crest_baseline: 15.0
+dataset_name: physionet
+description: PhysioNet EEG Motor Movement/Imagery Dataset
+entropy_baseline: 0.85
+rms_baseline: 18.5
+sample_rate: 160

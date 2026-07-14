@@ -1,0 +1,7 @@
+calibration_windows: 5
+crest_baseline: 20.0
+dataset_name: openbci
+description: Synthetic OpenBCI Dataset
+entropy_baseline: 0.8
+rms_baseline: 25.0
+sample_rate: 250

@@ -155,7 +155,7 @@ def _enumerate_threats(config: Any = None) -> List[ThreatEntry]:
        "SessionReplayAttack: capture clean data, then loop over target channels",
        "High", "Medium",
        "Spectral entropy analysis detects statistical uniformity of replayed signals",
-       "vireon.core.security.NeuroIDS")
+       "vireon.core.security.NeuroSignalAssuranceEngine")
 
     # ==================== TAMPERING ====================
     _t("T", "RF Telemetry", "Frame Payload",
@@ -186,7 +186,7 @@ def _enumerate_threats(config: Any = None) -> List[ThreatEntry]:
        "FramingDesynchronizationAttack: crafted microvolt values exploit unescaped framing",
        "Medium", "Medium",
        "IDS detects spectral anomalies from constant-value injection",
-       "vireon.core.security.NeuroIDS")
+       "vireon.core.security.NeuroSignalAssuranceEngine")
 
     # ==================== REPUDIATION ====================
     _t("R", "Event Bus", "Attack Timeline",
@@ -238,7 +238,7 @@ def _enumerate_threats(config: Any = None) -> List[ThreatEntry]:
        "NoiseInjectionAttack at high amplitude across all channels",
        "Medium", "High",
        "CUSUM alarm resets prevent infinite alert loops; IDS detection list capped at 1000 entries",
-       "vireon.core.security.NeuroIDS",
+       "vireon.core.security.NeuroSignalAssuranceEngine",
        "QIF-T2102")
 
     _t("D", "Digital Twin", "Battery/Temperature",

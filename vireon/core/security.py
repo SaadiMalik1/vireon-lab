@@ -196,7 +196,7 @@ class DeepAutoencoderIDS:
 
 class CoherenceEngine:
     """
-    Implements the QIF Coherence (Cs) metric for cross-modal validation.
+    Implements the Cross-Modal Coherence metric for validation.
     If a primary cortical stimulation occurs (e.g. visual phosphene), a corresponding
     autonomic response (e.g. pupil dilation) should follow. If missing, trust drops.
     """
@@ -218,7 +218,7 @@ class CoherenceEngine:
         return self.coherence_score
 
 
-class NeuroIDS:
+class NeuroSignalAssuranceEngine:
     """
     Intrusion Detection System for Brain-Computer Interfaces.
     Monitors signal dynamics and clinical trends in real time to detect
@@ -260,6 +260,7 @@ class NeuroIDS:
         self.ae_threshold = 0.5
         self.coherence_engine = CoherenceEngine()
         
+        self.history_confidence = []
         # Initialize Threat Intelligence for logging
         registry_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../neurosecurity/datalake/qtara-registrar.json'))
         self.threat_intel = ThreatIntelligence(registry_path)
@@ -333,7 +334,7 @@ class NeuroIDS:
             anomalies.append("STRUCTURAL_DEVIATION_ANOMALY")
             self._log_detection("STRUCTURAL_DEVIATION_ANOMALY", -1, ae_error)
 
-        # 5. QIF Cross-Modal Coherence (Cs) Check
+        # 5. Cross-Modal Coherence Check
         # If stimulation is running, the twin's secondary markers must match
         is_stimulating = self.twin.stimulation_enabled and self.twin.stimulation_amplitude_ma > 0
         cs_score = self.coherence_engine.evaluate(is_stimulating, self.twin.autonomic_pupil_dilation_mm)
@@ -421,15 +422,15 @@ class NeuroIDS:
         
         # Heuristic mapping for basic anomalies
         if anomaly_type == "HIGH_NOISE_ANOMALY":
-            tara_id = "QIF-T2102"
-        elif anomaly_type == "COHERENCE_FAILURE_ANOMALY":
-            tara_id = "QIF-T2201"
-        elif anomaly_type == "PATHOLOGICAL_SYNCHRONIZATION_ATTACK":
-            tara_id = "QIF-T2301"
-        elif anomaly_type == "SPECTRAL_SPOOFING_ANOMALY":
-            tara_id = "QIF-T2202"
-        elif anomaly_type == "SIGNAL_SUPPRESSION_ANOMALY":
-            tara_id = "QIF-T2101"
+            tara_id = "CWE-284"
+        elif anomaly_type == "BandPowerSkew":
+            tara_id = "CWE-284"
+        elif anomaly_type == "PathologicalSync":
+            tara_id = "CWE-284"
+        elif anomaly_type == "CoherenceDrop":
+            tara_id = "CWE-400"
+        elif anomaly_type == "Clipping/Saturation":
+            tara_id = "CWE-400"
             
         if tara_id and hasattr(self.threat_intel, "loader") and self.threat_intel.loader:
             tech = self.threat_intel.loader.get_technique(tara_id)
@@ -473,7 +474,7 @@ class NeuroIDS:
             self.detections.pop(0)
         
         # Print for visibility
-        print(f"[NeuroIDS] Detection: {anomaly_type} on Ch{channel} (Region: {brain_region_name}) -> TARA: {tara_id} ({description}) | Severity: {severity}")
+        print(f"[NSAE] Detection: {anomaly_type} on Ch{channel} (Region: {brain_region_name}) -> CWE/Mapping: {tara_id} ({description}) | Severity: {severity}")
 
 
 class NeuroIPS:
@@ -483,7 +484,7 @@ class NeuroIPS:
     filters corrupted signals, and enforces link layer security.
     """
 
-    def __init__(self, twin: DigitalTwin, ids: NeuroIDS, event_bus: Optional[EventBus] = None,
+    def __init__(self, twin: DigitalTwin, ids: NeuroSignalAssuranceEngine, event_bus: Optional[EventBus] = None,
                  max_stimulation_amplitude_ma: float = 4.0,
                  max_cumulative_charge: float = 5200.0):
         self.twin = twin

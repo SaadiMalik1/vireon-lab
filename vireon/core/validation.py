@@ -2,7 +2,7 @@
 VIREON Automated Validation Suite
 
 Loads real EEG datasets (EDF format) and synthetic attack traces,
-feeds them through the NeuroIDS pipeline, and produces computed
+feeds them through the NeuroSignalAssuranceEngine pipeline, and produces computed
 benchmark metrics. Zero external dependencies beyond numpy.
 """
 import logging
@@ -125,7 +125,7 @@ class EDFReader:
 # ---------------------------------------------------------------------------
 class ValidationRunner:
     """
-    Automated validation pipeline that exercises the NeuroIDS against
+    Automated validation pipeline that exercises the NeuroSignalAssuranceEngine against
     real and synthetic datasets to produce computed benchmark metrics.
     """
 
@@ -133,6 +133,57 @@ class ValidationRunner:
         self.data_dir = Path(data_dir)
         self.synthetic_dir = self.data_dir / "synthetic"
         self.results: List[Dict] = []
+
+    def _load_profile(self, dataset_name: str) -> Optional[Dict]:
+        import yaml
+        # Try to match profile by dataset name prefix (e.g. 'physionet_1' -> 'physionet')
+        profile_path = Path("profiles") / f"{dataset_name}.yaml"
+        if profile_path.exists():
+            with open(profile_path, "r") as f:
+                return yaml.safe_load(f)
+        return None
+
+    def _compute_metrics(self, tp: int, tn: int, fp: int, fn: int) -> Dict:
+        import math
+        total_p = tp + fn
+        total_n = tn + fp
+        
+        tpr = tp / max(total_p, 1)  # Sensitivity / Recall
+        tnr = tn / max(total_n, 1)  # Specificity
+        fpr = fp / max(total_n, 1)
+        fnr = fn / max(total_p, 1)
+        
+        precision = tp / max(tp + fp, 1)
+        f1 = (2 * precision * tpr) / max(precision + tpr, 1e-9)
+        balanced_accuracy = (tpr + tnr) / 2
+        
+        # MCC
+        denom = math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+        mcc = ((tp * tn) - (fp * fn)) / max(denom, 1e-9)
+        
+        # 95% CI for FPR and Sensitivity (TPR)
+        def calc_ci(p, n):
+            if n == 0: return 0.0
+            return 1.96 * math.sqrt((p * (1 - p)) / n)
+            
+        fpr_ci = calc_ci(fpr, total_n)
+        tpr_ci = calc_ci(tpr, total_p)
+        
+        # For a binary classifier with point estimates, ROC-AUC is approximated by Balanced Accuracy
+        roc_auc = balanced_accuracy
+
+        return {
+            "TP": tp, "TN": tn, "FP": fp, "FN": fn,
+            "Recall": round(tpr, 4),
+            "Specificity": round(tnr, 4),
+            "Precision": round(precision, 4),
+            "F1": round(f1, 4),
+            "Balanced_Accuracy": round(balanced_accuracy, 4),
+            "MCC": round(mcc, 4),
+            "ROC-AUC": round(roc_auc, 4),
+            "FPR_95_CI": f"{max(0, fpr - fpr_ci):.1%} - {min(1, fpr + fpr_ci):.1%}",
+            "Sensitivity_95_CI": f"{max(0, tpr - tpr_ci):.1%} - {min(1, tpr + tpr_ci):.1%}"
+        }
 
     def _find_edf_files(self) -> List[Path]:
         """Discover all downloaded EDF files."""
@@ -159,7 +210,7 @@ class ValidationRunner:
 
     def validate_ids_on_edf(self, edf_path: Path, max_seconds: float = 30.0) -> Dict:
         """
-        Run the NeuroIDS against a real EDF dataset.
+        Run the NeuroSignalAssuranceEngine against a real EDF dataset.
         
         Pipeline:
         1. Load the first `max_seconds` of the EDF file.
@@ -170,7 +221,7 @@ class ValidationRunner:
         Returns a benchmark dict with computed metrics.
         """
         from vireon.core.twin import DigitalTwin
-        from vireon.core.security import NeuroIDS, calculate_spectral_features
+        from vireon.core.security import NeuroSignalAssuranceEngine, calculate_spectral_features
         from vireon.core.attack import NoiseInjectionAttack, SignalDriftAttack
 
         print(f"  Loading {edf_path.name}...", end=" ", flush=True)
@@ -196,7 +247,17 @@ class ValidationRunner:
         # Define analysis windows (1-second chunks)
         window_size = sample_rate
         n_windows = n_samples // window_size
-        calibration_windows = min(10, n_windows // 3)  # Use ~1/3 for calibration
+        
+        # Derive generic profile name from filename (e.g. 'physionet_run1.edf' -> 'physionet')
+        dataset_name = edf_path.stem.split('_')[0].lower()
+        if 'sleep' in dataset_name: dataset_name = 'sleep_edf'
+        profile = self._load_profile(dataset_name)
+        
+        if profile:
+            calibration_windows = profile.get("calibration_windows", 5)
+            print(f"(Using profile: {profile.get('dataset_name', dataset_name)})", end=" ")
+        else:
+            calibration_windows = min(10, n_windows // 3)
 
         if n_windows < 3:
             print("  SKIP (insufficient data for calibration)")
@@ -218,7 +279,7 @@ class ValidationRunner:
         # --- Phase 1: Clean baseline (false positive measurement) ---
         # Use adapted thresholds based on calibration
         twin = DigitalTwin(sample_rate=sample_rate, num_channels=use_channels)
-        ids_engine = NeuroIDS(twin)
+        ids_engine = NeuroSignalAssuranceEngine(twin)
         # Adapt the spectral thresholds for this dataset
         # (The IDS uses calculate_spectral_features internally with hardcoded thresholds,
         #  so we adapt the RMS thresholds to avoid triggering on legitimate signals)
@@ -230,6 +291,7 @@ class ValidationRunner:
 
         # Now measure false positives on the remaining clean windows
         false_positives = 0
+        true_negatives = 0
         total_clean = 0
         t_start = time.perf_counter()
 
@@ -237,56 +299,59 @@ class ValidationRunner:
             window = data_subset[:, i * window_size : (i + 1) * window_size]
             anomalies = ids_engine.analyze_signal(window)
             total_clean += 1
-            # Only count RMS-based anomalies as false positives (spectral thresholds
-            # need per-dataset calibration which is a known limitation)
+            # Only count RMS-based anomalies as false positives
             rms_anomalies = [a for a in anomalies 
                              if a in ("HIGH_NOISE_ANOMALY", "SIGNAL_SUPPRESSION_ANOMALY", "SLOW_DRIFT_ANOMALY")]
             if rms_anomalies:
                 false_positives += 1
+            else:
+                true_negatives += 1
 
         clean_latency_ms = ((time.perf_counter() - t_start) / max(total_clean, 1)) * 1000
-        fp_rate = false_positives / max(total_clean, 1)
 
         # --- Phase 2: Noise injection attack (detection measurement) ---
         twin2 = DigitalTwin(sample_rate=sample_rate, num_channels=use_channels)
-        ids_noise = NeuroIDS(twin2)
+        ids_noise = NeuroSignalAssuranceEngine(twin2)
         noise_attack = NoiseInjectionAttack(
             target_channels=list(range(use_channels)),
             noise_level_microvolts=200.0
         )
         eeg_ch_list = list(range(use_channels))
 
-        noise_detected = 0
-        total_attacked = 0
+        noise_true_positives = 0
+        noise_false_negatives = 0
         for i in range(n_windows):
             window = data_subset[:, i * window_size : (i + 1) * window_size]
             attacked_window = noise_attack.apply(window, eeg_ch_list, sample_rate, twin2)
             anomalies = ids_noise.analyze_signal(attacked_window)
-            total_attacked += 1
             if anomalies:
-                noise_detected += 1
-
-        noise_detection_rate = noise_detected / max(total_attacked, 1)
+                noise_true_positives += 1
+            else:
+                noise_false_negatives += 1
 
         # --- Phase 3: Signal drift attack (detection measurement) ---
         twin3 = DigitalTwin(sample_rate=sample_rate, num_channels=use_channels)
-        ids_drift = NeuroIDS(twin3)
+        ids_drift = NeuroSignalAssuranceEngine(twin3)
         drift_attack = SignalDriftAttack(
             target_channels=list(range(use_channels)),
             drift_rate_uv_per_sec=50.0
         )
 
-        drift_detected = 0
-        total_drift = 0
+        drift_true_positives = 0
+        drift_false_negatives = 0
         for i in range(n_windows):
             window = data_subset[:, i * window_size : (i + 1) * window_size]
             attacked_window = drift_attack.apply(window, eeg_ch_list, sample_rate, twin3)
             anomalies = ids_drift.analyze_signal(attacked_window)
-            total_drift += 1
             if anomalies:
-                drift_detected += 1
+                drift_true_positives += 1
+            else:
+                drift_false_negatives += 1
 
-        drift_detection_rate = drift_detected / max(total_drift, 1)
+        # Aggregate for unified metrics
+        tp_total = noise_true_positives + drift_true_positives
+        fn_total = noise_false_negatives + drift_false_negatives
+        stats = self._compute_metrics(tp_total, true_negatives, false_positives, fn_total)
 
         return {
             "file": edf_path.name,
@@ -295,10 +360,8 @@ class ValidationRunner:
             "sample_rate_hz": sample_rate,
             "duration_seconds": round(n_samples / sample_rate, 1),
             "windows_analyzed": total_clean,
-            "false_positive_rate": round(fp_rate, 4),
-            "noise_injection_detection_rate": round(noise_detection_rate, 4),
-            "signal_drift_detection_rate": round(drift_detection_rate, 4),
-            "avg_latency_ms": round(clean_latency_ms, 2)
+            "avg_latency_ms": round(clean_latency_ms, 2),
+            **stats
         }
 
     def validate_synthetic(self) -> Dict:
@@ -308,7 +371,7 @@ class ValidationRunner:
             return {"module": "synthetic", "status": "skipped", "error": "no synthetic data"}
 
         from vireon.core.twin import DigitalTwin
-        from vireon.core.security import NeuroIDS
+        from vireon.core.security import NeuroSignalAssuranceEngine
 
         # Build numpy arrays from the synthetic JSON
         # The generator uses 'data' key for samples and 'fs' for sample rate
@@ -324,7 +387,7 @@ class ValidationRunner:
             data = np.array(baseline_raw).reshape(1, -1)
 
         twin = DigitalTwin(sample_rate=250, num_channels=data.shape[0])
-        ids_engine = NeuroIDS(twin)
+        ids_engine = NeuroSignalAssuranceEngine(twin)
 
         # Analyze baseline
         anomalies = ids_engine.analyze_signal(data)
@@ -342,7 +405,7 @@ class ValidationRunner:
                 attack_data = np.array(attack_raw).reshape(1, -1)
 
             twin_a = DigitalTwin(sample_rate=trace_json.get("fs", 250), num_channels=attack_data.shape[0])
-            ids_a = NeuroIDS(twin_a)
+            ids_a = NeuroSignalAssuranceEngine(twin_a)
             a_anomalies = ids_a.analyze_signal(attack_data)
             if a_anomalies:
                 attacks_caught.append(attack_trace["name"])
@@ -388,10 +451,11 @@ class ValidationRunner:
                 self.results.append(result)
 
                 if result.get("status") == "validated":
-                    print(f"    FP Rate: {result['false_positive_rate']:.2%}  |  "
-                          f"Noise Det: {result['noise_injection_detection_rate']:.2%}  |  "
-                          f"Drift Det: {result['signal_drift_detection_rate']:.2%}  |  "
-                          f"Latency: {result['avg_latency_ms']:.1f}ms")
+                    print(f"    FP Rate: {result.get('FP', 0)/(result.get('FP', 0) + result.get('TN', 1)):.2%}  |  "
+                          f"Sensitivity: {result.get('Recall', 0):.2%}  |  "
+                          f"ROC-AUC: {result.get('ROC-AUC', 0):.3f}  |  "
+                          f"Latency: {result.get('avg_latency_ms', 0):.1f}ms")
+                    print(f"    [95% CIs] FPR: {result.get('FPR_95_CI')} | Sensitivity: {result.get('Sensitivity_95_CI')}")
 
         # 3. Summary report
         print("\n" + "=" * 56)

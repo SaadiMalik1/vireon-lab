@@ -1,0 +1,7 @@
+calibration_windows: 10
+crest_baseline: 25.4
+dataset_name: sleep_edf
+description: Sleep-EDF Database Expanded
+entropy_baseline: 0.91
+rms_baseline: 22.1
+sample_rate: 100
