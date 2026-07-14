@@ -4,7 +4,7 @@ import logging
 import struct
 from pathlib import Path
 import numpy as np
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 """
 VIREON Automated Validation Suite

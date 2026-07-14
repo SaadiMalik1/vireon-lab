@@ -1,6 +1,7 @@
 import socket
 import threading
 import numpy as np
+from typing import Any
 
 class HardwareBridge:
     """

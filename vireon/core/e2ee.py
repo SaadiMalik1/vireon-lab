@@ -11,7 +11,7 @@ import os
 import json
 import base64
 import time
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 class E2EEChannel:
     def __init__(self, key_rotation_interval_sec: float = 3600.0):
