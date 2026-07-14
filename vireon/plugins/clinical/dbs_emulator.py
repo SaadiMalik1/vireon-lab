@@ -130,7 +130,7 @@ class ClosedLoopDBSController:
         # Peak frequency in beta band
         beta_idx = np.where((fft_freqs >= 13.0) & (fft_freqs <= 30.0))[0]
         if len(beta_idx) > 0:
-            peak_idx = beta_idx[np.argmax(np.abs(fft_vals[beta_idx]))]
+            _peak_idx = beta_idx[np.argmax(np.abs(fft_vals[beta_idx]))]
             # Phase angle in radians (-pi to pi)
             pass
         else:

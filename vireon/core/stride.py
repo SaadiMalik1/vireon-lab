@@ -1,4 +1,8 @@
 import json
+from datetime import datetime, timezone
+from typing import Dict, List, Any, Optional
+from dataclasses import dataclass
+
 """
 VIREON STRIDE Threat Model Auto-Generator.
 
@@ -14,14 +18,6 @@ References:
   - FDA "Cybersecurity in Medical Devices" (Feb 2026) §3.8
   - ISO 14971 Risk Management
 """
-
-from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass
-
-
-
-
 @dataclass
 class ThreatEntry:
     """A single STRIDE threat entry."""
