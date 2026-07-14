@@ -1,7 +1,8 @@
+import numpy as np
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 from vireon.core.twin import DigitalTwin
-from vireon.core.utils import calculate_rms, calculate_bandpower
+from vireon.core.utils import calculate_rms
 
 class IClinicalEvaluator(ABC):
     @abstractmethod

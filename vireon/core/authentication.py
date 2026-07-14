@@ -8,7 +8,7 @@ prevent physical spoofing or "borrowed" implant usage.
 """
 
 import numpy as np
-from typing import Dict, Any
+from typing import Dict
 
 class BiometricGate:
     def __init__(self, authorized_profile: Dict[str, float], tolerance: float = 0.15):

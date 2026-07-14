@@ -1,4 +1,3 @@
-from typing import Optional
 from vireon.core.attack import SignalAttackEngine, TemporalEvasionAttack, NoiseInjectionAttack, SignalDriftAttack
 
 class FeedbackMutatorEngine:

@@ -1,3 +1,4 @@
+import struct
 """
 VIREON Protocol Fuzzer — Mutation-based fuzz testing for BCI telemetry frames.
 
@@ -14,7 +15,6 @@ Strategies:
   - Field mutation: Individual field corruption
 """
 
-import os
 import random
 import time
 import json

@@ -1,3 +1,4 @@
+import json
 """
 VIREON SBOM Generator — CycloneDX 1.5 Software Bill of Materials.
 
@@ -15,7 +16,7 @@ import os
 import re
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 
 
 def _parse_pyproject_toml(project_root: str) -> Dict[str, Any]:

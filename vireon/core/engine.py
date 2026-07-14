@@ -1,3 +1,6 @@
+from vireon.core.twin import DigitalTwin
+from vireon.core.attack import SignalAttackEngine
+
 import time
 import threading
 import numpy as np
@@ -7,8 +10,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from vireon.core.twin import DigitalTwin
-from vireon.core.attack import SignalAttackEngine
 
 
 class ReplayEngine:
@@ -165,7 +166,7 @@ class ReplayEngine:
                         board.prepare_session()
                     if board and board.is_prepared():
                         board.start_stream()
-            except Exception as e:
+            except Exception:
                 logger.error("Warning starting board stream", exc_info=True)
         else:
             eeg_channels = list(range(num_channels))
@@ -207,7 +208,7 @@ class ReplayEngine:
             if self.device_wrapper is not None and hasattr(self.device_wrapper, 'read_chunk'):
                 try:
                     raw_data = self.device_wrapper.read_chunk(0, num_samples_per_chunk)
-                except Exception as e:
+                except Exception:
                     logger.error("Device wrapper read error", exc_info=True)
                     raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
                     
@@ -219,7 +220,7 @@ class ReplayEngine:
                         raw_data = data_chunk
                     else:
                         raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
-                except Exception as e:
+                except Exception:
                     logger.error(f"Board read error: {e}")
                     raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
 
@@ -228,7 +229,7 @@ class ReplayEngine:
                 try:
                     raw_data = self.dataset_reader.read_chunk(self.dataset_sample_position, num_samples_per_chunk)
                     self.dataset_sample_position += num_samples_per_chunk
-                except Exception as e:
+                except Exception:
                     # End of file or read error
                     if self._loop_dataset:
                         self.dataset_sample_position = 0
@@ -238,7 +239,7 @@ class ReplayEngine:
                         except Exception:
                             raw_data = np.full((num_channels, num_samples_per_chunk), np.nan)
                     else:
-                        print(f"[ReplayEngine] Dataset exhausted, stopping.")
+                        print("[ReplayEngine] Dataset exhausted, stopping.")
                         self.running = False
                         break
 
@@ -280,7 +281,7 @@ class ReplayEngine:
                             # Step the VM with current data
                             # The VM can observe the data and possibly manipulate therapy parameters
                             _ = self.scribe.execute_step(flattened)
-                        except Exception as e:
+                        except Exception:
                             logger.error("Scribe VM execution error", exc_info=True)
 
                     # Invoke clinical simulation callbacks concurrently to avoid GIL starvation
@@ -294,13 +295,13 @@ class ReplayEngine:
         if self.device_wrapper is not None and hasattr(self.device_wrapper, "stop_stream"):
             try:
                 self.device_wrapper.stop_stream()
-            except Exception as e:
+            except Exception:
                 logger.error("Error stopping device stream", exc_info=True)
         elif board is not None:
             try:
                 board.stop_stream()
                 board.release_session()
-            except Exception as e:
+            except Exception:
                 logger.error("Error releasing board session", exc_info=True)
 
     def get_buffer(self) -> Optional[np.ndarray]:

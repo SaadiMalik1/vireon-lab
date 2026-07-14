@@ -1,6 +1,4 @@
-import time
-import numpy as np
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 
 class GATTCharacteristic:
     def __init__(self, uuid: str, value: bytes = b"", permissions: List[str] = None):

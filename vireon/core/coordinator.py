@@ -1,3 +1,11 @@
+import time
+import sys
+import os
+import threading
+import numpy as np
+import logging
+logger = logging.getLogger(__name__)
+
 """
 VIREON Coordinator — Central orchestrator for the simulation pipeline.
 
@@ -10,7 +18,7 @@ from typing import Optional, Dict, Any
 
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine
-from vireon.core.attack import SignalAttackEngine, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
+from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
 from vireon.core.event_bus import EventBus, Event
 from vireon.core.config import ExperimentConfig
 from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
@@ -124,8 +132,8 @@ class Coordinator:
             from vireon.core.threat_intel import ThreatIntelligence
             self.threat_intel = ThreatIntelligence()
 
-        except Exception as e:
-            logger.error(f"Could not initialize ThreatIntelligence", exc_info=True)
+        except Exception:
+            logger.error(\"Could not initialize ThreatIntelligence\", exc_info=True)
             self.threat_intel = None
 
         # Enable event logging for reproducibility
@@ -369,22 +377,22 @@ class Coordinator:
 
         for attack_name in self.config.attacks.active:
             if attack_name == "noise":
-                print(f"[VIREON] Injecting Noise Attack (SD={self.config.attacks.noise_level_uv} uV)")
+                print(\"[VIREON] Injecting Noise Attack (SD={self.config.attacks.noise_level_uv} uV)\")
                 self.attack_engine.add_modifier(
                     NoiseInjectionAttack(target_channels, self.config.attacks.noise_level_uv)
                 )
             elif attack_name == "drift":
-                print(f"[VIREON] Injecting Signal Drift Attack")
+                print(\"[VIREON] Injecting Signal Drift Attack\")
                 self.attack_engine.add_modifier(
                     SignalDriftAttack(target_channels, self.config.attacks.drift_rate_uv_per_sec)
                 )
             elif attack_name == "impedance":
-                print(f"[VIREON] Injecting Impedance Spike Attack")
+                print(\"[VIREON] Injecting Impedance Spike Attack\")
                 self.attack_engine.add_modifier(
                     ImpedanceSpikeAttack(target_channels, self.config.attacks.spike_impedance_kohm)
                 )
             elif attack_name == "suppression":
-                print(f"[VIREON] Injecting Signal Suppression Attack")
+                print(\"[VIREON] Injecting Signal Suppression Attack\")
                 self.attack_engine.add_modifier(
                     SignalSuppressionAttack(target_channels, self.config.attacks.attenuation_factor)
                 )
@@ -422,8 +430,8 @@ class Coordinator:
                 )
             else:
                 print(f"[VIREON] Warning: Unknown device type '{self.config.device.type}'")
-        except Exception as e:
-            logger.error(f"Error loading device module", exc_info=True)
+        except Exception:
+            logger.error(\"Error loading device module\", exc_info=True)
             sys.exit(1)
         return device_wrapper
 
@@ -453,13 +461,13 @@ class Coordinator:
 
     def _setup_lsl_streamer(self):
         """Initialize LSL Streamer instead of Web UI."""
-        print(f"[VIREON] Bypassing Web UI. Initializing LSL Streamer...")
+        print("[VIREON] Bypassing Web UI. Initializing LSL Streamer...")
         try:
             from vireon.core.lsl_streamer import LSLStreamer
             self.lsl_streamer = LSLStreamer(num_channels=self.twin.num_channels, srate=self.twin.sample_rate)
             self.config.duration_sec = 100000.0  # Run indefinitely in LSL mode
-        except Exception as e:
-            logger.error(f"Failed to start LSL Streamer", exc_info=True)
+        except Exception:
+            logger.error(\"Failed to start LSL Streamer\", exc_info=True)
 
     def _setup_web_server(self):
         """Start the Web UI dashboard."""
@@ -612,7 +620,7 @@ class Coordinator:
                 data_to_process = np.frombuffer(
                     reconstructed_bytes[:raw_data.nbytes], dtype=raw_data.dtype
                 ).copy().reshape(raw_data.shape)
-            except Exception as e:
+            except Exception:
                 logger.error("BLE packet reconstruction failed", exc_info=True)
                 data_to_process = np.random.normal(0, 500.0, raw_data.shape)
 
@@ -753,7 +761,7 @@ class Coordinator:
         print(f" ISO Severity:    {summary.get('iso_severity', 'NEGLIGIBLE')}")
         print(f" Mean Confidence: {summary['average_confidence']:.2f}")
         if self.config.security.enabled:
-            print(f" Security Shield: ACTIVE (IDS/IPS Enabled)")
+            print(" Security Shield: ACTIVE (IDS/IPS Enabled)")
             print(f" Blocked Attacks: {summary.get('blocked_attacks_count', 0)}")
         print(f" Seed:            {self.config.seed}")
         print("=== NEUROSHIELD REPORTS ===")

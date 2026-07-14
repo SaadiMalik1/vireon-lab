@@ -62,7 +62,8 @@ class P300Analyzer:
             # Blind scanning (Sliding window)
             # Apply a simple low-pass filter (moving average) to isolate the slow P300 wave (approx 1-10Hz)
             window = int(0.1 * self.sample_rate) # 100ms moving average
-            if window < 1: window = 1
+            if window < 1:
+                window = 1
             
             for ch in range(n_channels):
                 # Simple moving average

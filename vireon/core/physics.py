@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from typing import Dict, Any
+from typing import Any
 
 logger = logging.getLogger("PhysicsEngine")
 
@@ -90,7 +90,7 @@ class PhysicsEngine:
                 # Simulation Warning Mode
                 twin.tissue_damage_risk = "HIGH"
                 twin.clinical_alert_active = True
-                if twin.clinical_status == "Nominal" or not "Physics Violation" in twin.clinical_status:
+                if twin.clinical_status == "Nominal" or "Physics Violation" not in twin.clinical_status:
                     twin.clinical_status = f"Physics Violation (Sim): {violation_msg}"
                     twin.hazard_state = "WARNING"
                     twin.iso_severity = "HIGH"

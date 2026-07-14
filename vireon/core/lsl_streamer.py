@@ -39,7 +39,7 @@ class LSLStreamer:
         self.outlet_telemetry = StreamOutlet(info_telemetry)
         
         print(f"[LSL] Started NeuroShield_EEG ({num_channels}ch @ {srate}Hz)")
-        print(f"[LSL] Started NeuroShield_Telemetry (Markers)")
+        print("[LSL] Started NeuroShield_Telemetry (Markers)")
 
     def push_eeg_chunk(self, chunk_data: np.ndarray):
         """

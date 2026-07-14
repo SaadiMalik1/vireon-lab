@@ -1,3 +1,4 @@
+import threading
 from typing import Dict, Any, List
 import numpy as np
 import os
@@ -101,7 +102,7 @@ class DigitalTwin:
                     atlas_data = json.load(f)
                     for region in atlas_data.get("brain_regions", []):
                         self.brain_regions[region["id"]] = region
-        except Exception as e:
+        except Exception:
             pass # Fails gracefully if not found
 
     # --- Simulation Clock & Battery Sag Emulation ---

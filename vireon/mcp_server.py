@@ -1,8 +1,6 @@
-import asyncio
 from mcp.server.fastmcp import FastMCP
-from typing import List, Optional, Dict
+from typing import List, Optional
 import json
-import uuid
 import hashlib
 import hmac
 import base64

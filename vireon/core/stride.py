@@ -1,3 +1,4 @@
+import json
 """
 VIREON STRIDE Threat Model Auto-Generator.
 
@@ -14,10 +15,9 @@ References:
   - ISO 14971 Risk Management
 """
 
-import os
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass

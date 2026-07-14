@@ -1,3 +1,5 @@
+import time
+import json
 """
 VIREON Automated Validation Suite
 
@@ -69,15 +71,19 @@ class EDFReader:
             # --- Per-signal headers ---
             self.labels = [f.read(16).decode().strip() for _ in range(self.num_signals)]
             # Skip transducer type, physical dimension
-            for _ in range(self.num_signals): f.read(80)  # transducer
-            for _ in range(self.num_signals): f.read(8)   # physical dimension
+            for _ in range(self.num_signals):
+                f.read(80)  # transducer
+            for _ in range(self.num_signals):
+                f.read(8)   # physical dimension
             self._physical_min = [float(f.read(8).decode().strip()) for _ in range(self.num_signals)]
             self._physical_max = [float(f.read(8).decode().strip()) for _ in range(self.num_signals)]
             self._digital_min = [int(f.read(8).decode().strip()) for _ in range(self.num_signals)]
             self._digital_max = [int(f.read(8).decode().strip()) for _ in range(self.num_signals)]
-            for _ in range(self.num_signals): f.read(80)  # prefiltering
+            for _ in range(self.num_signals):
+                f.read(80)  # prefiltering
             self._samples_per_record = [int(f.read(8).decode().strip()) for _ in range(self.num_signals)]
-            for _ in range(self.num_signals): f.read(32)  # reserved
+            for _ in range(self.num_signals):
+                f.read(32)  # reserved
 
             # Derive sample rate from the first EEG signal
             self.sample_rate = int(self._samples_per_record[0] / self.record_duration) if self.record_duration > 0 else 160
@@ -149,7 +155,7 @@ class ValidationRunner:
         tpr = tp / max(total_p, 1)  # Sensitivity / Recall
         tnr = tn / max(total_n, 1)  # Specificity
         fpr = fp / max(total_n, 1)
-        fnr = fn / max(total_p, 1)
+        _fnr = fn / max(total_p, 1)
         
         precision = tp / max(tp + fp, 1)
         f1 = (2 * precision * tpr) / max(precision + tpr, 1e-9)
@@ -161,7 +167,8 @@ class ValidationRunner:
         
         # 95% CI for FPR and Sensitivity (TPR)
         def calc_ci(p, n):
-            if n == 0: return 0.0
+            if n == 0:
+            return 0.0
             return 1.96 * math.sqrt((p * (1 - p)) / n)
             
         fpr_ci = calc_ci(fpr, total_n)
@@ -248,7 +255,8 @@ class ValidationRunner:
         
         # Derive generic profile name from filename (e.g. 'physionet_run1.edf' -> 'physionet')
         dataset_name = edf_path.stem.split('_')[0].lower()
-        if 'sleep' in dataset_name: dataset_name = 'sleep_edf'
+        if 'sleep' in dataset_name:
+            dataset_name = 'sleep_edf'
         profile = self._load_profile(dataset_name)
         
         if profile:
@@ -272,7 +280,7 @@ class ValidationRunner:
         # Set crest factor threshold to 95th percentile + 50% headroom
         # This prevents false positives from legitimate spectral peaks in real EEG
         crest_p95 = float(np.percentile(crest_factors, 95)) if crest_factors else 15.0
-        adapted_crest_threshold = crest_p95 * 1.5
+        _adapted = crest_p95 * 1.5
 
         # --- Phase 1: Clean baseline (false positive measurement) ---
         # Use adapted thresholds based on calibration
@@ -374,12 +382,10 @@ class ValidationRunner:
         # Build numpy arrays from the synthetic JSON
         # The generator uses 'data' key for samples and 'fs' for sample rate
         baseline_raw = traces["baseline"].get("data", traces["baseline"].get("samples", []))
-        baseline_fs = traces["baseline"].get("fs", 250)
-        if not baseline_raw:
+                if not baseline_raw:
             return {"module": "synthetic", "status": "skipped", "error": "empty baseline"}
 
-        n_samples = len(baseline_raw)
-        if isinstance(baseline_raw[0], list):
+                if isinstance(baseline_raw[0], list):
             data = np.array(baseline_raw).T
         else:
             data = np.array(baseline_raw).reshape(1, -1)
@@ -437,7 +443,7 @@ class ValidationRunner:
             print(f"  SKIPPED: {synthetic_result.get('error', 'unknown')}")
 
         # 2. Real EDF dataset validation
-        print(f"\n[2/2] Real EDF Dataset Validation")
+        print("\n[2/2] Real EDF Dataset Validation")
         print("-" * 40)
         edf_files = self._find_edf_files()
 

@@ -1,5 +1,4 @@
 import random
-from typing import List
 from vireon.plugins.ble.emulator import VirtualBLELink, VirtualBLEClient
 from vireon.core.twin import DigitalTwin
 

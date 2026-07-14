@@ -76,10 +76,14 @@ class QIFAtlas:
                         
                     # Extract Severity
                     sev_str = obj.get("x_qif_severity", "low").lower()
-                    if sev_str == "critical": base_niss = 9.0
-                    elif sev_str == "high": base_niss = 7.4
-                    elif sev_str == "medium": base_niss = 5.0
-                    else: base_niss = 3.0
+                    if sev_str == "critical":
+                        base_niss = 9.0
+                    elif sev_str == "high":
+                        base_niss = 7.4
+                    elif sev_str == "medium":
+                        base_niss = 5.0
+                    else:
+                        base_niss = 3.0
                     
                     # Extract Pathways (Bands)
                     bands = obj.get("x_qif_bands", [])

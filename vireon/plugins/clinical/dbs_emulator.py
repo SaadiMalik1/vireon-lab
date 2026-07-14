@@ -1,5 +1,4 @@
 import numpy as np
-import time
 from typing import List, Dict, Any
 from vireon.core.twin import DigitalTwin
 from vireon.core.utils import calculate_bandpower
@@ -133,9 +132,9 @@ class ClosedLoopDBSController:
         if len(beta_idx) > 0:
             peak_idx = beta_idx[np.argmax(np.abs(fft_vals[beta_idx]))]
             # Phase angle in radians (-pi to pi)
-            phase = np.angle(fft_vals[peak_idx])
+            
         else:
-            phase = 0.0
+            
 
         # 3. Decision loop
         # If the security layer has shut off therapy due to detected sync, do not re-enable

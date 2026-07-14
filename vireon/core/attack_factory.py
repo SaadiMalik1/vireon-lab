@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Type
+from typing import List
 from vireon.core.attack import ISignalModifier
 from vireon.core.twin import DigitalTwin
 from vireon.core.threat_intel import ThreatIntelligence

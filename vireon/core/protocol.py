@@ -1,6 +1,7 @@
+import struct
 import hmac
 import hashlib
-from typing import Tuple, Optional, Dict, Any
+from typing import Tuple
 
 class ProtocolError(Exception):
     """Raised when frame validation fails."""
@@ -101,8 +102,6 @@ class RFFrameProcessor:
     def pack_frame(self, seq_no: int, payload_type: int, payload: bytes, secure_mode: bool = False) -> bytes:
         """Pack payload into a binary telemetry frame."""
         # Header without length initially
-        header_partial = struct.pack(">B", self.PREAMBLE)
-        
         if secure_mode:
             # Emulate AES-GCM: IV (8B) + Ciphertext + Tag (16B)
             total_len = 5 + 8 + len(payload) + 16

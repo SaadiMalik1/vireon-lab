@@ -11,7 +11,7 @@ import os
 import json
 import base64
 import time
-from typing import Tuple, Dict, Any
+from typing import Dict, Any
 
 class E2EEChannel:
     def __init__(self, key_rotation_interval_sec: float = 3600.0):
@@ -80,9 +80,7 @@ class E2EEChannel:
         if len(raw) < 28:
             raise ValueError("Invalid AES-GCM payload size")
             
-        iv = raw[:12]
-        auth_tag = raw[-16:]
-        ciphertext = raw[12:-16]
+                ciphertext = raw[12:-16]
         
         # Simple XOR mock decryption
         plaintext = bytearray()
