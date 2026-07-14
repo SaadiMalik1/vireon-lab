@@ -20,3 +20,4 @@ This document tracks systematic documentation updates across the VIREON project 
 | `knowledge/neuroscience/action-potentials.md` | Complete | Drafted entry on threshold potentials, refractory periods, and their relation to signal injection vulnerabilities. | 2026-07-14 |
 | `knowledge/neuroscience/brain-regions.md` | Complete | Drafted entry on the motor cortex, subthalamic nucleus, and vagus nerve as anatomical attack surfaces for neurosecurity. | 2026-07-14 |
 | `knowledge/neuroscience/eeg.md` | Complete | Audited and completely rewritten to focus on signal degradation physics, EMI injection vectors, and P300 surveillance. | 2026-07-14 |
+| `knowledge/neuroscience/dbs.md` | Complete | Audited and rewritten to rigorously define waveform parameters (pulse width/charge density), closed-loop vulnerabilities, and battery DoS attacks. | 2026-07-14 |
