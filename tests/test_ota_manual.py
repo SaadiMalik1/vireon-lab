@@ -1,7 +1,6 @@
 import struct
 import sys
 from vireon.plugins.firmware.cortex_m_stub import CortexMStub
-from vireon.core.twin import DigitalTwin
 
 def test_valid_ota_update():
     stub = CortexMStub()

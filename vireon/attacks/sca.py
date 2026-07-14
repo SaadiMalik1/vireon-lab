@@ -7,7 +7,7 @@ post-explantation or via near-field EMF probes.
 """
 
 import numpy as np
-from typing import List, Tuple
+from typing import Tuple
 
 class DPAEmulator:
     """

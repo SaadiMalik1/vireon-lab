@@ -5,18 +5,12 @@ Replaces the monolithic main() function with a properly structured class
 that can be used both programmatically and from the CLI.
 """
 
-import os
-import sys
-import time
-import numpy as np
 from typing import Optional, Dict, Any
-import logging
 
-logger = logging.getLogger(__name__)
 
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine
-from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
+from vireon.core.attack import SignalAttackEngine, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
 from vireon.core.event_bus import EventBus, Event
 from vireon.core.config import ExperimentConfig
 from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
@@ -52,6 +46,7 @@ class Coordinator:
         self.twin: Optional[DigitalTwin] = None
         self.attack_engine: Optional[SignalAttackEngine] = None
         self.engine: Optional[ReplayEngine] = None
+        self.lock = threading.Lock()
 
         # Optional components (initialized during setup based on config)
         self.clinical_sim: Optional[ClosedLoopSimulator] = None
@@ -742,8 +737,7 @@ class Coordinator:
         summary["p300_leakage_events"] = self.total_p300_leakage_events
 
         from vireon.plugins.reports.generator import ReportGenerator
-        import time
-        
+                
         generator = ReportGenerator(self.twin)
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         prefix_with_time = f"{self.config.output.report_prefix}_{timestamp}"

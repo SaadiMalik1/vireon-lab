@@ -4,9 +4,6 @@ and experiment reproducibility.
 """
 import unittest
 import os
-import tempfile
-import json
-import numpy as np
 
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

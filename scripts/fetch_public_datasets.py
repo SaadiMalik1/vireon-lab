@@ -5,7 +5,6 @@ Downloads the curated public datasets (PhysioNet, BCI, OpenBCI)
 required for the Validation Suite. Supports resuming interrupted downloads.
 """
 import urllib.request
-import os
 import ssl
 from pathlib import Path
 import sys

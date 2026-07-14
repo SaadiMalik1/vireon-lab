@@ -13,7 +13,6 @@ Usage:
    python examples/lsl_receiver.py
 """
 
-import time
 import json
 try:
     from pylsl import resolve_byprop, StreamInlet

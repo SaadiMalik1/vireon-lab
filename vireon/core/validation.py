@@ -7,9 +7,7 @@ benchmark metrics. Zero external dependencies beyond numpy.
 """
 import logging
 import struct
-import time
 from pathlib import Path
-import json
 import numpy as np
 from typing import Dict, List, Optional, Tuple
 

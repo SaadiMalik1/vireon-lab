@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 from vireon.core.twin import DigitalTwin
 from vireon.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
 from vireon.plugins.ble.attacks import (

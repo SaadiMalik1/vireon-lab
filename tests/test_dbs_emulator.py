@@ -1,5 +1,4 @@
 import unittest
-import numpy as np
 from vireon.core.twin import DigitalTwin
 from vireon.plugins.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
 

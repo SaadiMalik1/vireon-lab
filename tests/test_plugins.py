@@ -3,7 +3,7 @@ import numpy as np
 import tempfile
 import os
 from vireon.core.twin import DigitalTwin
-from vireon.plugins.datasets.edf_reader import MockEEGReader, EDFReader
+from vireon.plugins.datasets.edf_reader import MockEEGReader
 from vireon.plugins.datasets.csv_reader import CSVReader
 from vireon.plugins.devices.synthetic import SyntheticBoardWrapper
 from vireon.plugins.devices.pieeg import PiEEGBoardWrapper
