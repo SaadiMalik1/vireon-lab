@@ -18,3 +18,4 @@ This document tracks systematic documentation updates across the VIREON project 
 | `docs/design-decisions/0004-threat-model.md` | Complete | Removed OSI of Mind framework reference in favor of generic clinical and neuroethics guardrails terminology. | 2026-07-14 |
 | `knowledge/neuroscience/neuron-basics.md` | Complete | Drafted foundational entry on electrochemical neuron modeling from a neurosecurity/engineering perspective. | 2026-07-14 |
 | `knowledge/neuroscience/action-potentials.md` | Complete | Drafted entry on threshold potentials, refractory periods, and their relation to signal injection vulnerabilities. | 2026-07-14 |
+| `knowledge/neuroscience/brain-regions.md` | Complete | Drafted entry on the motor cortex, subthalamic nucleus, and vagus nerve as anatomical attack surfaces for neurosecurity. | 2026-07-14 |
