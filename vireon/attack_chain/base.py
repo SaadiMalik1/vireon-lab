@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List
+from typing import Dict, Any
 from vireon.core.config import AttackerCapability
 from vireon.core.event_bus import EventBus
 
