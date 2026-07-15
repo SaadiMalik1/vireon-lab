@@ -16,9 +16,18 @@ VIREON maps its core modules to specific, curated datasets. Rather than arbitrar
 | **Synthetic Attacks** | Noise & Packet Loss | In-house generator | Validated |
 | **Protocol Replay** | BLE PCAP Captures | In-house/Extracted | Planned |
 
+> [!WARNING]
+> **Lack of Statistical Rigor**: The validation status reported above is based on point-in-time developer testing. It lacks automated CI enforcement, cross-validation sets, and formal standard deviations.
+
 ## Automated Validation
-VIREON implements the `vireon validate` CLI tool. This command automatically:
-1. Loads the downloaded EDF files using a zero-dependency pure-Python EDF reader.
+VIREON implements the `vireon validate` CLI tool. To ensure full reproducibility of the scientific benchmarks, researchers must first download the public dataset fragments:
+
+```bash
+python scripts/fetch_public_datasets.py
+```
+
+This command automatically:
+1. Loads the downloaded EDF files using a C-extension EDF reader (`pyedflib`) or falls back to synthetic data.
 2. Calibrates the engine dynamically by extracting dataset-specific spectral characteristics.
 3. Feeds clean windows through the VIREON engine to measure baseline false-positive rates.
 4. Applies simulated adversarial mutations (e.g., noise injection, signal drift) and measures true detection rates.

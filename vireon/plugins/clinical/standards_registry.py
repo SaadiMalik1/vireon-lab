@@ -4,10 +4,10 @@ import logging
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 
-logger = logging.getLogger("QIFRegistry")
+logger = logging.getLogger("ThreatAtlasRegistry")
 
 @dataclass
-class QIFThreatTechnique:
+class ThreatAtlasTechnique:
     id: str
     name: str
     category: str
@@ -23,24 +23,24 @@ class QIFThreatTechnique:
     physics_gate: str
     dual_use: str
 
-class QIFRegistry:
+class ThreatAtlasRegistry:
     _instance = None
-    _techniques: Dict[str, QIFThreatTechnique] = {}
+    _techniques: Dict[str, ThreatAtlasTechnique] = {}
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(QIFRegistry, cls).__new__(cls)
-            cls._instance._load_qif()
+            cls._instance = super(ThreatAtlasRegistry, cls).__new__(cls)
+            cls._instance._load_atlas()
         return cls._instance
 
-    def _load_qif(self):
-        qif_path = os.path.join(os.path.dirname(__file__), "data", "qif.json")
-        if not os.path.exists(qif_path):
-            logger.warning("qif.json not found offline. Registry will be empty.")
+    def _load_atlas(self):
+        atlas_path = os.path.join(os.path.dirname(__file__), "data", "threat_atlas.json")
+        if not os.path.exists(atlas_path):
+            logger.warning("threat_atlas.json not found offline. Registry will be empty.")
             return
 
         try:
-            with open(qif_path, "r", encoding="utf-8") as f:
+            with open(atlas_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             
             techniques = data.get("threats", {}).get("techniques", [])
@@ -54,7 +54,7 @@ class QIFRegistry:
                 physics_data = tech.get("physicsFeasibility", {})
                 tara_data = tech.get("tara", {})
 
-                self._techniques[t_id] = QIFThreatTechnique(
+                self._techniques[t_id] = ThreatAtlasTechnique(
                     id=t_id,
                     name=tech.get("name", "Unknown"),
                     category=tech.get("category", "Unknown"),
@@ -70,16 +70,16 @@ class QIFRegistry:
                     physics_gate=physics_data.get("gate_reason", ""),
                     dual_use=tara_data.get("dual_use", "unknown")
                 )
-            logger.info(f"Loaded {len(self._techniques)} threat techniques from QIF Atlas.")
+            logger.info(f"Loaded {len(self._techniques)} threat techniques from Threat Atlas.")
         except Exception as e:
-            logger.error(f"Error loading qif.json: {e}")
+            logger.error(f"Error loading threat_atlas.json: {e}")
 
     @classmethod
-    def get_technique(cls, technique_id: str) -> Optional[QIFThreatTechnique]:
+    def get_technique(cls, technique_id: str) -> Optional[ThreatAtlasTechnique]:
         registry = cls()
         return registry._techniques.get(technique_id)
 
     @classmethod
-    def get_all_techniques(cls) -> List[QIFThreatTechnique]:
+    def get_all_techniques(cls) -> List[ThreatAtlasTechnique]:
         registry = cls()
         return list(registry._techniques.values())

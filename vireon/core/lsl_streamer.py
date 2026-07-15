@@ -18,28 +18,28 @@ class LSLStreamer:
         
         # Outlet 1: The Raw EEG/LFP Signal (float32)
         info_eeg = StreamInfo(
-            name='NeuroShield_EEG',
+            name='VIREON_EEG',
             type='EEG',
             channel_count=num_channels,
             nominal_srate=srate,
             channel_format='float32',
-            source_id='neuroshield_engine_01'
+            source_id='vireon_engine_01'
         )
         self.outlet_eeg = StreamOutlet(info_eeg)
         
         # Outlet 2: The Security/Telemetry stream (String/JSON)
         info_telemetry = StreamInfo(
-            name='NeuroShield_Telemetry',
+            name='VIREON_Telemetry',
             type='Markers',
             channel_count=1,
             nominal_srate=0, # Irregular rate
             channel_format='string',
-            source_id='neuroshield_telemetry_01'
+            source_id='vireon_telemetry_01'
         )
         self.outlet_telemetry = StreamOutlet(info_telemetry)
         
-        print(f"[LSL] Started NeuroShield_EEG ({num_channels}ch @ {srate}Hz)")
-        print("[LSL] Started NeuroShield_Telemetry (Markers)")
+        print(f"[LSL] Started VIREON_EEG ({num_channels}ch @ {srate}Hz)")
+        print("[LSL] Started VIREON_Telemetry (Markers)")
 
     def push_eeg_chunk(self, chunk_data: np.ndarray):
         """

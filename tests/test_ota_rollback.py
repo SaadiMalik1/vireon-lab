@@ -1,5 +1,6 @@
 import unittest
 import struct
+import hashlib
 from vireon.plugins.firmware.cortex_m_stub import CortexMStub
 
 class TestOTARollback(unittest.TestCase):
@@ -11,7 +12,8 @@ class TestOTARollback(unittest.TestCase):
         payload_version = 2
         header = struct.pack('<I', payload_version)
         firmware_binary = b'ValidFirmwareData' * 10
-        full_payload = header + firmware_binary
+        signature = hashlib.sha256(firmware_binary).digest()
+        full_payload = header + signature + firmware_binary
         
         success = stub.process_ota_update(full_payload)
         
@@ -20,7 +22,8 @@ class TestOTARollback(unittest.TestCase):
         self.assertEqual(stub.efuses["MIN_SVN"], 2)
         
         # Verify memory was actually written
-        read_back = stub.flash[:len(firmware_binary)]
+        app_offset = stub.APP_BASE - stub.FLASH_BASE
+        read_back = stub.flash[app_offset : app_offset + len(firmware_binary)]
         self.assertEqual(read_back, firmware_binary)
 
     def test_rollback_attack_blocked(self):
@@ -32,7 +35,8 @@ class TestOTARollback(unittest.TestCase):
         payload_version = 0
         header = struct.pack('<I', payload_version)
         malicious_binary = b'MaliciousPayload' * 10
-        full_payload = header + malicious_binary
+        signature = hashlib.sha256(malicious_binary).digest()
+        full_payload = header + signature + malicious_binary
         
         success = stub.process_ota_update(full_payload)
         
@@ -49,7 +53,7 @@ class TestOTARollback(unittest.TestCase):
         
         self.assertFalse(success)
         self.assertTrue(stub.crashed)
-        self.assertIn("too short to contain header", stub.crash_reason)
+        self.assertIn("too short to contain header and signature", stub.crash_reason)
 
 if __name__ == '__main__':
     unittest.main()

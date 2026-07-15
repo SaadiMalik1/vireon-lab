@@ -84,3 +84,21 @@ class SyntheticBoardWrapper(IDeviceWrapper):
             return BoardShim.get_eeg_channels(self.board_id)
         else:
             return [1, 2, 3, 4, 5, 6, 7, 8]
+
+    def start(self):
+        self.board.prepare_session()
+        self.board.start_stream()
+
+    def stop(self):
+        self.board.stop_stream()
+        self.board.release_session()
+
+    def read_chunk(self, start_sample: int = 0, num_samples: int = -1) -> np.ndarray:
+        data = self.board.get_board_data()
+        channels = self.get_eeg_channels()
+        if data.shape[1] > 0:
+            return data[channels, :]
+        return np.empty((len(channels), 0))
+
+    def send_eeg_data(self, data: Any) -> None:
+        pass

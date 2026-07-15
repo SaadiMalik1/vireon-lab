@@ -44,6 +44,11 @@ class ZTAPolicyEngine:
         if context.clinical_mode:
             score += 0.1
             
+        # Mandatory E2EE Gating
+        if not context.e2ee_established:
+            # Clamp the maximum possible score below critical thresholds (e.g., 0.5)
+            score = min(score, 0.5)
+            
         return score
         
     def evaluate_request(self, action: str, context: TrustContext) -> AuthorizationDecision:
@@ -60,4 +65,6 @@ class ZTAPolicyEngine:
         if actual_score >= required_score:
             return AuthorizationDecision.ALLOW
         else:
+            import logging
+            logging.warning(f"[ZTA Engine] DENY action '{action}' | Actual Score: {actual_score:.2f} | Required: {required_score:.2f}")
             return AuthorizationDecision.DENY

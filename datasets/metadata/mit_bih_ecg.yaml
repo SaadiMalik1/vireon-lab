@@ -1,6 +1,6 @@
 dataset:
   id: mit_bih_ecg
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/mitdb/1.0.0/
   modality: ECG
   electrodes: 2
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - vagus_nerve_stimulator_simulation
     - physiological_anomaly_detection
-  status: pending_download
+  status: synthetic_mock

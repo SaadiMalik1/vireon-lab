@@ -1,6 +1,6 @@
 dataset:
   id: eegmmi_imagery
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/eegmmidb/1.0.0/
   modality: EEG
   electrodes: 64
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - state_inference_attack_simulation
     - active_cognitive_load_testing
-  status: pending_download
+  status: synthetic_mock

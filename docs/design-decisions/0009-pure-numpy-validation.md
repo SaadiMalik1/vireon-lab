@@ -12,7 +12,7 @@ However, VIREON operates in the intersection of embedded systems security and ne
 We explicitly chose to build the core validation and detection engine using **only the Python standard library and NumPy**.
 
 1. **Custom EDF Parser**: We wrote a lightweight, pure-Python `.edf` ingestion module tailored exclusively for continuous streaming simulation, stripping out clinical metadata handling we do not need.
-2. **NumPy Math**: All spectral analysis (FFT), windowing, EWMA, and statistical generation (ROC-AUC approximations, Confidence Intervals) are executed directly using raw NumPy array operations.
+2. **NumPy Math**: All spectral analysis (FFT), windowing, EWMA, and statistical generation (Balanced Accuracy calculations, Confidence Intervals) are executed directly using raw NumPy array operations.
 
 ## Consequences
 

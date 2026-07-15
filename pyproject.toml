@@ -6,7 +6,7 @@ build-backend = "maturin"
 manifest-path = "neuro_dsl/python_ext/Cargo.toml"
 [project]
 name = "vireon"
-version = "0.2.0"
+version = "1.0.0"
 description = "Virtual neurosecurity laboratory for reproducible BCI/DBS/VNS security research"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -28,30 +28,37 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "numpy>=1.20.0",
-    "jinja2>=3.0.0",
-    "pydantic>=2.0.0",
-    "mcp>=1.0.0",
-    "websockets>=11.0",
-    "pyyaml>=6.0.0",
+    "numpy~=1.20.0",
+    "jinja2~=3.0.0",
+    "pydantic~=2.0.0",
+    "mcp~=1.0.0",
+    "websockets~=11.0",
+    "pyyaml~=6.0.0",
+    "cryptography~=41.0.0",
+    "click~=8.1.0",
 ]
 
 [project.optional-dependencies]
-brainflow = ["brainflow>=5.0.0"]
-edf = ["pyedflib>=0.1.30"]
-mne = ["mne>=1.0.0"]
-science = ["scipy>=1.7.0"]
-lsl = ["pylsl>=1.16.2"]
+brainflow = ["brainflow~=5.0.0"]
+edf = ["pyedflib~=0.1.30"]
+mne = ["mne~=1.0.0"]
+science = ["scipy~=1.7.0"]
+lsl = ["pylsl~=1.16.2"]
 dev = [
-    "pytest>=7.0.0",
-    "tomli>=2.0.0;python_version<'3.11'",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
+    "pytest~=7.0.0",
+    "tomli~=2.0.0;python_version<'3.11'",
+    "ruff~=0.1.0",
+    "mypy~=1.0.0",
 ]
-reports = ["weasyprint>=60.0.0"]
-docs = ["mkdocs-material>=9.0.0"]
+reports = ["weasyprint~=60.0.0"]
+docs = ["mkdocs-material~=9.0.0"]
+ui = [
+    "streamlit~=1.31.0",
+    "pandas~=2.2.0",
+    "plotly~=5.18.0",
+]
 all = [
-    "vireon[brainflow,edf,mne,science,lsl,dev,reports,docs]",
+    "vireon[brainflow,edf,mne,science,lsl,dev,reports,docs,ui]",
 ]
 
 [project.scripts]
@@ -61,7 +68,7 @@ vireon = "vireon.__main__:main"
 # Example: my_plugin = "my_package:get_plugin_info"
 
 [project.urls]
-Repository = "https://github.com/vireon/vireon"
+Repository = "https://github.com/SaadiMalik1/Vireon.git"
 Documentation = "https://vireon.readthedocs.io"
 
 [tool.setuptools.packages.find]

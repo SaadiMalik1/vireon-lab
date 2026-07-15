@@ -10,4 +10,4 @@ dataset:
   purpose:
     - ecosystem_interoperability
     - auditory_visual_evoked_potentials
-  status: pending_download
+  status: synthetic_mock

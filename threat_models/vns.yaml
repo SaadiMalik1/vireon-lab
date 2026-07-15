@@ -14,6 +14,15 @@ assets:
   - id: clinician_programmer
     type: tablet
     description: Clinical tablet for adjusting stimulation parameters.
+  - id: neural_data
+    type: data
+    description: Patient neural data at rest and in transit.
+  - id: credentials
+    type: credential
+    description: API tokens and clinical credentials.
+  - id: reputation
+    type: reputation
+    description: Trust in the device manufacturer.
 
 trust_boundaries:
   - id: tb_inductive_link

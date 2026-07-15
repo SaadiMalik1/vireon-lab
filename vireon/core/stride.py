@@ -31,7 +31,7 @@ class ThreatEntry:
     likelihood: str            # High, Medium, Low
     existing_mitigation: str
     mitigation_module: str
-    qtara_id: Optional[str] = None
+    cptara_id: Optional[str] = None
     residual_risk: str = "Acceptable"
 
 
@@ -101,173 +101,40 @@ def generate_stride_model(config: Any = None) -> Dict[str, Any]:
     return model
 
 
+import os
+import logging
+logger = logging.getLogger(__name__)
+
 def _enumerate_threats(config: Any = None) -> List[ThreatEntry]:
-    """Enumerate all known threats across VIREON's attack surface."""
+    """Enumerate all known threats across VIREON's attack surface from config."""
     threats = []
-    tid = 0
-
-    def _t(cat, component, asset, desc, vector, sev, like, mitigation, module, qtara=None):
-        nonlocal tid
-        tid += 1
-        threats.append(ThreatEntry(
-            stride_category=cat,
-            threat_id=f"NS-{cat}-{tid:03d}",
-            component=component,
-            asset=asset,
-            threat_description=desc,
-            attack_vector=vector,
-            severity=sev,
-            likelihood=like,
-            existing_mitigation=mitigation,
-            mitigation_module=module,
-            qtara_id=qtara,
-        ))
-
-    # ==================== SPOOFING ====================
-    _t("S", "BLE Transport", "Device Identity",
-       "Attacker spoofs a BCI device by cloning its BLE advertisement and MAC address",
-       "Proximity-based BLE spoofing with cloned advertising data",
-       "High", "Medium",
-       "BLE Link Guard pairing state machine validates bonding sequence",
-       "vireon.core.security.BLELinkGuard")
-
-    _t("S", "RF Telemetry", "Frame Origin",
-       "Attacker injects forged telemetry frames with valid preamble",
-       "RF replay or injection using SDR (Software Defined Radio)",
-       "High", "Medium",
-       "HMAC-SHA256 frame authentication in secure mode; sequence number validation",
-       "vireon.core.protocol.RFFrameProcessor",
-       "QIF-T2202")
-
-    _t("S", "Closed-Loop Controller", "Decoder Input",
-       "Adversarial signal injection causes decoder to misclassify brain state",
-       "Signal-level adversarial perturbation targeting ML decoder",
-       "Critical", "Medium",
-       "Bandpass defense filter + autoencoder structural deviation detection",
-       "vireon.core.ml_decoder.AdversarialDefenseFilter",
-       "QIF-T2202")
-
-    _t("S", "Session Replay", "Signal Authenticity",
-       "Attacker captures clean EEG segment and replays it to mask real activity",
-       "SessionReplayAttack: capture clean data, then loop over target channels",
-       "High", "Medium",
-       "Spectral entropy analysis detects statistical uniformity of replayed signals",
-       "vireon.core.security.NeuroSignalAssuranceEngine")
-
-    # ==================== TAMPERING ====================
-    _t("T", "RF Telemetry", "Frame Payload",
-       "Attacker modifies telemetry frame payload in transit (bit-flip, data injection)",
-       "Man-in-the-middle modification of raw RF frames",
-       "Critical", "Medium",
-       "AES-GCM authenticated encryption with 128-bit auth tag; CRC-16 for plaintext mode",
-       "vireon.core.protocol.CryptoEmulator",
-       "QIF-T2102")
-
-    _t("T", "Stimulation Parameters", "DBS Amplitude/Frequency",
-       "Attacker modifies stimulation commands to induce tissue damage",
-       "Command injection via compromised programmer or wireless intercept",
-       "Critical", "High",
-       "IPS hard-clamps amplitude (4.0mA), cumulative charge (5200μC), and thermal dose",
-       "vireon.core.security.NeuroIPS",
-       "QIF-T2301")
-
-    _t("T", "Digital Twin State", "Clinical Variables",
-       "Attacker manipulates twin state to suppress safety alerts",
-       "Direct memory manipulation or race condition on shared state",
-       "High", "Low",
-       "Thread-locked state access (hardware_lock, clinical_lock, therapy_lock)",
-       "vireon.core.twin.DigitalTwin")
-
-    _t("T", "Cyton Framing", "Parser State",
-       "Attacker injects ADC values that encode as framing bytes (0xA0/0xC0)",
-       "FramingDesynchronizationAttack: crafted microvolt values exploit unescaped framing",
-       "Medium", "Medium",
-       "IDS detects spectral anomalies from constant-value injection",
-       "vireon.core.security.NeuroSignalAssuranceEngine")
-
-    # ==================== REPUDIATION ====================
-    _t("R", "Event Bus", "Attack Timeline",
-       "Attacker performs signal manipulation but no audit trail exists",
-       "Attacks executed without logging or non-repudiation evidence",
-       "Medium", "Medium",
-       "EventBus publishes all attack events; IDS logs detections with timestamps and TARA IDs",
-       "vireon.core.event_bus.EventBus")
-
-    _t("R", "Stimulation History", "Clinical Actions",
-       "Stimulation parameter changes are not cryptographically signed",
-       "Modification of stim_history entries after the fact",
-       "Medium", "Low",
-       "IPS maintains stim_history list with timestamps; report generator includes full timeline",
-       "vireon.core.security.NeuroIPS")
-
-    # ==================== INFORMATION DISCLOSURE ====================
-    _t("I", "WebSocket Server", "Neural Telemetry",
-       "Raw EEG/LFP data streamed over unencrypted WebSocket connection",
-       "Network eavesdropping on ws:// connection (not wss://)",
-       "High", "High",
-       "No encryption on WebSocket transport (GAP — use wss:// or application-level encryption)",
-       "vireon.dashboard")
-
-    _t("I", "LSL Stream", "Neural Data",
-       "Lab Streaming Layer broadcasts neural data on local network without access control",
-       "Any device on the LAN can subscribe to LSL streams",
-       "Medium", "High",
-       "LSL is designed for lab environments; no built-in access control (KNOWN LIMITATION)",
-       "vireon.core.lsl_streamer")
-
-    _t("I", "Dataset Export", "Patient EEG Files",
-       "Exported EDF/CSV files contain biometrically identifiable neural signatures",
-       "File exfiltration from shared storage or insecure export path",
-       "High", "Medium",
-       "No anonymization on exported data (GAP — planned: differential privacy + anonymizer)",
-       "vireon.plugins.datasets")
-
-    # ==================== DENIAL OF SERVICE ====================
-    _t("D", "RF Telemetry", "Frame Processing",
-       "Attacker floods receiver with malformed frames causing exponential backoff sleep",
-       "RFJammingAttack: high packet drop rate; telemetry flooding protection activates",
-       "High", "High",
-       "Exponential backoff duty cycling (5s → 10s → 20s → 60s max) after 3 consecutive failures",
-       "vireon.core.protocol.RFFrameProcessor")
-
-    _t("D", "Signal Pipeline", "IDS Processing",
-       "Adversarial noise injection saturates IDS with false positives (alert fatigue)",
-       "NoiseInjectionAttack at high amplitude across all channels",
-       "Medium", "High",
-       "CUSUM alarm resets prevent infinite alert loops; IDS detection list capped at 1000 entries",
-       "vireon.core.security.NeuroSignalAssuranceEngine",
-       "QIF-T2102")
-
-    _t("D", "Digital Twin", "Battery/Temperature",
-       "Attacker drives device parameters to failure state (battery drain, thermal shutdown)",
-       "Sustained high-amplitude stimulation commands",
-       "Medium", "Medium",
-       "PhysicsEngine models battery drain and thermal accumulation; IPS enforces thermal limits",
-       "vireon.core.physics.PhysicsEngine")
-
-    # ==================== ELEVATION OF PRIVILEGE ====================
-    _t("E", "Plugin Registry", "Code Execution",
-       "Malicious external plugin loaded via entry_points gains full system access",
-       "Supply chain attack: attacker publishes PyPI package with vireon.plugins entry point",
-       "Critical", "Low",
-       "Plugin whitelist: only vireon.plugins.* namespace allowed; opt-in via plugins.json",
-       "vireon.core.plugin_registry.PluginRegistry")
-
-    _t("E", "Stimulation Control", "Safety Limits",
-       "Attacker bypasses IPS clamping to set stimulation above safe limits",
-       "Direct API call to twin.set_stimulation() bypassing IPS sanitize_stimulation_write()",
-       "Critical", "Low",
-       "IPS is advisory — direct twin access is possible (architectural limitation)",
-       "vireon.core.security.NeuroIPS")
-
-    _t("E", "MCP Server", "Remote Control",
-       "Unauthorized MCP client sends control commands to running simulation",
-       "MCP server listens without authentication; any local client can connect",
-       "High", "Medium",
-       "MCP server binds to localhost by default; no authentication (GAP for network deployment)",
-       "vireon.mcp_server")
-
+    
+    config_path = os.path.join(os.path.dirname(__file__), "data", "stride_threats.json")
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            threat_data = json.load(f)
+            
+        tid = 1
+        for t in threat_data:
+            threats.append(ThreatEntry(
+                stride_category=t["cat"],
+                threat_id=f"NS-{t['cat']}-{tid:03d}",
+                component=t["component"],
+                asset=t["asset"],
+                threat_description=t["desc"],
+                attack_vector=t["vector"],
+                severity=t["sev"],
+                likelihood=t["like"],
+                existing_mitigation=t["mitigation"],
+                mitigation_module=t["module"],
+                cptara_id=t.get("cptara")
+            ))
+            tid += 1
+    except Exception as e:
+        logger.info(f"Error loading stride threats from config: {e}")
+        
     return threats
+
 
 
 def render_stride_markdown(model: Dict[str, Any]) -> str:
@@ -312,8 +179,8 @@ def render_stride_markdown(model: Dict[str, Any]) -> str:
             lines.append(f"- **Asset:** {t['asset']}")
             lines.append(f"- **Attack Vector:** {t['attack_vector']}")
             lines.append(f"- **Severity:** {t['severity']} | **Likelihood:** {t['likelihood']}")
-            if t.get("qtara_id"):
-                lines.append(f"- **qTARA ID:** {t['qtara_id']}")
+            if t.get("cptara_id"):
+                lines.append(f"- **qTARA ID:** {t['cptara_id']}")
             lines.append(f"- **Mitigation:** {t['existing_mitigation']}")
             lines.append(f"- **Module:** `{t['mitigation_module']}`")
             lines.append(f"- **Residual Risk:** {t['residual_risk']}")
@@ -331,26 +198,26 @@ def save_stride_model(model: Dict[str, Any], output_path: str) -> None:
 def print_stride_summary(model: Dict[str, Any]) -> None:
     """Print concise STRIDE summary to console."""
     summary = model["summary"]
-    print("=" * 60)
-    print(" VIREON STRIDE Threat Model")
-    print("=" * 60)
-    print(f"  Generated:     {model['generated_at']}")
-    print(f"  Total Threats:  {summary['total_threats']}")
-    print()
+    logger.info("=" * 60)
+    logger.info(" VIREON STRIDE Threat Model")
+    logger.info("=" * 60)
+    logger.info(f"  Generated:     {model['generated_at']}")
+    logger.info(f"  Total Threats:  {summary['total_threats']}")
+    logger.info()
 
-    print("  By Category:")
+    logger.info("  By Category:")
     for cat, desc in STRIDE_CATEGORIES.items():
         count = summary["by_category"].get(cat, 0)
         label = desc.split("—")[0].strip()
-        print(f"    [{cat}] {label:30s} {count}")
-    print()
+        logger.info(f"    [{cat}] {label:30s} {count}")
+    logger.info()
 
-    print("  By Severity:")
+    logger.info("  By Severity:")
     for sev in ["Critical", "High", "Medium", "Low"]:
         count = summary["by_severity"].get(sev, 0)
         bar = "█" * count
-        print(f"    {sev:10s} {count:2d} {bar}")
-    print()
+        logger.info(f"    {sev:10s} {count:2d} {bar}")
+    logger.info()
 
     # Highlight gaps
     gaps = []
@@ -360,9 +227,9 @@ def print_stride_summary(model: Dict[str, Any]) -> None:
                 gaps.append(t)
 
     if gaps:
-        print(f"  ⚠ GAPS IDENTIFIED: {len(gaps)}")
+        logger.info(f"  ⚠ GAPS IDENTIFIED: {len(gaps)}")
         for g in gaps:
-            print(f"    {g['threat_id']}: {g['threat_description'][:60]}...")
-        print()
+            logger.info(f"    {g['threat_id']}: {g['threat_description'][:60]}...")
+        logger.info()
 
-    print("=" * 60)
+    logger.info("=" * 60)

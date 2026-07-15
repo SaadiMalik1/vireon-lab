@@ -1,5 +1,6 @@
 import struct
 import sys
+import hashlib
 from vireon.plugins.firmware.cortex_m_stub import CortexMStub
 
 def test_valid_ota_update():
@@ -7,7 +8,8 @@ def test_valid_ota_update():
     payload_version = 2
     header = struct.pack('<I', payload_version)
     firmware_binary = b'ValidFirmwareData' * 10
-    full_payload = header + firmware_binary
+    signature = hashlib.sha256(firmware_binary).digest()
+    full_payload = header + signature + firmware_binary
     
     success = stub.process_ota_update(full_payload)
     assert success is True, "Valid OTA failed"
@@ -22,7 +24,8 @@ def test_rollback_attack_blocked():
     payload_version = 0
     header = struct.pack('<I', payload_version)
     malicious_binary = b'MaliciousPayload' * 10
-    full_payload = header + malicious_binary
+    signature = hashlib.sha256(malicious_binary).digest()
+    full_payload = header + signature + malicious_binary
     
     success = stub.process_ota_update(full_payload)
     assert success is False, "Rollback attack succeeded!"

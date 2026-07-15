@@ -11,7 +11,7 @@ VIREON is an evolving research platform and reference implementation; it is math
 ### Core Features
 
 1. **High-Fidelity Digital Twin:** Emulates the physical constraints of an implantable/wearable BCI, including battery sag, ADC saturation, electrode impedance variance, and thermal tissue constraints.
-2. **Deep Learning NeuroSignalAssuranceEngine:** An onboard Intrusion Detection System that falls back gracefully from a PyTorch-based Deep Autoencoder to a lightweight Numpy-based Linear Autoencoder, detecting anomalies in sub-millisecond windows.
+2. **Deep Learning SecurityEngine:** An onboard Intrusion Detection System that falls back gracefully from a PyTorch-based Deep Autoencoder to a lightweight Numpy-based Linear Autoencoder, detecting anomalies in sub-millisecond windows.
 3. **Standards-Based Threat Intelligence:** Directly integrates with established cybersecurity frameworks (STRIDE, MITRE) to map mathematical anomalies to real-world threat vectors.
 4. **Neuroethics Guardrails:** Enforces the "8 Guardrails of Neuromodesty" (e.g., G1), refusing to compile or simulate scientifically unfounded "mind-reading" attacks, maintaining strict epistemic integrity.
 5. **NeuroDSL Compiler:** A safe, embedded Rust-based DSL compiler (`Forge` and `Scribe`) for executing clinical therapies and testing bounded memory safety.
@@ -23,7 +23,8 @@ VIREON is an evolving research platform and reference implementation; it is math
 This documentation is divided into extensive standalone guides:
 
 - **[System Architecture](architecture.md)**: Deep dive into the Digital Twin physics engine, Coordinator orchestration, and NeuroDSL Rust compiler.
-- **[Threat Modeling](threat-model/README.md)**: Comprehensive explanation of the NeuroSignalAssuranceEngine, Attack Surface, and how the standards-based Threat Intelligence is parsed.
+- **[Physics Constraints](physics.md)**: Physics boundary conditions and integration limits for the simulations.
+- **[Threat Modeling](threat-model/README.md)**: Comprehensive explanation of the SecurityEngine, Attack Surface, and how the standards-based Threat Intelligence is parsed.
 - **[API & Interfaces](api.md)**: Python API reference, CLI commands, and Telemetry structures.
 - **[Plugin Development Guide](plugin-development.md)**: How to write custom Attack and Device plugins via the Event Bus.
 - **[Standards Derivation Log](STANDARDS-DERIVATION-LOG.md)**: The central architectural decision record tracing the alignment with clinical and cybersecurity industry standards.

@@ -1,6 +1,6 @@
 dataset:
   id: chb_mit_epilepsy
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/chbmit/1.0.0/
   modality: EEG
   electrodes: 23
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - closed_loop_ids_detection
     - abnormal_activity_baseline
-  status: pending_download
+  status: synthetic_mock

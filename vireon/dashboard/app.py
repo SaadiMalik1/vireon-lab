@@ -11,10 +11,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine
-from vireon.core.security import DeepAutoencoderIDS
+from vireon.core.detection import SecurityEngine
+from vireon.core.clinical import NeuroIPS
 from vireon.core.threat_intel import ThreatIntelligence
 from vireon.core.attack import SignalAttackEngine
-from vireon.core.redteam import FeedbackMutatorEngine
 
 st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠")
 
@@ -22,16 +22,26 @@ st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠
 def init_system():
     # Initialize components
     twin = DigitalTwin(hardware_mode=False) # Start in synth mode
-    ids = DeepAutoencoderIDS(threshold=0.08)
-    ti = ThreatIntelligence(registry_path="vireon/core/data/qtara_stub.json")
+    ids = SecurityEngine(twin)
+    ips = NeuroIPS(twin, ids)
+    ti = ThreatIntelligence(registry_path="vireon/core/data/cptara_stub.json")
     attack_engine = SignalAttackEngine(twin)
-    red_team = FeedbackMutatorEngine(attack_engine)
     
-    # Pre-train/warmup IDS with some noise
-    for _ in range(50):
-        ids.detect(np.random.normal(0, 5, (8,)))
-        
-    engine = ReplayEngine(twin=twin, attack_engine=attack_engine, ids=ids, ti=ti, red_team_engine=red_team)
+    engine = ReplayEngine(twin=twin, attack_engine=attack_engine)
+    engine.last_anomaly_score = 0.0
+    engine.active_anomalies = []
+    
+    def ui_callback(data):
+        if data.shape[1] > 0:
+            anomalies = ids.analyze_signal(data)
+            score = ids.score_signal(data)
+            engine.last_anomaly_score = score
+            engine.active_anomalies = anomalies
+            # Apply IPS
+            ips.sanitize_stimulation_write(twin.stimulation_amplitude_ma, twin.stimulation_frequency_hz)
+            ips.mitigate_signal_anomalies(data, anomalies)
+            
+    engine.add_callback(ui_callback)
     
     # Create a background thread for the engine
     engine_thread = threading.Thread(target=engine.run, daemon=True)
@@ -77,7 +87,7 @@ col3.metric("Beta Power", f"{state['beta_power']:.1f}")
 buffer = engine.get_buffer()
 if buffer is not None and buffer.shape[1] > 0:
     anomaly_score = engine.last_anomaly_score
-    is_anomaly = anomaly_score > engine.ids.threshold
+    is_anomaly = anomaly_score > 0.08 # Visual threshold
     
     col4.metric("Anomaly Score", f"{anomaly_score:.3f}", delta="High Risk!" if is_anomaly else "Normal", delta_color="inverse")
     col5.metric("NISS Score", f"{state['niss_score']}")

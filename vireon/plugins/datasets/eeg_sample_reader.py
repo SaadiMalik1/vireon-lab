@@ -62,7 +62,9 @@ class EEGSampleReader(IDatasetReader):
         return False
 
     def seek(self, sample_position: int) -> None:
-        raise NotImplementedError("Streaming sample reader does not support seeking")
+        if not self.supports_seeking:
+            return
+        # If implemented in the future, seeking logic goes here
 
     def read_chunk(self, start_sample: int, num_samples: int) -> np.ndarray:
         # Fallback to generating synthetic data that matches the dataset metadata

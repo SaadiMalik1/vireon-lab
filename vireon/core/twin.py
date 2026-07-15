@@ -3,11 +3,17 @@ from typing import Dict, Any, List
 import numpy as np
 import os
 import json
+from collections import deque
 from vireon.core.physics import PhysicsEngine
 from vireon.core.dynamics import KuramotoModel
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-class DigitalTwin:
+from vireon.core.interfaces import ITwin
+
+class DigitalTwin(ITwin):
     """
     Authoritative source of truth for a simulated neurodevice.
 
@@ -16,10 +22,8 @@ class DigitalTwin:
     """
 
     def __init__(self, device_id: str = "virtual_openbci_board",
-                 sample_rate: int = 250, num_channels: int = 8, hardware_mode: bool = False):
-        self.hardware_lock = threading.Lock()
-        self.clinical_lock = threading.Lock()
-        self.therapy_lock = threading.Lock()
+                 sample_rate: int = 250, num_channels: int = 8, hardware_mode: bool = False, seed: Optional[int] = None):
+        self._lock = threading.RLock()
         
         self.physics_engine = PhysicsEngine()
         self.hardware_mode = hardware_mode
@@ -58,6 +62,13 @@ class DigitalTwin:
         self.diagnostic_cluster = "UNKNOWN"
         self.niss_score = 0.0
 
+        # Active configuration state (can be modified by UI)
+        self.dbs_mode = False
+        self.secure_mode = False
+        self.nsp_mode = False
+        self.e2ee_mode = False
+        self.active_attack = "none"
+
         # Extended state variables (Phase 1 additions)
         self.temperature_celsius = 37.0       # Device/tissue temperature
         self.flash_utilization_pct = 0.0      # Internal flash usage
@@ -72,71 +83,92 @@ class DigitalTwin:
         self.adc_resolution_bits = 24
         self.amplifier_gain = 24              # ADS1299 default gain
         
-        # OSI of Mind (QIF) Additions
+        # OSI of Mind (Threat Atlas) Additions
         self.funnel_origin = "Ring 4: Cortical"
         self.autonomic_pupil_dilation_mm = 4.0 # Baseline pupil dilation in mm
         self.brain_regions: Dict[str, Any] = {}
-        self._load_brain_atlas()
+        self.channel_to_region: Dict[str, Any] = {}
+        self._load_atlas_mapping()
 
         # Continuous ODE Dynamics
-        self.neural_dynamics = KuramotoModel(num_oscillators=self.num_channels)
+        self.neural_dynamics = KuramotoModel(num_oscillators=self.num_channels, seed=seed)
 
         # Simulation clock (monotonic, not wall-clock)
         self._sim_clock: float = 0.0
 
-        # History log for reporting
-        self.history: List[Dict[str, Any]] = []
+        # History log for reporting (capped to prevent memory leak)
+        self.history = deque(maxlen=1000)
 
         # Log initial state
         self._log_state_change("Initialization")
 
-    def _load_brain_atlas(self):
-        """Loads QIF Brain-BCI Atlas to map device channels to brain regions."""
+    def _load_atlas_mapping(self):
+        """Loads Threat Atlas to map device channels to brain regions."""
         try:
             atlas_path = os.path.abspath(os.path.join(
                 os.path.dirname(__file__), 
-                "../../neurosecurity/datalake/qif-brain-bci-atlas.json"
+                "../../neurosecurity/datalake/threat-atlas-brain-bci.json"
             ))
             if os.path.exists(atlas_path):
                 with open(atlas_path, "r", encoding="utf-8") as f:
-                    atlas_data = json.load(f)
-                    for region in atlas_data.get("brain_regions", []):
+                    self.atlas_data = json.load(f)
+                    for region in self.atlas_data.get("brain_regions", []):
                         self.brain_regions[region["id"]] = region
-        except Exception:
-            pass # Fails gracefully if not found
+                    self.channel_to_region = self.atlas_data.get("mappings", {})
+            else:
+                self.channel_to_region = {}
+        except Exception as e:
+            logger.warning(f"Failed to load Threat Atlas. Running without anatomical mapping: {e}")
+            self.channel_to_region = {}
 
     # --- Simulation Clock & Battery Sag Emulation ---
 
     def set_sim_clock(self, t: float):
         """Set the simulation clock. Called by the ReplayEngine each tick."""
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             dt = t - self._sim_clock
             self._sim_clock = t
             if dt > 0:
                 self._tick_battery_locked(dt)
 
     def _tick_battery_locked(self, dt: float):
-        """Simulate battery discharge and voltage sag under load (running within lock)."""
-        # 1. Base consumption of the device (MCU, BLE link etc.)
-        base_draw = 0.005  # % per second
+        """Simulate battery discharge and voltage sag under load (running within lock).
+        Uses Peukert's Law for non-linear capacity reduction under high load.
+        """
+        # 1. Base current draw (mA)
+        base_ma = 5.0
         
-        # 2. Stimulation consumption (proportional to current amp and freq)
-        stim_draw = 0.0
+        # 2. Stimulation current draw (mA)
+        stim_ma = 0.0
         if self.stimulation_enabled and self.stimulation_amplitude_ma > 0:
-            # Higher amplitude and frequency consumes exponentially more power
-            stim_draw = 0.02 * self.stimulation_amplitude_ma * (self.stimulation_frequency_hz / 130.0)
+            stim_ma = self.stimulation_amplitude_ma * (self.stimulation_frequency_hz / 130.0) * 2.0
             
-        total_draw = (base_draw + stim_draw) * dt
-        self.battery_level = max(0.0, self.battery_level - total_draw)
+        total_ma = base_ma + stim_ma
         
-        # 3. Simulate battery voltage sag under load
-        sag = 0.0
-        if self.stimulation_enabled and self.stimulation_amplitude_ma > 0:
-            sag = 2.5 * self.stimulation_amplitude_ma
-            
-        effective_voltage_pct = self.battery_level - sag
+        # Peukert's Law: Effective current = I^k (k ~ 1.2 for medical batteries)
+        peukert_k = 1.2
+        effective_ma = total_ma ** peukert_k
         
-        # If sag-adjusted battery level drops below 5%, trigger a brownout reset/shutdown
+        # Calibrate so base_ma matches previous base_draw of 0.005 %/sec
+        capacity_scaling = 0.005 / (base_ma ** peukert_k)
+        
+        total_draw_pct = effective_ma * capacity_scaling * dt
+        self.battery_level = max(0.0, self.battery_level - total_draw_pct)
+        
+        # 3. Physically consistent battery model: V = OCV(SoC) - I * R_int
+        # OCV (Open Circuit Voltage) roughly 3.0V (0%) to 4.2V (100%)
+        ocv_v = 3.0 + 1.2 * (self.battery_level / 100.0)
+        
+        # Internal resistance (Ohms). Increases as SoC drops.
+        r_int_ohms = 0.5 + 2.0 * (1.0 - (self.battery_level / 100.0))
+        
+        # Voltage drop under load
+        v_drop = (total_ma / 1000.0) * r_int_ohms
+        effective_voltage_v = ocv_v - v_drop
+        
+        # Convert back to an "effective percentage" for the brownout logic (approx 3.15V cutoff ~ 5%)
+        effective_voltage_pct = max(0.0, (effective_voltage_v - 3.15) / 1.05 * 100.0)
+        
         if effective_voltage_pct < 5.0 and self.connected:
             self.connected = False
             self.stimulation_enabled = False
@@ -148,13 +180,6 @@ class DigitalTwin:
             self.iso_severity = "CRITICAL"
             self._log_state_change("Brownout: Device shut down due to voltage sag under stimulation load")
 
-        # 4. Delegate physical constraint calculations (temp rise, leakage) to PhysicsEngine
-        self.physics_engine.tick(self, dt)
-        
-        # 5. Step the ODE neural mass model
-        self.neural_dynamics.set_forcing(self.stimulation_amplitude_ma, self.stimulation_frequency_hz)
-        self.neural_dynamics.tick(dt, self._sim_clock)
-
     def get_sim_clock(self) -> float:
         """Return the current simulation clock value."""
         return self._sim_clock
@@ -162,7 +187,7 @@ class DigitalTwin:
     # --- State Accessors ---
 
     def get_state(self) -> Dict[str, Any]:
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             return {
                 "device_id": self.device_id,
                 "connected": self.connected,
@@ -205,7 +230,7 @@ class DigitalTwin:
         Return a complete frozen state copy suitable for serialization.
         Used to save/restore experiment states for reproducibility.
         """
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             return {
                 "device_id": self.device_id,
                 "connected": self.connected,
@@ -235,7 +260,10 @@ class DigitalTwin:
                 "communication_sessions": self.communication_sessions,
                 "funnel_origin": self.funnel_origin,
                 "autonomic_pupil_dilation_mm": self.autonomic_pupil_dilation_mm,
+                "fallback_mode_enabled": self.fallback_mode_enabled,
+                "fallback_mode_active": self.fallback_mode_active,
                 "sim_clock": self._sim_clock,
+                "neural_dynamics": self.neural_dynamics.get_state() if hasattr(self.neural_dynamics, 'get_state') else None,
                 "neural_coherence": self.neural_dynamics.coherence,
                 "beta_power": self.neural_dynamics.beta_power,
                 "history": list(self.history),
@@ -245,7 +273,7 @@ class DigitalTwin:
         """
         Restore state from a snapshot. Used for experiment replay.
         """
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             self.device_id = snap.get("device_id", self.device_id)
             self.connected = snap.get("connected", self.connected)
             self.battery_level = snap.get("battery_level", self.battery_level)
@@ -259,6 +287,7 @@ class DigitalTwin:
             self.decoder_confidence = snap.get("decoder_confidence", self.decoder_confidence)
             self.clinical_alert_active = snap.get("clinical_alert_active", self.clinical_alert_active)
             self.clinical_status = snap.get("clinical_status", self.clinical_status)
+            self.hazard_state = snap.get("hazard_state", self.hazard_state)
             self.iso_severity = snap.get("iso_severity", self.iso_severity)
             self.tissue_damage_risk = snap.get("tissue_damage_risk", self.tissue_damage_risk)
             self.clinical_action = snap.get("clinical_action", self.clinical_action)
@@ -273,8 +302,18 @@ class DigitalTwin:
             self.communication_sessions = snap.get("communication_sessions", 0)
             self.funnel_origin = snap.get("funnel_origin", "Ring 4: Cortical")
             self.autonomic_pupil_dilation_mm = snap.get("autonomic_pupil_dilation_mm", 4.0)
+            
+            self.fallback_mode_enabled = snap.get("fallback_mode_enabled", self.fallback_mode_enabled)
+            self.fallback_mode_active = snap.get("fallback_mode_active", self.fallback_mode_active)
+            if "neural_dynamics" in snap and snap["neural_dynamics"] is not None:
+                if hasattr(self.neural_dynamics, 'restore_state'):
+                    self.neural_dynamics.restore_state(snap["neural_dynamics"])
+                
+            # Keep history as deque
+            if "history" in snap:
+                self.history = deque(snap["history"], maxlen=1000)
+                
             self._sim_clock = snap.get("sim_clock", self._sim_clock)
-            self.history = snap.get("history", self.history)
 
     # --- State Mutators ---
 
@@ -310,7 +349,7 @@ class DigitalTwin:
         import numpy as np
         saturated = bool(np.any(np.abs(data) >= 1000.0))
         
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             if saturated != self.amplifier_saturated:
                 self.amplifier_saturated = saturated
                 if saturated:
@@ -330,15 +369,16 @@ class DigitalTwin:
             return np.clip(data, -1000.0, 1000.0)
         return data
 
-    def verify_electrode_impedances(self, signal_data: np.ndarray) -> bool:
+    def verify_electrode_connection(self, signal_data: np.ndarray) -> bool:
         """
-        Active biosensing check using a simulated micro-current impedance probe.
+        Active biosensing check using signal quality.
         Detects signal spoofing and contact status based on signal variance.
+        Note: This is a signal-quality heuristic, not a true electrical impedance measurement.
         """
         import numpy as np
         channel_vars = np.var(signal_data, axis=1)
         
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             for ch in range(self.num_channels):
                 var = channel_vars[ch]
                 if var > 100000.0:
@@ -356,7 +396,7 @@ class DigitalTwin:
             return all(2.0 <= imp <= 15.0 for imp in self.electrode_impedances.values())
 
     def update_impedance(self, ch: int, val: float):
-        with self.hardware_lock, self.clinical_lock:
+        with self._lock:
             if ch in self.electrode_impedances:
                 old_val = self.electrode_impedances[ch]
                 if abs(old_val - val) > 0.01:
@@ -364,13 +404,13 @@ class DigitalTwin:
                     self._log_state_change(f"Impedance update: ch {ch} -> {val:.2f} kOhm")
 
     def set_connection(self, status: bool):
-        with self.hardware_lock:
+        with self._lock:
             if self.connected != status:
                 self.connected = status
                 self._log_state_change(f"Connection status changed to: {status}")
 
     def update_decoder_confidence(self, conf: float):
-        with self.hardware_lock:
+        with self._lock:
             # Clip between 0.0 and 1.0
             conf = max(0.0, min(1.0, conf))
             if abs(self.decoder_confidence - conf) > 0.01:
@@ -378,7 +418,7 @@ class DigitalTwin:
                 self._log_state_change(f"Decoder confidence updated: {conf:.2f}")
 
     def enable_fallback_mode(self, active: bool):
-        with self.hardware_lock:
+        with self._lock:
             if self.fallback_mode_active != active:
                 self.fallback_mode_active = active
                 if active:
@@ -392,7 +432,7 @@ class DigitalTwin:
                     self._log_state_change("Safe Fallback Mode Deactivated")
 
     def update_therapy(self, enabled: bool):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             if self.fallback_mode_active:
                 self.stimulation_enabled = True
                 return
@@ -401,7 +441,7 @@ class DigitalTwin:
                 self._log_state_change(f"Stimulation therapy {'enabled' if enabled else 'disabled'}")
 
     def update_stimulation_params(self, amplitude: float, frequency: float):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             if self.fallback_mode_active:
                 self.stimulation_amplitude_ma = self.fallback_amplitude_ma
                 self.stimulation_frequency_hz = self.fallback_frequency_hz
@@ -411,27 +451,34 @@ class DigitalTwin:
                 self.stimulation_frequency_hz = frequency
                 self._log_state_change(f"Stimulation parameters updated: {amplitude} mA @ {frequency} Hz")
 
-    def set_clinical_alert(self, active: bool, status: str):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
-            if self.clinical_alert_active != active or self.clinical_status != status:
-                self.clinical_alert_active = active
+    def update_clinical_status(self, status: str, alert: bool = False, hazard: str = "NOMINAL", iso: str = "NEGLIGIBLE", action: str = "MONITOR"):
+        with self._lock:
+            if self.clinical_alert_active != alert or self.clinical_status != status:
+                self.clinical_alert_active = alert
                 self.clinical_status = status
-                self._log_state_change(f"Clinical alert status: active={active}, status={status}")
+                self.hazard_state = hazard
+                self.iso_severity = iso
+                self.clinical_action = action
+                self._log_state_change(f"Clinical alert status: active={alert}, status={status}")
+
+    def set_clinical_alert(self, active: bool, message: str):
+        """Helper to quickly set a clinical alert status."""
+        self.update_clinical_status(status=message, alert=active, hazard="WARNING" if active else "NOMINAL", iso="MARGINAL" if active else "NEGLIGIBLE")
 
     def update_battery(self, level: float):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             level = max(0.0, min(100.0, level))
             if abs(self.battery_level - level) > 0.1:
                 self.battery_level = level
                 self._log_state_change(f"Battery level: {level:.1f}%")
 
     def get_history(self) -> List[Dict[str, Any]]:
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             return list(self.history)
 
     def update_clinical_risk(self, hazard_state: str, iso_severity: str, tissue_damage_risk: str, clinical_action: str,
                              dsm5_diagnosis: str = "UNKNOWN", diagnostic_cluster: str = "UNKNOWN", niss_score: float = 0.0):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             if (self.hazard_state != hazard_state or
                 self.iso_severity != iso_severity or
                 self.tissue_damage_risk != tissue_damage_risk or
@@ -452,13 +499,13 @@ class DigitalTwin:
     # --- Extended State Mutators ---
 
     def update_temperature(self, temp_c: float):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             if abs(self.temperature_celsius - temp_c) > 0.05:
                 self.temperature_celsius = temp_c
                 self._log_state_change(f"Temperature: {temp_c:.1f}°C")
 
     def update_ble_pairing_state(self, state: str):
-        with self.hardware_lock, self.clinical_lock, self.therapy_lock:
+        with self._lock:
             if self.ble_pairing_state != state:
                 self.ble_pairing_state = state
                 self._log_state_change(f"BLE pairing state: {state}")

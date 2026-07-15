@@ -1,9 +1,10 @@
 import socket
 import threading
 import numpy as np
-from typing import Any
+from typing import Any, List
+from vireon.plugins.devices import IDeviceWrapper
 
-class HardwareBridge:
+class HardwareBridge(IDeviceWrapper):
     """
     Hardware-in-the-loop (HIL) TCP Loopback Server Bridge.
     Listens on local TCP port 9090 for protocol-equivalent binary telemetry
@@ -155,3 +156,12 @@ class HardwareBridge:
             out[:, offset:] = np.full((self.num_channels, starve_count), np.nan)
             
         return out
+
+    def get_board(self) -> Any:
+        return None
+
+    def get_eeg_channels(self) -> List[int]:
+        return list(range(self.num_channels))
+
+    def send_eeg_data(self, data: Any) -> None:
+        pass

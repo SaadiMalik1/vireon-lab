@@ -1,5 +1,8 @@
 # VIREON: Virtual Laboratory for BCI Security
 
+> [!CAUTION]
+> **Research/Education Testbed — Simulated Security**
+> VIREON is for research and educational purposes only. It uses **simulated security** and mock cryptographic operations. It is **not** for clinical, diagnostic, or production use.
 [![CI](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -19,6 +22,17 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 - **Web Dashboard**: Real-time telemetry monitoring through a Streamlit UI.
 - **Compliance Tooling**: Generate FDA 524B-compliant SBOMs, compliance reports, and audit SPDF practices automatically.
 
+## Component Status Matrix
+| Component | Status | Description |
+|-----------|--------|-------------|
+| **OpenBCI Cyton Emulator** | **Working** | Real PTY, accurate framing at correct scale. |
+| **Fuzzer** | **Working** | Mutation fuzzer with a real accept/reject oracle. |
+| **Plugin Registry** | **Working** | Thread-safe entry-point discovery. |
+| **Closed-Loop DBS** | **Working** | Emulated STN LFP and stimulation modulation. |
+| **Cryptography** | **SIMULATED** | Crypto primitives are simulated (XOR) for modeling; not mathematically secure. |
+| **Compliance Evidence** | **SIMULATED** | FDA 524B outputs are generated from simulated controls. |
+| **Physics / Biology** | **SIMULATED** | Generic algorithms used for educational threat modeling, not validated for clinical accuracy. |
+
 ## Who Should Use It?
 - **Academic Researchers**: To model the physiological impact of adversarial stimuli without human subjects.
 - **Security Researchers**: To develop and validate Intrusion Detection Systems (IDS) and Zero-Trust Architectures (ZTA) for medical implants.
@@ -28,11 +42,14 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 > [!WARNING]
 > **Not Medically Validated**: The physical and physiological equations modeled by VIREON (e.g., thermal tissue limits, generic EEG generation) are approximations built for cybersecurity threat modeling. They have **not** been validated for clinical accuracy and must not be used to make medical decisions.
 
+> [!CAUTION]
+> **Simulated Cryptography**: No real cryptographic operations (like AES-GCM or TLS) are performed by VIREON. All cryptographic functions are entirely simulated (e.g., XOR patterns) for the purpose of threat modeling. Do not rely on VIREON's cryptographic primitives for mathematical security.
+
 ---
 
 ## Installation & Prerequisites
 
-It is highly recommended to use a virtual environment. The project is managed via `pyproject.toml`.
+It is highly recommended to use a virtual environment. The project requires **Python 3.10+** and **Rust 1.85+**.
 
 ```bash
 git clone https://github.com/SaadiMalik1/Vireon.git

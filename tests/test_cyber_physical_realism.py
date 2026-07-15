@@ -11,6 +11,7 @@ class TestCyberPhysicalRealism(unittest.TestCase):
         
         # Advance clock to heat up tissue
         twin.set_sim_clock(100.0)
+        twin.physics_engine.tick(twin, 100.0)
         
         self.assertEqual(twin.tissue_damage_risk, "HIGH")
         self.assertTrue(twin.clinical_alert_active)
@@ -26,6 +27,7 @@ class TestCyberPhysicalRealism(unittest.TestCase):
         
         # Advance clock to heat up tissue
         twin.set_sim_clock(100.0)
+        twin.physics_engine.tick(twin, 100.0)
         
         self.assertEqual(twin.hazard_state, "HARDWARE_SHUTDOWN")
         self.assertTrue(twin.clinical_alert_active)

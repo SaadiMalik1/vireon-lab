@@ -15,6 +15,8 @@ Topics use dot-notation namespacing:
 
 import threading
 import uuid
+import concurrent.futures
+from collections import deque
 from typing import Callable, Dict, List, Any, Optional
 from dataclasses import dataclass, field
 
@@ -53,9 +55,10 @@ class EventBus:
     def __init__(self):
         self._subscriptions: Dict[str, List[_Subscription]] = {}
         self._lock = threading.Lock()
-        self._event_log: List[Event] = []
+        self._event_log: deque = deque(maxlen=10000)
         self._log_enabled = False
         self._max_log_size = 10000
+        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix="EventBus-")
 
     def subscribe(self, topic: str, handler: Callable[[Event], None],
                   priority: int = 100) -> str:
@@ -95,14 +98,12 @@ class EventBus:
 
     def publish(self, event: Event) -> None:
         """
-        Publish an event. All matching handlers are called synchronously
+        Publish an event. All matching handlers are dispatched asynchronously
         in priority order.
         """
         if self._log_enabled:
             with self._lock:
                 self._event_log.append(event)
-                if len(self._event_log) > self._max_log_size:
-                    self._event_log = self._event_log[-self._max_log_size:]
 
         # Collect handlers to invoke (snapshot under lock to avoid mutation during iteration)
         handlers_to_call: List[Callable[[Event], None]] = []
@@ -116,19 +117,25 @@ class EventBus:
                 for sub in self._subscriptions["*"]:
                     handlers_to_call.append(sub.handler)
 
-        # Invoke outside lock to avoid deadlocks
-        for handler in handlers_to_call:
+        # Invoke asynchronously outside lock
+        def _run_handler(h, e):
             try:
-                handler(event)
-            except Exception as e:
-                # Never let a handler crash the bus
+                h(e)
+            except Exception as ex:
                 import sys
-                print(f"[EventBus] Handler error on '{event.topic}': {e}", file=sys.stderr)
+                print(f"[EventBus] Handler error on '{e.topic}': {ex}", file=sys.stderr)
+
+        for handler in handlers_to_call:
+            self._executor.submit(_run_handler, handler, event)
 
     def enable_logging(self, enabled: bool = True, max_size: int = 10000):
         """Enable/disable event logging for debugging and replay."""
-        self._log_enabled = enabled
-        self._max_log_size = max_size
+        with self._lock:
+            self._log_enabled = enabled
+            if max_size != self._max_log_size:
+                self._max_log_size = max_size
+                old_events = list(self._event_log)
+                self._event_log = deque(old_events, maxlen=self._max_log_size)
 
     def get_event_log(self) -> List[Event]:
         """Return a copy of the event log."""
@@ -152,3 +159,8 @@ class EventBus:
         with self._lock:
             self._subscriptions.clear()
             self._event_log.clear()
+
+    def flush(self):
+        """Wait for all currently queued handlers to finish executing."""
+        futures = [self._executor.submit(lambda: None) for _ in range(self._executor._max_workers)]
+        concurrent.futures.wait(futures)

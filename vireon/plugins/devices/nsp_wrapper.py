@@ -2,10 +2,12 @@ import time
 import os
 import hashlib
 import json
+from typing import Any, List
+from vireon.plugins.devices import IDeviceWrapper
 
-class NSPCryptographicWrapper:
+class NSPCryptographicWrapper(IDeviceWrapper):
     """
-    Simulates the Neural Sensory Protocol (NSP) post-quantum cryptographic wrapper.
+    Simulates the Neural Sensory Protocol (NSP) advanced cryptographic wrapper.
     In a real implementation, this would apply ML-KEM/Kyber key encapsulation 
     and AES-256-GCM authentication. Here, we simulate the computational overhead
     and append realistic metadata tags.
@@ -19,7 +21,7 @@ class NSPCryptographicWrapper:
         """
         Takes a telemetry payload, simulates encryption overhead, and wraps it with NSP metadata.
         """
-        # Simulate computational overhead of post-quantum cryptography on low-power chips
+        # Simulate computational overhead of advanced cryptography on low-power chips
         if self.simulate_latency_ms > 0:
             time.sleep(self.simulate_latency_ms / 1000.0)
 
@@ -49,3 +51,21 @@ class NSPCryptographicWrapper:
         if "payload" in nsp_payload and "auth_tag" in nsp_payload:
             return nsp_payload["payload"]
         return nsp_payload
+
+    def get_board(self) -> Any:
+        return None
+
+    def get_eeg_channels(self) -> List[int]:
+        return []
+
+    def start(self) -> None:
+        pass
+
+    def stop(self) -> None:
+        pass
+
+    def read_chunk(self, start_sample: int, num_samples: int) -> Any:
+        return None
+
+    def send_eeg_data(self, data: Any) -> None:
+        pass

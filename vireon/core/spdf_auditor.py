@@ -8,6 +8,8 @@ such as Threat Models, SBOMs, Risk Management files, and static security checks.
 
 import os
 from typing import Dict, Any
+import logging
+logger = logging.getLogger(__name__)
 
 class SPDFAuditor:
     def __init__(self, project_root: str):
@@ -15,7 +17,7 @@ class SPDFAuditor:
         self.artifacts_dir = os.path.join(project_root, "artifacts")
         
     def audit(self) -> Dict[str, Any]:
-        print(f"[SPDFAuditor] Auditing project root: {self.project_root} for FDA 524B SPDF compliance...")
+        logger.info(f"[SPDFAuditor] Auditing project root: {self.project_root} for FDA 524B SPDF compliance...")
         
         results: Dict[str, Any] = {
             "sbom_present": False,
@@ -62,20 +64,20 @@ class SPDFAuditor:
         return results
 
     def print_report(self, results: Dict[str, Any]):
-        print("\n" + "="*50)
-        print(" FDA 524B SPDF AUDIT REPORT")
-        print("="*50)
-        print(f" SBOM Present:           {'[PASS]' if results['sbom_present'] else '[FAIL]'}")
-        print(f" Threat Model Present:   {'[PASS]' if results['threat_model_present'] else '[FAIL]'}")
-        print(f" Architecture Doc:       {'[PASS]' if results['architecture_doc_present'] else '[FAIL]'}")
-        print(f" Verification (Tests):   {'[PASS]' if results['tests_present'] else '[FAIL]'}")
-        print("-" * 50)
-        print(f" Overall SPDF Score:     {results['overall_spdf_score']:.1f}%")
+        logger.info("\n" + "="*50)
+        logger.info(" FDA 524B SPDF AUDIT REPORT")
+        logger.info("="*50)
+        logger.info(f" SBOM Present:           {'[PASS]' if results['sbom_present'] else '[FAIL]'}")
+        logger.info(f" Threat Model Present:   {'[PASS]' if results['threat_model_present'] else '[FAIL]'}")
+        logger.info(f" Architecture Doc:       {'[PASS]' if results['architecture_doc_present'] else '[FAIL]'}")
+        logger.info(f" Verification (Tests):   {'[PASS]' if results['tests_present'] else '[FAIL]'}")
+        logger.info("-" * 50)
+        logger.info(f" Overall SPDF Score:     {results['overall_spdf_score']:.1f}%")
         
         if results["gaps"]:
-            print("\n Identified Gaps:")
+            logger.info("\n Identified Gaps:")
             for gap in results["gaps"]:
-                print(f"  - {gap}")
+                logger.info(f"  - {gap}")
         else:
-            print("\n [✓] No SPDF compliance gaps identified.")
-        print("="*50 + "\n")
+            logger.info("\n [✓] No SPDF compliance gaps identified.")
+        logger.info("="*50 + "\n")

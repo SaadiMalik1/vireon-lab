@@ -12,6 +12,7 @@ class TestBLEGATTStack(unittest.TestCase):
     def setUp(self):
         self.server = VirtualBLEServer()
         self.link = VirtualBLELink(self.server)
+        self.link.set_pairing_code("123456")
         self.client = VirtualBLEClient(self.link)
 
     def test_gatt_database_structure(self):
@@ -70,6 +71,7 @@ class TestBLELayerAttacks(unittest.TestCase):
         self.twin = DigitalTwin(num_channels=8)
         self.server = VirtualBLEServer()
         self.link = VirtualBLELink(self.server)
+        self.link.set_pairing_code("123456")
         self.client = VirtualBLEClient(self.link)
 
     def test_pairing_failure_attack(self):

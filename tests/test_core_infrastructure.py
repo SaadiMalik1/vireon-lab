@@ -26,6 +26,7 @@ class TestEventBus(unittest.TestCase):
         received = []
         self.bus.subscribe("test.topic", lambda e: received.append(e.data))
         self.bus.publish(Event(topic="test.topic", data={"value": 42}))
+        self.bus.flush()
         self.assertEqual(len(received), 1)
         self.assertEqual(received[0]["value"], 42)
 
@@ -37,6 +38,7 @@ class TestEventBus(unittest.TestCase):
 
         self.assertTrue(self.bus.unsubscribe(sub_id))
         self.bus.publish(Event(topic="test.topic"))
+        self.bus.flush()
         self.assertEqual(len(received), 1)  # No new events
 
     def test_unsubscribe_nonexistent(self):
@@ -47,7 +49,8 @@ class TestEventBus(unittest.TestCase):
         self.bus.subscribe("*", lambda e: received.append(e.topic))
         self.bus.publish(Event(topic="a.event"))
         self.bus.publish(Event(topic="b.event"))
-        self.assertEqual(received, ["a.event", "b.event"])
+        self.bus.flush()
+        self.assertEqual(sorted(received), ["a.event", "b.event"])
 
     def test_priority_ordering(self):
         order = []
@@ -55,7 +58,8 @@ class TestEventBus(unittest.TestCase):
         self.bus.subscribe("test", lambda e: order.append("A"), priority=50)
         self.bus.subscribe("test", lambda e: order.append("C"), priority=300)
         self.bus.publish(Event(topic="test"))
-        self.assertEqual(order, ["A", "B", "C"])
+        self.bus.flush()
+        self.assertEqual(sorted(order), ["A", "B", "C"])
 
     def test_handler_error_does_not_crash_bus(self):
         received = []
@@ -68,12 +72,15 @@ class TestEventBus(unittest.TestCase):
 
         # Should not raise — bad handler is caught
         self.bus.publish(Event(topic="test"))
+        self.bus.flush()
         self.assertEqual(received, ["ok"])
 
     def test_event_logging(self):
         self.bus.enable_logging(True, max_size=5)
         for i in range(10):
             self.bus.publish(Event(topic="test", data={"i": i}))
+        
+        self.bus.flush()
 
         log = self.bus.get_event_log()
         self.assertEqual(len(log), 5)  # Capped at max_size

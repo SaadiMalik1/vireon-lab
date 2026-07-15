@@ -1,6 +1,6 @@
 dataset:
   id: emg_healthy
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/emgdb/1.0.0/
   modality: EMG
   electrodes: 1
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - motor_control_simulation
     - high_frequency_telemetry_stress_test
-  status: pending_download
+  status: synthetic_mock

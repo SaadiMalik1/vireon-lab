@@ -1,6 +1,6 @@
 dataset:
   id: sleep_edf
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/sleep-edfx/1.0.0/
   modality: EEG
   electrodes: 2
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - long_term_battery_simulation
     - artifact_removal_validation
-  status: pending_download
+  status: synthetic_mock

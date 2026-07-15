@@ -8,12 +8,14 @@ and Clean-Label Backdoor insertion (trigger injection without label change).
 
 import numpy as np
 import random
+from abc import ABC, abstractmethod
 from typing import Tuple, Optional
 
-class DataPoisoner:
+class DataPoisoner(ABC):
     """Base class for data poisoning techniques."""
+    @abstractmethod
     def poison(self, x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        raise NotImplementedError()
+        pass
 
 
 class LabelFlippingPoisoner(DataPoisoner):

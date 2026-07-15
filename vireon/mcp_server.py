@@ -1,3 +1,8 @@
+"""
+WARNING: This module is for simulation purposes only.
+The MCP Server trust boundary is undefined. It runs with no persistence and no real 
+trust establishment protocol. Do not deploy this in a production network.
+"""
 from mcp.server.fastmcp import FastMCP
 from typing import List, Optional
 import json
@@ -19,7 +24,15 @@ mcp = FastMCP("VIREON-Neural-Terminal")
 # In the NeuroDSL architecture, access is governed by cryptographically 
 # verifiable capability tokens mapped to Neurorights.
 
-SERVER_SECRET = secrets.token_bytes(32)
+SECRET_FILE = os.path.expanduser("~/.vireon/mcp_secret.key")
+if os.path.exists(SECRET_FILE):
+    with open(SECRET_FILE, "rb") as f:
+        SERVER_SECRET = f.read()
+else:
+    os.makedirs(os.path.dirname(SECRET_FILE), exist_ok=True)
+    SERVER_SECRET = secrets.token_bytes(32)
+    with open(SECRET_FILE, "wb") as f:
+        f.write(SERVER_SECRET)
 
 def _verify_capability(session_token: str, required_capability: str) -> bool:
     try:
@@ -32,7 +45,7 @@ def _verify_capability(session_token: str, required_capability: str) -> bool:
             return False
         payload = json.loads(payload_bytes.decode())
         caps = payload.get("c", [])
-        return required_capability in caps or "root.override" in caps
+        return required_capability in caps
     except Exception:
         return False
 
@@ -40,10 +53,10 @@ def _verify_capability(session_token: str, required_capability: str) -> bool:
 def mock_authenticate_session(biomarker_hash: str, role: str = "patient", auth_signature: Optional[str] = None) -> str:
     """
     WARNING: This is a MOCK authentication function. It does not perform real
-    Post-Quantum Cryptography (PQKC) or actual biomarker validation. It is solely
+    Advanced Cryptography (PQKC) or actual biomarker validation. It is solely
     for simulating the authentication flow in the digital twin environment.
     
-    Simulates Post-Quantum Key Exchange and Biomarker MFA authentication.
+    Simulates Advanced Key Exchange and Biomarker MFA authentication.
     
     Args:
         biomarker_hash: A simulated hash of the user's EEG/P300 signature.
@@ -60,8 +73,7 @@ def mock_authenticate_session(biomarker_hash: str, role: str = "patient", auth_s
         # without hardcoding symmetric secrets.
         expected_sig = os.environ.get("CLINICIAN_PUB_KEY")
         if not expected_sig:
-            # Fallback for local simulation testing only
-            expected_sig = hashlib.sha256(b"simulated_pki_key" + biomarker_hash.encode()).hexdigest()
+            return json.dumps({"error": "Role Escalation Denied: Server misconfiguration (CLINICIAN_PUB_KEY missing)."})
             
         if not auth_signature or auth_signature != expected_sig:
             return json.dumps({"error": "Role Escalation Denied: Invalid or missing cryptographic signature for clinician."})
@@ -111,10 +123,10 @@ def get_available_plugins() -> str:
     
     result: dict[str, dict[str, list[dict[str, str]]]] = {"categories": {}}
     for cat in cats:
-        plugins = registry._registry.get(cat, {})
+        plugins = registry.list_category(cat)
         result["categories"][cat] = [
             {"name": info.name, "description": info.description} 
-            for info in plugins.values()
+            for info in plugins
         ]
         
     return json.dumps(result, indent=2)
@@ -166,7 +178,7 @@ def run_simulation(
         },
         "security": {
             "enabled": secure_mode,
-            "nsp_enabled": True # Enforce post-quantum wrapper
+            "nsp_enabled": True # Enforce advanced wrapper
         },
         "emulation": {
             "dbs_mode": dbs_mode,

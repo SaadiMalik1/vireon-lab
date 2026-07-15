@@ -10,4 +10,4 @@ dataset:
   purpose:
     - eeg_preprocessing_validation
     - motor_imagery_classification_benchmark
-  status: pending_download
+  status: synthetic_mock

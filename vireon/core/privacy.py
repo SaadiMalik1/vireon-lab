@@ -35,7 +35,7 @@ class DifferentialPrivacyFilter:
     The sensitivity is based on the maximum expected amplitude variation
     in microvolts (e.g., 100 µV for standard EEG).
     """
-    def __init__(self, epsilon: float = 1.0, sensitivity_uv: float = 100.0, seed: int = None):
+    def __init__(self, epsilon: float = 1.0, sensitivity_uv: float = 100.0, seed: Optional[int] = None):
         self.epsilon = epsilon
         self.sensitivity = sensitivity_uv
         # scale parameter b = sensitivity / epsilon

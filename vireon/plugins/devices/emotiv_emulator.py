@@ -1,6 +1,7 @@
 import threading
 import time
 import numpy as np
+from typing import List, Any
 from vireon.core.twin import DigitalTwin
 from vireon.plugins.devices import IDeviceWrapper
 
@@ -13,11 +14,19 @@ class EmotivEpocEmulator(IDeviceWrapper):
     def __init__(self, twin: DigitalTwin, serial_port: str = ""):
         self.twin = twin
         self.serial_port = serial_port
+        self.board_id = 99  # Emotiv EPOC+ is a mock for now
         self.running = False
         self.thread = None
         self.sample_rate = 128
         self.num_channels = 14
         self.channel_names = ["AF3", "F7", "F3", "FC5", "T7", "P7", "O1", "O2", "P8", "T8", "FC6", "F4", "F8", "AF4"]
+        self.packet_counter = 0
+
+    def get_board(self) -> Any:
+        return None
+
+    def get_eeg_channels(self) -> List[int]:
+        return list(range(14))
 
     def start(self):
         self.running = True
@@ -30,6 +39,9 @@ class EmotivEpocEmulator(IDeviceWrapper):
         if self.thread:
             self.thread.join()
         print("[EmotivEpocEmulator] Stopped virtual stream")
+
+    def read_chunk(self, start_sample: int, num_samples: int) -> np.ndarray:
+        return np.zeros((self.num_channels, num_samples))
 
     def send_eeg_data(self, state_dict: dict):
         pass # Optional bridge callback

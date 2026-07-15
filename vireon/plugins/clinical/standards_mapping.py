@@ -2,9 +2,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class QIFAtlas:
+class ThreatAtlas:
     """
-    QIF Open Neural Atlas mapping for Threat Modeling.
+    Open Neural Atlas mapping for Threat Modeling.
     Translates physical BCI attacks into psychiatric/neurological outcomes based on disrupted neural pathways.
     (References DSM-5-TR diagnostic categories for threat modeling purposes)
     """
@@ -50,11 +50,11 @@ class QIFAtlas:
         if not os.path.exists(stix_path):
             logger.warning(f"STIX bundle not found at {stix_path}. Falling back to default.")
             cls.ATTACK_TECHNIQUES = {
-                "QIF-T0009": {"name": "RF false brainwave injection", "pathways": ["N7_PFC_M1", "N6_HIPPOCAMPUS_AMYGDALA"], "base_niss": 7.4},
-                "QIF-T0011": {"name": "Intermodulation (BCI signal weaponized)", "pathways": ["N6_HIPPOCAMPUS_AMYGDALA", "N5_STRIATUM_STN"], "base_niss": 7.4},
-                "QIF-T0023": {"name": "Closed-loop perturbation cascade", "pathways": ["N7_PFC_M1", "N6_HIPPOCAMPUS_AMYGDALA"], "base_niss": 7.4},
-                "QIF-T0030": {"name": "Motor hijacking", "pathways": ["N7_PFC_M1", "N6_HIPPOCAMPUS_AMYGDALA", "N5_STRIATUM_STN"], "base_niss": 6.7},
-                "QIF-T0068": {"name": "Bifurcation forcing", "pathways": ["N5_STRIATUM_STN", "N4_THALAMUS"], "base_niss": 8.1}
+                "ATLAS-T0009": {"name": "RF false brainwave injection", "pathways": ["N7_PFC_M1", "N6_HIPPOCAMPUS_AMYGDALA"], "base_niss": 7.4},
+                "ATLAS-T0011": {"name": "Intermodulation (BCI signal weaponized)", "pathways": ["N6_HIPPOCAMPUS_AMYGDALA", "N5_STRIATUM_STN"], "base_niss": 7.4},
+                "ATLAS-T0023": {"name": "Closed-loop perturbation cascade", "pathways": ["N7_PFC_M1", "N6_HIPPOCAMPUS_AMYGDALA"], "base_niss": 7.4},
+                "ATLAS-T0030": {"name": "Motor hijacking", "pathways": ["N7_PFC_M1", "N6_HIPPOCAMPUS_AMYGDALA", "N5_STRIATUM_STN"], "base_niss": 6.7},
+                "ATLAS-T0068": {"name": "Bifurcation forcing", "pathways": ["N5_STRIATUM_STN", "N4_THALAMUS"], "base_niss": 8.1}
             }
             cls._stix_loaded = True
             return
@@ -69,14 +69,14 @@ class QIFAtlas:
                     refs = obj.get("external_references", [])
                     ext_id = None
                     for ref in refs:
-                        if ref.get("source_name") == "QIF TARA" and "external_id" in ref:
+                        if ref.get("source_name") == "ATLAS TARA" and "external_id" in ref:
                             ext_id = ref["external_id"]
                             break
                     if not ext_id:
                         continue
                         
                     # Extract Severity
-                    sev_str = obj.get("x_qif_severity", "low").lower()
+                    sev_str = obj.get("x_atlas_severity", "low").lower()
                     if sev_str == "critical":
                         base_niss = 9.0
                     elif sev_str == "high":
@@ -87,7 +87,7 @@ class QIFAtlas:
                         base_niss = 3.0
                     
                     # Extract Pathways (Bands)
-                    bands = obj.get("x_qif_bands", [])
+                    bands = obj.get("x_atlas_bands", [])
                     pathways = []
                     # Map prefix (N7, N6) to full pathway if it exists in DSM5_MAPPINGS
                     # e.g., "N7" matches "N7_PFC_M1"
@@ -110,10 +110,10 @@ class QIFAtlas:
     @classmethod
     def evaluate_clinical_impact(cls, attack_signature: str, duration_sec: float) -> dict:
         """
-        Evaluate the likely psychiatric/clinical outcome of an attack based on the QIF Atlas.
+        Evaluate the likely psychiatric/clinical outcome of an attack based on the Threat Atlas.
         
         Args:
-            attack_signature (str): The specific attack type detected (maps to QIF techniques)
+            attack_signature (str): The specific attack type detected (maps to Atlas techniques)
             duration_sec (float): How long the attack has been active
             
         Returns:
@@ -124,8 +124,8 @@ class QIFAtlas:
                 "iso14971_severity": str
             }
         """
-        # Map generic simulator attacks to QIF specific techniques if needed
-        technique_id = cls._map_to_qif_technique(attack_signature)
+        # Map generic simulator attacks to Atlas specific techniques if needed
+        technique_id = cls._map_to_atlas_technique(attack_signature)
         
         cls._load_stix_data()
         
@@ -174,17 +174,17 @@ class QIFAtlas:
             "diagnostic_cluster": primary_cluster,
             "niss_score": round(niss_score, 1),
             "iso14971_severity": iso_severity,
-            "qif_technique": technique_id
+            "atlas_technique": technique_id
         }
 
     @classmethod
-    def _map_to_qif_technique(cls, attack_signature: str) -> str:
-        """Maps internal attack names to QIF Atlas T-codes."""
+    def _map_to_atlas_technique(cls, attack_signature: str) -> str:
+        """Maps internal attack names to Threat Atlas T-codes."""
         mapping = {
-            "noise_injection": "QIF-T0009",      # RF false brainwave
-            "phase_shift": "QIF-T0023",          # Closed-loop cascade
-            "signal_suppression": "QIF-T0011",   # Intermodulation
-            "firmware_override": "QIF-T0068",    # Bifurcation forcing
-            "stimulation_leak": "QIF-T0030",     # Motor hijacking
+            "noise_injection": "ATLAS-T0009",      # RF false brainwave
+            "phase_shift": "ATLAS-T0023",          # Closed-loop cascade
+            "signal_suppression": "ATLAS-T0011",   # Intermodulation
+            "firmware_override": "ATLAS-T0068",    # Bifurcation forcing
+            "stimulation_leak": "ATLAS-T0030",     # Motor hijacking
         }
         return mapping.get(attack_signature.lower(), "UNKNOWN")

@@ -12,6 +12,11 @@ import struct
 class CortexMStub:
     def __init__(self):
         # Simplified Memory Map
+        self.BOOTLOADER_BASE = 0x08000000
+        self.BOOTLOADER_SIZE = 32 * 1024 # 32 KB
+        self.APP_BASE = 0x08008000
+        self.APP_SIZE = 480 * 1024 # 480 KB
+        
         self.FLASH_BASE = 0x08000000
         self.FLASH_SIZE = 512 * 1024 # 512 KB
         
@@ -58,6 +63,11 @@ class CortexMStub:
         self.crash_reason = ""
         self.overflow_detected = False
 
+    def recover(self):
+        """Recover from a crashed state (simulated reboot)."""
+        print(f"[FirmwareEmulator] Executing recovery/reboot sequence...")
+        self.reset()
+
     def write_memory(self, address: int, data: bytes) -> bool:
         """Writes data to memory. Returns True if successful, False if fault."""
         if self.crashed:
@@ -100,18 +110,29 @@ class CortexMStub:
     def process_ota_update(self, payload: bytes) -> bool:
         """
         Simulates Secure Bootloader processing an OTA update payload.
-        Expects a 4-byte header containing the SVN (Security Version Number).
-        Format: [SVN (4 bytes, little-endian)] + [Binary Payload...]
+        Expects a 36-byte header containing the SVN (4 bytes) and SHA256 Signature (32 bytes).
+        Format: [SVN (4 bytes)] + [Signature (32 bytes)] + [Binary Payload...]
         """
         if self.crashed:
             return False
             
-        if len(payload) < 4:
-            self._trigger_fault("OTA Error: Payload too short to contain header.")
+        if len(payload) < 36:
+            self._trigger_fault("OTA Error: Payload too short to contain header and signature.")
             return False
             
         # Extract 4-byte SVN (little-endian unsigned int)
         payload_svn = struct.unpack('<I', payload[:4])[0]
+        
+        # Extract 32-byte Signature
+        signature = payload[4:36]
+        firmware_binary = payload[36:]
+        
+        # Cryptographic Signature Verification
+        import hashlib
+        expected_sig = hashlib.sha256(firmware_binary).digest()
+        if signature != expected_sig:
+            self._trigger_fault("Secure Boot Fault: Firmware signature verification failed.")
+            return False
         
         # Anti-Rollback Check against hardware eFuses
         if payload_svn < self.efuses["MIN_SVN"]:
@@ -119,9 +140,8 @@ class CortexMStub:
                                 f"Payload SVN ({payload_svn}) < MIN_SVN ({self.efuses['MIN_SVN']})")
             return False
             
-        # Simulate writing the rest of the payload to Flash memory
-        firmware_binary = payload[4:]
-        success = self.write_memory(self.FLASH_BASE, firmware_binary)
+        # Simulate writing the rest of the payload to Flash memory (APP region)
+        success = self.write_memory(self.APP_BASE, firmware_binary)
         
         if success:
             print(f"[CortexMStub] OTA Update Successful. Flashed {len(firmware_binary)} bytes.")

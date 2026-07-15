@@ -1,12 +1,13 @@
 import unittest
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS, BLELinkGuard
+from vireon.core.detection import SecurityEngine
+from vireon.core.clinical import NeuroIPS, BLELinkGuard
 
 class TestNeuroSecurityLayer(unittest.TestCase):
     def setUp(self):
         self.twin = DigitalTwin(num_channels=8)
-        self.ids = NeuroSignalAssuranceEngine(self.twin)
+        self.ids = SecurityEngine(self.twin)
         self.ips = NeuroIPS(self.twin, self.ids)
         self.link_guard = BLELinkGuard(self.twin)
 
@@ -23,7 +24,7 @@ class TestNeuroSecurityLayer(unittest.TestCase):
 
         # 3. Clean signal check
         # Instantiate fresh IDS to avoid stateful CUSUM/Autoencoder drift triggers
-        ids_fresh = NeuroSignalAssuranceEngine(self.twin)
+        ids_fresh = SecurityEngine(self.twin)
         clean_data = np.random.normal(0, 10.0, (8, 100))
         anomalies = ids_fresh.analyze_signal(clean_data)
         self.assertEqual(len(anomalies), 0)
@@ -87,6 +88,49 @@ class TestNeuroSecurityLayer(unittest.TestCase):
         self.assertEqual(safe_mtu, 23)
         self.assertEqual(self.link_guard.blocked_mtu_abuses, 1)
         self.assertTrue(self.twin.get_state()["clinical_alert_active"])
+
+    def test_ble_link_guard_connection_and_rf(self):
+        # 1. verify_connection
+        bonding_db = {"00:11:22:33:44:55": "key1"}
+        # valid
+        self.assertTrue(self.link_guard.verify_connection("00:11:22:33:44:55", True, bonding_db))
+        # spoofed
+        self.assertFalse(self.link_guard.verify_connection("00:11:22:33:44:55", False, bonding_db))
+        # unknown mac
+        self.assertTrue(self.link_guard.verify_connection("AA:BB:CC:DD:EE:FF", False, bonding_db))
+        
+        # 2. rf environment
+        self.twin.rf_packet_drop_rate = 0.4
+        self.link_guard.check_rf_environment()
+        self.assertEqual(self.link_guard.jamming_alerts, 1)
+
+    def test_ips_coherence_clamping(self):
+        # Step 1: Write initial value
+        self.ips.sanitize_stimulation_write(1.0, 130.0)
+        self.twin.sim_clock = 1.0
+        
+        # Step 2: Write jump value > 0.5 delta
+        amp, freq = self.ips.sanitize_stimulation_write(2.0, 130.0)
+        # Should be clamped to 1.5
+        self.assertEqual(amp, 1.5)
+        
+        # Step 3: Test beta low (coherence state untrusted)
+        self.ids.history_beta_power.append(10.0) # low beta
+        amp2, freq2 = self.ips.sanitize_stimulation_write(2.5, 130.0)
+        # Should be clamped to 1.5
+        self.assertEqual(amp2, 1.5)
+        
+    def test_ips_thermal_and_nan(self):
+        # Test nan
+        amp, freq = self.ips.sanitize_stimulation_write(float('nan'), float('inf'))
+        self.assertEqual(amp, 0.0)
+        self.assertEqual(freq, 0.0)
+        
+        # Test thermal dose
+        self.twin.temperature_celsius = 41.0
+        amp2, freq2 = self.ips.sanitize_stimulation_write(2.0, 130.0)
+        self.assertEqual(amp2, 1.0)
+        self.assertEqual(freq2, 130.0)
 
 if __name__ == "__main__":
     unittest.main()

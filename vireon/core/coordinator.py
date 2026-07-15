@@ -55,45 +55,28 @@ class Coordinator:
 
         # Optional components (initialized during setup based on config)
         self.clinical_sim: Optional[ClosedLoopSimulator] = None
-        self.dbs_controller = None
-        self.ids = None
-        self.ips = None
-        self.link_guard = None
-        self.emulator = None
-        self.fw_monitor = None
-        self.ble_server = None
-        self.p300_analyzer = None
-        self.total_p300_leakage_events = 0
-        self.e2ee_channel = None
-        self.biometric_gate = None
-        self.ble_link = None
-        self.ble_client = None
-        self.bridge = None
-        self.web_server = None
-        self.ws_server = None
-        self.lsl_streamer = None
-        self.threat_intel = None
-        self.nsp_wrapper = None
-        self.zta_engine = None
-
-        # Shared mutable simulation context for web UI control
-        # (backward compat with existing web_server.py)
-        self._simulation_context: Dict[str, Any] = {
-            "dbs_mode": config.emulation.dbs_mode,
-            "secure_mode": config.security.enabled,
-            "nsp_mode": config.security.nsp_enabled,
-            "dbs_attack": config.emulation.dbs_attack,
-            "active_attack": "none",
-            "noise_intensity": config.attacks.noise_level_uv,
-            "attenuation_factor": config.attacks.attenuation_factor,
-            "impedance_kohm": config.attacks.spike_impedance_kohm,
-        }
+        self.dbs_controller: Optional[Any] = None
+        self.ids: Optional[Any] = None
+        self.ips: Optional[Any] = None
+        self.link_guard: Optional[Any] = None
+        self.emulator: Optional[Any] = None
+        self.fw_monitor: Optional[Any] = None
+        self.ble_server: Optional[Any] = None
+        self.p300_analyzer: Optional[Any] = None
+        self.total_p300_leakage_events: int = 0
+        self.e2ee_channel: Optional[Any] = None
+        self.biometric_gate: Optional[Any] = None
+        self.ble_link: Optional[Any] = None
+        self.ble_client: Optional[Any] = None
+        self.bridge: Optional[Any] = None
+        self.web_server: Optional[Any] = None
+        self.ws_server: Optional[Any] = None
+        self.lsl_streamer: Optional[Any] = None
+        self.threat_intel: Optional[Any] = None
+        self.nsp_wrapper: Optional[Any] = None
+        self.zta_engine: Optional[Any] = None
 
         self._setup_complete = False
-
-    @property
-    def simulation_context(self) -> Dict[str, Any]:
-        return self._simulation_context
 
     def setup(self):
         """Initialize all components based on config. Call once before run()."""
@@ -118,20 +101,16 @@ class Coordinator:
 
         # 1. Initialize core state
         self.twin = DigitalTwin(
-            device_id=f"virtual_{self.config.device.type}_board",
+            device_id=self.config.device.device_id,
             sample_rate=self.config.device.sample_rate,
-            num_channels=self.config.device.num_channels
+            num_channels=self.config.device.num_channels,
+            hardware_mode=self.config.device.hardware_mode,
+            seed=self.config.seed
         )
         self.attack_engine = SignalAttackEngine(self.twin, self.event_bus)
 
         # 1.5 Initialize Threat Intel (Standards Mapping)
-        try:
-            from vireon.core.threat_intel import ThreatIntelligence
-            self.threat_intel = ThreatIntelligence()
-
-        except Exception:
-            logger.error("Could not initialize ThreatIntelligence", exc_info=True)
-            self.threat_intel = None
+        self.threat_intel = self.registry.create("security", "threat_intel")
 
         # Enable event logging for reproducibility
         self.event_bus.enable_logging(True)
@@ -158,12 +137,18 @@ class Coordinator:
         device_wrapper = self._setup_device()
         dataset_reader = self._setup_dataset()
 
+        from vireon.core.data_provider import DeviceProviderAdapter, DatasetProviderAdapter
+        provider = None
+        if device_wrapper:
+            provider = DeviceProviderAdapter(device_wrapper)
+        elif dataset_reader:
+            provider = DatasetProviderAdapter(dataset_reader)
+
         # 4. Build replay engine
         self.engine = ReplayEngine(
             twin=self.twin,
             attack_engine=self.attack_engine,
-            device_wrapper=device_wrapper,
-            dataset_reader=dataset_reader,
+            provider=provider,
             seed=self.config.seed,
             loop_dataset=self.config.dataset.loop
         )
@@ -178,18 +163,20 @@ class Coordinator:
         # 6. Security layer
         if self.config.security.enabled or self.config.web.enabled:
             print("[VIREON] Initializing Neuro Security Layer (IDS/IPS Active)...")
-            from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS, BLELinkGuard
-            self.ids = NeuroSignalAssuranceEngine(
-                self.twin, self.event_bus,
+            self.ids = self.registry.create(
+                "security", "ids",
+                twin=self.twin, event_bus=self.event_bus,
                 rms_high_threshold=self.config.security.rms_high_threshold,
                 rms_low_threshold=self.config.security.rms_low_threshold,
-                beta_power_threshold=self.config.security.beta_power_threshold
+                beta_power_threshold=self.config.security.beta_power_threshold,
+                seed=self.config.seed
             )
-            self.ips = NeuroIPS(
-                self.twin, self.ids, self.event_bus,
+            self.ips = self.registry.create(
+                "security", "ips",
+                twin=self.twin, ids=self.ids, event_bus=self.event_bus,
                 max_stimulation_amplitude_ma=self.config.security.max_stimulation_amplitude_ma
             )
-            self.link_guard = BLELinkGuard(self.twin, self.event_bus)
+            self.link_guard = self.registry.create("security", "ble_guard", twin=self.twin, event_bus=self.event_bus)
             
         # 6.5 NSP Wrapper
         if self.config.security.nsp_enabled or self.config.web.enabled:
@@ -197,27 +184,23 @@ class Coordinator:
             self.nsp_wrapper = NSPCryptographicWrapper(simulate_latency_ms=1.5)
 
         # 6.6 Firmware Emulation
-        from vireon.plugins.firmware.cortex_m_stub import CortexMStub, FirmwareSecurityMonitor
+        from vireon.plugins.firmware.cortex_m_stub import CortexMStub
         self.emulator = CortexMStub()
-        self.fw_monitor = FirmwareSecurityMonitor(self.emulator)
+        self.fw_monitor = self.registry.create("security", "fw_monitor", firmware_emulator=self.emulator)
 
         # 6.7 P300 Leakage Analyzer
-        from vireon.core.privacy_leakage import P300Analyzer
-        self.p300_analyzer = P300Analyzer()
+        self.p300_analyzer = self.registry.create("security", "p300_analyzer")
 
         # 6.8 End-to-End Encryption (E2EE)
-        from vireon.core.e2ee import E2EEChannel
-        self.e2ee_channel = E2EEChannel()
+        self.e2ee_channel = self.registry.create("security", "e2ee_channel")
 
         # 6.9 Neuro-Biometric Authentication Gate
-        from vireon.core.authentication import BiometricGate
         # Profile specific to the generated synthetic data (alpha ~ 10Hz)
-        self.biometric_gate = BiometricGate(authorized_profile={"alpha_peak_hz": 10.0})
+        self.biometric_gate = self.registry.create("security", "biometric_gate", authorized_profile={"alpha_peak_hz": 10.0})
 
         # 6.10 Zero-Trust Architecture Policy Engine
         if getattr(self.config.security, 'enable_zta', False):
-            from vireon.core.zta import ZTAPolicyEngine
-            self.zta_engine = ZTAPolicyEngine(thresholds=getattr(self.config.security, 'zta_thresholds', {}))
+            self.zta_engine = self.registry.create("security", "zta_engine", thresholds=getattr(self.config.security, 'zta_thresholds', {}))
 
         # 7. Web server & LSL
         if getattr(self.config.web, 'lsl_only', False):
@@ -247,28 +230,9 @@ class Coordinator:
             self.emulator.start()
             self.engine.add_callback(self.emulator.send_eeg_data)
 
-        # 11. Initialize Attack Chain (Threat Model)
+        # 11. Initialize Attack Chain (Threat Model) - REMOVED (Dead orchestration)
         self.attack_chain = []
         self.attack_context = {}
-        
-        capability = getattr(self.config.attacker_model, 'capability', "L0")
-        
-        try:
-            from vireon.attack_chain import (
-                ReconnaissanceStage, InitialAccessStage, ProtocolAbuseStage,
-                PrivilegeEscalationStage, PersistenceStage, ExecutionStage, RecoveryStage
-            )
-            self.attack_chain = [
-                ReconnaissanceStage(capability, self.event_bus),
-                InitialAccessStage(capability, self.event_bus),
-                ProtocolAbuseStage(capability, self.event_bus),
-                PrivilegeEscalationStage(capability, self.event_bus),
-                PersistenceStage(capability, self.event_bus),
-                ExecutionStage(capability, self.event_bus),
-                RecoveryStage(capability, self.event_bus)
-            ]
-        except ImportError:
-            pass
 
         # Publish setup complete event
         self.event_bus.publish(Event(
@@ -297,11 +261,7 @@ class Coordinator:
               f"duration={self.config.duration_sec}s, "
               f"seed={self.config.seed})...")
 
-        # Execute pre-signal attack stages
-        for stage in self.attack_chain:
-            success = stage.execute(self.attack_context)
-            if not success:
-                break
+        # Execute pre-signal attack stages - REMOVED (Dead orchestration)
 
         self.engine.start(interval_sec=self.config.interval_sec)
         start_time = time.time()
@@ -375,7 +335,7 @@ class Coordinator:
             signal_list = signal_chunk.tolist()
             state["signal_chunk"] = [0.0 if np.isnan(x) else x for x in signal_list]
             
-            active_attack = self._simulation_context.get("active_attack", "none")
+            active_attack = self.twin.active_attack
             state["active_attack"] = active_attack
             if self.threat_intel and active_attack != "none":
                 tara_intel = self.threat_intel.resolve_attack(active_attack)
@@ -390,7 +350,7 @@ class Coordinator:
                 state["clamping_active"] = self.ips.clamping_active
                 state["blocked_mtu_abuses"] = self.ips.blocked_mtu_abuses
                 
-            if self._simulation_context.get("nsp_mode", False) and self.nsp_wrapper:
+            if self.twin.nsp_mode and self.nsp_wrapper:
                 state = self.nsp_wrapper.encrypt_payload(state)
                 
             self.ws_server.broadcast_sync(json.dumps(state))
@@ -425,8 +385,9 @@ class Coordinator:
             elif attack_name == "stimulation_leak":
                 print("[VIREON] Injecting Stimulation Leak Attack")
                 if self.config.security.enabled:
-                    from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
-                    temp_ids = NeuroSignalAssuranceEngine(self.twin)
+                    from vireon.core.detection import SecurityEngine
+                    from vireon.core.clinical import NeuroIPS
+                    temp_ids = SecurityEngine(self.twin)
                     temp_ips = NeuroIPS(self.twin, temp_ids)
                     amp, freq = temp_ips.sanitize_stimulation_write(10.0, 130.0)
                     self.twin.update_therapy(True)
@@ -456,8 +417,8 @@ class Coordinator:
                 )
             else:
                 print(f"[VIREON] Warning: Unknown device type '{self.config.device.type}'")
-        except Exception:
-            logger.error("Error loading device module", exc_info=True)
+        except Exception as e:
+            logger.error(f"Error loading device module: {e}", exc_info=True)
             sys.exit(1)
         return device_wrapper
 
@@ -486,18 +447,22 @@ class Coordinator:
         return dataset_reader
 
     def _setup_lsl_streamer(self):
-        """Initialize LSL Streamer instead of Web UI."""
-        print("[VIREON] Bypassing Web UI. Initializing LSL Streamer...")
+        """
+        Initialize LSL Streamer instead of Web UI.
+        This is an intentional headless execution path used primarily for 
+        automated testing and CI environments where a Web UI cannot be spawned.
+        """
+        print("[VIREON] Starting headless mode for automated testing. Initializing LSL Streamer...")
         try:
             from vireon.core.lsl_streamer import LSLStreamer
             self.lsl_streamer = LSLStreamer(num_channels=self.twin.num_channels, srate=self.twin.sample_rate)
             self.config.duration_sec = 100000.0  # Run indefinitely in LSL mode
-        except Exception:
-            logger.error("Failed to start LSL Streamer", exc_info=True)
+        except Exception as e:
+            logger.error(f"Failed to start LSL Streamer: {e}", exc_info=True)
+            raise RuntimeError(f"LSL Streamer failed to initialize: {e}") from e
 
     def _setup_web_server(self):
         """Start the Web UI dashboard."""
-        import webbrowser
         import secrets
         from vireon.plugins.reports.web_server import start_web_server, simulation_context
         
@@ -525,9 +490,6 @@ class Coordinator:
         # Add WebSocket broadcast callback to the engine
         self.engine.add_callback(self._ws_broadcast_callback)
 
-        if self.config.web.open_browser:
-            webbrowser.open(f"http://127.0.0.1:{self.config.web.port}")
-
     def _setup_ble(self):
         """Initialize BLE emulation stack."""
         from vireon.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
@@ -539,7 +501,7 @@ class Coordinator:
         self.ble_client = VirtualBLEClient(self.ble_link)
 
         self.ble_client.connect()
-        self.ble_client.pair("123456")
+        self.ble_client.pair(self.ble_link.pairing_code)
 
         requested_mtu = 247
         if self.config.emulation.ble_attack == "mtu_abuse":
@@ -559,7 +521,7 @@ class Coordinator:
         
         # Determine biometric confidence
         bio_conf = 1.0
-        if self.biometric_gate and not self.biometric_gate.is_unlocked:
+        if self.biometric_gate and self.biometric_gate.is_locked:
             bio_conf = 0.0
         elif self.ids and self.ids.history_confidence:
             bio_conf = self.ids.history_confidence[-1]
@@ -567,8 +529,8 @@ class Coordinator:
         return TrustContext(
             biometric_confidence=bio_conf,
             firmware_healthy=not getattr(self.emulator, 'crashed', False) if self.emulator else True,
-            e2ee_established=self._simulation_context.get("e2ee_mode", False),
-            clinical_mode=True # Defaulting to True for simulation purposes
+            e2ee_established=self.twin.e2ee_mode,
+            clinical_mode=getattr(self.config.security, 'clinical_mode', False)
         )
 
     def _simulation_callback(self, raw_data, eeg_channels, sample_rate):
@@ -591,8 +553,8 @@ class Coordinator:
             self.scenario.update(self.engine.sim_clock, self.attack_engine, self.registry)
 
         # Resolve active flags dynamically (supports web UI live toggling)
-        dbs_active = self._simulation_context["dbs_mode"]
-        secure_active = self._simulation_context["secure_mode"]
+        dbs_active = self.twin.dbs_mode
+        secure_active = self.twin.secure_mode
 
         # 1. Acquire signal source
         if dbs_active and self.dbs_controller:
@@ -646,9 +608,10 @@ class Coordinator:
                 data_to_process = np.frombuffer(
                     reconstructed_bytes[:raw_data.nbytes], dtype=raw_data.dtype
                 ).copy().reshape(raw_data.shape)
-            except Exception:
-                logger.error("BLE packet reconstruction failed", exc_info=True)
-                data_to_process = np.random.normal(0, 500.0, raw_data.shape)
+            except Exception as e:
+                logger.error(f"BLE packet reconstruction failed: {e}", exc_info=True)
+                self.twin.hazard_state = "FAULT"
+                data_to_process = np.full(raw_data.shape, np.nan)
 
             if secure_active and self.ids and self.ips:
                 anomalies = self.ids.analyze_signal(data_to_process)
@@ -656,7 +619,7 @@ class Coordinator:
 
         # 3. Clinical closed-loop evaluation
         if dbs_active and self.dbs_controller:
-            dbs_attack_type = self._simulation_context.get("dbs_attack", "")
+            dbs_attack_type = "phase_shift" if self.twin.active_attack == "phase_shift" else ""
             self.dbs_controller.process_lfp(
                 data_to_process, eeg_channels, sample_rate,
                 attack_active=(dbs_attack_type == "phase_shift")
@@ -671,7 +634,7 @@ class Coordinator:
             self.clinical_sim.process_signal(data_to_process, eeg_channels, sample_rate)
 
         # 3.5 Biometric Authentication
-        if self._simulation_context.get("biometric_auth", False) and self.biometric_gate:
+        if getattr(self.config.security, 'biometric_auth', False) and self.biometric_gate:
             self.biometric_gate.authenticate_window(data_to_process, sample_rate)
             if self.biometric_gate.is_locked:
                 print("[Coordinator] Egress blocked by BiometricGate.")
@@ -691,7 +654,7 @@ class Coordinator:
                     
             self.lsl_streamer.push_eeg_chunk(lsl_data)
             
-            active_attack = self._simulation_context.get("active_attack", "none")
+            active_attack = self.twin.active_attack
             telemetry = {
                 "sim_clock": self.engine.sim_clock,
                 "niss_score": self.twin.niss_score,
@@ -710,10 +673,10 @@ class Coordinator:
             if self.config.security.enabled and self.ids:
                 telemetry["mean_confidence"] = self.ids.history_confidence[-1] if self.ids.history_confidence else 1.0
                 
-            if self._simulation_context.get("nsp_mode", False) and self.nsp_wrapper:
+            if self.twin.nsp_mode and self.nsp_wrapper:
                 telemetry = self.nsp_wrapper.encrypt_payload(telemetry)
                 
-            if self._simulation_context.get("e2ee_mode", False) and self.e2ee_channel:
+            if self.twin.e2ee_mode and self.e2ee_channel:
                 telemetry = {"e2ee_payload": self.e2ee_channel.encrypt_payload(telemetry)}
                 
             self.lsl_streamer.push_telemetry(telemetry)
@@ -767,7 +730,7 @@ class Coordinator:
             summary["clamping_active"] = False
             summary["blocked_mtu_abuses"] = 0
             
-        summary["nsp_active"] = self._simulation_context.get("nsp_mode", False)
+        summary["nsp_active"] = self.twin.nsp_mode
         summary["p300_leakage_events"] = self.total_p300_leakage_events
 
         from vireon.plugins.reports.generator import ReportGenerator
@@ -790,7 +753,7 @@ class Coordinator:
             print(" Security Shield: ACTIVE (IDS/IPS Enabled)")
             print(f" Blocked Attacks: {summary.get('blocked_attacks_count', 0)}")
         print(f" Seed:            {self.config.seed}")
-        print("=== NEUROSHIELD REPORTS ===")
+        print("=== VIREON REPORTS ===")
         print(f"  - HTML Log:     {self.config.output.report_prefix}_report.html")
         print(f"  - PDF Report:   {self.config.output.report_prefix}_report.pdf")
         print(f"  - Markdown Log: {self.config.output.report_prefix}_report.md")

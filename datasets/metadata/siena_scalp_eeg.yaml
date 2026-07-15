@@ -1,6 +1,6 @@
 dataset:
   id: siena_scalp_eeg
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/siena-scalp-eeg/1.0.0/
   modality: EEG
   electrodes: 29
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - clinical_device_trace_validation
     - high_density_eeg_replay
-  status: pending_download
+  status: synthetic_mock

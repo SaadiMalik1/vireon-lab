@@ -1,6 +1,13 @@
 from vireon.core.twin import DigitalTwin
+from vireon.core.interfaces import ITwin
 from vireon.core.attack import SignalAttackEngine
 
+"""
+WARNING: This module is for simulation purposes only.
+The NeuroDSL bytecode VM execution has no sandboxing. Arbitrary jumps (e.g., JUMP_IF) 
+could theoretically manipulate host memory if misconfigured. Do not execute untrusted 
+NeuroDSL code outside of this simulation lab.
+"""
 import time
 import threading
 import numpy as np
@@ -25,22 +32,14 @@ class ReplayEngine:
     """
 
     def __init__(self,
-                 twin: DigitalTwin,
+                 twin: ITwin,
                  attack_engine: SignalAttackEngine,
-                 device_wrapper=None,
-                 dataset_reader=None,
+                 provider=None,  # Should be IDataProvider
                  seed: Optional[int] = None,
-                 loop_dataset: bool = True,
-                 ids=None,
-                 ti=None,
-                 red_team_engine=None):
+                 loop_dataset: bool = True):
         self.twin = twin
         self.attack_engine = attack_engine
-        self.device_wrapper = device_wrapper
-        self.dataset_reader = dataset_reader
-        self.ids = ids
-        self.ti = ti
-        self.red_team_engine = red_team_engine
+        self.provider = provider
 
         self.last_anomaly_score = 0.0
         self.active_attack = "none"
@@ -154,27 +153,14 @@ class ReplayEngine:
         num_channels = self.twin.num_channels
 
         # EEG channels indices (normally 0 to num_channels-1, or specified by device)
-        if self.device_wrapper is not None:
-            eeg_channels = self.device_wrapper.get_eeg_channels()
-            board = self.device_wrapper.get_board()
-            # Start streaming
-            try:
-                if hasattr(self.device_wrapper, "start_stream"):
-                    self.device_wrapper.start_stream()
-                else:
-                    if board and not board.is_prepared():
-                        board.prepare_session()
-                    if board and board.is_prepared():
-                        board.start_stream()
-            except Exception:
-                logger.error("Warning starting board stream", exc_info=True)
+        if self.provider is not None:
+            eeg_channels = self.provider.get_eeg_channels()
         else:
             eeg_channels = list(range(num_channels))
-            board = None
 
-        num_samples_per_chunk = int(sr * interval_sec)
-        if num_samples_per_chunk <= 0:
-            num_samples_per_chunk = 1
+        accumulated_samples = 0.0
+        pending_futures = set()
+        MAX_PENDING_TASKS = 20
 
         last_time = time.time()
 
@@ -198,132 +184,132 @@ class ReplayEngine:
 
             # Advance simulation clock (simulating 100 ppm oscillator clock drift & jitter)
             drift = self.rng.uniform(-1.0, 1.0) * (interval_sec * 0.0001)
-            self._sim_clock += interval_sec + drift
+            actual_dt = interval_sec + drift
+            self._sim_clock += actual_dt
+            
+            # Step the digital twin clock and physics/dynamics
             self.twin.set_sim_clock(self._sim_clock)
+            self.twin.physics_engine.tick(self.twin, actual_dt)
+            self.twin.neural_dynamics.set_forcing(self.twin.stimulation_amplitude_ma, self.twin.stimulation_frequency_hz)
+            self.twin.neural_dynamics.tick(actual_dt, self._sim_clock)
 
-            # Fetch data chunk
-            raw_data = None
-            self._current_buffer = None
+            accumulated_samples += sr * actual_dt
+            num_samples_per_chunk = int(accumulated_samples)
 
-            if self.device_wrapper is not None and hasattr(self.device_wrapper, 'read_chunk'):
-                try:
-                    raw_data = self.device_wrapper.read_chunk(0, num_samples_per_chunk)
-                except Exception:
-                    logger.error("Device wrapper read error", exc_info=True)
-                    raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
-                    
-            elif board is not None:
-                try:
-                    # Fetch from BrainFlow board
-                    data_chunk = board.get_board_data()
-                    if data_chunk.size > 0:
-                        raw_data = data_chunk
-                    else:
-                        raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
-                except Exception as e:
-                    logger.error(f"Board read error: {e}")
-                    raw_data = np.full((max(eeg_channels) + 1, num_samples_per_chunk), np.nan)
-
-            elif self.dataset_reader is not None:
-                # Fetch from Dataset Reader
-                try:
-                    raw_data = self.dataset_reader.read_chunk(self.dataset_sample_position, num_samples_per_chunk)
-                    self.dataset_sample_position += num_samples_per_chunk
-                except Exception:
-                    # End of file or read error
-                    if self._loop_dataset:
-                        self.dataset_sample_position = 0
-                        try:
-                            raw_data = self.dataset_reader.read_chunk(0, num_samples_per_chunk)
-                            self.dataset_sample_position = num_samples_per_chunk
-                        except Exception:
-                            raw_data = np.full((num_channels, num_samples_per_chunk), np.nan)
-                    else:
-                        print("[ReplayEngine] Dataset exhausted, stopping.")
-                        self.running = False
-                        break
-
-            else:
-                # No source configured, propagate NaN to signify absence of data rather than fabricating noise
-                raw_data = np.full((num_channels, num_samples_per_chunk), np.nan)
-
-            # Ensure raw_data shape is correct (channels, samples)
-            if raw_data is not None and len(raw_data.shape) == 2:
-                # Apply attacks
-                mutated_data = self.attack_engine.apply_attacks(raw_data, eeg_channels, sr)
-                
-                with self._buffer_lock:
-                    self._current_buffer = mutated_data
-
-                # Run IDS if present
-                if self.ids and mutated_data.shape[1] > 0:
-                    # Feed mean of the chunk to IDS for simplicity
-                    features = np.mean(mutated_data[:8, :], axis=1)
-                    if len(features) == 8:
-                        self.last_anomaly_score = self.ids.detect(features)
-                        
-                        # Update twin clinical state based on anomaly score
-                        if self.last_anomaly_score > self.ids.threshold:
-                            self.twin.set_clinical_alert(True, "IDS Anomaly Detected")
-                        else:
-                            self.twin.set_clinical_alert(False, "Nominal")
-
-                # Run Red Team feedback loop
-                if self.red_team_engine:
-                    self.red_team_engine.tick(self.last_anomaly_score, self.ids.threshold if self.ids else 1.0)
-
-                # Check connection status in digital twin
-                if self.twin.connected:
-                    # Run scribe VM if available
-                    if self.scribe:
-                        flattened = mutated_data.flatten().tolist()
-                        try:
-                            # Step the VM with current data
-                            # The VM can observe the data and possibly manipulate therapy parameters
-                            _ = self.scribe.execute_step(flattened)
-                        except Exception:
-                            logger.error("Scribe VM execution error", exc_info=True)
-
-                    # Invoke clinical simulation callbacks concurrently to avoid GIL starvation
-                    for cb in self.callbacks:
-                        if self._executor:
-                            self._executor.submit(cb, mutated_data, eeg_channels, sr)
-            else:
-                print("[ReplayEngine] Received invalid shape or empty data.")
+            if num_samples_per_chunk > 0:
+                accumulated_samples -= num_samples_per_chunk
+                # Fetch data chunk
+                raw_data: Optional[np.ndarray] = self._fetch_data(num_samples_per_chunk, num_channels)
+    
+                # Ensure raw_data shape is correct (channels, samples)
+                if raw_data is not None and len(raw_data.shape) == 2:
+                    self._dispatch_update(raw_data, eeg_channels, sr, pending_futures, MAX_PENDING_TASKS)
+                else:
+                    print("[ReplayEngine] Received invalid shape or empty data.")
 
         # Cleanup loop resources
-        if self.device_wrapper is not None and hasattr(self.device_wrapper, "stop_stream"):
-            try:
-                self.device_wrapper.stop_stream()
-            except Exception:
-                logger.error("Error stopping device stream", exc_info=True)
-        elif board is not None:
-            try:
-                board.stop_stream()
-                board.release_session()
-            except Exception:
-                logger.error("Error releasing board session", exc_info=True)
+        if self.provider is not None:
+            # If the provider wraps a device, try to stop it
+            if hasattr(self.provider, 'device'):
+                try:
+                    if hasattr(self.provider.device, "stop_stream"):
+                        self.provider.device.stop_stream()
+                except Exception as e:
+                    logger.warning(f"Error stopping stream: {e}")
+            if hasattr(self.provider, 'board') and self.provider.board:
+                try:
+                    self.provider.board.stop_stream()
+                    self.provider.board.release_session()
+                except Exception as e:
+                    logger.warning(f"Error releasing session: {e}")
 
     def get_buffer(self) -> Optional[np.ndarray]:
         with self._buffer_lock:
             return getattr(self, "_current_buffer", None)
 
+    def _fetch_data(self, num_samples_per_chunk: int, num_channels: int) -> Optional[np.ndarray]:
+        self._current_buffer = None
+        if self.provider is not None:
+            try:
+                raw_data = self.provider.read_chunk(self.dataset_sample_position, num_samples_per_chunk)
+                self.dataset_sample_position += num_samples_per_chunk
+                if raw_data is None or (raw_data.shape[1] < num_samples_per_chunk and self._loop_dataset):
+                    if hasattr(self.provider, 'reader') and self._loop_dataset:
+                        self.dataset_sample_position = 0
+                        raw_data = self.provider.read_chunk(0, num_samples_per_chunk)
+                        self.dataset_sample_position = num_samples_per_chunk
+                return raw_data
+            except Exception as e:
+                if self._loop_dataset:
+                    self.dataset_sample_position = 0
+                    try:
+                        raw_data = self.provider.read_chunk(0, num_samples_per_chunk)
+                        self.dataset_sample_position = num_samples_per_chunk
+                        return raw_data
+                    except Exception as loop_e:
+                        logger.error(f"Failed to restart dataset loop: {loop_e}")
+                        self.twin.hazard_state = "FAULT"
+                        return np.full((num_channels, num_samples_per_chunk), np.nan)
+                else:
+                    logger.info("[ReplayEngine] Dataset exhausted, stopping.")
+                    self.running = False
+                    return None
+        return np.full((num_channels, num_samples_per_chunk), np.nan)
+
+    def _dispatch_update(self, raw_data: np.ndarray, eeg_channels: List[int], sr: int, pending_futures: Optional[set] = None, max_pending: int = 20):
+        mutated_data = self.attack_engine.apply_attacks(raw_data, eeg_channels, sr, self.rng)
+        with self._buffer_lock:
+            self._current_buffer = mutated_data
+
+        if self.twin.connected:
+            if self.scribe:
+                try:
+                    _ = self.scribe.execute_step(mutated_data.flatten().tolist())
+                except Exception:
+                    logger.error("Scribe VM execution error", exc_info=True)
+            for cb in self.callbacks:
+                if self._executor:
+                    if pending_futures is not None:
+                        done = {f for f in pending_futures if f.done()}
+                        pending_futures.difference_update(done)
+                        if len(pending_futures) > max_pending:
+                            logger.warning(f"Load shedding callback! Queue full ({len(pending_futures)} pending).")
+                            continue
+                    future = self._executor.submit(cb, mutated_data, eeg_channels, sr)
+                    if pending_futures is not None:
+                        pending_futures.add(future)
+
     def inject_attack(self, attack_name: str):
         """Used by the dashboard to inject attacks."""
         self.active_attack = attack_name
-        # Clear existing
+        
+        # Remove previously injected attacks safely
+        if not hasattr(self, '_injected_modifiers'):
+            self._injected_modifiers = []
+        
         with self.attack_engine.lock:
-            self.attack_engine.modifiers.clear()
+            for mod in self._injected_modifiers:
+                if mod in self.attack_engine.modifiers:
+                    self.attack_engine.remove_modifier(mod)
+            self._injected_modifiers.clear()
             
+        if attack_name == "none":
+            return
+            
+        new_mod = None
         if attack_name == "noise":
             from vireon.core.attack import NoiseInjectionAttack
-            self.attack_engine.add_modifier(NoiseInjectionAttack(target_channels=[0, 1]))
+            new_mod = NoiseInjectionAttack(target_channels=[0, 1])
         elif attack_name == "drift":
             from vireon.core.attack import SignalDriftAttack
-            self.attack_engine.add_modifier(SignalDriftAttack(target_channels=[0, 1]))
+            new_mod = SignalDriftAttack(target_channels=[0, 1])
         elif attack_name == "temporal_evasion":
             from vireon.core.attack import TemporalEvasionAttack
-            self.attack_engine.add_modifier(TemporalEvasionAttack(target_channels=[0, 1]))
+            new_mod = TemporalEvasionAttack(target_channels=[0, 1])
         elif attack_name == "session_replay":
             from vireon.core.attack import SessionReplayAttack
-            self.attack_engine.add_modifier(SessionReplayAttack(target_channels=[0, 1]))
+            new_mod = SessionReplayAttack(target_channels=[0, 1])
+            
+        if new_mod:
+            self.attack_engine.add_modifier(new_mod)
+            self._injected_modifiers.append(new_mod)

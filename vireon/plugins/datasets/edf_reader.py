@@ -16,8 +16,8 @@ except ImportError:
 class EDFReader(IDatasetReader):
     """
     Reader for European Data Format (EDF/BDF) files.
-    Falls back gracefully to MockEEGReader if pyedflib is not installed
-    or if the file is missing/invalid.
+    Relies on pyedflib (a C-extension wrapper). Falls back gracefully 
+    to MockEEGReader if pyedflib is not installed or if the file is missing/invalid.
     """
 
     def __init__(self, file_path: str, fallback_on_error: bool = True):
@@ -126,9 +126,9 @@ class EDFReader(IDatasetReader):
             try:
                 # readSignal returns float64 array of values in microvolts
                 data[ch, :] = self.reader.readSignal(ch, start_sample, num_samples)
-            except Exception:
+            except Exception as e:
                 # Handle end of file or read errors by zeroing
-                logger.debug("End of file or read error", exc_info=True)
+                logger.error(f"EDF read error on channel {ch}: {e}", exc_info=True)
                 data[ch, :] = 0.0
         return data
 

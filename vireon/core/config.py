@@ -40,8 +40,8 @@ class DeviceConfig(BaseModel):
     """Configuration for the virtual device."""
     type: str = Field(default="synthetic")       # "synthetic", "pieeg", "replay", "cyton", "ganglion", "muse", "emotiv"
     serial_port: str = Field(default="")         # e.g., "/dev/ttyUSB0" or "COM3"
-    sample_rate: int = Field(default=250)
-    num_channels: int = Field(default=8)
+    sample_rate: int = Field(default=250, gt=0)
+    num_channels: int = Field(default=8, gt=0)
 
 
 class DatasetConfig(BaseModel):
@@ -79,15 +79,15 @@ class SecurityConfig(BaseModel):
     nsp_enabled: bool = Field(default=False)
     enable_zta: bool = Field(default=False)
     zta_thresholds: dict = Field(default_factory=lambda: {"ota_update": 0.9, "telemetry_read": 0.5})
-    rms_high_threshold: float = Field(default=120.0)
-    rms_low_threshold: float = Field(default=0.5)
-    beta_power_threshold: float = Field(default=35.0)
-    max_stimulation_amplitude_ma: float = Field(default=4.0)
+    rms_high_threshold: float = Field(default=120.0, gt=0)
+    rms_low_threshold: float = Field(default=0.5, gt=0)
+    beta_power_threshold: float = Field(default=35.0, gt=0)
+    max_stimulation_amplitude_ma: float = Field(default=4.0, gt=0)
 
 
 class OutputConfig(BaseModel):
     """Configuration for experiment output."""
-    report_prefix: str = Field(default="neuroshield_run")
+    report_prefix: str = Field(default="vireon_run")
     formats: List[str] = Field(default_factory=lambda: ["json", "html", "md"])
     no_report: bool = Field(default=False)
 
@@ -126,8 +126,8 @@ class ExperimentConfig(BaseModel):
     """Complete experiment configuration — the root config object."""
     name: str = Field(default="default")
     seed: Optional[int] = Field(default=None)    # None = non-deterministic
-    duration_sec: float = Field(default=10.0)
-    interval_sec: float = Field(default=0.1)
+    duration_sec: float = Field(default=10.0, gt=0)
+    interval_sec: float = Field(default=0.1, gt=0)
 
     device: DeviceConfig = Field(default_factory=DeviceConfig)
     dataset: DatasetConfig = Field(default_factory=DatasetConfig)
@@ -217,7 +217,7 @@ def config_from_cli_args(args) -> ExperimentConfig:
             "nsp_enabled": getattr(args, "nsp", False),
         },
         "output": {
-            "report_prefix": getattr(args, "report_prefix", "neuroshield_run"),
+            "report_prefix": getattr(args, "report_prefix", "vireon_run"),
             "no_report": getattr(args, "no_report", False),
         },
         "web": {
