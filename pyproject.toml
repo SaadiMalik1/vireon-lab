@@ -28,7 +28,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "numpy~=1.20.0",
+    "numpy>=1.26.0",
     "jinja2~=3.0.0",
     "pydantic~=2.0.0",
     "mcp~=1.0.0",
@@ -41,8 +41,8 @@ dependencies = [
 [project.optional-dependencies]
 brainflow = ["brainflow~=5.0.0"]
 edf = ["pyedflib~=0.1.30"]
-mne = ["mne~=1.0.0"]
-science = ["scipy~=1.7.0"]
+mne = ["mne>=1.6.0"]
+science = ["scipy>=1.11.0"]
 lsl = ["pylsl~=1.16.2"]
 dev = [
     "pytest~=7.0.0",
