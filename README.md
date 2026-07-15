@@ -36,7 +36,7 @@ It is highly recommended to use a virtual environment. The project is managed vi
 
 ```bash
 git clone https://github.com/SaadiMalik1/Vireon.git
-cd neurosheild
+cd Vireon
 python3 -m venv .venv
 source .venv/bin/activate
 
@@ -123,6 +123,3 @@ For help, please refer to [SUPPORT.md](SUPPORT.md).
 
 ## License
 VIREON is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
-
-## Citation
-If you use VIREON in your research, please cite it using the provided [CITATION.cff](CITATION.cff) file.
