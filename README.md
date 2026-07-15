@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 **Audience**: Security Researchers, Academic Researchers, Developers
 
@@ -122,7 +122,7 @@ We welcome contributions from researchers and engineers! Please read our [Contri
 For help, please refer to [SUPPORT.md](SUPPORT.md).
 
 ## License
-VIREON is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+VIREON is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation
 If you use VIREON in your research, please cite it using the provided [CITATION.cff](CITATION.cff) file.

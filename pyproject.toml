@@ -9,7 +9,7 @@ name = "vireon"
 version = "0.2.0"
 description = "Virtual neurosecurity laboratory for reproducible BCI/DBS/VNS security research"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 authors = [
     {name = "VIREON Contributors"}
@@ -24,7 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
