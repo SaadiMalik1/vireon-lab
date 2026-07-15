@@ -1,0 +1,40 @@
+name: Cochlear Implant
+description: Auditory prosthesis with external sound processor.
+
+assets:
+  - id: internal_receiver
+    type: implant
+    description: Implanted receiver and electrode array in the cochlea.
+  - id: external_processor
+    type: wearable
+    description: Microphone and signal processor worn behind the ear.
+  - id: smartphone_streamer
+    type: mobile_app
+    description: App for streaming audio directly via Bluetooth.
+
+trust_boundaries:
+  - id: tb_rf_coil
+    type: near_field
+    components: [external_processor, internal_receiver]
+    protocol: Inductive RF
+  - id: tb_audio_stream
+    type: wireless
+    components: [smartphone_streamer, external_processor]
+    protocol: Bluetooth Classic / LE Audio
+
+entry_points:
+  - component: external_processor
+    interface: Bluetooth Interface
+  - component: external_processor
+    interface: Microphones (Acoustic)
+
+security_assumptions:
+  - The internal receiver has no computational logic, only stimulus routing.
+  - The external processor is strictly limited to safe stimulation bounds in hardware.
+  - Pairing requires a physical button press on the processor.
+
+potential_attack_paths:
+  - path: L1 -> tb_audio_stream -> external_processor
+    technique: Acoustic Shock / Malicious Audio Streaming
+  - path: L0 -> tb_rf_coil
+    technique: Eavesdropping on unencrypted inductive link

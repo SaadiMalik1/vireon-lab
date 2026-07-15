@@ -1,0 +1,49 @@
+name: Brain-Computer Interface (BCI)
+description: Bidirectional BCI for motor control and sensory feedback.
+
+assets:
+  - id: bci_implant
+    type: implant
+    description: High-density microelectrode array in motor cortex.
+  - id: wearable_processor
+    type: wearable
+    description: External processing unit for neural decoding.
+  - id: robotic_prosthesis
+    type: actuator
+    description: External robotic limb.
+  - id: calibration_software
+    type: desktop_app
+    description: PC software for training decoding algorithms.
+
+trust_boundaries:
+  - id: tb_transcutaneous
+    type: physical_or_rf
+    components: [bci_implant, wearable_processor]
+    protocol: High-bandwidth RF or percutaneous connector
+  - id: tb_actuator_bus
+    type: wired
+    components: [wearable_processor, robotic_prosthesis]
+    protocol: CAN bus or Serial
+  - id: tb_calibration_link
+    type: network
+    components: [wearable_processor, calibration_software]
+    protocol: Wi-Fi / TCP
+
+entry_points:
+  - component: wearable_processor
+    interface: Wi-Fi Interface
+  - component: wearable_processor
+    interface: Decoder Firmware Update
+  - component: calibration_software
+    interface: Network Port
+
+security_assumptions:
+  - The wearable processor acts as a gateway and firewall for the implant.
+  - Calibration software is run on a trusted, isolated network.
+  - Actuator limits are enforced locally on the robotic prosthesis.
+
+potential_attack_paths:
+  - path: L2 -> tb_calibration_link -> wearable_processor
+    technique: Decoder Model Poisoning
+  - path: L5 -> wearable_processor -> tb_transcutaneous -> bci_implant
+    technique: Malicious Stimulation Injection
