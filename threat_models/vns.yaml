@@ -1,0 +1,43 @@
+name: Vagus Nerve Stimulation (VNS)
+description: Open-loop and responsive VNS for epilepsy treatment.
+
+assets:
+  - id: vns_implant
+    type: implant
+    description: Pulse generator connected to the vagus nerve.
+  - id: patient_magnet
+    type: physical
+    description: Handheld magnet used to manually trigger stimulation.
+  - id: programming_wand
+    type: telemetry_wand
+    description: Inductive telemetry wand used by clinicians.
+  - id: clinician_programmer
+    type: tablet
+    description: Clinical tablet for adjusting stimulation parameters.
+
+trust_boundaries:
+  - id: tb_inductive_link
+    type: near_field
+    components: [vns_implant, programming_wand]
+    protocol: Proprietary Inductive
+  - id: tb_magnetic_switch
+    type: physical_field
+    components: [vns_implant, patient_magnet]
+    protocol: Magnetic Reed Switch
+
+entry_points:
+  - component: vns_implant
+    interface: Inductive Telemetry Coil
+  - component: vns_implant
+    interface: Magnetic Switch
+
+security_assumptions:
+  - Inductive telemetry requires physical proximity (< 5 cm).
+  - Programming wands are physically secured in clinical environments.
+  - Magnet swipes only trigger predefined safe stimulation bursts.
+
+potential_attack_paths:
+  - path: L1 -> tb_magnetic_switch -> vns_implant
+    technique: Magnetic Denial of Service (continuous magnet application)
+  - path: L1 -> tb_inductive_link -> vns_implant
+    technique: RF Telemetry Spoofing

@@ -1,0 +1,45 @@
+name: Deep Brain Stimulation (DBS)
+description: Closed-loop DBS system with companion app and cloud syncing.
+
+assets:
+  - id: dbs_implant
+    type: implant
+    description: IPG and depth electrodes in STN.
+  - id: companion_app
+    type: mobile_app
+    description: Patient smartphone application for therapy adjustment.
+  - id: cloud_backend
+    type: server
+    description: Telemetry synchronization and remote monitoring.
+  - id: clinician_programmer
+    type: tablet
+    description: Clinical tablet for adjusting stimulation parameters.
+
+trust_boundaries:
+  - id: tb_body_area_network
+    type: wireless
+    components: [dbs_implant, companion_app, clinician_programmer]
+    protocol: BLE
+  - id: tb_internet
+    type: network
+    components: [companion_app, cloud_backend, clinician_programmer]
+    protocol: HTTPS/TLS
+
+entry_points:
+  - component: dbs_implant
+    interface: BLE Advertising
+  - component: companion_app
+    interface: Android/iOS OS APIs
+  - component: cloud_backend
+    interface: REST API
+
+security_assumptions:
+  - The implant requires mutual authentication for parameter changes.
+  - The companion app enforces certificate pinning.
+  - RF range is limited to ~2 meters.
+
+potential_attack_paths:
+  - path: L1 -> tb_body_area_network -> dbs_implant
+    technique: Protocol Replay
+  - path: L2 -> companion_app -> tb_body_area_network -> dbs_implant
+    technique: Malicious Parameter Update

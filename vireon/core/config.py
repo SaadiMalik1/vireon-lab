@@ -8,6 +8,7 @@ reproducible experiments by capturing all parameters in a single file.
 
 import os
 from typing import Dict, Any, List, Optional
+from enum import Enum
 from pydantic import BaseModel, Field
 
 # TOML parsing: use stdlib tomllib (3.11+) or fallback to tomli
@@ -19,6 +20,21 @@ except ImportError:
     except ImportError:
         tomllib = None
 
+
+class AttackerCapability(str, Enum):
+    """Levels of attacker capability within the ecosystem."""
+    L0 = "L0"  # Passive observer
+    L1 = "L1"  # Nearby radio attacker
+    L2 = "L2"  # Companion app compromise
+    L3 = "L3"  # Authenticated user
+    L4 = "L4"  # Firmware modification
+    L5 = "L5"  # Root/device compromise
+    L6 = "L6"  # Supply-chain compromise
+
+class AttackerModel(BaseModel):
+    """Assumed attacker capability and techniques."""
+    capability: AttackerCapability = Field(default=AttackerCapability.L0)
+    techniques: List[str] = Field(default_factory=list)
 
 class DeviceConfig(BaseModel):
     """Configuration for the virtual device."""
@@ -115,6 +131,8 @@ class ExperimentConfig(BaseModel):
 
     device: DeviceConfig = Field(default_factory=DeviceConfig)
     dataset: DatasetConfig = Field(default_factory=DatasetConfig)
+    threat_model_file: Optional[str] = Field(default=None)
+    attacker_model: AttackerModel = Field(default_factory=AttackerModel)
     attacks: AttackConfig = Field(default_factory=AttackConfig)
     security: SecurityConfig = Field(default_factory=SecurityConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)

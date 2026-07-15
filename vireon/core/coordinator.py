@@ -247,6 +247,29 @@ class Coordinator:
             self.emulator.start()
             self.engine.add_callback(self.emulator.send_eeg_data)
 
+        # 11. Initialize Attack Chain (Threat Model)
+        self.attack_chain = []
+        self.attack_context = {}
+        
+        capability = getattr(self.config.attacker_model, 'capability', "L0")
+        
+        try:
+            from vireon.attack_chain import (
+                ReconnaissanceStage, InitialAccessStage, ProtocolAbuseStage,
+                PrivilegeEscalationStage, PersistenceStage, ExecutionStage, RecoveryStage
+            )
+            self.attack_chain = [
+                ReconnaissanceStage(capability, self.event_bus),
+                InitialAccessStage(capability, self.event_bus),
+                ProtocolAbuseStage(capability, self.event_bus),
+                PrivilegeEscalationStage(capability, self.event_bus),
+                PersistenceStage(capability, self.event_bus),
+                ExecutionStage(capability, self.event_bus),
+                RecoveryStage(capability, self.event_bus)
+            ]
+        except ImportError:
+            pass
+
         # Publish setup complete event
         self.event_bus.publish(Event(
             topic="experiment.setup_complete",
@@ -273,6 +296,12 @@ class Coordinator:
         print(f"[VIREON] Starting simulation (interval={self.config.interval_sec}s, "
               f"duration={self.config.duration_sec}s, "
               f"seed={self.config.seed})...")
+
+        # Execute pre-signal attack stages
+        for stage in self.attack_chain:
+            success = stage.execute(self.attack_context)
+            if not success:
+                break
 
         self.engine.start(interval_sec=self.config.interval_sec)
         start_time = time.time()
