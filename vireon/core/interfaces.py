@@ -3,6 +3,15 @@ from typing import Any, List
 import numpy as np
 
 class ITwin(abc.ABC):
+    sample_rate: int
+    num_channels: int
+    physics_engine: Any
+    neural_dynamics: Any
+    stimulation_amplitude_ma: float
+    stimulation_frequency_hz: float
+    hazard_state: str
+    connected: bool
+
     @abc.abstractmethod
     def get_sim_clock(self) -> float:
         pass
@@ -17,86 +26,6 @@ class ITwin(abc.ABC):
 
     @abc.abstractmethod
     def set_sim_clock(self, clock: float):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def sample_rate(self) -> int:
-        pass
-
-    @sample_rate.setter
-    @abc.abstractmethod
-    def sample_rate(self, value: int):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def num_channels(self) -> int:
-        pass
-
-    @num_channels.setter
-    @abc.abstractmethod
-    def num_channels(self, value: int):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def physics_engine(self) -> Any:
-        pass
-
-    @physics_engine.setter
-    @abc.abstractmethod
-    def physics_engine(self, value: Any):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def neural_dynamics(self) -> Any:
-        pass
-
-    @neural_dynamics.setter
-    @abc.abstractmethod
-    def neural_dynamics(self, value: Any):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def stimulation_amplitude_ma(self) -> float:
-        pass
-
-    @stimulation_amplitude_ma.setter
-    @abc.abstractmethod
-    def stimulation_amplitude_ma(self, value: float):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def stimulation_frequency_hz(self) -> float:
-        pass
-
-    @stimulation_frequency_hz.setter
-    @abc.abstractmethod
-    def stimulation_frequency_hz(self, value: float):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def hazard_state(self) -> str:
-        pass
-
-    @hazard_state.setter
-    @abc.abstractmethod
-    def hazard_state(self, value: str):
-        pass
-
-    @property
-    @abc.abstractmethod
-    def connected(self) -> bool:
-        pass
-
-    @connected.setter
-    @abc.abstractmethod
-    def connected(self, value: bool):
         pass
 
 
