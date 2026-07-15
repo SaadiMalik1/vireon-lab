@@ -1,7 +1,11 @@
 import json
+import os
+import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
 
 """
 VIREON STRIDE Threat Model Auto-Generator.
@@ -100,10 +104,6 @@ def generate_stride_model(config: Any = None) -> Dict[str, Any]:
 
     return model
 
-
-import os
-import logging
-logger = logging.getLogger(__name__)
 
 def _enumerate_threats(config: Any = None) -> List[ThreatEntry]:
     """Enumerate all known threats across VIREON's attack surface from config."""

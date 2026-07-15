@@ -115,12 +115,12 @@ class AdversarialOptimizerAttack(ISignalModifier):
     It evaluates one gene per simulation block, measuring real-world twin state,
     and persisting learning across the simulation timeline.
     """
-    def __init__(self, target_channels: List[int], population_size: int = 10, target_rms_limit: float = 100.0):
+    def __init__(self, target_channels: List[int], population_size: int = 10, target_rms_limit: float = 100.0, rng: Optional[np.random.Generator] = None):
         self.target_channels = target_channels
         self.population_size = population_size
         self.target_rms_limit = target_rms_limit
         # Genes: [amplitude, frequency (13-30)]
-        self.population = (rng if rng is not None else np.random).random(population_size, 2)
+        self.population = (rng if rng is not None else np.random).random((population_size, 2))
         self.population[:, 0] *= 50.0  # Amplitude up to 50
         self.population[:, 1] = 13.0 + self.population[:, 1] * 17.0  # Frequency 13-30 Hz
         
@@ -601,14 +601,14 @@ class InsiderThreatAttack(ISignalModifier):
         if not self.has_fired:
             print("[InsiderThreatAttack] Injecting malicious clinical configuration...")
             # Force a dangerous parameter directly on the twin
-            twin.update_config({"stimulation_amplitude_ma": 15.0})
+            twin.stimulation_amplitude_ma = 15.0
             twin.set_clinical_alert(True, "Insider Threat: Dangerous parameters injected")
             self.has_fired = True
         return data
 
     def revert(self, twin: DigitalTwin) -> None:
         if self.has_fired:
-            twin.update_config({"stimulation_amplitude_ma": 5.0})
+            twin.stimulation_amplitude_ma = 5.0
             twin.set_clinical_alert(False, "Nominal")
 
 # --- NEW ATTACK STUBS FOR 13-TAXONOMY NSAE VALIDATION ---

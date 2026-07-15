@@ -12,7 +12,7 @@ class DynamicStandardsAttack(ISignalModifier):
         self.target_channels = target_channels
         self.technique = technique
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
         return data
 
 class AttackFactory:
@@ -23,7 +23,7 @@ class AttackFactory:
     @staticmethod
     def _create_apply_method(category: str):
         # We use closure to generate dynamic apply methods
-        def apply_signal_injection(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        def apply_signal_injection(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
             mutated = data.copy()
             for ch in self.target_channels:
                 if ch in eeg_channels:
@@ -33,7 +33,7 @@ class AttackFactory:
             twin.set_clinical_alert(True, f"IDS Alert: {self.technique.get('mitre_attack', 'Unknown')} ({self.technique.get('name', 'Unknown')}) Active")
             return mutated
 
-        def apply_denial_of_service(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        def apply_denial_of_service(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
             mutated = data.copy()
             for ch in self.target_channels:
                 if ch in eeg_channels:
@@ -42,7 +42,7 @@ class AttackFactory:
             twin.set_clinical_alert(True, f"IDS Alert: {self.technique.get('mitre_attack', 'Unknown')} ({self.technique.get('name', 'Unknown')}) Active")
             return mutated
 
-        def apply_data_manipulation(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        def apply_data_manipulation(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
             mutated = data.copy()
             dt = data.shape[1] / sample_rate
             drift_rate = 20.0
@@ -54,7 +54,7 @@ class AttackFactory:
             twin.set_clinical_alert(True, f"IDS Alert: {self.technique.get('mitre_attack', 'Unknown')} ({self.technique.get('name', 'Unknown')}) Active")
             return mutated
 
-        def apply_eavesdropping(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+        def apply_eavesdropping(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
             twin.set_clinical_alert(True, f"Telemetry Threat Detected: {self.technique.get('name', 'Unknown')}")
             return data
 

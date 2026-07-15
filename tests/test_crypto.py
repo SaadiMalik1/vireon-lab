@@ -1,6 +1,6 @@
 from vireon.core.protocol import RFFrameProcessor, ProtocolError, CryptoEmulator, CertificateError
 
-from cryptography.hazmat.primitives.asymmetric import rsa, ec
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
 from cryptography import x509
 from cryptography.x509.oid import NameOID

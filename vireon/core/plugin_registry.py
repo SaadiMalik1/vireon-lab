@@ -216,7 +216,10 @@ def register_builtin_plugins(registry: PluginRegistry) -> None:
     # 1. Dynamic Discovery via entry_points
     try:
         eps = importlib.metadata.entry_points()
-        vireon_eps = eps.select(group='vireon.plugins') if hasattr(eps, 'select') else eps.get('vireon.plugins', [])
+        if hasattr(eps, 'select'):
+            vireon_eps = eps.select(group='vireon.plugins')
+        else:
+            vireon_eps = eps.get('vireon.plugins', []) # type: ignore
         
         for ep in vireon_eps:
             try:

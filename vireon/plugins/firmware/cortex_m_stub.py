@@ -65,7 +65,7 @@ class CortexMStub:
 
     def recover(self):
         """Recover from a crashed state (simulated reboot)."""
-        print(f"[FirmwareEmulator] Executing recovery/reboot sequence...")
+        print("[FirmwareEmulator] Executing recovery/reboot sequence...")
         self.reset()
 
     def write_memory(self, address: int, data: bytes) -> bool:

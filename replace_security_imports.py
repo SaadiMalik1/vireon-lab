@@ -1,5 +1,4 @@
 import os
-import glob
 
 # Files to update
 files_to_update = [

@@ -144,7 +144,7 @@ class ValidationRunner:
 
     def validate_ids_on_edf(self, edf_path: Path, max_seconds: float = 30.0) -> Dict:
         from vireon.core.twin import DigitalTwin
-        from vireon.core.detection import SecurityEngine, calculate_spectral_features
+        from vireon.core.detection import SecurityEngine
         from vireon.core.attack import NoiseInjectionAttack, SignalDriftAttack
 
         logger.info(f"  Loading {edf_path.name}...")

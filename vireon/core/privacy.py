@@ -9,6 +9,7 @@ Reference: Adversarial Attacks and Defenses on EEG-based BCIs (2024-2025).
 """
 
 import numpy as np
+from typing import Optional
 
 class PrivacyBudgetTracker:
     """Tracks the total privacy budget consumed over a session."""

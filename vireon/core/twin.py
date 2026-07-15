@@ -1,17 +1,15 @@
 import threading
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import numpy as np
 import os
 import json
 from collections import deque
 from vireon.core.physics import PhysicsEngine
 from vireon.core.dynamics import KuramotoModel
+from vireon.core.interfaces import ITwin
 import logging
 
 logger = logging.getLogger(__name__)
-
-
-from vireon.core.interfaces import ITwin
 
 class DigitalTwin(ITwin):
     """
@@ -97,7 +95,7 @@ class DigitalTwin(ITwin):
         self._sim_clock: float = 0.0
 
         # History log for reporting (capped to prevent memory leak)
-        self.history = deque(maxlen=1000)
+        self.history: deque = deque(maxlen=1000)
 
         # Log initial state
         self._log_state_change("Initialization")

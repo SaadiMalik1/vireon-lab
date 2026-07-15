@@ -1,7 +1,7 @@
 import asyncio
 import threading
 import urllib.parse
-from typing import Set, Optional
+from typing import Set, Optional, Any
 import websockets
 
 class NeuroWebSocketServer:
@@ -14,12 +14,12 @@ class NeuroWebSocketServer:
         self.host = host
         self.port = port
         self.token = token
-        self.clients: Set[websockets.WebSocketServerProtocol] = set()
+        self.clients: Set[Any] = set()
         self.loop: Optional[asyncio.AbstractEventLoop] = None
         self.server = None
         self.thread: Optional[threading.Thread] = None
 
-    async def handler(self, websocket: websockets.WebSocketServerProtocol):
+    async def handler(self, websocket: Any):
         """Handle incoming client connections."""
         
         # Authenticate connection using WS_TOKEN

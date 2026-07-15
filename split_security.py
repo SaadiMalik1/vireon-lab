@@ -1,4 +1,3 @@
-import os
 import re
 
 with open('/home/ronin/Documents/n2/vireon/core/security.py', 'r') as f:

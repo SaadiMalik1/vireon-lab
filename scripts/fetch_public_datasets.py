@@ -112,7 +112,7 @@ def download_file(url: str, dest_path: str, data_entry: dict):
                     print(f"    Got:      {sha256_hash.hexdigest()}")
                     path.unlink() # Delete corrupted/tampered file
                 else:
-                    print(f"[+] SHA-256 checksum validated successfully.")
+                    print("[+] SHA-256 checksum validated successfully.")
 
     except Exception as e:
         print(f"\n[!] Failed to download {path.name}: {e}")

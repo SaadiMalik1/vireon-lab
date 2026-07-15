@@ -31,13 +31,23 @@ class CryptoEmulator:
             if cert.not_valid_after < now or cert.not_valid_before > now:
                 raise CertificateError("Invalid X.509 Certificate: Expired or not yet valid.")
                 
+            from cryptography.hazmat.primitives.asymmetric import rsa, ec
             root_pubkey = root_cert.public_key()
-            root_pubkey.verify(
-                cert.signature,
-                cert.tbs_certificate_bytes,
-                padding.PKCS1v15(),
-                cert.signature_hash_algorithm,
-            )
+            if isinstance(root_pubkey, rsa.RSAPublicKey):
+                root_pubkey.verify(
+                    cert.signature,
+                    cert.tbs_certificate_bytes,
+                    padding.PKCS1v15(),
+                    cert.signature_hash_algorithm,
+                )
+            elif isinstance(root_pubkey, ec.EllipticCurvePublicKey):
+                root_pubkey.verify(
+                    cert.signature,
+                    cert.tbs_certificate_bytes,
+                    ec.ECDSA(cert.signature_hash_algorithm)
+                )
+            else:
+                raise CertificateError("Unsupported public key type.")
             return True
         except InvalidSignature:
             raise CertificateError("Invalid X.509 Certificate: Untrusted Root CA (signature verification failed).")
@@ -107,9 +117,9 @@ class RFFrameProcessor:
             raise ValueError("RFFrameProcessor requires a securely derived 32-byte shared_key")
         self.SHARED_KEY = shared_key
         self.expected_seq_no = 0
-        self.consecutive_failures = {}
-        self.sleep_until = {}
-        self.sleep_duration = {}
+        self.consecutive_failures: dict[str, int] = {}
+        self.sleep_until: dict[str, float] = {}
+        self.sleep_duration: dict[str, float] = {}
         self.session_key = self.SHARED_KEY
         self.iv_counter = 0
 

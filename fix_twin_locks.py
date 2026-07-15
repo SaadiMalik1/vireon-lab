@@ -1,5 +1,3 @@
-import os
-import re
 
 filepath = '/home/ronin/Documents/n2/vireon/core/twin.py'
 with open(filepath, 'r') as f:

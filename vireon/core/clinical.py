@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Tuple, Optional
 import math
 import threading
 
@@ -212,7 +212,7 @@ class NeuroIPS:
         Mutes anomalous channels and fills with baseline noise to keep decoder stable.
         """
         clean_data = data.copy()
-        muted_channels = []
+        muted_channels: list[int] = []
 
         if "DATA_CORRUPTION_ANOMALY" in anomalies:
             # Replace all NaN values with zeros across all channels to prevent autoencoder crash

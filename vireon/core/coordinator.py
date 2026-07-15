@@ -11,7 +11,7 @@ import os
 import threading
 import numpy as np
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional, Any
 
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine

@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List
+from typing import List, Any
 from vireon.plugins.devices import IDeviceWrapper
 
 # Graceful check for brainflow

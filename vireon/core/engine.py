@@ -1,6 +1,11 @@
-from vireon.core.twin import DigitalTwin
 from vireon.core.interfaces import ITwin
 from vireon.core.attack import SignalAttackEngine
+import time
+import threading
+import numpy as np
+from typing import Optional, List, Callable, Any
+import concurrent.futures
+import logging
 
 """
 WARNING: This module is for simulation purposes only.
@@ -8,12 +13,6 @@ The NeuroDSL bytecode VM execution has no sandboxing. Arbitrary jumps (e.g., JUM
 could theoretically manipulate host memory if misconfigured. Do not execute untrusted 
 NeuroDSL code outside of this simulation lab.
 """
-import time
-import threading
-import numpy as np
-from typing import Optional, List, Callable
-import concurrent.futures
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +158,7 @@ class ReplayEngine:
             eeg_channels = list(range(num_channels))
 
         accumulated_samples = 0.0
-        pending_futures = set()
+        pending_futures: set[Any] = set()
         MAX_PENDING_TASKS = 20
 
         last_time = time.time()
@@ -228,7 +227,7 @@ class ReplayEngine:
             return getattr(self, "_current_buffer", None)
 
     def _fetch_data(self, num_samples_per_chunk: int, num_channels: int) -> Optional[np.ndarray]:
-        self._current_buffer = None
+        self._current_buffer: Optional[np.ndarray] = None
         if self.provider is not None:
             try:
                 raw_data = self.provider.read_chunk(self.dataset_sample_position, num_samples_per_chunk)
@@ -239,7 +238,7 @@ class ReplayEngine:
                         raw_data = self.provider.read_chunk(0, num_samples_per_chunk)
                         self.dataset_sample_position = num_samples_per_chunk
                 return raw_data
-            except Exception as e:
+            except Exception:
                 if self._loop_dataset:
                     self.dataset_sample_position = 0
                     try:
@@ -285,7 +284,7 @@ class ReplayEngine:
         
         # Remove previously injected attacks safely
         if not hasattr(self, '_injected_modifiers'):
-            self._injected_modifiers = []
+            self._injected_modifiers: list[Any] = []
         
         with self.attack_engine.lock:
             for mod in self._injected_modifiers:
@@ -296,7 +295,7 @@ class ReplayEngine:
         if attack_name == "none":
             return
             
-        new_mod = None
+        new_mod: Any = None
         if attack_name == "noise":
             from vireon.core.attack import NoiseInjectionAttack
             new_mod = NoiseInjectionAttack(target_channels=[0, 1])
