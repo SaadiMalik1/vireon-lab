@@ -176,7 +176,7 @@ def run_simulation(
 
     # Initialize coordinator with the raw config
     from vireon.core.config import ExperimentConfig
-    config = ExperimentConfig(**raw_config)
+    config = ExperimentConfig.model_validate(raw_config)
     coordinator = Coordinator(config)
     coordinator.setup()
     
