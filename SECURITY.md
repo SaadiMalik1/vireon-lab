@@ -3,16 +3,16 @@
 **Audience**: Security Researchers, Developers
 
 ## Purpose
-This document outlines the security assumptions, threat model of the repository itself, and the responsible disclosure policy for reporting vulnerabilities in the NeuroShield framework.
+This document outlines the security assumptions, threat model of the repository itself, and the responsible disclosure policy for reporting vulnerabilities in the VIREON framework.
 
 ## Scope
-This policy applies to the NeuroShield engine, its core plugins, and the NeuroDSL compiler. It does **not** cover vulnerabilities found in the third-party medical hardware simulated by NeuroShield (e.g., OpenBCI boards, Medtronic pacemakers).
+This policy applies to the VIREON engine, its core plugins, and the NeuroDSL compiler. It does **not** cover vulnerabilities found in the third-party medical hardware simulated by VIREON (e.g., OpenBCI boards, Medtronic pacemakers).
 
 ## Threat Model & Security Assumptions
-NeuroShield is a *research and simulation* tool. 
+VIREON is a *research and simulation* tool. 
 - **Trust Boundary**: The local execution environment is assumed to be trusted. We do not currently sandbox the execution of user-provided Python plugins beyond standard OS permissions.
 - **NeuroDSL DSL**: The embedded Rust compiler (`NeuroDSL`) is designed to provide bounded memory safety for simulated clinical therapies, but is not intended to securely sandbox malicious arbitrary code execution on the host machine.
-- **Telemetry Egress**: LSL and WebSocket streams emitted by NeuroShield are unencrypted by default (unless ZTA/E2EE layers are explicitly enabled in the simulation config). They should not be exposed to untrusted networks.
+- **Telemetry Egress**: LSL and WebSocket streams emitted by VIREON are unencrypted by default (unless ZTA/E2EE layers are explicitly enabled in the simulation config). They should not be exposed to untrusted networks.
 
 ## Supported Versions
 Only the latest release on the `main` branch is actively supported for security updates.
@@ -24,9 +24,9 @@ Only the latest release on the `main` branch is actively supported for security 
 
 ## Reporting a Vulnerability
 
-We take the security of NeuroShield seriously. If you discover a security vulnerability in the NeuroShield platform, please **do not** report it via public GitHub issues.
+We take the security of VIREON seriously. If you discover a security vulnerability in the VIREON platform, please **do not** report it via public GitHub issues.
 
-Instead, please send an email to **security@neuroshield-project.org**.
+Instead, please send an email to **security@vireon-project.org**.
 
 ### What to include
 - A description of the vulnerability.
@@ -41,8 +41,8 @@ Instead, please send an email to **security@neuroshield-project.org**.
 
 ## Out-of-Scope Attacks
 - Denial of Service (DoS) attacks requiring massive external resources against the simulation host.
-- Social engineering of NeuroShield contributors.
-- Vulnerabilities in upstream dependencies (e.g., NumPy, PyTorch), unless NeuroShield uses them in an egregiously insecure manner.
+- Social engineering of VIREON contributors.
+- Vulnerabilities in upstream dependencies (e.g., NumPy, PyTorch), unless VIREON uses them in an egregiously insecure manner.
 
 ## Related Documents
 - [Contributing Guidelines](CONTRIBUTING.md)

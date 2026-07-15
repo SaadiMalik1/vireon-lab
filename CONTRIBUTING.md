@@ -1,14 +1,14 @@
-# Contributing to NeuroShield
+# Contributing to VIREON
 
 **Audience**: Developers, Security Researchers, Academic Researchers
 
-First off, thank you for considering contributing to NeuroShield! It's people like you that make NeuroShield such a great platform for neurosecurity research.
+First off, thank you for considering contributing to VIREON! It's people like you that make VIREON such a great platform for neurosecurity research.
 
 ## Purpose
-This document outlines the process for contributing to the NeuroShield project, including coding standards, branch management, and how to submit pull requests.
+This document outlines the process for contributing to the VIREON project, including coding standards, branch management, and how to submit pull requests.
 
 ## Scope
-These guidelines cover all contributions to the NeuroShield repository, including code (core engine, plugins, attacks), documentation, and dataset configurations.
+These guidelines cover all contributions to the VIREON repository, including code (core engine, plugins, attacks), documentation, and dataset configurations.
 
 ## Prerequisites
 - Python 3.10+
@@ -28,7 +28,7 @@ This section guides you through submitting a bug report. Following these guideli
 - Use the GitHub Issue Tracker.
 - Provide a clear and descriptive title.
 - Provide a step-by-step description of the suggested enhancement in as many details as possible.
-- Explain why this enhancement would be useful to most NeuroShield users or neurosecurity researchers.
+- Explain why this enhancement would be useful to most VIREON users or neurosecurity researchers.
 
 ### Pull Requests
 1. Fork the repo and create your branch from `main`.
@@ -44,7 +44,7 @@ This section guides you through submitting a bug report. Following these guideli
 - Type hints are required for all new Python code.
 
 ## Architecture Principles
-NeuroShield uses an event-driven plugin architecture. Do not tightly couple components. Use the `EventBus` for cross-component communication, and the `PluginRegistry` for adding new devices or attack vectors.
+VIREON uses an event-driven plugin architecture. Do not tightly couple components. Use the `EventBus` for cross-component communication, and the `PluginRegistry` for adding new devices or attack vectors.
 
 ## Related Documents
 - [Code of Conduct](CODE_OF_CONDUCT.md)

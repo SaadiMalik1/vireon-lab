@@ -1,6 +1,6 @@
 # VIREON: Virtual Laboratory for BCI Security
 
-[![CI](https://github.com/SaadiMalik1/neurosheild/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/neurosheild/actions/workflows/ci.yml)
+[![CI](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -35,7 +35,7 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 It is highly recommended to use a virtual environment. The project is managed via `pyproject.toml`.
 
 ```bash
-git clone https://github.com/SaadiMalik1/neurosheild.git
+git clone https://github.com/SaadiMalik1/Vireon.git
 cd neurosheild
 python3 -m venv .venv
 source .venv/bin/activate
