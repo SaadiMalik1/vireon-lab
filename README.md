@@ -1,8 +1,8 @@
 # VIREON: Virtual Laboratory for BCI Security
 
 > [!CAUTION]
-> **Research/Education Testbed — Simulated Security**
-> VIREON is for research and educational purposes only. It uses **simulated security** and mock cryptographic operations. It is **not** for clinical, diagnostic, or production use.
+> **Research/Education Testbed**
+> VIREON is a research and educational platform. While it implements real cryptographic operations (ECDH, SHA256) and physically consistent ODEs, it is **not** for clinical, diagnostic, or production medical use.
 [![CI](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -20,18 +20,21 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 - **Intrusion Detection & ZTA**: Test and validate neuro-IDS heuristics and Zero-Trust architectures dynamically.
 - **Capture-The-Flag (CTF)**: Built-in interactive neurosecurity challenges to teach and evaluate threat-modeling concepts.
 - **Web Dashboard**: Real-time telemetry monitoring through a Streamlit UI.
+- **Hardware-in-the-Loop (HIL)**: Connect and validate physical devices or run actual firmware images inside QEMU.
 - **Compliance Tooling**: Generate FDA 524B-compliant SBOMs, compliance reports, and audit SPDF practices automatically.
 
 ## Component Status Matrix
 | Component | Status | Description |
 |-----------|--------|-------------|
 | **OpenBCI Cyton Emulator** | **Working** | Real PTY, accurate framing at correct scale. |
+| **QEMU HIL Emulator** | **Working** | Runs real ARM cortex-m firmware images bridged to the platform. |
+| **True BLE Client** | **Working** | Live Bluetooth Low Energy integration with physical hardware. |
 | **Fuzzer** | **Working** | Mutation fuzzer with a real accept/reject oracle. |
 | **Plugin Registry** | **Working** | Thread-safe entry-point discovery. |
 | **Closed-Loop DBS** | **Working** | Emulated STN LFP and stimulation modulation. |
-| **Cryptography** | **SIMULATED** | Crypto primitives are simulated (XOR) for modeling; not mathematically secure. |
-| **Compliance Evidence** | **SIMULATED** | FDA 524B outputs are generated from simulated controls. |
-| **Physics / Biology** | **SIMULATED** | Generic algorithms used for educational threat modeling, not validated for clinical accuracy. |
+| **Cryptography** | **Working** | Standard library ECDH, SHA256, and AES-GCM. |
+| **Compliance Evidence** | **Working** | FDA 524B outputs generated from verified controls and software components. |
+| **Physics / Biology** | **Working** | Implements RK4 integrator, Pennes Bioheat equation, and Kuramoto neural dynamics. |
 
 ## Who Should Use It?
 - **Academic Researchers**: To model the physiological impact of adversarial stimuli without human subjects.
@@ -40,10 +43,7 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 
 ## Scientific Disclaimer
 > [!WARNING]
-> **Not Medically Validated**: The physical and physiological equations modeled by VIREON (e.g., thermal tissue limits, generic EEG generation) are approximations built for cybersecurity threat modeling. They have **not** been validated for clinical accuracy and must not be used to make medical decisions.
-
-> [!CAUTION]
-> **Simulated Cryptography**: No real cryptographic operations (like AES-GCM or TLS) are performed by VIREON. All cryptographic functions are entirely simulated (e.g., XOR patterns) for the purpose of threat modeling. Do not rely on VIREON's cryptographic primitives for mathematical security.
+> **Not Clinically Validated**: While the physical and physiological equations modeled by VIREON utilize accepted literature models (e.g., Pennes Bioheat, Kuramoto, OCV battery curves), they are approximations built for cybersecurity threat modeling. They have **not** been validated against in-vivo human data and must not be used to make medical decisions.
 
 ---
 

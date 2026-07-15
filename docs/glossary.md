@@ -49,4 +49,4 @@ VIREON operates at the intersection of neuroscience, cybersecurity, and control 
 27. **DoS (Denial of Service)**: Exhausting device resources to prevent therapy.
 28. **Rollback Attack**: Forcing a device to revert to an older, vulnerable firmware.
 29. **Replay Attack**: Capturing and resending valid telemetry to deceive the system.
-30. **E2EE (End-to-End Encryption)**: Encrypted communication link (simulated).
+30. **E2EE (End-to-End Encryption)**: Encrypted communication link using standard library cryptography.

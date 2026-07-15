@@ -15,7 +15,7 @@ Below are the currently supported threat categories that the VIREON Intrusion De
 
 ### ATTACK-002: Telemetry Interception / State Inference (STRIDE: Information Disclosure)
 - **Description**: An attacker passively sniffs the BLE or LSL data streams to infer the patient's broad physiological or cognitive state.
-- **Simulation Event**: Logged when the simulated RF link lacks E2EE and is exposed to the local network loopback.
+- **Simulation Event**: Logged when the RF link's E2EE is bypassed or downgraded, exposing telemetry to the local network loopback.
 - **Physiological Impact**: Privacy violation.
 
 ### ATTACK-003: Firmware Rollback Attack (STRIDE: Elevation of Privilege)

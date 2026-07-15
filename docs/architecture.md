@@ -101,3 +101,9 @@ These models are ingested by `core.config` and establish the context for the `At
 To support education and interactive validation, VIREON embeds a Capture-The-Flag (CTF) engine. 
 - It loads structured `.json` neurosecurity challenges.
 - Challenges validate specific user interactions and flag submissions against the live simulated state or analytical outputs.
+
+## 8. Hardware-in-the-Loop (HIL) & Physical Integration
+
+The platform provides a flexible plugin architecture (`vireon/plugins/`) to move beyond pure simulation:
+- **QEMU HIL Emulation**: Real ARM firmware binaries can be loaded and executed within a `qemu-system-arm` process (`QemuCortexMEmulator`). Telemetry is bridged securely over dedicated TCP ports, allowing hardware-accurate behavioral testing of actual device payloads.
+- **True BLE Connectivity**: Connects to physical hardware in the real world using the `TrueBLEClient` (powered by `bleak`). This enables testing of live cyber-physical attacks against production-grade RF endpoints.

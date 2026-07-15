@@ -17,4 +17,4 @@ vireon compile therapy.rme -o therapy.bin
 ```
 
 ## 3. Deploying
-The `therapy.bin` file can now be loaded into the Digital Twin or sent via a simulated OTA update.
+The `therapy.bin` file can now be loaded into the Digital Twin or sent via an OTA update.

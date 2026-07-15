@@ -42,7 +42,7 @@ Yes. You can load standard clinical data formats (like `.edf`) by passing them t
 `vireon run --dataset=patient_data.edf`
 
 ### 9. Can I connect a real BCI or DBS device?
-Currently, Hardware-in-the-Loop (HIL) testing is highly experimental and limited to OpenBCI boards. See the tutorials for setting up HIL.
+Yes! VIREON's Hardware-in-the-Loop (HIL) capabilities allow you to run real ARM firmware images via the `QemuCortexMEmulator` and connect to physical hardware using the `TrueBLEClient`. Experimental support for OpenBCI boards is also available.
 
 ### 10. The simulation is running much slower than real-time.
 Check your `SecurityConfig`. If you have the PyTorch Deep Autoencoder enabled, it adds latency per tick. If you do not have a dedicated GPU, this will cause the simulation clock to lag behind wall-clock time. Disable it in the configuration to fall back to the ultra-fast Linear Autoencoder.
@@ -56,7 +56,7 @@ Benchmarks (like sub-millisecond latency claims) lack statistical rigor due to P
 No. As outlined in the [Threat Model bounds](threat-model/assumptions.md), we do not simulate the PHY layer. VIREON only models logical attacks like MTU abuse or malformed GATT packets.
 
 ### 13. Is the cryptography in VIREON secure?
-**NO**. VIREON uses **simulated cryptography** (e.g., XOR patterns) designed solely for threat modeling and timing analysis. Do NOT use VIREON for mathematical security or production environments.
+VIREON implements real standard library cryptographic operations (ECDH, SHA256, AES-GCM) rather than simulated mocks. However, as this is an educational and research testbed, you should **not** use VIREON for securing production medical devices or real patient data.
 
 ### 14. How do I add my own attack?
 You can create a new Python class inheriting from `BaseAttack` and place it in the `vireon.attacks` namespace (or inject it dynamically via the Plugin Registry). See the [Plugin Development Guide](plugin-development.md) for details.

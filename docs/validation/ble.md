@@ -14,8 +14,8 @@ VIREON simulates the logical state machine of a BLE Generic Attribute Profile (G
 - **Infinite CPU**: We assume the implant's BLE stack can process any valid MTU size instantaneously, except when explicitly targeted by an `MTUAbuseAttack`.
 
 ## Limitations & Out of Scope
-- **No PHY Layer**: VIREON does not simulate the physical RF layer (2.4 GHz). You cannot test jamming attacks that rely on overlapping radio frequencies.
-- **Simplified State Machine**: We do not simulate BLE pairing or bonding crypto-exchanges. The simulation assumes the devices are already paired and bonded.
+- **No PHY Layer in Simulation**: VIREON's software simulation does not simulate the physical RF layer (2.4 GHz). However, if you require physical layer validation (like testing physical jamming or real SMP pairing), you must switch to the Hardware-in-the-Loop `TrueBLEClient` plugin, which connects to a real BLE adapter.
+- **Simplified State Machine**: In software simulation mode, we do not simulate BLE pairing or bonding crypto-exchanges; it assumes devices are already paired. For real pairing flows, use `TrueBLEClient`.
 
 ## References
 This level of simulation is sufficient for modeling logical layer attacks (e.g., sending malformed GATT requests or flooding the event queue) but cannot be used to validate physical RF security.
