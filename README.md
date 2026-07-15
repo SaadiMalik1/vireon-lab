@@ -9,24 +9,20 @@
 ## What is VIREON?
 VIREON is an open-source research platform for simulating, validating, and evaluating the security of implantable neurotechnology.
 
-**Validated against 8 public neurophysiological datasets spanning 500+ hours of EEG recordings.**
+It provides a complete **cyber-physical kill chain evaluator** that allows researchers to model the entire attacker lifecycle—from reconnaissance and initial access to physical signal manipulation—across different neurotechnology ecosystems (DBS, VNS, Cochlear, BCI).
 
-## Why does it exist?
-As neurotechnology transitions from clinical labs to commercial availability, the attack surface expands. VIREON exists to model threats—such as unauthorized stimulation, telemetry manipulation, device denial-of-service, state inference, firmware compromise, and wireless protocol abuse—safely in a digital environment before they manifest in clinical reality. 
-
-VIREON is built on top of existing standards (e.g., STRIDE, MITRE ATT&CK, IEC 81001-5-1, ISO 14971), acting as an orchestrator for threat modeling and safety validation rather than inventing new standards.
+## Core Features
+- **Attack Lifecycle Engine**: Model threat actors from passive observers (L0) up to supply-chain root compromises (L6) across 7 distinct attack stages.
+- **Structured Threat Models**: Declarative YAML models defining assets, boundaries, and assumptions for standard neurotech ecosystems.
+- **Intrusion Detection & ZTA**: Test and validate neuro-IDS heuristics and Zero-Trust architectures dynamically.
+- **Capture-The-Flag (CTF)**: Built-in interactive neurosecurity challenges to teach and evaluate threat-modeling concepts.
+- **Web Dashboard**: Real-time telemetry monitoring through a Streamlit UI.
+- **Compliance Tooling**: Generate FDA 524B-compliant SBOMs, compliance reports, and audit SPDF practices automatically.
 
 ## Who Should Use It?
 - **Academic Researchers**: To model the physiological impact of adversarial stimuli without human subjects.
 - **Security Researchers**: To develop and validate Intrusion Detection Systems (IDS) and Zero-Trust Architectures (ZTA) for medical implants.
 - **Medical Device Engineers**: To test bounded execution, battery constraints, and anti-rollback safeguards on simulated firmware.
-
-## Who Should NOT Use It?
-- **Clinicians/Patients**: VIREON is a simulation tool. It is not diagnostic medical software and cannot be used to tune actual patient therapy.
-- **General Hobbyists**: Without a foundational understanding of cyber-physical systems or neuro-engineering, the telemetry output may be misinterpreted.
-
-## Current Maturity Level
-VIREON is currently a **Research Prototype**. The core simulation loop is stable, but APIs and plugin architectures are subject to rapid, breaking changes.
 
 ## Scientific Disclaimer
 > [!WARNING]
@@ -34,63 +30,63 @@ VIREON is currently a **Research Prototype**. The core simulation loop is stable
 
 ---
 
-
-
-## Roadmap
-
-**v0.2**
-- [x] Digital Twin physics and signals
-- [x] Coordinator and Policy Engine separation
-- [x] Extensible Plugin architecture
-
-**v0.3**
-- [ ] Automated reproducible benchmarks suite
-- [ ] Integration of a Curated Validation Corpus (e.g., PhysioNet, BCI Competition Datasets)
-- [ ] Hardware-in-the-loop (HIL) integration
-- [ ] BLE packet fuzzing
-
-**v1.0**
-- [ ] Stable Python APIs
-- [ ] Documentation freeze
-- [ ] Research publication
-
----
-
 ## Installation & Prerequisites
-See the [Installation Guide](INSTALL.md) for detailed instructions on Python virtual environments and Rust toolchains.
+
+It is highly recommended to use a virtual environment. The project is managed via `pyproject.toml`.
 
 ```bash
 git clone https://github.com/SaadiMalik1/neurosheild.git
 cd neurosheild
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+
+# Install the project and all optional dependencies (including UI and Docs)
+pip install -e ".[all]"
 ```
+
+*Note: For detailed instructions regarding Rust toolchains for the NeuroDSL compiler, see the [Installation Guide](INSTALL.md).*
 
 ---
 
-## Quick Start & Example Workflow
+## Quick Start & CLI Workflow
 
-**1. Run a 10-second headless simulation with an active noise attack:**
+VIREON provides a powerful, unified CLI (`vireon`) for all core functions.
+
+### 1. Headless Simulation
+Run a 10-second headless simulation with an active noise attack:
 ```bash
-python3 -m vireon run --duration 10.0 --attack noise
+vireon run --duration 10.0 --attack noise
 ```
 
-**2. Expected Output:**
-```text
-Simulation started...
-Baseline telemetry OK.
-[t=5.0s] Attack injected: NOISE
-[NSAE] Anomaly detected (confidence: 0.92)
-[ZTA] Trust score degraded: 0.8 -> 0.4
-[ZTA] Telemetry egress halted.
-Simulation complete.
-Report generated: reports/session.pdf
+### 2. Interactive Web Dashboard
+Launch the Streamlit UI to monitor physical states, IDS alerts, and active attacks in real time:
+```bash
+vireon ui --port 7777
 ```
 
-**3. Launch the Web Dashboard:**
+### 3. Capture-The-Flag (CTF) Mode
+List and play interactive neurosecurity challenges:
 ```bash
-python3 -m vireon ui --port 7777
+# View available challenges
+vireon ctf list
+
+# Start a specific challenge (e.g., ctf-001)
+vireon ctf start ctf-001
+```
+
+### 4. Compliance & Audit Tools
+Generate FDA 524B compliance documentation:
+```bash
+vireon sbom -o output/sbom.json
+vireon compliance-report -o output/compliance.json
+vireon audit-spdf
+```
+
+### 5. Fuzzing & Diagnostics
+Run protocol fuzzing or view loaded plugins:
+```bash
+vireon info
+vireon fuzz --iterations 5000 --protocol vireon
 ```
 
 ---
@@ -98,12 +94,16 @@ python3 -m vireon ui --port 7777
 ## Project Structure
 ```text
 vireon/
+├── attack_chain/   # 7-stage cyber kill chain lifecycle models
 ├── core/           # Coordinator, Engine, ZTA, IDS, Digital Twin
-├── plugins/        # Firmware Emulators, BLE clients, Extensible datasets
-├── tests/          # Pytest validation and manual verification scripts
-├── neuro_dsl/       # Embedded Rust DSL Compiler
-├── docs/           # Technical, scientific, and API documentation
-└── main.py         # CLI entry point
+├── ctf/            # Capture-the-Flag challenge engine & content
+├── dashboard/      # Streamlit interactive Web UI
+├── plugins/        # Firmware Emulators, BLE clients, Datasets
+├── tests/          # Pytest validation scripts
+├── neuro_dsl/      # Embedded Rust DSL Compiler
+└── __main__.py     # Unified CLI entry point
+threat_models/      # Declarative YAML ecosystem threat models
+docs/               # Technical, scientific, and API documentation
 ```
 
 ## Documentation Links
@@ -112,7 +112,6 @@ vireon/
 - [Threat Modeling & Security](docs/threat-model/README.md)
 - [API Reference](docs/api.md)
 - [Plugin Development Guide](docs/plugin-development.md)
-- [Frequently Asked Questions](docs/FAQ.md)
 
 ---
 
