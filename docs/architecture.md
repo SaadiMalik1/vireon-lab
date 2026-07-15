@@ -62,3 +62,32 @@ The VIREON platform includes an interactive dashboard built with **Streamlit** t
 - **Threat Intel Panel**: Visualizes active detections, **Red Team Engine** feedback scores, and their mapped qTARA classifications. 
 
 The dashboard provides a closed-loop environment where researchers can observe physiological responses, trigger runtime simulated attacks, and analyze the NeuroSignalAssuranceEngine mitigations interactively.
+
+## 5. Cyber Kill Chain Engine (`attack_chain/`)
+
+VIREON implements a formal **Cyber Kill Chain** evaluator rather than assuming immediate root compromise. The `AttackChain` module models a 7-stage adversarial progression:
+1. Reconnaissance
+2. Initial Access
+3. Protocol Abuse
+4. Privilege Escalation
+5. Persistence
+6. Execution (Triggers the physical `vireon.core.attack` signal modifiers)
+7. Recovery
+
+During initialization, the `Coordinator` dynamically orchestrates these stages. If an attacker's modeled capability (L0-L6) is insufficient to breach a stage, the chain terminates before safety-critical execution.
+
+## 6. Declarative Threat Models (`threat_models/`)
+
+Ecosystem-specific threat models are implemented as declarative YAML configurations rather than hard-coded scripts.
+Models (such as `dbs.yaml`, `vns.yaml`, `cochlear.yaml`, and `bci.yaml`) explicitly map:
+- **Assets**: Identifying IPGs, Companion Apps, and Cloud backends.
+- **Trust Boundaries**: The specific boundaries crossed by physical and digital telemetry.
+- **Attack Paths**: The exact capabilities required to compromise an asset.
+
+These models are ingested by `core.config` and establish the context for the `AttackChain` and Zero-Trust Policy Engine.
+
+## 7. Capture-The-Flag Engine (`ctf/`)
+
+To support education and interactive validation, VIREON embeds a Capture-The-Flag (CTF) engine. 
+- It loads structured `.json` neurosecurity challenges.
+- Challenges validate specific user interactions and flag submissions against the live simulated state or analytical outputs.

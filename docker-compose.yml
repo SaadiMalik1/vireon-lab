@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  neuroshield:
+  vireon:
     build: .
-    container_name: neuroshield-lab
+    container_name: vireon-lab
     ports:
       - "7777:7777"
     volumes:
       - .:/app
     environment:
       - PYTHONUNBUFFERED=1
-    command: python -m neuroshield ui --port 7777 --host 0.0.0.0
+    command: python -m vireon ui --port 7777 --host 0.0.0.0

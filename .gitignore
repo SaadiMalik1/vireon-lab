@@ -5,6 +5,9 @@ venv/
 env/
 ENV/
 .ruff_venv/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
 
 # Python Cache and Binaries
 __pycache__/
@@ -24,9 +27,19 @@ __pycache__/
 
 # Project specific dynamic output
 neuroshield_run_*
+vireon_run_*
+sbom.json
 
 # Local planning notes
 plans/
+scratch/
+
+# Ad-hoc Scratch Scripts
+rename.py
+test_ids.py
+test_run.sh
+simulate_board.py
+main.py
 
 # Local References
 openbci_reference/
