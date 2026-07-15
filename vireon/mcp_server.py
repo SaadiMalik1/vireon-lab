@@ -184,7 +184,7 @@ def run_simulation(
     coordinator.run()
     
     # Capture the final state of the digital twin
-    final_state = coordinator.twin.get_state()
+    final_state = coordinator.twin.get_state() if coordinator.twin else {}
     coordinator.teardown()
     
     # Return key safety metrics

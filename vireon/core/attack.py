@@ -658,8 +658,8 @@ class MotionArtifactAttack(ISignalModifier):
             if ch in eeg_channels:
                 artifact = np.random.normal(0, 150.0, size=(data.shape[1],))
                 # low-pass filter the artifact to simulate motion
-                artifact = np.convolve(artifact, np.ones(10)/10, mode='same')
-                mutated[ch, :] += artifact
+                artifact_filtered = np.convolve(artifact, np.ones(10)/10, mode='same')
+                mutated[ch, :] += artifact_filtered
         return mutated
 
 class CrossTalkAttack(ISignalModifier):

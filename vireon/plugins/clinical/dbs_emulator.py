@@ -98,9 +98,9 @@ class ClosedLoopDBSController:
         lfp = data[0, :]
         
         # Accumulate feedback buffer (keep last 250 samples for FFT calculations)
-        self.feedback_buffer = np.concatenate((self.feedback_buffer, lfp))
+        self.feedback_buffer = np.concatenate((self.feedback_buffer, lfp)) # type: ignore
         if len(self.feedback_buffer) > 250:
-            self.feedback_buffer = self.feedback_buffer[-250:]
+            self.feedback_buffer = self.feedback_buffer[-250:] # type: ignore
 
         # 1. Apply phase-shifting attack if active on feedback path
         # A 180-degree phase shift at 20 Hz (period = 12.5 samples at 250Hz) is equal to 6 samples delay
@@ -112,7 +112,7 @@ class ClosedLoopDBSController:
 
         if attack_active and len(analysis_buffer) >= 6:
             # Shift buffer by 6 samples to emulate 180 degrees delay
-            analysis_buffer = np.roll(analysis_buffer, 6)
+            analysis_buffer = np.roll(analysis_buffer, 6) # type: ignore
 
         # 2. Compute beta power and phase
         n = len(analysis_buffer)
