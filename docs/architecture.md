@@ -8,8 +8,10 @@ graph TD
     C[Coordinator] --> RE[Replay Engine]
     C --> WS[WebSocket Server]
     RE --> DT[Digital Twin]
-    RE --> SE[Security Engine]
-    DT --> PE[Physics Engine]
+    RE --> Det[Detection Engine]
+    RE --> Clin[Clinical Engine]
+    RE --> Phys[Physics Engine]
+    DT --> Phys
     WS --> UI[Web Dashboard]
 ```
 
@@ -17,13 +19,8 @@ graph TD
 
 The `DigitalTwin` is the core state machine of the Virtual Laboratory. It maintains the physical and clinical state of the simulated BCI device.
 
-### Granular Concurrency Model
-To support high-frequency simulation (e.g., thousands of channels at 250Hz), the Digital Twin utilizes three distinct, granular `threading.Lock` objects:
-- **`hardware_lock`**: Protects low-level physical state variables like `battery_level`, `electrode_impedances`, and `amplifier_saturated`.
-- **`clinical_lock`**: Protects high-level diagnostic state, including `clinical_status`, `decoder_confidence`, and `hazard_state`.
-- **`therapy_lock`**: Protects stimulation and feedback parameters, such as `stimulation_enabled` and `stimulation_amplitude_ma`.
-
-This granular locking prevents high-frequency battery sag calculations from bottlenecking slower, asynchronous clinical diagnostic updates. However, due to Python's Global Interpreter Lock (GIL), true sub-millisecond hardware-level determinism is not achieved in this simulation.
+### Concurrency Model
+To support high-frequency simulation safely, the Digital Twin utilizes a unified **`threading.RLock()`** to serialize state access across the ReplayEngine thread and asynchronous RPC telemetry endpoints. This unified lock eliminates race conditions, state tearing, and deadlocks that plagued previous multi-lock implementations, preserving authoritative ground truth determinism across all integrated physics and clinical computations.
 
 ### Physics Engine
 The `DigitalTwin` delegates complex thermodynamic and electrical boundary calculations to the `PhysicsEngine`. When the ReplayEngine triggers `set_sim_clock`, the twin automatically simulates:
@@ -39,7 +36,7 @@ The `Coordinator` is the orchestration layer that ties the simulation together.
 ### The ReplayEngine Loop
 The core of the simulation is a strict timing loop managed by the `ReplayEngine`. It:
 - Pushes synthetic or pre-recorded EEG data into the twin at the defined `sample_rate`.
-- Dispatches this data to the `SecurityEngine` for immediate threat analysis.
+- Dispatches this data to the modular analysis pipelines (Detection, Clinical, Physics).
 - Calculates physical constraints and battery usage based on elapsed `dt`.
 
 ### Telemetry Dispatch
