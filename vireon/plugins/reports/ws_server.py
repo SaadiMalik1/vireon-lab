@@ -3,6 +3,7 @@ import threading
 import urllib.parse
 from typing import Set, Optional, Any
 import websockets
+from websockets.exceptions import ConnectionClosed
 
 class NeuroWebSocketServer:
     """
@@ -40,7 +41,7 @@ class NeuroWebSocketServer:
             # Keep connection open and listen for close events
             async for _ in websocket:
                 pass
-        except websockets.exceptions.ConnectionClosed:
+        except ConnectionClosed:
             pass
         finally:
             if websocket in self.clients:
