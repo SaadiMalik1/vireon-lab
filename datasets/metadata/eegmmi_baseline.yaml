@@ -1,6 +1,6 @@
 dataset:
   id: eegmmi_baseline
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/eegmmidb/1.0.0/
   modality: EEG
   electrodes: 64
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - baseline_simulation
     - ids_false_positive_testing
-  status: pending_download
+  status: synthetic_mock

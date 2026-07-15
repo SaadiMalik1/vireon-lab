@@ -8,10 +8,17 @@ from vireon.core.event_bus import EventBus, Event
 
 class ISignalModifier(ABC):
     @abstractmethod
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         """
         Mutates the incoming signal window and registers impacts
         on the DigitalTwin state (e.g. impedance changes, disconnection).
+        """
+        pass
+
+    def revert(self, twin: DigitalTwin) -> None:
+        """
+        Reverts any persistent state changes made to the DigitalTwin when 
+        the modifier is removed. Base implementation does nothing.
         """
         pass
 
@@ -21,12 +28,12 @@ class NoiseInjectionAttack(ISignalModifier):
         self.target_channels = target_channels
         self.noise_level = noise_level_microvolts
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels:
                 # Add Gaussian noise
-                noise = np.random.normal(0, self.noise_level, size=data.shape[1])
+                noise = (rng if rng is not None else np.random).normal(0, self.noise_level, size=data.shape[1])
                 mutated_data[ch, :] += noise
         return mutated_data
 
@@ -38,7 +45,7 @@ class SignalDriftAttack(ISignalModifier):
         # Maintain drift offsets across calls
         self.offsets: Dict[int, float] = {ch: 0.0 for ch in target_channels}
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         dt = num_samples / sample_rate
@@ -61,7 +68,7 @@ class ImpedanceSpikeAttack(ISignalModifier):
         self.powerline_noise_amplitude = powerline_noise_amplitude
         self.time_counter = 0.0
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
 
@@ -76,10 +83,15 @@ class ImpedanceSpikeAttack(ISignalModifier):
                 twin.update_impedance(ch, self.spike_value)
 
                 # Zero out clean signal and inject powerline noise + high random noise
-                high_noise = np.random.normal(0, 30.0, size=num_samples)
+                high_noise = (rng if rng is not None else np.random).normal(0, 30.0, size=num_samples)
                 mutated_data[ch, :] = powerline_noise + high_noise
 
         return mutated_data
+
+    def revert(self, twin: DigitalTwin) -> None:
+        """Revert impedance to nominal 5.0 kOhm."""
+        for ch in self.target_channels:
+            twin.update_impedance(ch, 5.0)
 
 
 class SignalSuppressionAttack(ISignalModifier):
@@ -87,7 +99,7 @@ class SignalSuppressionAttack(ISignalModifier):
         self.target_channels = target_channels
         self.attenuation_factor = attenuation_factor
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels:
@@ -108,7 +120,7 @@ class AdversarialOptimizerAttack(ISignalModifier):
         self.population_size = population_size
         self.target_rms_limit = target_rms_limit
         # Genes: [amplitude, frequency (13-30)]
-        self.population = np.random.rand(population_size, 2)
+        self.population = (rng if rng is not None else np.random).random(population_size, 2)
         self.population[:, 0] *= 50.0  # Amplitude up to 50
         self.population[:, 1] = 13.0 + self.population[:, 1] * 17.0  # Frequency 13-30 Hz
         
@@ -122,7 +134,7 @@ class AdversarialOptimizerAttack(ISignalModifier):
         self.current_phase = 0.0 # Maintain continuous phase state across blocks
         self._last_injected = False
 
-    def _evolve(self):
+    def _evolve(self, rng: Optional[np.random.Generator] = None):
         # Select best half based on actual recorded fitness
         sorted_idx = np.argsort(self.fitness_scores)[::-1]
         best_fitness = self.fitness_scores[sorted_idx[0]]
@@ -136,8 +148,8 @@ class AdversarialOptimizerAttack(ISignalModifier):
         new_population = np.zeros_like(self.population)
         new_population[:len(best_half)] = best_half
         for i in range(len(best_half), self.population_size):
-            parent = best_half[np.random.randint(0, len(best_half))]
-            mutation = np.random.normal(0, 0.1, 2)
+            parent = best_half[(rng if rng is not None else np.random).integers(0, len(best_half))]
+            mutation = (rng if rng is not None else np.random).normal(0, 0.1, 2)
             mutation[0] *= 10.0 # Amplitude mutation
             mutation[1] *= 2.0  # Freq mutation
             new_population[i] = np.clip(parent + mutation, [0.0, 13.0], [self.target_rms_limit * 1.414, 30.0])
@@ -146,7 +158,7 @@ class AdversarialOptimizerAttack(ISignalModifier):
         self.current_gene_idx = 0
         self.generation += 1
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         num_samples = data.shape[1]
         
         # 1. Evaluate fitness of the PREVIOUS gene based on twin's current physical state
@@ -159,7 +171,7 @@ class AdversarialOptimizerAttack(ISignalModifier):
             
             self.current_gene_idx += 1
             if self.current_gene_idx >= self.population_size:
-                self._evolve()
+                self._evolve(rng)
                 
         # 2. Inject Current gene to evaluate
         amp, freq = self.population[self.current_gene_idx]
@@ -197,12 +209,14 @@ class TraceReplayAttack(ISignalModifier):
                 if len(self.trace_data.shape) > 1:
                     self.trace_data = self.trace_data[:, 0] # Take first column
             else:
-                self.trace_data = np.zeros(1000) # Fallback
-        except Exception:
-            self.trace_data = np.zeros(1000) # Fallback
+                raise FileNotFoundError(f"Trace file not found: {trace_file_path}")
+        except Exception as e:
+            import logging
+            logging.error(f"Failed to load trace data from {trace_file_path}: {e}")
+            raise IOError(f"Failed to load trace data: {e}")
         self.trace_index = 0
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         
@@ -228,7 +242,7 @@ class RFJammingAttack(ISignalModifier):
     def __init__(self, drop_rate: float = 0.5):
         self.drop_rate = drop_rate
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         # We don't mutate the raw analog signal; we just set the drop rate on the twin
         # so the Emulator drops packets during serialization.
         setattr(twin, "rf_packet_drop_rate", self.drop_rate)
@@ -246,7 +260,7 @@ class FramingDesynchronizationAttack(ISignalModifier):
         self.target_channels = target_channels
         self.inject_start_byte = inject_start_byte
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         
         # Calculate dynamic scaling based on the DigitalTwin ADC params
@@ -282,7 +296,7 @@ class SessionReplayAttack(ISignalModifier):
         self.is_capturing = True
         self.replay_index = 0
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         dt = num_samples / sample_rate
@@ -326,7 +340,7 @@ class TemporalEvasionAttack(ISignalModifier):
         self.amplitude = amplitude
         self.time_counter = 0.0
         
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         
@@ -340,7 +354,7 @@ class TemporalEvasionAttack(ISignalModifier):
         burst_mask = phase_in_cycle < self.burst_duration_sec
         
         if np.any(burst_mask):
-            payload = np.random.normal(0, self.amplitude, size=(int(num_samples),))
+            payload = (rng if rng is not None else np.random).normal(0, self.amplitude, size=(int(num_samples),))
             for ch in self.target_channels:
                 if ch in eeg_channels:
                     mutated_data[ch, burst_mask] += payload[burst_mask]
@@ -390,6 +404,9 @@ class SignalAttackEngine:
                 self.modifiers.remove(modifier)
                 removed = True
 
+        if removed:
+            modifier.revert(self.twin)
+
         if removed and self.event_bus:
             self.event_bus.publish(Event(
                 topic="attack.modifier_removed",
@@ -400,7 +417,7 @@ class SignalAttackEngine:
                 source="attack_engine"
             ))
 
-    def apply_attacks(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int) -> np.ndarray:
+    def apply_attacks(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         processed_data = data.copy()
         with self.lock:
             active_mods = list(self.modifiers)
@@ -409,7 +426,7 @@ class SignalAttackEngine:
         setattr(self.twin, "rf_packet_drop_rate", 0.0)
 
         for modifier in active_mods:
-            processed_data = modifier.apply(processed_data, eeg_channels, sample_rate, self.twin)
+            processed_data = modifier.apply(processed_data, eeg_channels, sample_rate, self.twin, rng)
 
         if active_mods and self.event_bus:
             self.event_bus.publish(Event(
@@ -508,7 +525,7 @@ class NeuroPhishingAttack(ISignalModifier):
         self.manipulation_type = manipulation_type
         self.time_counter = 0.0
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         
@@ -545,14 +562,17 @@ class FirmwareRollbackAttack(ISignalModifier):
         self.payload_version = payload_version
         self.has_fired = False
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    @property
+    def full_payload(self) -> bytes:
+        import struct
+        malicious_binary = b'A' * 600000
+        header = struct.pack('<I', self.payload_version)
+        return header + malicious_binary
+
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         if not self.has_fired:
-            import struct
             # Construct a malicious payload: [Version header (4 bytes)] + [Overflow Payload]
             # Version is lower than the expected minimum (e.g., SVN 0)
-            malicious_binary = b'A' * 600000 # Large buffer designed to cause overflow if executed
-            header = struct.pack('<I', self.payload_version)
-            _full_payload = header + malicious_binary
             
             # Record the attempt on the Digital Twin's event log or directly via the firmware
             twin.set_clinical_alert(True, f"Malicious OTA Downgrade Attempted (SVN {self.payload_version})")
@@ -563,12 +583,40 @@ class FirmwareRollbackAttack(ISignalModifier):
             
         return data
 
+    def revert(self, twin: DigitalTwin) -> None:
+        """Clear the clinical alert if it was triggered."""
+        if self.has_fired:
+            twin.set_clinical_alert(False, "Nominal")
+
+class InsiderThreatAttack(ISignalModifier):
+    """
+    Simulates an insider threat where a compromised clinician sets dangerous
+    stimulation parameters directly, bypassing normal safeguards.
+    """
+    def __init__(self, target_channels: List[int]):
+        self.target_channels = target_channels
+        self.has_fired = False
+
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
+        if not self.has_fired:
+            print("[InsiderThreatAttack] Injecting malicious clinical configuration...")
+            # Force a dangerous parameter directly on the twin
+            twin.update_config({"stimulation_amplitude_ma": 15.0})
+            twin.set_clinical_alert(True, "Insider Threat: Dangerous parameters injected")
+            self.has_fired = True
+        return data
+
+    def revert(self, twin: DigitalTwin) -> None:
+        if self.has_fired:
+            twin.update_config({"stimulation_amplitude_ma": 5.0})
+            twin.set_clinical_alert(False, "Nominal")
+
 # --- NEW ATTACK STUBS FOR 13-TAXONOMY NSAE VALIDATION ---
 
 class ElectrodeSaturationAttack(ISignalModifier):
     def __init__(self, target_channels: List[int]):
         self.target_channels = target_channels
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels: 
@@ -579,9 +627,9 @@ class PacketLossAttack(ISignalModifier):
     def __init__(self, target_channels: List[int], drop_prob: float = 0.1):
         self.target_channels = target_channels
         self.drop_prob = drop_prob
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
-        mask = np.random.rand(data.shape[1]) < self.drop_prob
+        mask = (rng if rng is not None else np.random).random(data.shape[1]) < self.drop_prob
         for ch in self.target_channels:
             if ch in eeg_channels: 
                 mutated[ch, mask] = 0.0
@@ -591,7 +639,7 @@ class TimingJitterAttack(ISignalModifier):
     def __init__(self, target_channels: List[int], jitter_ms: float = 2.0):
         self.target_channels = target_channels
         self.jitter_ms = jitter_ms
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels:
@@ -604,11 +652,11 @@ class DropoutAttack(ISignalModifier):
     def __init__(self, target_channels: List[int], dropout_length_sec: float = 0.5):
         self.target_channels = target_channels
         self.dropout_length_sec = dropout_length_sec
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         drop_samples = int(self.dropout_length_sec * sample_rate)
         if drop_samples > 0 and drop_samples < data.shape[1]:
-            start_idx = np.random.randint(0, data.shape[1] - drop_samples)
+            start_idx = (rng if rng is not None else np.random).integers(0, data.shape[1] - drop_samples)
             for ch in self.target_channels:
                 if ch in eeg_channels: 
                     mutated[ch, start_idx:start_idx+drop_samples] = 0.0
@@ -618,7 +666,7 @@ class ClippingAttack(ISignalModifier):
     def __init__(self, target_channels: List[int], clip_value: float = 100.0):
         self.target_channels = target_channels
         self.clip_value = clip_value
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels: 
@@ -628,7 +676,7 @@ class ClippingAttack(ISignalModifier):
 class AmplifierSaturationAttack(ISignalModifier):
     def __init__(self, target_channels: List[int]):
         self.target_channels = target_channels
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels: 
@@ -639,7 +687,7 @@ class EMIAttack(ISignalModifier):
     def __init__(self, target_channels: List[int]):
         self.target_channels = target_channels
         self.time_counter = 0.0
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         t = self.time_counter + np.arange(data.shape[1]) / sample_rate
         self.time_counter += data.shape[1] / sample_rate
@@ -652,11 +700,11 @@ class EMIAttack(ISignalModifier):
 class MotionArtifactAttack(ISignalModifier):
     def __init__(self, target_channels: List[int]):
         self.target_channels = target_channels
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         for ch in self.target_channels:
             if ch in eeg_channels:
-                artifact = np.random.normal(0, 150.0, size=(data.shape[1],))
+                artifact = (rng if rng is not None else np.random).normal(0, 150.0, size=(data.shape[1],))
                 # low-pass filter the artifact to simulate motion
                 artifact_filtered = np.convolve(artifact, np.ones(10)/10, mode='same')
                 mutated[ch, :] += artifact_filtered
@@ -667,7 +715,7 @@ class CrossTalkAttack(ISignalModifier):
         self.target_channels = target_channels
         self.source_channel = source_channel
         self.crosstalk_factor = crosstalk_factor
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         mutated = data.copy()
         if self.source_channel in eeg_channels:
             source_data = data[self.source_channel, :]
@@ -680,7 +728,7 @@ class ClockSkewAttack(ISignalModifier):
     def __init__(self, target_channels: List[int], skew_rate: float = 0.01):
         self.target_channels = target_channels
         self.skew_rate = skew_rate
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         # Simplistic representation of clock skew as a slight drift in data interpolation
         mutated = data.copy()
         num_samples = data.shape[1]

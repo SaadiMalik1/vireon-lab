@@ -1,9 +1,9 @@
-# Benchmarks: NeuroSignalAssuranceEngine Latency
+# Benchmarks: SecurityEngine Latency
 
 **Audience**: Academic Researchers, Systems Engineers
 
 ## Purpose
-This document logs the computational latency overhead introduced by the onboard Intrusion Detection System (NeuroSignalAssuranceEngine) during simulation ticks.
+This document logs the computational latency overhead introduced by the onboard Intrusion Detection System (SecurityEngine) during simulation ticks.
 
 ## Benchmark Configuration
 - **Hardware**: Standard x86_64 CPU (e.g., Intel Core i7 / AMD Ryzen 7)
@@ -11,6 +11,9 @@ This document logs the computational latency overhead introduced by the onboard 
 - **Simulation Tick Size**: 250 samples at 250 Hz (1.0 second chunks)
 
 ## Results
+
+> [!WARNING]
+> **Lack of Statistical Rigor**: The metrics reported below are point-in-time estimates gathered on developer machines. They lack standard deviations, formal hardware specifications, and are not strictly reproduced in automated CI. Python's Global Interpreter Lock (GIL) and OS scheduling prevent guaranteed sub-millisecond determinism.
 
 Following the integration of the zero-dependency Spectral Anomaly Detector and the dynamic calibration pipeline, VIREON achieves highly deterministic sub-millisecond latency for intrusion detection.
 

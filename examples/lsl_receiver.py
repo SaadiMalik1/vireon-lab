@@ -24,17 +24,17 @@ def main():
     print("Looking for VIREON LSL streams...")
     
     # Resolve the EEG/LFP data stream
-    eeg_streams = resolve_byprop('name', 'NeuroShield_EEG')
+    eeg_streams = resolve_byprop('name', 'VIREON_EEG')
     if not eeg_streams:
-        print("Could not find NeuroShield_EEG stream.")
+        print("Could not find VIREON_EEG stream.")
         return
         
     eeg_inlet = StreamInlet(eeg_streams[0])
     
     # Resolve the Telemetry/Security stream
-    telemetry_streams = resolve_byprop('name', 'NeuroShield_Telemetry')
+    telemetry_streams = resolve_byprop('name', 'VIREON_Telemetry')
     if not telemetry_streams:
-        print("Could not find NeuroShield_Telemetry stream.")
+        print("Could not find VIREON_Telemetry stream.")
         return
         
     telemetry_inlet = StreamInlet(telemetry_streams[0])

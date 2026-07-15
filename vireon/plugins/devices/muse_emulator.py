@@ -1,5 +1,7 @@
 import threading
 import time
+import numpy as np
+from typing import List, Any
 from vireon.core.twin import DigitalTwin
 from vireon.plugins.devices import IDeviceWrapper
 
@@ -18,6 +20,12 @@ class MuseEmulator(IDeviceWrapper):
         self.channel_names = ["TP9", "AF7", "AF8", "TP10"]
         self.packet_counter = 0
 
+    def get_board(self) -> Any:
+        return None  # Replace with actual board object if needed
+        
+    def get_eeg_channels(self) -> List[int]:
+        return list(range(4))
+
     def start(self):
         self.running = True
         self.thread = threading.Thread(target=self._stream_loop, daemon=True)
@@ -29,6 +37,9 @@ class MuseEmulator(IDeviceWrapper):
         if self.thread:
             self.thread.join()
         print("[MuseEmulator] Stopped virtual stream")
+
+    def read_chunk(self, start_sample: int, num_samples: int) -> np.ndarray:
+        return np.zeros((self.num_channels, num_samples))
 
     def send_eeg_data(self, state_dict: dict):
         pass # Optional bridge callback

@@ -13,7 +13,7 @@ The motivation behind NSAE is to move beyond proprietary security assumptions an
 
 The NSAE operates via a Digital Twin architecture. A `DigitalTwin` models the physical state of the AFE (impedance, sampling rate, ADC gain/resolution) and acts as the ground truth context for anomaly detection. 
 
-The `NeuroSignalAssuranceEngine` continuously analyzes incoming windowed EEG data. It employs an Exponentially Weighted Moving Average (EWMA) and dynamic spectral characterization to establish baselines. When deviations occur—whether through Root Mean Square (RMS) spikes, Crest Factor anomalies, or targeted temporal evasion bursts—the NSAE triggers localized alerts without interrupting the primary data flow.
+The `SecurityEngine` continuously analyzes incoming windowed EEG data. It employs an Exponentially Weighted Moving Average (EWMA) and dynamic spectral characterization to establish baselines. When deviations occur—whether through Root Mean Square (RMS) spikes, Crest Factor anomalies, or targeted temporal evasion bursts—the NSAE triggers localized alerts without interrupting the primary data flow.
 
 ## 3. Threat Model
 
@@ -49,12 +49,12 @@ For each dataset, the validation runner establishes a dataset-specific spectral 
 Testing against the aforementioned datasets yielded deep statistical metrics. 
 
 **Average Metrics Across Datasets:**
-- **Sensitivity (Recall)**: 100.0% (The NSAE successfully detected all severe signal perturbations)
-- **Latency**: ~0.8ms per 1-second window on standard consumer hardware.
-- **ROC-AUC (Approx. via Balanced Accuracy)**: 0.85 - 0.975 (Highly performant, though dataset specific).
+- **Sensitivity (Recall)**: Pending robust independent CI validation.
+- **Latency**: Pending formal profiling.
+- **Balanced Accuracy**: Pending robust independent CI validation.
 - **False Positive Rate (FPR)**: Highly variable based on calibration limits. Datasets with massive natural shifts in amplitude (e.g., Sleep-EDF transitions) exhibited high FPR (up to 100% without localized threshold tuning).
 
-*95% Confidence Intervals were computed for all FPR and Sensitivity metrics, confirming the stability of the detection mechanics on cleanly calibrated data.*
+*Note: Previous claims of 100% sensitivity and ~0.8ms latency have been retracted pending rigorous, independent verification.*
 
 ## 6. Limitations
 
@@ -64,4 +64,4 @@ Testing against the aforementioned datasets yielded deep statistical metrics.
 
 ## 7. Future Work
 
-Future advancements will focus on replacing the linear EWMA anomaly detection with an integrated LSTM-based sequence predictor capable of unspooled latent space reconstruction. Additionally, incorporating dynamic profile adaptation—where the baseline crest factor and RMS automatically regress against the patient's diurnal cycle—will drastically reduce the false positive rate in continuous ambulatory monitoring scenarios.
+Future advancements will focus on exploring advanced sequence prediction models to replace the linear EWMA anomaly detection. Additionally, incorporating dynamic profile adaptation—where the baseline crest factor and RMS automatically regress against the patient's diurnal cycle—will drastically reduce the false positive rate in continuous ambulatory monitoring scenarios.

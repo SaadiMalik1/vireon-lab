@@ -68,7 +68,7 @@ CONTROL_FAMILIES = {
 }
 
 
-def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
+def _inventory_vireon_controls(project_root: str) -> List[Dict[str, Any]]:
     """
     Introspect VIREON's codebase to inventory existing security controls.
     Maps each control to the FDA control family it satisfies.
@@ -96,7 +96,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "family": "authentication",
         "control_id": "NS-AUTH-003",
         "name": "BLE Pairing State Machine",
-        "module": "vireon.core.security.BLELinkGuard",
+        "module": "vireon.core.clinical.BLELinkGuard",
         "status": "IMPLEMENTED",
         "evidence": "4-state FSM: UNPAIRED → PAIRING → PAIRED → BONDED with validation",
     })
@@ -150,7 +150,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "family": "access_control",
         "control_id": "NS-AC-001",
         "name": "Stimulation Parameter Clamping",
-        "module": "vireon.core.security.NeuroIPS",
+        "module": "vireon.core.clinical.NeuroIPS",
         "status": "IMPLEMENTED",
         "evidence": "Hard limits on amplitude (4.0 mA), frequency, and cumulative charge",
     })
@@ -175,8 +175,8 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
     controls.append({
         "family": "intrusion_detection",
         "control_id": "NS-IDS-001",
-        "name": "NeuroSignalAssuranceEngine Signal Anomaly Detection",
-        "module": "vireon.core.security.NeuroSignalAssuranceEngine",
+        "name": "SecurityEngine Signal Anomaly Detection",
+        "module": "vireon.core.detection.SecurityEngine",
         "status": "IMPLEMENTED",
         "evidence": "Multi-layer detection: RMS thresholds, spectral entropy, CUSUM drift, autoencoder, coherence",
     })
@@ -184,7 +184,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "family": "intrusion_detection",
         "control_id": "NS-IDS-002",
         "name": "Command Jitter Detection",
-        "module": "vireon.core.security.NeuroSignalAssuranceEngine.analyze_commands",
+        "module": "vireon.core.detection.SecurityEngine.analyze_commands",
         "status": "IMPLEMENTED",
         "evidence": "Detects >5 parameter changes within 3-second window",
     })
@@ -200,7 +200,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "family": "intrusion_detection",
         "control_id": "NS-IDS-004",
         "name": "Autoencoder Structural Deviation Detection",
-        "module": "vireon.core.security.LinearAutoencoderIDS / DeepAutoencoderIDS",
+        "module": "vireon.core.detection.LinearAutoencoderIDS / DeepAutoencoderIDS",
         "status": "IMPLEMENTED",
         "evidence": "PCA-based (numpy) and LSTM-based (PyTorch) autoencoder anomaly detection",
     })
@@ -224,7 +224,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "name": "qTARA Technique Registry",
         "module": "vireon.core.threat_intel.ThreatIntelligence",
         "status": "IMPLEMENTED",
-        "evidence": "Quantum-Threat-Aware Risk Assessment registry with technique-to-detection mapping",
+        "evidence": "Cyber-Physical-Threat-Aware Risk Assessment registry with technique-to-detection mapping",
     })
     controls.append({
         "family": "threat_model",
@@ -258,7 +258,7 @@ def _inventory_neuroshield_controls(project_root: str) -> List[Dict[str, Any]]:
         "family": "risk_management",
         "control_id": "NS-RM-001",
         "name": "Thermal Dose Safety Model",
-        "module": "vireon.core.security.NeuroIPS",
+        "module": "vireon.core.clinical.NeuroIPS",
         "status": "IMPLEMENTED",
         "evidence": "Cumulative thermal dose tracking with automatic stimulation cutoff",
     })
@@ -290,7 +290,7 @@ def generate_compliance_report(project_root: str, sbom: Optional[Dict] = None) -
     if sbom is None:
         sbom = generate_sbom(project_root)
 
-    controls = _inventory_neuroshield_controls(project_root)
+    controls = _inventory_vireon_controls(project_root)
 
     # Group controls by family
     controls_by_family: Dict[str, List[Dict]] = {}

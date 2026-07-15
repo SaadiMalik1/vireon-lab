@@ -1,12 +1,26 @@
+"""
+WARNING: This module is for simulation purposes only.
+The web server binds to 0.0.0.0 without TLS. The trust boundary between the 
+simulation and the host network is undefined. It relies on simplified CORS 
+and rate limiting. Do not use for real clinical data.
+"""
 import http.server
 import socketserver
 import threading
 import json
 import os
 import urllib.parse
+import time
+import subprocess
+import ssl
 from typing import Dict, Any
 from vireon.core.twin import DigitalTwin
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
+from vireon.core.protocol import RFFrameProcessor
+from vireon.core.detection import SecurityEngine
+from vireon.core.clinical import NeuroIPS
+from vireon.core.attack_factory import AttackFactory
+from vireon.plugins.clinical.closed_loop import UncontrolledStimulationAttack
 
 # Shared context containing active web controls
 simulation_context: Dict[str, Any] = {
@@ -39,8 +53,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
     @classmethod
     def get_processor(cls):
         if cls.frame_processor is None:
-            from vireon.core.protocol import RFFrameProcessor
-            cls.frame_processor = RFFrameProcessor()
+            cls.frame_processor = RFFrameProcessor(b"X"*32)
         return cls.frame_processor
 
     def translate_path(self, path):
@@ -61,13 +74,12 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def _check_cors(self) -> bool:
         origin = self.headers.get("Origin")
-        if origin and not origin.startswith("http://localhost:") and not origin.startswith("http://127.0.0.1:"):
-            self.send_error(403, "Forbidden CORS origin")
+        if not origin or (not origin.startswith("http://localhost:") and not origin.startswith("http://127.0.0.1:")):
+            self.send_error(403, "Forbidden CORS origin: Missing or unauthorized Origin header")
             return False
         return True
 
     def _check_rate_limit(self) -> bool:
-        import time
         client_ip = self.client_address[0]
         now = time.time()
         
@@ -94,8 +106,28 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             
         return True
 
+    def _check_auth(self) -> bool:
+        auth_header = self.headers.get("Authorization")
+        expected_token = simulation_context.get("ws_token")
+        
+        if not expected_token:
+            return True
+            
+        if not auth_header or not auth_header.startswith("Bearer "):
+            self.send_error(401, "Unauthorized: Bearer token required")
+            return False
+            
+        token = auth_header.split(" ")[1]
+        if token != expected_token:
+            self.send_error(401, "Unauthorized: Invalid token")
+            return False
+            
+        return True
+
     def do_GET(self):
         if self.path == "/api/state":
+            if not self._check_auth():
+                return
             state = self.twin.get_state()
             if self.ips:
                 state["blocked_attacks_count"] = self.ips.blocked_attacks_count
@@ -109,6 +141,8 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 
             self.send_json(state)
         elif self.path == "/api/history":
+            if not self._check_auth():
+                return
             self.send_json(self.twin.get_history())
         elif self.path == "/api/standards_mapping.json":
             mapping_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "core", "data", "standards_mapping.json")
@@ -139,7 +173,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/api/control":
-            if not self._check_cors() or not self._check_rate_limit():
+            if not self._check_cors() or not self._check_rate_limit() or not self._check_auth():
                 return
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -172,7 +206,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                         self.ips.blocked_attacks_count += 1
                 self.send_error(400, f"Bad Request: {e}")
         elif self.path == "/api/neuro_dsl/compile":
-            if not self._check_cors() or not self._check_rate_limit():
+            if not self._check_cors() or not self._check_rate_limit() or not self._check_auth():
                 return
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -180,17 +214,17 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 params = json.loads(post_data.decode('utf-8'))
                 source_code = params.get("source", "")
                 
-                # Execute neuro_dsl forge compiler
-                import subprocess
-                # Write to temp file
-                import tempfile
-                with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
-                    f.write(source_code)
-                    tmp_name = f.name
-                    
-                cmd = f"cargo run --bin forge < {tmp_name}"
-                result = subprocess.run(cmd, shell=True, cwd="/home/ronin/Documents/n2/neuro_dsl", capture_output=True, text=True)
-                os.unlink(tmp_name)
+                # Resolve the correct path dynamically relative to this file
+                dsl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../neuro_dsl"))
+                cmd = ["cargo", "run", "--bin", "forge"]
+                
+                result = subprocess.run(
+                    cmd, 
+                    input=source_code, 
+                    cwd=dsl_dir, 
+                    capture_output=True, 
+                    text=True
+                )
                 
                 if result.returncode != 0:
                     self.send_json({"status": "error", "error": result.stderr})
@@ -240,8 +274,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if self.ips is not None:
                     amp, freq = self.ips.sanitize_stimulation_write(amp, freq)
                 else:
-                    from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
-                    temp_ids = NeuroSignalAssuranceEngine(self.twin)
+                    temp_ids = SecurityEngine(self.twin)
                     temp_ips = NeuroIPS(self.twin, temp_ids)
                     amp, freq = temp_ips.sanitize_stimulation_write(amp, freq)
                 
@@ -251,10 +284,13 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
         # 1. Update Mode states
         if "dbs_mode" in params:
             simulation_context["dbs_mode"] = bool(params["dbs_mode"])
+            self.twin.dbs_mode = simulation_context["dbs_mode"]
         if "secure_mode" in params:
             simulation_context["secure_mode"] = bool(params["secure_mode"])
+            self.twin.secure_mode = simulation_context["secure_mode"]
         if "nsp_mode" in params:
             simulation_context["nsp_mode"] = bool(params["nsp_mode"])
+            self.twin.nsp_mode = simulation_context["nsp_mode"]
         if "hardware_mode" in params:
             hw_mode = bool(params["hardware_mode"])
             simulation_context["hardware_mode"] = hw_mode
@@ -265,8 +301,10 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             if "active_attack" in params:
                 attack_type = str(params["active_attack"]).lower()
                 simulation_context["active_attack"] = attack_type
+                self.twin.active_attack = attack_type
             else:
                 attack_type = str(simulation_context["active_attack"])
+                self.twin.active_attack = attack_type
             
             # Clear existing signal modifiers
             with self.attack_engine.lock if hasattr(self.attack_engine, 'lock') else threading.Lock():
@@ -274,7 +312,6 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 
                 # Apply new signal attacks using current context intensity values
                 if attack_type not in ["noise", "drift", "impedance", "suppression", "none", "", "phase_shift", "stimulation_leak"]:
-                    from vireon.core.attack_factory import AttackFactory
                     try:
                         dynamic_attack = AttackFactory.create_dynamic_attack(attack_type, target_channels=[0, 1])
                         self.attack_engine.add_modifier(dynamic_attack)
@@ -298,13 +335,11 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             # If stimulation leak is chosen and secure mode is NOT active, trigger it immediately
             if attack_type == "stimulation_leak":
                 if not simulation_context["secure_mode"]:
-                    from vireon.plugins.clinical.closed_loop import UncontrolledStimulationAttack
                     leak = UncontrolledStimulationAttack(self.twin)
                     leak.apply()
                 else:
                     # If secure mode is active, clamp it safely
-                    from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
-                    temp_ids = NeuroSignalAssuranceEngine(self.twin)
+                    temp_ids = SecurityEngine(self.twin)
                     temp_ips = NeuroIPS(self.twin, temp_ids)
                     amp, freq = temp_ips.sanitize_stimulation_write(10.0, 130.0)
                     self.twin.update_therapy(True)
@@ -334,11 +369,40 @@ def start_web_server(twin: DigitalTwin, attack_engine: SignalAttackEngine, port:
     
     simulation_context["ws_token"] = ws_token
     
+    # Sync initial state to twin
+    twin.dbs_mode = simulation_context.get("dbs_mode", False)
+    twin.secure_mode = simulation_context.get("secure_mode", False)
+    twin.nsp_mode = simulation_context.get("nsp_mode", False)
+    twin.hardware_mode = simulation_context.get("hardware_mode", False)
+    twin.active_attack = simulation_context.get("active_attack", "none")
+    
     # Resolve index.html target directories
     current_dir = os.path.dirname(os.path.abspath(__file__))
     BCIAPIRequestHandler.web_dir = os.path.join(current_dir, "web")
     
-    server = ThreadedHTTPServer(("0.0.0.0", port), BCIAPIRequestHandler)
+    cert_file = os.path.join(current_dir, "cert.pem")
+    key_file = os.path.join(current_dir, "key.pem")
+    
+    # Generate self-signed cert if missing
+    if not os.path.exists(cert_file) or not os.path.exists(key_file):
+        print("[WebServer] Generating self-signed TLS certificate for localhost...")
+        try:
+            subprocess.run([
+                "openssl", "req", "-x509", "-newkey", "rsa:4096", "-nodes",
+                "-out", cert_file, "-keyout", key_file, "-days", "365",
+                "-subj", "/CN=127.0.0.1"
+            ], check=True, capture_output=True)
+        except Exception as e:
+            print(f"[WebServer] Failed to generate TLS cert: {e}. Falling back to HTTP.")
+            
+    server = ThreadedHTTPServer(("127.0.0.1", port), BCIAPIRequestHandler)
+    if os.path.exists(cert_file) and os.path.exists(key_file):
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+        server.socket = context.wrap_socket(server.socket, server_side=True)
+        print(f"[WebServer] TLS enabled on https://127.0.0.1:{port}")
+    else:
+        print(f"[WebServer] Running on http://127.0.0.1:{port}")
     
     server_thread = threading.Thread(target=server.serve_forever, daemon=True)
     server_thread.start()

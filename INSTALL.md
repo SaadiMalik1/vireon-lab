@@ -27,7 +27,7 @@ VIREON requires **Python 3.10** or higher. We highly recommend using a virtual e
 
 ```bash
 git clone https://github.com/SaadiMalik1/Vireon.git
-cd neurosheild
+cd Vireon
 
 # Create and activate virtual environment
 python3 -m venv .venv
@@ -53,5 +53,18 @@ vireon run --duration 5.0
 
 If successful, you will see the Coordinator spin up the Digital Twin, run the tick loop, and gracefully shut down without errors, leaving a PDF report in the root directory.
 
+## 5. Docker Installation (Alternative)
+
+If you prefer to run VIREON without installing host dependencies, a Dockerfile is provided:
+```bash
+git clone https://github.com/SaadiMalik1/Vireon.git
+cd Vireon
+docker build -t vireon-lab .
+docker run -p 7777:7777 vireon-lab ui --host 0.0.0.0
+```
+
 ## Troubleshooting
-If you encounter issues during installation, please consult the [FAQ](docs/FAQ.md) or open a discussion on GitHub.
+- **Maturin / Rust Build Errors**: If `pip install -e .` fails while building `vireon_neuro_dsl`, ensure Rust is fully updated (`rustup update`) and that you have `maturin` installed (`pip install maturin`).
+- **LSL Bindings on Windows**: Native Windows may struggle with `pylsl` binary dependencies. We recommend using WSL2 (Ubuntu) for Windows users.
+- **Streamlit Port In Use**: If `vireon ui` fails, another process is using port 7777. Change the port using `vireon ui --port 8888`.
+If you encounter other issues, please consult the [FAQ](docs/faq.md) or open a discussion on GitHub.

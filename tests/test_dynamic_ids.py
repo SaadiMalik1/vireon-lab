@@ -1,10 +1,10 @@
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroSignalAssuranceEngine
+from vireon.core.detection import SecurityEngine
 
 def test_autoencoder_and_cusum():
     twin = DigitalTwin()
-    ids = NeuroSignalAssuranceEngine(twin)
+    ids = SecurityEngine(twin)
     
     # Send nominal data (pink noise-like) to establish baseline
     for _ in range(50):
@@ -21,6 +21,10 @@ def test_autoencoder_and_cusum():
             
     assert "SLOW_DRIFT_ANOMALY" in anomalies
     
+    if ids.autoencoder is None:
+        import pytest
+        pytest.skip("Autoencoder not initialized (PyTorch missing)")
+
     # Test Autoencoder structural deviation
     # We send data with completely different covariance structure
     abnormal_data = np.random.normal(0, 100.0, (8, 250))

@@ -2,73 +2,60 @@
 
 **Audience**: Developers, Data Scientists
 
-## Python API (Core Modules)
+*Note: The interfaces described below represent the logical components of the system. In the current prototype implementation, these modules are tightly coupled and run synchronously on the main Python thread.*
 
-VIREON's core functionality is encapsulated within the `vireon.core` namespace. This reference provides an overview of the primary classes you will interact with when writing scripts or plugins.
+## Core Modules (`vireon.core`)
 
-### `vireon.core.coordinator.Coordinator`
+### `Coordinator`
 The central orchestrator of the simulation.
-- `__init__(config: Configuration, output_dir: str)`
-- `setup()`: Initializes the Digital Twin, Firmware Emulator, LSL Streamers, and ZTA Engine based on the provided configuration.
+- `setup()`: Initializes the Digital Twin, Firmware Emulator, LSL Streamers, and ZTA Engine.
 - `run_simulation()`: Enters the blocking tick-based physics loop.
-- `simulate_firmware_update(payload: bytes) -> bool`: Simulates an OTA update. Internally calls the ZTA engine to evaluate trust before proceeding.
 
-### `vireon.core.zta.ZTAPolicyEngine`
-The Zero-Trust authorization engine.
-- `__init__(thresholds: dict)`: Initializes action-specific trust thresholds.
-- `evaluate_request(action: str, context: TrustContext) -> AuthorizationDecision`: Evaluates if the current `TrustContext` meets the threshold for the requested action.
+### `SecurityEngine` / `ZTAPolicyEngine`
+The heuristic threat intelligence and zero-trust evaluation core.
+- `evaluate_request(action, context)`: Evaluates trust context against physical anomalies.
 
-### `vireon.core.twin.DigitalTwin`
+### `DigitalTwin`
 Models the physiological and physical state of the patient/device.
-- `tick(time_delta: float, active_draw: float)`: Advances the state of the battery and tissue temperature based on power draw.
-- `set_clinical_alert(status: bool, reason: str)`: Flags an anomaly for the reporting engine.
+- `tick(time_delta, active_draw)`: Advances state of battery and temperature.
+- `set_clinical_alert(status, reason)`: Flags anomalies.
 
----
+### `EventBus`
+Global pub-sub broker for synchronous event dispatch across plugins and engines.
+- `subscribe(event_type, callback)`
+- `publish(event_type, payload)`
 
-## Command Line Interface (CLI)
+## Engines & Emulators
 
-The `main.py` entry point exposes the VIREON CLI via `click`.
+### `NeuroIPS`
+The Intrusion Prevention System. Intercepts `EventBus` messages and blocks malicious instructions before they hit the DigitalTwin.
 
-### `run`
-Executes a headless simulation.
-```bash
-python3 -m vireon run [OPTIONS]
-```
-- `--duration FLOAT`: Duration of the simulation in seconds (default: 10.0).
-- `--attack TEXT`: Pre-configured attack to inject (options: `mtu`, `noise`, `rollback`, `none`).
+### `BLE Emulator`
+Simulates the Bluetooth Low Energy interface of clinical programmers.
+- `inject_packet(payload)`: Simulates over-the-air injection.
+- `read_characteristic(uuid)`: Fetches simulated device state.
 
-### `ui`
-Launches the Streamlit diagnostic dashboard.
-```bash
-python3 -m vireon ui [OPTIONS]
-```
-- `--port INTEGER`: Port to bind the dashboard to (default: 7777).
+## Abstract Interfaces (`vireon.core.plugin`)
 
----
+### `BaseAttack`
+Superclass for all simulated attacks (e.g., `DenialOfServiceAttack`, `BatteryDrainAttack`).
 
-## Telemetry Interfaces
+### `BaseDataset`
+Interface for dataset readers. Returns standard NumPy arrays for `Coordinator` playback.
 
-VIREON emits two data streams synchronously during a simulation run.
+### `PluginRegistry`
+Singleton manager for dynamically loaded capabilities.
+- `register(plugin_type, class_ref)`
+- `list_category(category)`
 
-### Lab Streaming Layer (LSL)
-- **Stream Name**: `NeuroShield_EEG`
-- **Type**: `EEG`
-- **Channels**: 8
-- **Sample Rate**: 250 Hz
-- **Format**: `float32`
+## CLI (`__main__.py`)
+The `main.py` entry point exposes the `vireon` CLI via Click.
+- `run`: Headless simulation.
+- `ui`: Streamlit dashboard.
+- `fuzz`: Protocol fuzzing.
+- `sbom`: FDA 524B compliance exports.
+- `compile`: Compiles NeuroDSL scripts.
+- `info`: Lists loaded plugins.
 
-### WebSockets (Diagnostic State)
-- **Port**: 8765 (default)
-- **Format**: JSON
-- **Payload Structure**:
-  ```json
-  {
-    "time": 1.25,
-    "battery_capacity": 499.5,
-    "temperature": 37.1,
-    "cpu_usage": 15.0,
-    "firmware_crashed": false,
-    "zta_score": 0.95,
-    "alerts": []
-  }
-  ```
+## Configuration (`vireon.core.config`)
+- `ExperimentConfig`: Strongly-typed Pydantic model for loading and validating `default.toml` constraints (replaces loose dictionaries).

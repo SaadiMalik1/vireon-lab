@@ -167,6 +167,22 @@
       "iso_14971_category": "Hazard",
       "cwe": "CWE-682",
       "description": "Oscillator skew injection."
+    },
+    "web_server_exploit": {
+      "name": "Web Server Exploit",
+      "stride": "Elevation of Privilege",
+      "mitre_attack": "T1190",
+      "iso_14971_category": "Hazard",
+      "cwe": "CWE-20",
+      "description": "Exploiting vulnerable Web Server plugin."
+    },
+    "bootloader_compromise": {
+      "name": "Bootloader Compromise",
+      "stride": "Elevation of Privilege",
+      "mitre_attack": "T1542",
+      "iso_14971_category": "Hazard",
+      "cwe": "CWE-284",
+      "description": "Bootloader compromise via unsigned firmware."
     }
   },
   "meta": {

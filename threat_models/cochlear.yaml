@@ -11,6 +11,15 @@ assets:
   - id: smartphone_streamer
     type: mobile_app
     description: App for streaming audio directly via Bluetooth.
+  - id: neural_data
+    type: data
+    description: Patient auditory data and configurations.
+  - id: credentials
+    type: credential
+    description: Bluetooth pairing keys and application tokens.
+  - id: reputation
+    type: reputation
+    description: Trust in the device manufacturer.
 
 trust_boundaries:
   - id: tb_rf_coil

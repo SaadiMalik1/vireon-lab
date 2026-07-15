@@ -21,6 +21,8 @@ class BiometricGate:
         self.is_locked = False
         self.consecutive_failures = 0
         self.max_failures = 5
+        self.lockout_time = 0.0
+        self.lockout_duration = 300.0 # 5 minutes
 
     def authenticate_window(self, data: np.ndarray, sample_rate: int) -> bool:
         """
@@ -28,8 +30,15 @@ class BiometricGate:
         it to the authorized profile.
         Returns True if authenticated, False otherwise.
         """
+        import time
+        import logging
         if self.is_locked:
-            return False
+            if time.time() - self.lockout_time > self.lockout_duration:
+                logging.info("[BiometricGate] Lockout duration expired. Re-enabling authentication.")
+                self.is_locked = False
+                self.consecutive_failures = 0
+            else:
+                return False
             
         # Extract features (mock implementation for simulation)
         # We simulate a simple FFT-based alpha peak detection.
@@ -41,7 +50,7 @@ class BiometricGate:
             
         n = len(signal)
         if n == 0:
-            return True
+            return False
             
         fft_vals = np.abs(np.fft.rfft(signal))
         freqs = np.fft.rfftfreq(n, d=1.0/sample_rate)
@@ -52,6 +61,28 @@ class BiometricGate:
         if not np.any(alpha_mask):
             return True
             
+        # Spoofing Defense: Spectral Entropy (rejects basic oscillators)
+        from vireon.core.detection import calculate_spectral_features
+        entropy, crest = calculate_spectral_features(signal)
+        if entropy < 0.2:
+            self.consecutive_failures += 1
+            if self.consecutive_failures >= self.max_failures:
+                self.is_locked = True
+                self.lockout_time = time.time()
+                logging.error(f"[BiometricGate] ALERT: Synthetic signal injection detected! (Entropy: {entropy:.2f} < 0.2)")
+            return False
+            
+        # Spoofing Defense: Cross-channel correlation (rejects identical cloning)
+        if len(data.shape) > 1 and data.shape[0] > 1:
+            corr = np.corrcoef(data[0, :], data[1, :])[0, 1]
+            if abs(corr) > 0.99:
+                self.consecutive_failures += 1
+                if self.consecutive_failures >= self.max_failures:
+                    self.is_locked = True
+                    self.lockout_time = time.time()
+                    logging.error(f"[BiometricGate] ALERT: Cross-channel cloning detected! (Corr: {corr:.2f})")
+                return False
+        
         alpha_fft = fft_vals[alpha_mask]
         alpha_freqs = freqs[alpha_mask]
         
@@ -67,7 +98,8 @@ class BiometricGate:
             self.consecutive_failures += 1
             if self.consecutive_failures >= self.max_failures:
                 self.is_locked = True
-                print(f"[BiometricGate] ALERT: Biometric mismatch! Locking device. Observed: {observed_peak:.1f}Hz, Expected: {expected_peak:.1f}Hz")
+                self.lockout_time = time.time()
+                logging.error(f"[BiometricGate] ALERT: Biometric mismatch! Locking device. Observed: {observed_peak:.1f}Hz, Expected: {expected_peak:.1f}Hz")
             return False
         else:
             # Recover

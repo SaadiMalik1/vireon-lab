@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+import time
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -54,6 +55,8 @@ class TestAttackScenarios(unittest.TestCase):
         self.assertEqual(len(self.attack_engine.modifiers), 1)
         self.assertEqual(self.attack_engine.modifiers[0].__class__.__name__, "NoiseInjectionAttack")
         self.assertEqual(self.attack_engine.modifiers[0].noise_level, 75.0)
+        time.sleep(0.2)
+        self.attack_engine.event_bus.flush()
         self.assertIn("attack.scenario_step.started", event_topics)
 
         # 4. Check middle of first step (t = 2.0)
@@ -62,6 +65,7 @@ class TestAttackScenarios(unittest.TestCase):
 
         # 5. Check end of first step (t = 3.0)
         scenario.update(3.0, self.attack_engine, self.registry)
+        self.attack_engine.event_bus.flush()
         self.assertEqual(len(self.attack_engine.modifiers), 0)
         self.assertIn("attack.scenario_step.stopped", event_topics)
 

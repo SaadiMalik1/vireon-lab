@@ -15,7 +15,7 @@ import threading
 class PluginInfo:
     """Metadata describing a registered plugin."""
     name: str
-    category: str                # "datasets", "devices", "attacks", "clinical", "reports", "wireless"
+    category: str                # "datasets", "devices", "attacks", "clinical", "reports", "wireless", "security"
     description: str = ""
     factory: Optional[Callable] = None   # Callable that creates an instance
     plugin_class: Optional[Type] = None  # Or a class to instantiate
@@ -206,11 +206,35 @@ class PluginRegistry:
 def register_builtin_plugins(registry: PluginRegistry) -> None:
     """
     Register all built-in VIREON plugins.
-
-    This is called during Coordinator initialization to make all
-    shipped components available through the registry.
+    First tries to use importlib.metadata entry points for dynamic discovery.
+    Falls back to hardcoded registrations for backward compatibility.
     """
-    # --- Dataset Readers ---
+    import importlib.metadata
+    import logging
+    logger = logging.getLogger(__name__)
+
+    # 1. Dynamic Discovery via entry_points
+    try:
+        eps = importlib.metadata.entry_points()
+        vireon_eps = eps.select(group='vireon.plugins') if hasattr(eps, 'select') else eps.get('vireon.plugins', [])
+        
+        for ep in vireon_eps:
+            try:
+                plugin_loader = ep.load()
+                info = plugin_loader()
+                if isinstance(info, list):
+                    for i in info:
+                        if not registry.has(i.category, i.name):
+                            registry.register(i)
+                else:
+                    if not registry.has(info.category, info.name):
+                        registry.register(info)
+            except Exception as e:
+                logger.error(f"[PluginRegistry] Failed to dynamically load plugin {ep.name}: {e}")
+    except Exception as e:
+        logger.warning(f"[PluginRegistry] Entry point discovery failed: {e}")
+
+    # 2. Fallback to manual registration
     from vireon.plugins.datasets.edf_reader import EDFReader
     from vireon.plugins.datasets.mock_reader import MockEEGReader
     from vireon.plugins.datasets.csv_reader import CSVReader
@@ -412,5 +436,79 @@ def register_builtin_plugins(registry: PluginRegistry) -> None:
         category="clinical",
         description="Closed-loop Deep Brain Stimulation controller",
         plugin_class=ClosedLoopDBSController,
+        version="1.0.0"
+    ))
+
+    # --- Security & Privacy ---
+    from vireon.core.detection import SecurityEngine
+    from vireon.core.clinical import NeuroIPS, BLELinkGuard
+    from vireon.plugins.firmware.cortex_m_stub import FirmwareSecurityMonitor
+    from vireon.core.privacy_leakage import P300Analyzer
+    from vireon.core.e2ee import E2EEChannel
+    from vireon.core.authentication import BiometricGate
+    from vireon.core.zta import ZTAPolicyEngine
+    from vireon.core.threat_intel import ThreatIntelligence
+
+    registry.register(PluginInfo(
+        name="ids",
+        category="security",
+        description="Intrusion Detection System for neural anomalies",
+        plugin_class=SecurityEngine,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="ips",
+        category="security",
+        description="Intrusion Prevention System for neural anomalies",
+        plugin_class=NeuroIPS,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="ble_guard",
+        category="security",
+        description="Bluetooth Low Energy protocol monitor",
+        plugin_class=BLELinkGuard,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="fw_monitor",
+        category="security",
+        description="Firmware execution environment monitor",
+        plugin_class=FirmwareSecurityMonitor,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="p300_analyzer",
+        category="security",
+        description="Privacy leakage analyzer for P300 potentials",
+        plugin_class=P300Analyzer,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="e2ee_channel",
+        category="security",
+        description="End-to-end encrypted channel wrapper",
+        plugin_class=E2EEChannel,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="biometric_gate",
+        category="security",
+        description="Neuro-biometric authentication gate",
+        plugin_class=BiometricGate,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="zta_engine",
+        category="security",
+        description="Zero-Trust Architecture policy engine",
+        plugin_class=ZTAPolicyEngine,
+        version="1.0.0"
+    ))
+    registry.register(PluginInfo(
+        name="threat_intel",
+        category="security",
+        description="Threat Intelligence mapping",
+        plugin_class=ThreatIntelligence,
         version="1.0.0"
     ))

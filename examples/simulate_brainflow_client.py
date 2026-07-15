@@ -13,6 +13,7 @@ except ImportError:
 def main():
     parser = argparse.ArgumentParser(description="VIREON BrainFlow Client Test")
     parser.add_argument("--port", type=str, required=True, help="Virtual Cyton PTY port (e.g. /dev/pts/X)")
+    parser.add_argument("--timeout", type=float, default=60.0, help="Timeout in seconds (0 to run forever)")
     args = parser.parse_args()
 
     # Configure BrainFlow to read from the Cyton Board
@@ -39,7 +40,8 @@ def main():
         print("[BrainFlowClient] LSL Outlet created.")
         
         packet_count = 0
-        while True:
+        start_time = time.time()
+        while args.timeout == 0 or time.time() - start_time < args.timeout:
             # Get the data from brainflow buffer
             data = board.get_board_data()
             if data.shape[1] > 0:

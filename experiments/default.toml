@@ -1,5 +1,5 @@
-# NeuroShield Experiment Configuration
-# Run with: python -m neuroshield run experiments/default.toml
+# VIREON Experiment Configuration
+# Run with: python -m vireon run experiments/default.toml
 
 [experiment]
 name = "default_eeg_baseline"

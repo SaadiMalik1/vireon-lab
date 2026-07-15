@@ -2,6 +2,17 @@
 
 The VIREON platform is composed of distinct modules that interact strictly through defined interfaces. The architecture is designed to prioritize performance, state isolation, and accurate physical emulation, separating the "brain" (the digital twin) from the "nervous system" (the telemetry and coordination layer).
 
+## Architecture Overview
+```mermaid
+graph TD
+    C[Coordinator] --> RE[Replay Engine]
+    C --> WS[WebSocket Server]
+    RE --> DT[Digital Twin]
+    RE --> SE[Security Engine]
+    DT --> PE[Physics Engine]
+    WS --> UI[Web Dashboard]
+```
+
 ## 1. Digital Twin (`twin.py`)
 
 The `DigitalTwin` is the core state machine of the Virtual Laboratory. It maintains the physical and clinical state of the simulated BCI device.
@@ -12,7 +23,7 @@ To support high-frequency simulation (e.g., thousands of channels at 250Hz), the
 - **`clinical_lock`**: Protects high-level diagnostic state, including `clinical_status`, `decoder_confidence`, and `hazard_state`.
 - **`therapy_lock`**: Protects stimulation and feedback parameters, such as `stimulation_enabled` and `stimulation_amplitude_ma`.
 
-This granular locking prevents high-frequency battery sag calculations from bottlenecking slower, asynchronous clinical diagnostic updates.
+This granular locking prevents high-frequency battery sag calculations from bottlenecking slower, asynchronous clinical diagnostic updates. However, due to Python's Global Interpreter Lock (GIL), true sub-millisecond hardware-level determinism is not achieved in this simulation.
 
 ### Physics Engine
 The `DigitalTwin` delegates complex thermodynamic and electrical boundary calculations to the `PhysicsEngine`. When the ReplayEngine triggers `set_sim_clock`, the twin automatically simulates:
@@ -22,12 +33,13 @@ The `DigitalTwin` delegates complex thermodynamic and electrical boundary calcul
 
 ## 2. Coordinator (`coordinator.py`)
 
-The `Coordinator` is the orchestration layer that ties the simulation together.
+The `Coordinator` is the orchestration layer that ties the simulation together. 
+*Note: In the current prototype, the Coordinator functions as a monolithic "God class" that binds together the engines, logging, and state directly, violating strict decoupling principles. Future updates aim to modularize this.*
 
 ### The ReplayEngine Loop
 The core of the simulation is a strict timing loop managed by the `ReplayEngine`. It:
 - Pushes synthetic or pre-recorded EEG data into the twin at the defined `sample_rate`.
-- Dispatches this data to the `NeuroSignalAssuranceEngine` for immediate threat analysis.
+- Dispatches this data to the `SecurityEngine` for immediate threat analysis.
 - Calculates physical constraints and battery usage based on elapsed `dt`.
 
 ### Telemetry Dispatch
@@ -40,17 +52,15 @@ The `ExperimentConfig` is defined using a structured **Pydantic** model (`core/c
 
 ## 3. NeuroDSL Compiler Stack (`compiler/`)
 
-VIREON incorporates **NeuroDSL**, an embedded Rust-based Domain Specific Language (DSL) used for defining safe, deterministic clinical therapy scripts (e.g., stimulation pulses, UI layout instructions).
+VIREON incorporates **NeuroDSL**, an embedded Rust-based Domain Specific Language (DSL) used for defining clinical therapy scripts. The Rust extension is compiled and bound to Python using **maturin**.
 
-The compiler is split into two isolated binaries to prevent untrusted input from crashing the embedded environment:
+Currently, the Rust VM integrates directly into the Python thread. **Note: It does not yet provide isolation.** Malformed bytecode or untrusted input can execute synchronously and crash or hang the entire simulation.
 
 1. **Forge (The Frontend Compiler)**: 
-   - A high-level parser that takes human-readable NeuroDSL scripts (e.g., `SET_AMP 5.0`) and compiles them into a rigid, bounds-checked binary format known as 'Staves'.
-   - Validates memory limits and rejects malformed syntax before it reaches the simulation layer.
+   - A high-level parser that takes human-readable NeuroDSL scripts (e.g., `SET_AMP 5.0`) and compiles them into a binary format known as 'Staves'.
 
 2. **Scribe (The Embedded Interpreter)**: 
-   - Designed for `no_std` environments (simulating an MCU firmware).
-   - Safely executes the compiled Staves bytecode inside the virtual environment.
+   - Executes the compiled Staves bytecode inside the virtual environment.
    - Triggers physical changes in the `DigitalTwin` (e.g., increasing `stimulation_amplitude_ma`).
 
 ## 4. Web Dashboard (`dashboard/app.py`)
@@ -61,20 +71,20 @@ The VIREON platform includes an interactive dashboard built with **Streamlit** t
 - **State Panels**: Displays live `DigitalTwin` physical states (battery, temp, impedance) and alerts.
 - **Threat Intel Panel**: Visualizes active detections, **Red Team Engine** feedback scores, and their mapped qTARA classifications. 
 
-The dashboard provides a closed-loop environment where researchers can observe physiological responses, trigger runtime simulated attacks, and analyze the NeuroSignalAssuranceEngine mitigations interactively.
+The dashboard provides a closed-loop environment where researchers can observe physiological responses, trigger runtime simulated attacks, and analyze the SecurityEngine mitigations interactively.
 
 ## 5. Cyber Kill Chain Engine (`attack_chain/`)
 
-VIREON implements a formal **Cyber Kill Chain** evaluator rather than assuming immediate root compromise. The `AttackChain` module models a 7-stage adversarial progression:
+VIREON incorporates a **Cyber Kill Chain** evaluator conceptually modeling a 7-stage adversarial progression:
 1. Reconnaissance
 2. Initial Access
 3. Protocol Abuse
 4. Privilege Escalation
 5. Persistence
-6. Execution (Triggers the physical `vireon.core.attack` signal modifiers)
+6. Execution
 7. Recovery
 
-During initialization, the `Coordinator` dynamically orchestrates these stages. If an attacker's modeled capability (L0-L6) is insufficient to breach a stage, the chain terminates before safety-critical execution.
+*Note: While the directory exists and models this progression, the actual integration into the `ReplayEngine` is currently synchronous and tightly coupled, ignoring the defined abstractions. Architectural decoupling is planned for future work.*
 
 ## 6. Declarative Threat Models (`threat_models/`)
 

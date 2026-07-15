@@ -2,6 +2,7 @@ import unittest
 import http.client
 import json
 import time
+import ssl
 from vireon.core.twin import DigitalTwin
 from vireon.core.attack import SignalAttackEngine
 from vireon.plugins.reports.web_server import start_web_server, simulation_context
@@ -20,7 +21,8 @@ class TestWebUIRESTAPI(unittest.TestCase):
 
     def _get(self, path):
         """Helper: send GET and return (status, parsed_json)."""
-        conn = http.client.HTTPConnection('127.0.0.1', 8181, timeout=5)
+        context = ssl._create_unverified_context()
+        conn = http.client.HTTPSConnection('127.0.0.1', 8181, timeout=5, context=context)
         conn.request('GET', path)
         resp = conn.getresponse()
         status = resp.status
@@ -31,11 +33,15 @@ class TestWebUIRESTAPI(unittest.TestCase):
     def _post_json(self, path, payload_dict):
         """Helper: send POST with JSON body and return (status, parsed_json)."""
         body = json.dumps(payload_dict).encode('utf-8')
-        conn = http.client.HTTPConnection('127.0.0.1', 8181, timeout=5)
-        conn.request('POST', path, body=body, headers={'Content-Type': 'application/json'})
+        context = ssl._create_unverified_context()
+        conn = http.client.HTTPSConnection('127.0.0.1', 8181, timeout=5, context=context)
+        conn.request('POST', path, body=body, headers={'Content-Type': 'application/json', 'Origin': 'http://127.0.0.1:8181'})
         resp = conn.getresponse()
         status = resp.status
-        data = json.loads(resp.read().decode('utf-8'))
+        try:
+            data = json.loads(resp.read().decode('utf-8'))
+        except json.JSONDecodeError:
+            data = {}
         conn.close()
         return status, data
 

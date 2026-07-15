@@ -4,15 +4,15 @@
 *       @SaadiMalik1
 
 # Core engine and architecture
-/neuroshield/core/       @SaadiMalik1
+/vireon/core/       @SaadiMalik1
 /docs/architecture.md    @SaadiMalik1
 
 # Security and Attacks
-/neuroshield/attacks/    @SaadiMalik1
+/vireon/attacks/    @SaadiMalik1
 /docs/security*.md       @SaadiMalik1
 
 # Plugins and Firmware
-/neuroshield/plugins/    @SaadiMalik1
+/vireon/plugins/    @SaadiMalik1
 
 # Rust compiler
 /neuro_dsl/               @SaadiMalik1

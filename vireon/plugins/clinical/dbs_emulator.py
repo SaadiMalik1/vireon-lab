@@ -122,6 +122,9 @@ class ClosedLoopDBSController:
         # Get current beta-band power (13-30 Hz)
         beta_power = calculate_bandpower(analysis_buffer, sample_rate, (13.0, 30.0))
         self.history_beta_power.append(beta_power)
+        # Cap history size
+        if len(self.history_beta_power) > 1000:
+            self.history_beta_power.pop(0)
         
         # Estimate phase using rfft
         fft_vals = np.fft.rfft(analysis_buffer)
@@ -141,8 +144,6 @@ class ClosedLoopDBSController:
         state_curr = self.twin.get_state()
         if state_curr["clinical_status"] == "IDS Suspend: Sync Detected":
             self.stimulation_mode = "none"
-        else:
-            pass
             self.twin.update_therapy(False)
             self.twin.update_stimulation_params(0.0, 0.0)
             return

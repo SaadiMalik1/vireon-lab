@@ -32,3 +32,8 @@ VIREON adheres to established industry standards regarding scientific validity. 
 ### Out-of-Scope Attacks (Rejected)
 - **"Mind Reading"**: Extracting complex, plain-text semantic thoughts or passwords from motor-cortex EEG data. 
 - **"Mind Control"**: Overriding a patient's complex behavioral choices.
+
+## Platform & Cryptography Assumptions
+
+1. **Host Environment**: The simulation assumes execution in a trusted, POSIX-compliant environment with Python 3.10+ and Rust 1.85+.
+2. **Simulated Cryptography**: VIREON **does not perform real cryptographic operations**. Concepts like End-to-End Encryption (E2EE) and firmware signing are simulated using weak XOR patterns for the sole purpose of logic and timing threat modeling. Do not rely on VIREON for mathematical security.

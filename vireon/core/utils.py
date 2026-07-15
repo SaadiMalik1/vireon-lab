@@ -36,7 +36,7 @@ def format_telemetry_table(twin: DigitalTwin) -> str:
     
     lines = []
     lines.append("=" * 60)
-    lines.append(f" NEUROSHIELD TELEMETRY - {state['device_id'].upper()}")
+    lines.append(f" VIREON TELEMETRY - {state['device_id'].upper()}")
     lines.append("=" * 60)
     lines.append(f" Connection Status : {'CONNECTED' if state['connected'] else 'DISCONNECTED':<12} | Battery Level : {state['battery_level']}%")
     lines.append(f" Firmware Version  : {state['firmware_version']:<12} | Sample Rate   : {state['sample_rate']} Hz")

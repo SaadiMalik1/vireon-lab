@@ -1,6 +1,6 @@
 dataset:
   id: apnea_ecg
-  source: PhysioNet
+  source: Synthetic Mock Data
   url: https://physionet.org/content/apnea-ecg/1.0.0/
   modality: ECG
   electrodes: 1
@@ -10,4 +10,4 @@ dataset:
   purpose:
     - cardiorespiratory_monitoring_validation
     - multi_modal_anomaly_detection
-  status: pending_download
+  status: synthetic_mock

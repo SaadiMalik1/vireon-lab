@@ -1,6 +1,6 @@
-# NeuroShield — Noise Injection Security Assessment
+# VIREON — Noise Injection Security Assessment
 # Demonstrates deterministic attack replay for reproducible research.
-# Run with: python -m neuroshield run experiments/noise_attack.toml
+# Run with: python -m vireon run experiments/noise_attack.toml
 
 [experiment]
 name = "noise_injection_assessment"

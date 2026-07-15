@@ -135,6 +135,8 @@ class ProtocolFuzzer:
         payload = bytes(self.rng.getrandbits(8) for _ in range(size))
         
         # Manually construct to bypass pack_frame's struct check
+        # This bypass is intentional: we specifically want to test the processor's
+        # behavior when it receives a payload length field that contradicts the actual payload size.
         # PREAMBLE(1) | LEN(1) | SEQ(2) | TYPE(1) | PAYLOAD... | CRC/MAC
         # We'll set length field to 255 or size % 256
         fake_len = size % 256
@@ -185,7 +187,7 @@ class ProtocolFuzzer:
                          mutation_details: Dict, secure: bool = False) -> FuzzResult:
         """Execute a single fuzz test case against a fresh processor."""
         self.test_counter += 1
-        test_processor = RFFrameProcessor()
+        test_processor = RFFrameProcessor(b"X"*32)
 
         start = time.monotonic()
         try:
@@ -234,7 +236,7 @@ class ProtocolFuzzer:
         started_at = datetime.now(timezone.utc).isoformat()
 
         # Fresh processor for generating valid base frames
-        gen_processor = RFFrameProcessor()
+        gen_processor = RFFrameProcessor(b"X"*32)
 
         for i in range(iterations):
             strategy = self.rng.choice(self.STRATEGIES)
@@ -381,8 +383,10 @@ def save_fuzz_report(report: FuzzCampaignReport, output_path: str) -> None:
 
 class BrainFlowFuzzer(ProtocolFuzzer):
     """
-    Fuzzer for BrainFlow/OpenBCI protocol (Cyton board).
-    Generates synthetic 33-byte packets (0xA0 start, 0xC0 end).
+    Fuzzer tailored for the BrainFlow/OpenBCI protocol (Cyton board).
+    While ProtocolFuzzer tests the generic VIREON frame format, this class 
+    is specifically adapted to generate and mutate synthetic 33-byte Cyton 
+    packets (0xA0 start, 0xC0 end) without duplicating the core fuzzing engine.
     """
     def _make_valid_frame(self, processor: Any, seq_no: int = 0, secure: bool = False) -> bytes:
         # Mock OpenBCI Cyton packet: 33 bytes

@@ -67,7 +67,7 @@ class LSLDeviceWrapper(IDeviceWrapper):
     Device wrapper that acts as an LSL Inlet.
     Connects to an existing LSL stream and pulls chunks as if from hardware.
     """
-    def __init__(self, stream_name: str = 'NeuroShield_EEG', max_channels: int = 8):
+    def __init__(self, stream_name: str = 'VIREON_EEG', max_channels: int = 8):
         self.board_mock = _LSLBoardShimMock(stream_name, max_channels)
 
     def get_board(self):

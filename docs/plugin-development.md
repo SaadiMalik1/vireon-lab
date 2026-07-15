@@ -13,52 +13,53 @@ All cross-component communication happens via the `EventBus`. The Coordinator, D
 - `ATTACK_INJECTED`: Fired when an attack payload is delivered to the firmware.
 - `FIRMWARE_CRASH`: Fired if the emulator halts unexpectedly.
 
-## 2. Writing a Custom Attack Plugin
+## 2. Adding Custom Components
 
-To write a custom attack, inherit from the `BaseAttack` abstract class.
-
+### Custom Attack Plugins
+To write a custom attack, inherit from `BaseAttack`.
 ```python
 from vireon.core.attack import BaseAttack
 
 class CustomDenialOfServiceAttack(BaseAttack):
-    """
-    Simulates a DoS attack by flooding the firmware event queue.
-    """
-    
     def __init__(self, target_twin, flood_rate: int = 100):
         super().__init__(target_twin)
         self.flood_rate = flood_rate
 
     def apply(self, client, link):
-        # Your attack logic here.
-        # Use the provided BLE client or direct link to inject packets.
         for _ in range(self.flood_rate):
             link.inject_malformed_packet(b"\xFF\x00")
-            
-        print(f"Injected {self.flood_rate} malformed packets.")
 ```
 
-## 3. Registering the Plugin
+### New Device Types
+To emulate a new BCI or DBS device, extend `vireon.core.device.BaseDevice` and implement the `tick()` behavior.
 
-Plugins must be registered with the Coordinator before the simulation begins. If you are using the CLI, this currently requires modifying the `setup()` block in `main.py`. In future versions, dynamic loading via entry points will be supported.
+### Dataset Readers
+To parse custom data formats (e.g., specific clinical `.mat` structures), inherit from `vireon.core.dataset.BaseDataset`.
 
-```python
-# In main.py
-coordinator = Coordinator(config, run_dir)
-coordinator.setup()
+### Report Formats
+Custom reporters (e.g., XML output) can be added by implementing the `vireon.core.reporting.BaseReporter` interface.
 
-# Inject custom attack
-my_attack = CustomDenialOfServiceAttack(coordinator.twin, flood_rate=500)
-my_attack.apply(coordinator.ble_client, coordinator.ble_link)
+## 3. Configuration & Registration
+Plugins can read from their own sections in `default.toml` by utilizing the `PluginConfig` class.
+
+Plugins are registered using the `PluginRegistry` in `__main__.py` or via standard Python entry points in `pyproject.toml`:
+```toml
+[project.entry-points."vireon.plugins"]
+my_attack = "my_package:get_plugin_info"
 ```
 
-## 4. Threat Intelligence Mapping
+## 4. Testing & Validation
+All custom plugins must be unit-tested. Use the provided `MockCoordinator` in `vireon.tests.mocks` to simulate event bus dispatch without running a full clinical simulation.
 
-If your custom attack maps to a known theoretical neurosecurity threat, you should tag it with a standard mapping identifier so the NeuroSignalAssuranceEngine and reporting engine can categorize it correctly against STRIDE or MITRE CWE.
+## 5. Rust Workflow (NeuroDSL)
+If your plugin extends the NeuroDSL compiler (e.g., adding a new firmware instruction):
+1. Navigate to `neuro_dsl/forge` or `neuro_dsl/scribe`.
+2. Add your implementation in Rust.
+3. Run `cargo test` to verify.
+4. Run `maturin develop` from the Python root to rebuild the bindings.
 
-```python
-def execute(self, coordinator):
-    coordinator.twin.set_clinical_alert(True, "ATTACK-004: Resource Exhaustion Detected")
-```
-
-See the [Standards Mapping Registry](validation/standards-mapping.md) for valid threat categories.
+## 6. Release Process
+To distribute your plugin:
+- Package it as a standard Python module on PyPI.
+- Ensure the `vireon.plugins` entry point is defined.
+- Users can then run `pip install your-vireon-plugin` and it will automatically appear in `vireon info`.

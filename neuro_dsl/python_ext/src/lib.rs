@@ -19,6 +19,9 @@ impl PyScribe {
     }
 
     pub fn load_bytecode(&mut self, bytecode: &[u8]) -> PyResult<()> {
+        if let Err(e) = self.inner.verify(bytecode) {
+            return Err(PyValueError::new_err(format!("Bytecode validation failed: {:?}", e)));
+        }
         self.bytecode = bytecode.to_vec();
         Ok(())
     }
@@ -28,7 +31,7 @@ impl PyScribe {
             return Ok(eeg_data);
         }
 
-        if let Err(e) = self.inner.execute(&self.bytecode) {
+        if let Err(e) = self.inner.execute(&self.bytecode, &eeg_data) {
             return Err(PyRuntimeError::new_err(format!("Scribe execution error: {:?}", e)));
         }
 

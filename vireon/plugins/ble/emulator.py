@@ -59,7 +59,12 @@ class VirtualBLELink:
         self.connected = False
         self.paired = False
         self.mtu = 23  # BLE default MTU
-        self.pairing_code = "123456"
+        import secrets
+        self.pairing_code = f"{secrets.randbelow(1000000):06d}"
+        
+    def set_pairing_code(self, pin: str):
+        """Allow injection of known PIN for testing purposes."""
+        self.pairing_code = pin
         self.latency_ms = 15.0  # Connection interval latency
 
 class VirtualBLEClient:

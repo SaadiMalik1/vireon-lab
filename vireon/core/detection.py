@@ -1,12 +1,16 @@
 import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
 import os
+import logging
+import threading
+import importlib.resources as pkg_resources
 
 from vireon.core.twin import DigitalTwin
-from vireon.core.safety_envelope import SafetyEnvelope
-from vireon.core.utils import calculate_rms
 from vireon.core.event_bus import EventBus, Event
 from vireon.core.threat_intel import ThreatIntelligence
+from vireon.core.utils import calculate_rms
+
+logger = logging.getLogger(__name__)
 
 try:
     import torch
@@ -14,6 +18,7 @@ try:
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
+
 
 
 def calculate_spectral_features(signal: np.ndarray) -> Tuple[float, float]:
@@ -203,9 +208,16 @@ class CoherenceEngine:
     def __init__(self):
         self.baseline_pupil = 4.0
         self.coherence_score = 1.0
+        self.primary_history = []
 
     def evaluate(self, primary_active: bool, secondary_val: float) -> float:
-        if primary_active:
+        self.primary_history.append(primary_active)
+        if len(self.primary_history) > 10:  # ~200-500ms lag window depending on tick rate
+            self.primary_history.pop(0)
+            
+        recently_active = any(self.primary_history)
+        
+        if recently_active:
             if secondary_val < 4.2:
                 # Spoofed signal! Stimulation is happening but body isn't reacting
                 self.coherence_score = max(0.0, self.coherence_score - 0.2)
@@ -218,7 +230,7 @@ class CoherenceEngine:
         return self.coherence_score
 
 
-class NeuroSignalAssuranceEngine:
+class SecurityEngine:
     """
     Intrusion Detection System for Brain-Computer Interfaces.
     Monitors signal dynamics and clinical trends in real time to detect
@@ -228,7 +240,8 @@ class NeuroSignalAssuranceEngine:
     def __init__(self, twin: DigitalTwin, event_bus: Optional[EventBus] = None,
                  rms_high_threshold: float = 120.0,
                  rms_low_threshold: float = 0.5,
-                 beta_power_threshold: float = 35.0):
+                 beta_power_threshold: float = 35.0,
+                 seed: Optional[int] = None):
         self.twin = twin
         self.event_bus = event_bus
 
@@ -252,25 +265,91 @@ class NeuroSignalAssuranceEngine:
         self.cusum_pos: Dict[int, float] = {}
         self.cusum_neg: Dict[int, float] = {}
         
-        self.autoencoder: Any
+        self.autoencoder: Optional[DeepAutoencoderIDS] = None
         if TORCH_AVAILABLE:
+            if seed is not None:
+                torch.manual_seed(seed)
             self.autoencoder = DeepAutoencoderIDS(input_dim=self.twin.num_channels)
         else:
-            self.autoencoder = LinearAutoencoderIDS()
-            
+            self.autoencoder = None
         self.ae_threshold = 0.5
         self.coherence_engine = CoherenceEngine()
         
-        self.history_confidence: list[float] = []
+        self.history_confidence: List[float] = []
         # Initialize Threat Intelligence for logging
-        registry_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../neurosecurity/datalake/qtara-registrar.json'))
+        try:
+            registry_path = str(pkg_resources.files("vireon.plugins.clinical.data").joinpath("tara_stix.json"))
+        except (AttributeError, ImportError):
+            # Fallback for older python or missing package
+            registry_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../plugins/clinical/data/tara_stix.json'))
+        
         self.threat_intel = ThreatIntelligence(registry_path)
+        self._lock = threading.RLock()
 
         # Detection logs
         self.detections: List[Dict[str, Any]] = []
+    def score_signal(self, data: np.ndarray) -> float:
+        """
+        Returns a continuous anomaly score for use in threshold-swept ROC validation.
+        Higher score = more anomalous.
+        """
+        scores = []
+        n_channels = data.shape[0]
+        
+        # Explicit sanitization check
+        if np.isnan(data).any():
+            return float('inf')
+            
+        # 1. Structural Deviation (Autoencoder MSE)
+        if self.autoencoder and getattr(self.autoencoder, 'is_fitted', False):
+            # Evaluate without updating calibration buffer
+            if TORCH_AVAILABLE and isinstance(self.autoencoder, DeepAutoencoderIDS):
+                import torch
+                obs = torch.tensor(data.T, dtype=torch.float32).unsqueeze(0)
+                self.autoencoder.model.eval()
+                with torch.no_grad():
+                    reconstruction = self.autoencoder.model(obs)
+                    errors = torch.mean((obs - reconstruction) ** 2, dim=2).squeeze(0).numpy()
+                ae_error = float(np.mean(errors))
+                scores.append(ae_error)
+            elif isinstance(self.autoencoder, LinearAutoencoderIDS):
+                obs = data.T
+                x_c = obs - self.autoencoder.mean
+                y = x_c @ self.autoencoder.components.T
+                reconstruction = y @ self.autoencoder.components
+                errors = np.mean((x_c - reconstruction)**2, axis=1)
+                scores.append(float(np.mean(errors)))
+
+        for ch in range(n_channels):
+            ch_signal = data[ch, :]
+            rms = calculate_rms(ch_signal)
+            
+            # 2. Dynamic Baseline Z-score
+            if self.dynamic_baseline_enabled and ch in self.rms_ewma:
+                std_dev = np.sqrt(self.rms_var[ch]) if self.rms_var[ch] > 0 else 1.0
+                z_score = abs(rms - self.rms_ewma[ch]) / std_dev
+                scores.append(z_score / 3.0)  # Normalize so 3-sigma is 1.0
+                
+            # 3. Spectral Spoofing
+            entropy, crest_factor = calculate_spectral_features(ch_signal)
+            if crest_factor > 1.0:
+                scores.append(crest_factor / 15.0)
+                
+        return float(np.max(scores)) if scores else 0.0
+
     def analyze_signal(self, data: np.ndarray) -> List[str]:
+        with self._lock:
+            return self._analyze_signal(data)
+
+    def _analyze_signal(self, data: np.ndarray) -> List[str]:
         anomalies = []
         n_channels = data.shape[0]
+
+        # Explicit sanitization check (NaN Propagation Bypass mitigation)
+        if np.isnan(data).any():
+            anomalies.append("DATA_CORRUPTION_ANOMALY")
+            self._log_detection("DATA_CORRUPTION_ANOMALY", -1, float('nan'))
+            return anomalies
 
         for ch in range(n_channels):
             ch_signal = data[ch, :]
@@ -330,10 +409,11 @@ class NeuroSignalAssuranceEngine:
                 self._log_detection("SPECTRAL_SPOOFING_ANOMALY", ch, crest_factor)
 
         # 4. Detect structural deviations using autoencoder
-        ae_error = self.autoencoder.detect(data)
-        if ae_error > self.ae_threshold:
-            anomalies.append("STRUCTURAL_DEVIATION_ANOMALY")
-            self._log_detection("STRUCTURAL_DEVIATION_ANOMALY", -1, ae_error)
+        if self.autoencoder:
+            ae_error = self.autoencoder.detect(data)
+            if ae_error > self.ae_threshold:
+                anomalies.append("STRUCTURAL_DEVIATION_ANOMALY")
+                self._log_detection("STRUCTURAL_DEVIATION_ANOMALY", -1, ae_error)
 
         # 5. Cross-Modal Coherence Check
         # If stimulation is running, the twin's secondary markers must match
@@ -358,6 +438,10 @@ class NeuroSignalAssuranceEngine:
         return unique_anomalies
 
     def analyze_commands(self, amplitude: float, frequency: float) -> List[str]:
+        with self._lock:
+            return self._analyze_commands(amplitude, frequency)
+
+    def _analyze_commands(self, amplitude: float, frequency: float) -> List[str]:
         """
         IDS behavioral analysis to detect high-frequency parameter manipulation (jitter attacks).
         """
@@ -389,9 +473,13 @@ class NeuroSignalAssuranceEngine:
         return anomalies
 
     def analyze_clinical(self, current_beta_power: float, stim_enabled: bool, amplitude: float) -> List[str]:
+        with self._lock:
+            return self._analyze_clinical(current_beta_power, stim_enabled, amplitude)
+
+    def _analyze_clinical(self, current_beta_power: float, stim_enabled: bool, amplitude: float) -> List[str]:
         anomalies = []
         self.history_beta_power.append(current_beta_power)
-        if len(self.history_beta_power) > 20:
+        if len(self.history_beta_power) > 1000:
             self.history_beta_power.pop(0)
 
         # 3. Detect Pathological Synchronization (Phase-Shifting attack)
@@ -474,336 +562,7 @@ class NeuroSignalAssuranceEngine:
         if len(self.detections) > 1000:
             self.detections.pop(0)
         
-        # Print for visibility
-        print(f"[NSAE] Detection: {anomaly_type} on Ch{channel} (Region: {brain_region_name}) -> CWE/Mapping: {tara_id} ({description}) | Severity: {severity}")
+        # Log for visibility instead of print
+        logger.warning(f"[NSAE] Detection: {anomaly_type} on Ch{channel} (Region: {brain_region_name}) -> CWE/Mapping: {tara_id} ({description}) | Severity: {severity}")
 
 
-class NeuroIPS:
-    """
-    Intrusion Prevention System for Brain-Computer Interfaces.
-    Executes automated mitigation actions: clamps stimulation parameters to safe thresholds,
-    filters corrupted signals, and enforces link layer security.
-    """
-
-    def __init__(self, twin: DigitalTwin, ids: NeuroSignalAssuranceEngine, event_bus: Optional[EventBus] = None,
-                 max_stimulation_amplitude_ma: float = 4.0,
-                 max_cumulative_charge: float = 5200.0):
-        self.twin = twin
-        self.ids = ids
-        self.event_bus = event_bus
-        self.max_stimulation_amplitude_ma = max_stimulation_amplitude_ma
-        self.max_cumulative_charge = max_cumulative_charge
-
-        self.blocked_attacks_count = 0
-        self.clamping_active = False
-        self.stim_history: List[Tuple[float, float, float]] = []
-        self.accumulated_thermal_dose = 0.0
-        self.safety_envelope = SafetyEnvelope(max_amplitude_ma=max_stimulation_amplitude_ma)
-
-    def sanitize_stimulation_write(self, amplitude: float, frequency: float) -> Tuple[float, float]:
-        """
-        Sanitizes raw stimulator write commands to protect patient tissue.
-        Prevents dangerous high-current command injections and cumulative charge buildup.
-        """
-        import math
-        if math.isnan(amplitude) or math.isinf(amplitude):
-            amplitude = 0.0
-        if math.isnan(frequency) or math.isinf(frequency):
-            frequency = 0.0
-            
-        # Closed-Loop Safety Envelope check (ISO 14971 bounds)
-        is_safe, envelope_metrics = self.safety_envelope.evaluate(self.twin)
-        if not is_safe:
-            self.blocked_attacks_count += 1
-            self.clamping_active = True
-            self.twin.set_clinical_alert(True, f"IPS Block: Safety Envelope Breach ({envelope_metrics['hazard_state']})")
-            self.twin.update_clinical_risk(
-                hazard_state=envelope_metrics['hazard_state'],
-                iso_severity=envelope_metrics['iso_severity'],
-                tissue_damage_risk=envelope_metrics['tissue_damage_risk'],
-                clinical_action=envelope_metrics['clinical_action']
-            )
-            # Revert to safe mode or shutdown
-            if envelope_metrics['clinical_action'] == "FALLBACK_SAFE_MODE":
-                return min(amplitude, 0.5), min(frequency, 10.0)
-            return 0.0, 0.0
-            
-        current_time = self.twin.get_sim_clock()
-        
-        # Check command behavioral rate limit
-        cmd_anomalies = self.ids.analyze_commands(amplitude, frequency)
-        if "HIGH_FREQUENCY_COMMAND_ANOMALY" in cmd_anomalies:
-            self.blocked_attacks_count += 1
-            self.clamping_active = True
-            self.twin.set_clinical_alert(True, "IPS Block: Command Jitter Detected")
-            self.twin.update_clinical_risk(
-                hazard_state="PROTOCOL_ABUSE",
-                iso_severity="MARGINAL",
-                tissue_damage_risk="NONE",
-                clinical_action="RATE_LIMIT"
-            )
-            # Revert to last stable stimulation settings
-            if len(self.stim_history) > 0:
-                return self.stim_history[-1][1], self.stim_history[-1][2]
-            return 0.0, 0.0
-
-        # Calculate Leaky Integrator Thermal Dose (Pennes Bioheat Equation approximation)
-        dt = 0.0
-        power_injected = 0.0
-        if len(self.stim_history) > 0:
-            dt = current_time - self.stim_history[-1][0]
-            last_amp = self.stim_history[-1][1]
-            last_freq = self.stim_history[-1][2]
-            # Power injected by the PREVIOUS pulse over the interval dt
-            power_injected = abs(last_amp) * abs(last_freq)
-
-        self.stim_history.append((current_time, amplitude, frequency))
-        # Keep recent history for coherence checks, though leaky integrator doesn't strictly need it all
-        self.stim_history = [x for x in self.stim_history if current_time - x[0] <= 10.0]
-
-        if dt > 0:
-            # Dissipation factor (tau = 60 seconds thermal relaxation time)
-            tau_dissipation = 60.0
-            decay_factor = np.exp(-dt / tau_dissipation)
-
-            # Update Leaky Integrator
-            self.accumulated_thermal_dose = (self.accumulated_thermal_dose * decay_factor) + (power_injected * dt)
-
-        if self.accumulated_thermal_dose > self.max_cumulative_charge:
-            self.blocked_attacks_count += 1
-            self.clamping_active = True
-            self.twin.set_clinical_alert(True, "IPS: Cumulative Charge Threat Detected")
-            self.twin.update_clinical_risk(
-                hazard_state="TISSUE_HEATING",
-                iso_severity="CRITICAL",
-                tissue_damage_risk="HIGH",
-                clinical_action="SHUTDOWN"
-            )
-            if self.event_bus:
-                self.event_bus.publish(Event(
-                    topic="ips.cumulative_charge_clamped",
-                    data={
-                        "accumulated_thermal_dose": self.accumulated_thermal_dose,
-                        "limit": self.max_cumulative_charge,
-                        "sim_clock": current_time
-                    },
-                    source="ips"
-                ))
-            return 0.0, 0.0  # Force shutoff to protect tissue
-
-        # Thermodynamic temperature protection (Pulsed-load / Evasion mitigation)
-        if self.twin.temperature_celsius >= 40.5:
-            self.blocked_attacks_count += 1
-            self.clamping_active = True
-            self.twin.set_clinical_alert(True, "IPS: Thermal Tissue Hazard Detected")
-            self.twin.update_clinical_risk(
-                hazard_state="TISSUE_HEATING",
-                iso_severity="CRITICAL",
-                tissue_damage_risk="HIGH",
-                clinical_action="SHUTDOWN"
-            )
-            return 0.0, 0.0
-
-        # Patient State Coherence Model (Paradox 3 solution)
-        coherence_clamped = False
-        if len(self.stim_history) > 1:
-            last_amp = self.stim_history[-2][1]
-            
-            # 1. Delta rate limit (Max change of 0.5 mA per write)
-            if abs(amplitude - last_amp) > 0.5:
-                amplitude = last_amp + np.sign(amplitude - last_amp) * 0.5
-                self.clamping_active = True
-                coherence_clamped = True
-                self.blocked_attacks_count += 1
-                self.twin.set_clinical_alert(True, "IPS Clamped: Coherence Delta Rate Limit")
-                self.stim_history[-1] = (current_time, amplitude, frequency)
-                
-            # 2. Clinical state coherence (Cannot increase stimulation if beta power is low, OR if IDS anomalies are active)
-            if len(self.ids.history_beta_power) > 0:
-                last_beta = self.ids.history_beta_power[-1]
-                # Cross-reference with active anomalies to prevent beta inflation evasion
-                active_anomalies = self.ids.detections[-5:] # check recent detections
-                has_active_anomaly = any(d["timestamp"] >= current_time - 3.0 for d in active_anomalies)
-                
-                if (last_beta < 15.0 or has_active_anomaly) and amplitude > last_amp:
-                    amplitude = last_amp
-                    self.clamping_active = True
-                    coherence_clamped = True
-                    self.blocked_attacks_count += 1
-                    msg = "IPS Clamped: Coherence State Untrusted (Anomaly Active)" if has_active_anomaly else "IPS Clamped: Coherence State Check Failed"
-                    self.twin.set_clinical_alert(True, msg)
-                    self.stim_history[-1] = (current_time, amplitude, frequency)
-
-        if coherence_clamped:
-            return amplitude, frequency
-
-        # Hard limit ceiling check
-        if amplitude > self.max_stimulation_amplitude_ma:
-            self.blocked_attacks_count += 1
-            self.clamping_active = True
-
-            # Log command blocking directly into Digital Twin history
-            self.twin.set_clinical_alert(True, "IPS Command Clamping Warning")
-            self.twin.update_clinical_risk(
-                hazard_state="WARNING",
-                iso_severity="MARGINAL",
-                tissue_damage_risk="NONE",
-                clinical_action="MONITOR"
-            )
-
-            if self.event_bus:
-                self.event_bus.publish(Event(
-                    topic="ips.stimulation_clamped",
-                    data={
-                        "requested_amplitude": amplitude,
-                        "clamped_amplitude": self.max_stimulation_amplitude_ma,
-                        "sim_clock": current_time
-                    },
-                    source="ips"
-                ))
-
-            return self.max_stimulation_amplitude_ma, frequency
-
-        self.clamping_active = False
-        return amplitude, frequency
-
-    def mitigate_signal_anomalies(self, data: np.ndarray, anomalies: List[str]) -> np.ndarray:
-        """
-        Active channel filtering and reconstruction.
-        Mutes anomalous channels and fills with baseline noise to keep decoder stable.
-        """
-        clean_data = data.copy()
-        muted_channels = []
-
-        if "HIGH_NOISE_ANOMALY" in anomalies or "SIGNAL_SUPPRESSION_ANOMALY" in anomalies:
-            # Filter and replace abnormal channels with low-amplitude nominal noise
-            for ch in range(clean_data.shape[0]):
-                ch_signal = clean_data[ch, :]
-                rms = calculate_rms(ch_signal)
-                if rms > self.ids.rms_high_threshold or rms < self.ids.rms_low_threshold:
-                    clean_data[ch, :] = np.random.normal(0, 2.0, clean_data.shape[1])
-                    muted_channels.append(ch)
-
-            if muted_channels:
-                self.blocked_attacks_count += 1
-                if self.event_bus:
-                    self.event_bus.publish(Event(
-                        topic="ips.channels_muted",
-                        data={
-                            "muted_channels": muted_channels,
-                            "sim_clock": self.twin.get_sim_clock()
-                        },
-                        source="ips"
-                    ))
-
-        return clean_data
-
-    def mitigate_pathological_sync(self, anomalies: List[str]) -> bool:
-        """
-        Detects closed-loop phase-locked stimulation compromise and suspends therapy
-        gracefully to prevent tremor amplification.
-        """
-        if "PATHOLOGICAL_SYNCHRONIZATION_ATTACK" in anomalies:
-            self.blocked_attacks_count += 1
-            if self.twin.fallback_mode_enabled:
-                # Transition to Safe open-loop Fallback Therapy mode
-                self.twin.enable_fallback_mode(True)
-                self.twin.set_clinical_alert(True, "Degraded (Safe Fallback)")
-                self.twin.update_decoder_confidence(0.90)  # Recover confidence partially
-                self.twin.update_clinical_risk(
-                    hazard_state="NOMINAL",  # Patient is clinically protected
-                    iso_severity="MARGINAL",
-                    tissue_damage_risk="NONE",
-                    clinical_action="OPEN_LOOP_FALLBACK"
-                )
-            else:
-                # Legacy behavior: Force safety shutoff of stimulator to suspend compromised closed-loop
-                self.twin.update_therapy(False)
-                self.twin.update_stimulation_params(0.0, 0.0)
-                self.twin.set_clinical_alert(True, "IDS Suspend: Sync Detected")
-                self.twin.update_decoder_confidence(0.90)  # Recover confidence partially
-                self.twin.update_clinical_risk(
-                    hazard_state="THERAPY_SUSPENDED",
-                    iso_severity="MARGINAL",
-                    tissue_damage_risk="NONE",
-                    clinical_action="SUSPEND_THERAPY"
-                )
-
-            if self.event_bus:
-                self.event_bus.publish(Event(
-                    topic="ips.dbs_sync_mitigated",
-                    data={
-                        "clinical_status": "IDS Suspend: Sync Detected",
-                        "fallback_mode": self.twin.fallback_mode_enabled,
-                        "sim_clock": self.twin.get_sim_clock()
-                    },
-                    source="ips"
-                ))
-            return True
-        return False
-
-
-class BLELinkGuard:
-    """
-    BLE Link Layer Guard.
-    Prevents link-level boundary abuses and illegal MTU negotiations.
-    """
-
-    def __init__(self, twin: DigitalTwin, event_bus: Optional[EventBus] = None):
-        self.twin = twin
-        self.event_bus = event_bus
-        self.blocked_mtu_abuses = 0
-        self.jamming_alerts = 0
-        self.blocked_spoofing_attempts = 0
-
-    def verify_connection(self, client_mac: str, is_paired: bool, bonding_db: dict) -> bool:
-        """
-        Defends against BLESA (BLE Spoofing Attack).
-        Requires devices with known MAC addresses to prove they possess the IRK/LTK (via is_paired).
-        If a device MAC is in bonding_db but is_paired is False, it's a spoofing attempt.
-        """
-        if client_mac in bonding_db:
-            if not is_paired:
-                self.blocked_spoofing_attempts += 1
-                self.twin.set_clinical_alert(True, f"BLE Link Guard: Blocked Spoofing (BLESA) from {client_mac}")
-                if self.event_bus:
-                    self.event_bus.publish(Event(
-                        topic="link_guard.spoofing_blocked",
-                        data={"mac": client_mac, "sim_clock": self.twin.get_sim_clock()},
-                        source="link_guard"
-                    ))
-                return False
-        return True
-
-    def check_rf_environment(self):
-        drop_rate = getattr(self.twin, "rf_packet_drop_rate", 0.0)
-        # If dropping more than 30% of packets, trigger RF Jamming Alert
-        if drop_rate >= 0.3:
-            self.jamming_alerts += 1
-            self.twin.set_clinical_alert(True, f"BLE Link Guard: Severe RF Jamming Detected ({drop_rate*100:.0f}% drops)")
-            if self.event_bus:
-                self.event_bus.publish(Event(
-                    topic="link_guard.jamming_detected",
-                    data={"drop_rate": drop_rate, "sim_clock": self.twin.get_sim_clock()},
-                    source="link_guard"
-                ))
-
-    def verify_mtu(self, requested_mtu: int) -> int:
-        # BLE specification minimum MTU size is 23 bytes
-        if requested_mtu < 23:
-            self.blocked_mtu_abuses += 1
-            self.twin.set_clinical_alert(True, "BLE Link Guard: Blocked MTU Abuse")
-
-            if self.event_bus:
-                self.event_bus.publish(Event(
-                    topic="link_guard.mtu_abuse_blocked",
-                    data={
-                        "requested_mtu": requested_mtu,
-                        "enforced_mtu": 23,
-                        "sim_clock": self.twin.get_sim_clock()
-                    },
-                    source="link_guard"
-                ))
-
-            return 23  # Enforce spec minimum
-        return requested_mtu

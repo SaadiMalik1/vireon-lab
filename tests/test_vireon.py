@@ -45,6 +45,26 @@ class TestDigitalTwin(unittest.TestCase):
         self.assertEqual(len(self.twin.get_history()), initial_history_len + 1)
         self.assertEqual(self.twin.get_history()[-1]["connected"], False)
 
+    def test_snapshot_and_restore(self):
+        # Set some non-default states
+        self.twin.hazard_state = "WARNING"
+        self.twin.fallback_mode_enabled = True
+        self.twin.neural_dynamics.beta_power = 0.75
+        self.twin.neural_dynamics.coherence = 0.8
+        
+        snap = self.twin.snapshot()
+        
+        # Reset and restore
+        self.twin = DigitalTwin(device_id="test_board")
+        self.assertEqual(self.twin.hazard_state, "NOMINAL")
+        
+        self.twin.restore(snap)
+        
+        self.assertEqual(self.twin.hazard_state, "WARNING")
+        self.assertTrue(self.twin.fallback_mode_enabled)
+        self.assertEqual(self.twin.neural_dynamics.beta_power, 0.75)
+        self.assertEqual(self.twin.neural_dynamics.coherence, 0.8)
+
 class TestSignalModifiers(unittest.TestCase):
     def setUp(self):
         self.twin = DigitalTwin(num_channels=8)

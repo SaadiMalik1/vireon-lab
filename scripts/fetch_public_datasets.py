@@ -8,6 +8,7 @@ import urllib.request
 import ssl
 from pathlib import Path
 import sys
+import hashlib
 
 # Disable SSL verification for simplicity in some locked-down environments
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -65,7 +66,7 @@ DATASETS = {
     }
 }
 
-def download_file(url: str, dest_path: str):
+def download_file(url: str, dest_path: str, data_entry: dict):
     """Downloads a file, resuming if partially downloaded."""
     path = Path(dest_path)
     
@@ -97,6 +98,22 @@ def download_file(url: str, dest_path: str):
                         sys.stdout.write(f"\r    Progress: {downloaded/1024/1024:.2f} MB")
                     sys.stdout.flush()
                 print(f"\n[+] Successfully downloaded {path.name}")
+
+            # Optional SHA256 integrity check
+            if 'sha256' in data_entry:
+                print(f"[*] Validating SHA-256 checksum for {path.name}...")
+                sha256_hash = hashlib.sha256()
+                with open(path, "rb") as f:
+                    for byte_block in iter(lambda: f.read(4096), b""):
+                        sha256_hash.update(byte_block)
+                if sha256_hash.hexdigest() != data_entry['sha256']:
+                    print(f"[!] WARNING: SHA-256 checksum mismatch for {path.name}!")
+                    print(f"    Expected: {data_entry['sha256']}")
+                    print(f"    Got:      {sha256_hash.hexdigest()}")
+                    path.unlink() # Delete corrupted/tampered file
+                else:
+                    print(f"[+] SHA-256 checksum validated successfully.")
+
     except Exception as e:
         print(f"\n[!] Failed to download {path.name}: {e}")
         # Clean up partial file on hard failure
@@ -117,7 +134,7 @@ def main():
     
     for key, data in DATASETS.items():
         print(f"\n--- Fetching: {data['description']} ---")
-        download_file(data['url'], data['dest'])
+        download_file(data['url'], data['dest'], data)
         
     print("\n[+] Validation Corpus fetching complete.")
 

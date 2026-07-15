@@ -11,6 +11,9 @@ This document bounds the expected throughput capabilities of VIREON's dual telem
 
 ## Results
 
+> [!WARNING]
+> **Lack of Statistical Rigor**: The metrics reported below are point-in-time estimates gathered on developer machines. They lack standard deviations, formal hardware specifications, and are not strictly reproduced in automated CI.
+
 ### Lab Streaming Layer (LSL)
 LSL is highly optimized for multi-channel time-series data.
 - **Max Throughput Achieved**: `> 100,000 samples/second` (synthetic stress test)

@@ -523,7 +523,7 @@ function animateOscilloscope() {
         return; // Flatline
     }
     
-    if (activeAttack === 'noise' || activeAttack.startsWith('qif-')) {
+    if (activeAttack === 'noise' || activeAttack.startsWith('cpif-')) {
         oscCtx.strokeStyle = COLORS.rose500;
     } else if (activeAttack === 'phase_shift') {
         oscCtx.strokeStyle = COLORS.amber500;
@@ -605,12 +605,12 @@ function animateConfidenceChart() {
 
 // Initial initialization loads the current server-side configurations
 async function init() {
-    // 1. Fetch QIF data to populate attack dropdown
+    // 1. Fetch CPIF data to populate attack dropdown
     try {
-        const qifRes = await fetch('/api/qif.json');
-        if (qifRes.ok) {
-            const qifData = await qifRes.json();
-            const techniques = qifData.threats?.techniques || [];
+        const cpifRes = await fetch('/api/cpif.json');
+        if (cpifRes.ok) {
+            const cpifData = await cpifRes.json();
+            const techniques = cpifData.threats?.techniques || [];
             const dropdown = document.getElementById('attack-dropdown');
             
             // Group by tactic/category
@@ -631,7 +631,7 @@ async function init() {
             });
         }
     } catch (e) {
-        console.error("Failed to fetch QIF data:", e);
+        console.error("Failed to fetch CPIF data:", e);
     }
 
     // 2. Poll context initially to align buttons

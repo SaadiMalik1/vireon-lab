@@ -1,32 +1,33 @@
 import unittest
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.core.security import NeuroSignalAssuranceEngine, NeuroIPS
+from vireon.core.detection import SecurityEngine
+from vireon.core.clinical import NeuroIPS
 from vireon.core.protocol import RFFrameProcessor, ProtocolError
 
 class TestBCIParadoxSolvers(unittest.TestCase):
     def setUp(self):
         self.twin = DigitalTwin(num_channels=8)
         self.twin.fallback_mode_enabled = True
-        self.ids = NeuroSignalAssuranceEngine(self.twin)
+        self.ids = SecurityEngine(self.twin)
         self.ips = NeuroIPS(self.twin, self.ids)
 
     def test_active_impedance_probe(self):
         # 1. Nominal LFP signal (normal variance)
         nominal_data = np.random.normal(0, 10.0, (8, 250))
-        res = self.twin.verify_electrode_impedances(nominal_data)
+        res = self.twin.verify_electrode_connection(nominal_data)
         self.assertTrue(res)
         self.assertEqual(self.twin.electrode_impedances[0], 5.0)
 
         # 2. High-noise spoofing signal
         noise_data = np.random.normal(0, 500.0, (8, 250))
-        res = self.twin.verify_electrode_impedances(noise_data)
+        res = self.twin.verify_electrode_connection(noise_data)
         self.assertFalse(res)
         self.assertEqual(self.twin.electrode_impedances[0], 60.0)
 
         # 3. Suppressed / flatline signal
         flat_data = np.zeros((8, 250))
-        res = self.twin.verify_electrode_impedances(flat_data)
+        res = self.twin.verify_electrode_connection(flat_data)
         self.assertFalse(res)
         self.assertEqual(self.twin.electrode_impedances[0], 100.0)
 
@@ -72,7 +73,7 @@ class TestBCIParadoxSolvers(unittest.TestCase):
         self.assertTrue(self.ips.clamping_active)
 
     def test_telemetry_sleep_duty_cycling(self):
-        processor = RFFrameProcessor()
+        processor = RFFrameProcessor(b"X"*32)
         
         # Perform 3 consecutive unpacking failures
         for _ in range(3):
@@ -81,8 +82,8 @@ class TestBCIParadoxSolvers(unittest.TestCase):
                 processor.unpack_frame(b"\x00\x00\x00", secure_mode=False, current_time=1.0)
 
         # The receiver is now asleep (sleep_until = 1.0 + 5.0 = 6.0)
-        self.assertEqual(processor.consecutive_failures, 3)
-        self.assertEqual(processor.sleep_until, 6.0)
+        self.assertEqual(processor.consecutive_failures.get("default", 0), 3)
+        self.assertEqual(processor.sleep_until.get("default", 0.0), 6.0)
 
         # Subsequent valid frame throws error due to sleep status
         valid_frame = processor.pack_frame(0, 0x01, b"test", secure_mode=False)
@@ -93,8 +94,8 @@ class TestBCIParadoxSolvers(unittest.TestCase):
         # Once time advances past sleep_until, frames are accepted and reset sleep state
         seq, ptype, unpacked = processor.unpack_frame(valid_frame, secure_mode=False, current_time=7.0)
         self.assertEqual(unpacked, b"test")
-        self.assertEqual(processor.consecutive_failures, 0)
-        self.assertEqual(processor.sleep_until, 0.0)
+        self.assertEqual(processor.consecutive_failures.get("default", 0), 0)
+        self.assertEqual(processor.sleep_until.get("default", 0.0), 0.0)
 
 if __name__ == "__main__":
     unittest.main()

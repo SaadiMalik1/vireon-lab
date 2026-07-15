@@ -15,48 +15,81 @@ class CryptoEmulator:
     """Emulates NIST/FIPS compliant cryptography (X.509, ECDH, AES-GCM)."""
     
     @staticmethod
-    def validate_x509_cert(cert_data: dict) -> bool:
-        """Emulates X.509 certificate chain validation."""
-        required_fields = ["issuer", "subject", "valid_from", "valid_to", "public_key", "signature"]
-        if not all(k in cert_data for k in required_fields):
-            raise CertificateError("Invalid X.509 Certificate: Missing required fields.")
+    def validate_x509_cert(pem_cert: bytes, root_ca_pem: bytes) -> bool:
+        """Validates an X.509 certificate against a trusted root CA."""
+        from cryptography import x509
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives.asymmetric import padding
+        from cryptography.exceptions import InvalidSignature
+        import datetime
+
+        try:
+            cert = x509.load_pem_x509_certificate(pem_cert, default_backend())
+            root_cert = x509.load_pem_x509_certificate(root_ca_pem, default_backend())
             
-        import time
-        current_time = time.time()
-        if current_time < cert_data["valid_from"] or current_time > cert_data["valid_to"]:
-            raise CertificateError("Invalid X.509 Certificate: Expired or not yet valid.")
-            
-        if cert_data["signature"] != "VALID_ROOT_CA_SIG":
-            raise CertificateError("Invalid X.509 Certificate: Untrusted Root CA.")
-            
-        return True
+            now = datetime.datetime.now()
+            if cert.not_valid_after < now or cert.not_valid_before > now:
+                raise CertificateError("Invalid X.509 Certificate: Expired or not yet valid.")
+                
+            root_pubkey = root_cert.public_key()
+            root_pubkey.verify(
+                cert.signature,
+                cert.tbs_certificate_bytes,
+                padding.PKCS1v15(),
+                cert.signature_hash_algorithm,
+            )
+            return True
+        except InvalidSignature:
+            raise CertificateError("Invalid X.509 Certificate: Untrusted Root CA (signature verification failed).")
+        except CertificateError:
+            raise
+        except Exception as e:
+            raise CertificateError(f"Invalid X.509 Certificate: {e}")
         
     @staticmethod
     def ecdh_key_exchange(private_key_a: bytes, public_key_b: bytes) -> bytes:
-        """Emulates Elliptic Curve Diffie-Hellman key agreement."""
-        # Emulation: The shared secret is just a hash of both keys sorted to be commutative
-        combined = b"".join(sorted([private_key_a, public_key_b]))
-        return hashlib.sha256(combined).digest()
+        """Elliptic Curve Diffie-Hellman key agreement using X25519 and HKDF."""
+        from cryptography.hazmat.primitives.asymmetric import x25519
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+        from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
+        try:
+            priv = load_pem_private_key(private_key_a, password=None)
+            pub = load_pem_public_key(public_key_b)
+            
+            if not isinstance(priv, x25519.X25519PrivateKey) or not isinstance(pub, x25519.X25519PublicKey):
+                raise ProtocolError("ECDH Key Exchange failed: Keys must be X25519")
+                
+            shared_secret = priv.exchange(pub)
+            
+            derived_key = HKDF(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=None,
+                info=b'vireon handshake data',
+            ).derive(shared_secret)
+            return derived_key
+        except Exception as e:
+            raise ProtocolError(f"ECDH Key Exchange failed: {e}")
         
     @staticmethod
     def aes_gcm_encrypt(key: bytes, iv: bytes, plaintext: bytes, aad: bytes) -> Tuple[bytes, bytes]:
-        """Emulates AES-GCM encryption with Auth Tag."""
-        # Simple XOR cipher for emulation
-        ciphertext = bytes([b ^ key[i % len(key)] for i, b in enumerate(plaintext)])
-        # Tag is HMAC of ciphertext + aad + iv
-        tag_data = ciphertext + aad + iv
-        tag = hmac.new(key, tag_data, hashlib.sha256).digest()[:16] # 128-bit tag
-        return ciphertext, tag
+        """Implements AES-GCM encryption with Auth Tag."""
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        aesgcm = AESGCM(key)
+        ct_tag = aesgcm.encrypt(iv, plaintext, aad)
+        return ct_tag[:-16], ct_tag[-16:]
         
     @staticmethod
     def aes_gcm_decrypt(key: bytes, iv: bytes, ciphertext: bytes, aad: bytes, tag: bytes) -> bytes:
-        """Emulates AES-GCM decryption and tag verification."""
-        expected_tag_data = ciphertext + aad + iv
-        expected_tag = hmac.new(key, expected_tag_data, hashlib.sha256).digest()[:16]
-        if not hmac.compare_digest(tag, expected_tag):
+        """Implements AES-GCM decryption and tag verification."""
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        from cryptography.exceptions import InvalidTag
+        aesgcm = AESGCM(key)
+        try:
+            return aesgcm.decrypt(iv, ciphertext + tag, aad)
+        except InvalidTag:
             raise ProtocolError("AES-GCM Auth Tag verification failed (malicious modification)")
-        plaintext = bytes([b ^ key[i % len(key)] for i, b in enumerate(ciphertext)])
-        return plaintext
 
 class RFFrameProcessor:
     """
@@ -68,13 +101,15 @@ class RFFrameProcessor:
     """
     PREAMBLE = 0xAA
     HEADER_STRUCT = struct.Struct(">BBHB")  # Preamble, Length, SeqNo, PayloadType
-    SHARED_KEY = b"neuroshield_telemetry_secure_key_2026"
-
-    def __init__(self):
+    
+    def __init__(self, shared_key: bytes):
+        if not shared_key or len(shared_key) != 32:
+            raise ValueError("RFFrameProcessor requires a securely derived 32-byte shared_key")
+        self.SHARED_KEY = shared_key
         self.expected_seq_no = 0
-        self.consecutive_failures = 0
-        self.sleep_until = 0.0
-        self.sleep_duration = 5.0
+        self.consecutive_failures = {}
+        self.sleep_until = {}
+        self.sleep_duration = {}
         self.session_key = self.SHARED_KEY
         self.iv_counter = 0
 
@@ -103,10 +138,10 @@ class RFFrameProcessor:
         """Pack payload into a binary telemetry frame."""
         # Header without length initially
         if secure_mode:
-            # Emulate AES-GCM: IV (8B) + Ciphertext + Tag (16B)
-            total_len = 5 + 8 + len(payload) + 16
+            # Emulate AES-GCM: IV (12B) + Ciphertext + Tag (16B)
+            total_len = 5 + 12 + len(payload) + 16
             header = struct.pack(">BBHB", self.PREAMBLE, total_len, seq_no, payload_type)
-            iv = struct.pack(">Q", self.iv_counter)
+            iv = struct.pack(">Q", self.iv_counter) + b"\x00\x00\x00\x00" # AES-GCM needs 12-byte IV
             self.iv_counter += 1
             ciphertext, tag = CryptoEmulator.aes_gcm_encrypt(self.session_key, iv, payload, aad=header)
             return header + iv + ciphertext + tag
@@ -117,7 +152,7 @@ class RFFrameProcessor:
             crc = self.calculate_crc16(frame_body)
             return frame_body + struct.pack(">H", crc)
 
-    def unpack_frame(self, frame_bytes: bytes, secure_mode: bool = False, current_time: float = 0.0) -> Tuple[int, int, bytes]:
+    def unpack_frame(self, frame_bytes: bytes, secure_mode: bool = False, current_time: float = 0.0, source_id: str = "default") -> Tuple[int, int, bytes]:
         """
         Unpack and validate a binary telemetry frame with flood-protection duty cycling.
         
@@ -126,8 +161,9 @@ class RFFrameProcessor:
         Raises:
             ProtocolError if frame is malformed, out of sequence, corrupted, or if receiver is asleep.
         """
-        if current_time < self.sleep_until:
-            raise ProtocolError(f"RF Receiver is sleeping due to telemetry flooding protection. Sleep remaining: {self.sleep_until - current_time:.1f}s")
+        sleep_until = self.sleep_until.get(source_id, 0.0)
+        if current_time < sleep_until:
+            raise ProtocolError(f"RF Receiver is sleeping for source {source_id} due to telemetry flooding protection. Sleep remaining: {sleep_until - current_time:.1f}s")
 
         try:
             if len(frame_bytes) < 7:
@@ -143,12 +179,12 @@ class RFFrameProcessor:
                 
             # Verify integrity
             if secure_mode:
-                if len(frame_bytes) < 5 + 8 + 16:
+                if len(frame_bytes) < 5 + 12 + 16:
                     raise ProtocolError("Secure frame too short")
                 header = frame_bytes[:5]
-                iv = frame_bytes[5:13]
+                iv = frame_bytes[5:17]
                 tag = frame_bytes[-16:]
-                ciphertext = frame_bytes[13:-16]
+                ciphertext = frame_bytes[17:-16]
                 payload = CryptoEmulator.aes_gcm_decrypt(self.session_key, iv, ciphertext, aad=header, tag=tag)
             else:
                 payload_end = length - 2
@@ -167,14 +203,16 @@ class RFFrameProcessor:
                     
             # Success: reset counters
             self.expected_seq_no = seq_no + 1
-            self.consecutive_failures = 0
-            self.sleep_until = 0.0
-            self.sleep_duration = 5.0
+            self.consecutive_failures[source_id] = 0
+            self.sleep_until[source_id] = 0.0
+            self.sleep_duration[source_id] = 5.0
             return seq_no, payload_type, payload
             
         except ProtocolError as e:
-            self.consecutive_failures += 1
-            if self.consecutive_failures >= 3:
-                self.sleep_until = current_time + self.sleep_duration
-                self.sleep_duration = min(60.0, self.sleep_duration * 2.0)
+            failures = self.consecutive_failures.get(source_id, 0) + 1
+            self.consecutive_failures[source_id] = failures
+            duration = self.sleep_duration.get(source_id, 5.0)
+            if failures >= 3:
+                self.sleep_until[source_id] = current_time + duration
+                self.sleep_duration[source_id] = min(60.0, duration * 2.0)
             raise e
