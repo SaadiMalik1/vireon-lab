@@ -203,21 +203,21 @@ def print_stride_summary(model: Dict[str, Any]) -> None:
     logger.info("=" * 60)
     logger.info(f"  Generated:     {model['generated_at']}")
     logger.info(f"  Total Threats:  {summary['total_threats']}")
-    logger.info()
+    logger.info("")
 
     logger.info("  By Category:")
     for cat, desc in STRIDE_CATEGORIES.items():
         count = summary["by_category"].get(cat, 0)
         label = desc.split("—")[0].strip()
         logger.info(f"    [{cat}] {label:30s} {count}")
-    logger.info()
+    logger.info("")
 
     logger.info("  By Severity:")
     for sev in ["Critical", "High", "Medium", "Low"]:
         count = summary["by_severity"].get(sev, 0)
         bar = "█" * count
         logger.info(f"    {sev:10s} {count:2d} {bar}")
-    logger.info()
+    logger.info("")
 
     # Highlight gaps
     gaps = []
@@ -230,6 +230,6 @@ def print_stride_summary(model: Dict[str, Any]) -> None:
         logger.info(f"  ⚠ GAPS IDENTIFIED: {len(gaps)}")
         for g in gaps:
             logger.info(f"    {g['threat_id']}: {g['threat_description'][:60]}...")
-        logger.info()
+        logger.info("")
 
     logger.info("=" * 60)

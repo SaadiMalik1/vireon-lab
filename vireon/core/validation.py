@@ -56,19 +56,19 @@ class ValidationRunner:
         if not y_true:
             return {}
             
-        y_true = np.array(y_true)
-        y_score = np.array(y_score)
+        y_true_np = np.array(y_true)
+        y_score_np = np.array(y_score)
         
         # Sort scores descending
-        desc_score_indices = np.argsort(y_score, kind="mergesort")[::-1]
-        y_score = y_score[desc_score_indices]
-        y_true = y_true[desc_score_indices]
+        desc_score_indices = np.argsort(y_score_np, kind="mergesort")[::-1]
+        y_score_np = y_score_np[desc_score_indices]
+        y_true_np = y_true_np[desc_score_indices]
         
-        distinct_value_indices = np.where(np.diff(y_score))[0]
-        threshold_idxs = np.r_[distinct_value_indices, y_true.size - 1]
+        distinct_value_indices = np.where(np.diff(y_score_np))[0]
+        threshold_idxs = np.r_[distinct_value_indices, y_true_np.size - 1]
         
-        tps = np.cumsum(y_true)[threshold_idxs]
-        fps = np.cumsum(1 - y_true)[threshold_idxs]
+        tps = np.cumsum(y_true_np)[threshold_idxs]
+        fps = np.cumsum(1 - y_true_np)[threshold_idxs]
         
         total_p = tps[-1] if len(tps) > 0 else 0
         total_n = fps[-1] if len(fps) > 0 else 0
@@ -83,7 +83,7 @@ class ValidationRunner:
         try:
             auc = np.trapezoid(tpr, fpr)
         except AttributeError:
-            auc = np.trapz(tpr, fpr) # fallback for older numpy
+            auc = np.trapz(tpr, fpr) # type: ignore[attr-defined]
         
         # Youden's J optimal threshold
         j_stats = tpr - fpr
