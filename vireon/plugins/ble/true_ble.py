@@ -1,7 +1,5 @@
-import asyncio
 from typing import Optional, Callable
 from bleak import BleakClient, BleakScanner
-from vireon.plugins.ble.emulator import VirtualBLELink, VirtualBLEServer
 from vireon.plugins.devices.hardware_bridge import HardwareBridge
 
 class TrueBLEClient:

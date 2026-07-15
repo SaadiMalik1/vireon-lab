@@ -27,8 +27,8 @@ class CryptoEmulator:
             cert = x509.load_pem_x509_certificate(pem_cert, default_backend())
             root_cert = x509.load_pem_x509_certificate(root_ca_pem, default_backend())
             
-            now = datetime.datetime.now()
-            if cert.not_valid_after < now or cert.not_valid_before > now:
+            now = datetime.datetime.now(datetime.timezone.utc)
+            if cert.not_valid_after_utc < now or cert.not_valid_before_utc > now:
                 raise CertificateError("Invalid X.509 Certificate: Expired or not yet valid.")
                 
             from cryptography.hazmat.primitives.asymmetric import rsa, ec
