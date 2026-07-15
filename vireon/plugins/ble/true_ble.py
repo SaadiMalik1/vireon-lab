@@ -46,7 +46,8 @@ class TrueBLEClient:
     async def read_characteristic(self, char_uuid: str) -> Optional[bytes]:
         if not self.is_connected:
             raise ConnectionError("Not connected to BLE device.")
-        return await self.client.read_gatt_char(char_uuid)
+        data = await self.client.read_gatt_char(char_uuid)
+        return bytes(data)
 
     async def write_characteristic(self, char_uuid: str, data: bytes, response: bool = False):
         if not self.is_connected:
