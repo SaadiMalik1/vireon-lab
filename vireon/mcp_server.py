@@ -26,13 +26,13 @@ mcp = FastMCP("VIREON-Neural-Terminal")
 
 SECRET_FILE = os.path.expanduser("~/.vireon/mcp_secret.key")
 if os.path.exists(SECRET_FILE):
-    with open(SECRET_FILE, "rb") as f:
-        SERVER_SECRET = f.read()
+    with open(SECRET_FILE, "rb") as f_in:
+        SERVER_SECRET = f_in.read()
 else:
     os.makedirs(os.path.dirname(SECRET_FILE), exist_ok=True)
     SERVER_SECRET = secrets.token_bytes(32)
-    with open(SECRET_FILE, "wb") as f:
-        f.write(SERVER_SECRET)
+    with open(SECRET_FILE, "wb") as f_out:
+        f_out.write(SERVER_SECRET)
 
 def _verify_capability(session_token: str, required_capability: str) -> bool:
     try:
