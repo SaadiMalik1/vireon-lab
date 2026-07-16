@@ -21,55 +21,55 @@ from vireon.core.detection import SecurityEngine
 from vireon.core.clinical import NeuroIPS
 from vireon.core.attack_factory import AttackFactory
 from vireon.plugins.clinical.closed_loop import UncontrolledStimulationAttack
-
-# Shared context containing active web controls
-simulation_context: Dict[str, Any] = {
-    "dbs_mode": False,
-    "secure_mode": False,
-    "nsp_mode": False,
-    "hardware_mode": False,
-    "dbs_attack": "", # "", "phase_shift"
-    "active_attack": "none", # "none", or standard internal identifier
-    "noise_intensity": 50.0,
-    "attenuation_factor": 0.1,
-    "impedance_kohm": 60.0,
-    "ws_token": "" # Populated on launch for WS auth
-}
-
 class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
-    # Class variables set during initialization
-    twin: DigitalTwin = None
-    attack_engine: SignalAttackEngine = None
-    ips = None
-    link_guard = None
-    web_dir: str = ""
+    server: 'ThreadedHTTPServer'
     
-    frame_processor = None
-    next_seq_no = 0
+    @property
+    def twin(self): return self.server.twin
+    @property
+    def attack_engine(self): return self.server.attack_engine
+    @property
+    def ips(self): return self.server.ips
+    @property
+    def link_guard(self): return self.server.link_guard
+    @property
+    def web_dir(self): return self.server.web_dir
+    @property
+    def simulation_context(self): return self.server.simulation_context
 
-    _rate_limit_lock = threading.Lock()
-    _ip_timestamps: Dict[str, list[float]] = {}
+    @property
+    def _rate_limit_lock(self): return self.server._rate_limit_lock
+    @property
+    def _ip_timestamps(self): return self.server._ip_timestamps
+    @property
+    def next_seq_no(self): return self.server.next_seq_no
+    @next_seq_no.setter
+    def next_seq_no(self, value): self.server.next_seq_no = value
 
-    @classmethod
-    def get_processor(cls):
-        if cls.frame_processor is None:
-            cls.frame_processor = RFFrameProcessor(b"X"*32)
-        return cls.frame_processor
+    def get_processor(self):
+        if self.server.frame_processor is None:
+            self.server.frame_processor = RFFrameProcessor(b"X"*32)
+        return self.server.frame_processor
 
     def translate_path(self, path):
         # Serve static files from the custom web folder
         parsed_url = urllib.parse.urlparse(path)
-        rel_path = parsed_url.path.lstrip('/')
+        unquoted_path = urllib.parse.unquote(parsed_url.path)
+        rel_path = unquoted_path.lstrip('/')
         
-        # Prevent path traversal attacks
-        if ".." in rel_path or rel_path.startswith('/'):
-            return ""
-
         # Default to index.html
         if rel_path == "":
             rel_path = "index.html"
             
-        full_path = os.path.join(self.web_dir, rel_path)
+        full_path = os.path.abspath(os.path.join(self.web_dir, rel_path))
+        # Prevent path traversal attacks by validating final absolute path with trailing separator
+        safe_dir = os.path.abspath(self.web_dir)
+        if not safe_dir.endswith(os.sep):
+            safe_dir += os.sep
+            
+        if not full_path.startswith(safe_dir) and full_path != os.path.abspath(self.web_dir):
+            return ""
+            
         return full_path
 
     def _check_cors(self) -> bool:
@@ -83,32 +83,32 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
         client_ip = self.client_address[0]
         now = time.time()
         
-        with BCIAPIRequestHandler._rate_limit_lock:
+        with self._rate_limit_lock:
             # Prevent OOM from IP spoofing / botnets
-            if len(BCIAPIRequestHandler._ip_timestamps) > 1000:
+            if len(self._ip_timestamps) > 1000:
                 # Prune stale IPs that haven't made a request in the last 2 seconds
-                stale_ips = [ip for ip, ts in BCIAPIRequestHandler._ip_timestamps.items() if not ts or (now - ts[-1] > 2.0)]
+                stale_ips = [ip for ip, ts in self._ip_timestamps.items() if not ts or (now - ts[-1] > 2.0)]
                 for ip in stale_ips:
-                    del BCIAPIRequestHandler._ip_timestamps[ip]
+                    del self._ip_timestamps[ip]
 
-            if client_ip not in BCIAPIRequestHandler._ip_timestamps:
-                BCIAPIRequestHandler._ip_timestamps[client_ip] = []
+            if client_ip not in self._ip_timestamps:
+                self._ip_timestamps[client_ip] = []
                 
             # Filter timestamps in the last 1.0 seconds
-            timestamps = [t for t in BCIAPIRequestHandler._ip_timestamps[client_ip] if now - t < 1.0]
+            timestamps = [t for t in self._ip_timestamps[client_ip] if now - t < 1.0]
             
             if len(timestamps) >= 15: # Max 15 requests per second
                 self.send_error(429, "Too Many Requests - Backend Rate Limit Exceeded")
                 return False
                 
             timestamps.append(now)
-            BCIAPIRequestHandler._ip_timestamps[client_ip] = timestamps
+            self._ip_timestamps[client_ip] = timestamps
             
         return True
 
     def _check_auth(self) -> bool:
         auth_header = self.headers.get("Authorization")
-        expected_token = simulation_context.get("ws_token")
+        expected_token = self.simulation_context.get("ws_token")
         
         if not expected_token:
             return True
@@ -158,7 +158,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             if os.path.exists(full_path):
                 with open(full_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                content = content.replace("WS_TOKEN_PLACEHOLDER", simulation_context.get("ws_token", ""))
+                content = content.replace("WS_TOKEN_PLACEHOLDER", self.simulation_context.get("ws_token", ""))
                 content_bytes = content.encode("utf-8")
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/html')
@@ -185,11 +185,11 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 payload_bytes = json.dumps(params).encode('utf-8')
                 
                 # Check if secure mode is enabled
-                secure = simulation_context.get("secure_mode", False)
+                secure = self.simulation_context.get("secure_mode", False)
                 
                 # Pack the frame (transmitter side)
-                frame = processor.pack_frame(BCIAPIRequestHandler.next_seq_no, payload_type=0x01, payload=payload_bytes, secure_mode=secure)
-                BCIAPIRequestHandler.next_seq_no += 1
+                frame = processor.pack_frame(self.next_seq_no, payload_type=0x01, payload=payload_bytes, secure_mode=secure)
+                self.next_seq_no += 1
                 
                 # Process the frame (receiver/firmware side)
                 seq, ptype, unpacked_payload = processor.unpack_frame(
@@ -198,7 +198,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 validated_params = json.loads(unpacked_payload.decode('utf-8'))
                 
                 self._update_simulation(validated_params)
-                self.send_json({"status": "success", "context": simulation_context})
+                self.send_json({"status": "success", "context": self.simulation_context})
             except Exception as e:
                 # Log protocol violations in security IPS
                 if "ProtocolError" in e.__class__.__name__ or "replay" in str(e).lower() or "signature" in str(e).lower() or "CRC" in str(e):
@@ -251,26 +251,25 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(response_bytes)
 
     def _update_simulation(self, params: Dict[str, Any]):
-        global simulation_context
-        
-        # 0. Update custom slider value overrides in context
-        if "noise_intensity" in params:
-            simulation_context["noise_intensity"] = float(params["noise_intensity"])
-        if "attenuation_factor" in params:
-            simulation_context["attenuation_factor"] = float(params["attenuation_factor"])
-        if "impedance_kohm" in params:
-            simulation_context["impedance_kohm"] = float(params["impedance_kohm"])
-            
-        # Update live digital twin parameter overrides
-        if "battery_level" in params:
-            self.twin.battery_level = float(params["battery_level"])
+        with self.server.context_lock:
+            # 0. Update custom slider value overrides in context
+            if "noise_intensity" in params:
+                self.simulation_context["noise_intensity"] = float(params["noise_intensity"])
+            if "attenuation_factor" in params:
+                self.simulation_context["attenuation_factor"] = float(params["attenuation_factor"])
+            if "impedance_kohm" in params:
+                self.simulation_context["impedance_kohm"] = float(params["impedance_kohm"])
+                
+            # Update live digital twin parameter overrides
+            if "battery_level" in params:
+                self.twin.battery_level = float(params["battery_level"])
             
         if "stimulation_amplitude_ma" in params or "stimulation_frequency_hz" in params:
             amp = float(params.get("stimulation_amplitude_ma", self.twin.stimulation_amplitude_ma))
             freq = float(params.get("stimulation_frequency_hz", self.twin.stimulation_frequency_hz))
             
             # Sanitization ceiling clamp check under security shield
-            if simulation_context["secure_mode"]:
+            if self.simulation_context["secure_mode"]:
                 if self.ips is not None:
                     amp, freq = self.ips.sanitize_stimulation_write(amp, freq)
                 else:
@@ -283,27 +282,27 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             
         # 1. Update Mode states
         if "dbs_mode" in params:
-            simulation_context["dbs_mode"] = bool(params["dbs_mode"])
-            self.twin.dbs_mode = simulation_context["dbs_mode"]
+            self.simulation_context["dbs_mode"] = bool(params["dbs_mode"])
+            self.twin.dbs_mode = self.simulation_context["dbs_mode"]
         if "secure_mode" in params:
-            simulation_context["secure_mode"] = bool(params["secure_mode"])
-            self.twin.secure_mode = simulation_context["secure_mode"]
+            self.simulation_context["secure_mode"] = bool(params["secure_mode"])
+            self.twin.secure_mode = self.simulation_context["secure_mode"]
         if "nsp_mode" in params:
-            simulation_context["nsp_mode"] = bool(params["nsp_mode"])
-            self.twin.nsp_mode = simulation_context["nsp_mode"]
+            self.simulation_context["nsp_mode"] = bool(params["nsp_mode"])
+            self.twin.nsp_mode = self.simulation_context["nsp_mode"]
         if "hardware_mode" in params:
             hw_mode = bool(params["hardware_mode"])
-            simulation_context["hardware_mode"] = hw_mode
+            self.simulation_context["hardware_mode"] = hw_mode
             self.twin.hardware_mode = hw_mode
             
         # 2. Update Attack configuration
         if "active_attack" in params or "noise_intensity" in params or "attenuation_factor" in params or "impedance_kohm" in params:
             if "active_attack" in params:
                 attack_type = str(params["active_attack"]).lower()
-                simulation_context["active_attack"] = attack_type
+                self.simulation_context["active_attack"] = attack_type
                 self.twin.active_attack = attack_type
             else:
-                attack_type = str(simulation_context["active_attack"])
+                attack_type = str(self.simulation_context["active_attack"])
                 self.twin.active_attack = attack_type
             
             # Clear existing signal modifiers
@@ -318,23 +317,23 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     except ValueError as e:
                         print(f"Error loading standard attack: {e}")
                 elif attack_type == "noise":
-                    self.attack_engine.add_modifier(NoiseInjectionAttack([0, 1], noise_level_microvolts=float(simulation_context["noise_intensity"])))
+                    self.attack_engine.add_modifier(NoiseInjectionAttack([0, 1], noise_level_microvolts=float(self.simulation_context["noise_intensity"])))
                 elif attack_type == "drift":
                     self.attack_engine.add_modifier(SignalDriftAttack([0, 1], drift_rate_uv_per_sec=10.0))
                 elif attack_type == "impedance":
-                    self.attack_engine.add_modifier(ImpedanceSpikeAttack([0, 1], spike_value_kohm=float(simulation_context["impedance_kohm"])))
+                    self.attack_engine.add_modifier(ImpedanceSpikeAttack([0, 1], spike_value_kohm=float(self.simulation_context["impedance_kohm"])))
                 elif attack_type == "suppression":
-                    self.attack_engine.add_modifier(SignalSuppressionAttack([0, 1], attenuation_factor=float(simulation_context["attenuation_factor"])))
+                    self.attack_engine.add_modifier(SignalSuppressionAttack([0, 1], attenuation_factor=float(self.simulation_context["attenuation_factor"])))
                     
             # Update DBS attacks
             if attack_type == "phase_shift":
-                simulation_context["dbs_attack"] = "phase_shift"
+                self.simulation_context["dbs_attack"] = "phase_shift"
             else:
-                simulation_context["dbs_attack"] = ""
+                self.simulation_context["dbs_attack"] = ""
                 
             # If stimulation leak is chosen and secure mode is NOT active, trigger it immediately
             if attack_type == "stimulation_leak":
-                if not simulation_context["secure_mode"]:
+                if not self.simulation_context["secure_mode"]:
                     leak = UncontrolledStimulationAttack(self.twin)
                     leak.apply()
                 else:
@@ -358,27 +357,53 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
 class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
     """Multiple threads handling client requests concurrently."""
     daemon_threads = True
-    pass
+    twin: DigitalTwin
+    attack_engine: SignalAttackEngine
+    ips: Any
+    link_guard: Any
+    frame_processor: Any
+    next_seq_no: int
+    _rate_limit_lock: threading.Lock
+    _ip_timestamps: Dict[str, list[float]]
+    context_lock: threading.Lock
+    simulation_context: Dict[str, Any]
+    web_dir: str
 
 def start_web_server(twin: DigitalTwin, attack_engine: SignalAttackEngine, port: int = 7777, ips = None, link_guard = None, ws_token: str = "") -> ThreadedHTTPServer:
-    # Set request handler globals
-    BCIAPIRequestHandler.twin = twin
-    BCIAPIRequestHandler.attack_engine = attack_engine
-    BCIAPIRequestHandler.ips = ips
-    BCIAPIRequestHandler.link_guard = link_guard
+    server = ThreadedHTTPServer(("127.0.0.1", port), BCIAPIRequestHandler)
     
-    simulation_context["ws_token"] = ws_token
+    server.twin = twin
+    server.attack_engine = attack_engine
+    server.ips = ips
+    server.link_guard = link_guard
+    server.frame_processor = None
+    server.next_seq_no = 0
+    server._rate_limit_lock = threading.Lock()
+    server._ip_timestamps = {}
+    server.context_lock = threading.Lock()
+    server.simulation_context = {
+        "dbs_mode": False,
+        "secure_mode": False,
+        "nsp_mode": False,
+        "hardware_mode": False,
+        "dbs_attack": "", 
+        "active_attack": "none", 
+        "noise_intensity": 50.0,
+        "attenuation_factor": 0.1,
+        "impedance_kohm": 60.0,
+        "ws_token": ws_token
+    }
     
     # Sync initial state to twin
-    twin.dbs_mode = simulation_context.get("dbs_mode", False)
-    twin.secure_mode = simulation_context.get("secure_mode", False)
-    twin.nsp_mode = simulation_context.get("nsp_mode", False)
-    twin.hardware_mode = simulation_context.get("hardware_mode", False)
-    twin.active_attack = simulation_context.get("active_attack", "none")
+    twin.dbs_mode = server.simulation_context.get("dbs_mode", False)
+    twin.secure_mode = server.simulation_context.get("secure_mode", False)
+    twin.nsp_mode = server.simulation_context.get("nsp_mode", False)
+    twin.hardware_mode = server.simulation_context.get("hardware_mode", False)
+    twin.active_attack = server.simulation_context.get("active_attack", "none")
     
     # Resolve index.html target directories
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    BCIAPIRequestHandler.web_dir = os.path.join(current_dir, "web")
+    server.web_dir = os.path.join(current_dir, "web")
     
     cert_file = os.path.join(current_dir, "cert.pem")
     key_file = os.path.join(current_dir, "key.pem")
@@ -395,7 +420,6 @@ def start_web_server(twin: DigitalTwin, attack_engine: SignalAttackEngine, port:
         except Exception as e:
             print(f"[WebServer] Failed to generate TLS cert: {e}. Falling back to HTTP.")
             
-    server = ThreadedHTTPServer(("127.0.0.1", port), BCIAPIRequestHandler)
     if os.path.exists(cert_file) and os.path.exists(key_file):
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.load_cert_chain(certfile=cert_file, keyfile=key_file)

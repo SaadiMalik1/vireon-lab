@@ -10,6 +10,9 @@ pub fn parse(tokens: Vec<Token>) -> Result<Ast, ForgeError> {
         match token {
             Token::SetAmp => {
                 if let Some(Token::Number(val)) = iter.next() {
+                    if val > 255 {
+                        return Err(ForgeError::ParserError(format!("SET_AMP value {} exceeds 8-bit limit", val)));
+                    }
                     statements.push(Statement::SetAmp(val as u8));
                 } else {
                     return Err(ForgeError::ParserError("Expected number after SET_AMP".into()));
@@ -38,6 +41,9 @@ pub fn parse(tokens: Vec<Token>) -> Result<Ast, ForgeError> {
                         _ => return Err(ForgeError::ParserError(format!("Unknown shape: {}", shape_name))),
                     };
                     if let Some(Token::Number(size)) = iter.next() {
+                        if size > 255 {
+                            return Err(ForgeError::ParserError(format!("SHAPE size {} exceeds 8-bit limit", size)));
+                        }
                         statements.push(Statement::Shape(shape, size as u8));
                     } else {
                         return Err(ForgeError::ParserError("Expected size number after shape name".into()));
@@ -51,6 +57,9 @@ pub fn parse(tokens: Vec<Token>) -> Result<Ast, ForgeError> {
             },
             Token::ReadSensor => {
                 if let (Some(Token::Number(sensor)), Some(Token::Number(addr))) = (iter.next(), iter.next()) {
+                    if sensor > 255 || addr > 255 {
+                        return Err(ForgeError::ParserError("READ_SENSOR arguments must fit in 8 bits".into()));
+                    }
                     statements.push(Statement::ReadSensor(sensor as u8, addr as u8));
                 } else {
                     return Err(ForgeError::ParserError("Expected sensor and address after READ_SENSOR".into()));
@@ -58,6 +67,9 @@ pub fn parse(tokens: Vec<Token>) -> Result<Ast, ForgeError> {
             },
             Token::LoopStart => {
                 if let Some(Token::Number(iters)) = iter.next() {
+                    if iters > 255 {
+                        return Err(ForgeError::ParserError(format!("LOOP_START iterations {} exceeds 8-bit limit", iters)));
+                    }
                     statements.push(Statement::LoopStart(iters as u8));
                 } else {
                     return Err(ForgeError::ParserError("Expected iterations after LOOP_START".into()));
@@ -68,6 +80,9 @@ pub fn parse(tokens: Vec<Token>) -> Result<Ast, ForgeError> {
             },
             Token::JumpIf => {
                 if let (Some(Token::Number(addr)), Some(Token::Number(val)), Some(Token::Number(target))) = (iter.next(), iter.next(), iter.next()) {
+                    if addr > 255 || val > 255 {
+                        return Err(ForgeError::ParserError("JUMP_IF addr and val must fit in 8 bits".into()));
+                    }
                     statements.push(Statement::JumpIf(addr as u8, val as u8, target as u16));
                 } else {
                     return Err(ForgeError::ParserError("Expected address, value, and target after JUMP_IF".into()));

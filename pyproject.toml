@@ -54,7 +54,10 @@ dev = [
     "mypy>=1.10.0",
 ]
 reports = ["weasyprint>=68.0"]
-docs = ["mkdocs-material~=9.0.0"]
+docs = [
+    "mkdocs-material~=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+]
 ui = [
     "streamlit>=1.54.0",
     "pandas~=2.2.0",
@@ -73,10 +76,6 @@ vireon = "vireon.__main__:main"
 [project.urls]
 Repository = "https://github.com/SaadiMalik1/Vireon.git"
 Documentation = "https://vireon.readthedocs.io"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["vireon*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

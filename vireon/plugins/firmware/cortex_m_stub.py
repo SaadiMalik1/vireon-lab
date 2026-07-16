@@ -123,14 +123,16 @@ class CortexMStub:
         # Extract 4-byte SVN (little-endian unsigned int)
         payload_svn = struct.unpack('<I', payload[:4])[0]
         
-        # Extract 32-byte Signature
-        signature = payload[4:36]
-        firmware_binary = payload[36:]
+        signature = payload[4:68]
+        firmware_binary = payload[68:]
         
-        # Cryptographic Signature Verification
-        import hashlib
-        expected_sig = hashlib.sha256(firmware_binary).digest()
-        if signature != expected_sig:
+        # Verify real asymmetric signature (Ed25519) instead of SHA-256 hash (SEC-5)
+        try:
+            if not hasattr(self, "ota_public_key"):
+                self._trigger_fault("Secure Boot Fault: No public key provisioned.")
+                return False
+            self.ota_public_key.verify(signature, firmware_binary)
+        except Exception:
             self._trigger_fault("Secure Boot Fault: Firmware signature verification failed.")
             return False
         

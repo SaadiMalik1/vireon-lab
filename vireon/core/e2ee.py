@@ -82,7 +82,7 @@ class E2EEChannel:
         iv = os.urandom(12)
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         aesgcm = AESGCM(self.session_key)
-        ciphertext = aesgcm.encrypt(iv, plaintext, None)
+        ciphertext = aesgcm.encrypt(iv, plaintext, b'vireon-e2ee-context')
         
         # AESGCM.encrypt returns ciphertext with the tag appended
         final_payload = iv + ciphertext
@@ -105,7 +105,7 @@ class E2EEChannel:
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         aesgcm = AESGCM(self.session_key)
         try:
-            plaintext = aesgcm.decrypt(iv, ciphertext, None)
+            plaintext = aesgcm.decrypt(iv, ciphertext, b'vireon-e2ee-context')
         except Exception as e:
             raise ValueError("AES-GCM Auth Tag verification failed") from e
             

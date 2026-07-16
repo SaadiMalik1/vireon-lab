@@ -238,14 +238,15 @@ class ReplayEngine:
                         raw_data = self.provider.read_chunk(0, num_samples_per_chunk)
                         self.dataset_sample_position = num_samples_per_chunk
                 return raw_data
-            except Exception:
+            except (OSError, ValueError, EOFError, IndexError) as e:
+                logger.warning(f"Dataset read boundary reached or error: {e}")
                 if self._loop_dataset:
                     self.dataset_sample_position = 0
                     try:
                         raw_data = self.provider.read_chunk(0, num_samples_per_chunk)
                         self.dataset_sample_position = num_samples_per_chunk
                         return raw_data
-                    except Exception as loop_e:
+                    except (OSError, ValueError, EOFError, IndexError) as loop_e:
                         logger.error(f"Failed to restart dataset loop: {loop_e}")
                         self.twin.hazard_state = "FAULT"
                         return np.full((num_channels, num_samples_per_chunk), np.nan)
@@ -264,7 +265,7 @@ class ReplayEngine:
             if self.scribe:
                 try:
                     _ = self.scribe.execute_step(mutated_data.flatten().tolist())
-                except Exception:
+                except RuntimeError:
                     logger.error("Scribe VM execution error", exc_info=True)
             for cb in self.callbacks:
                 if self._executor:

@@ -13,7 +13,7 @@ VIREON is a *research and simulation* tool.
 - **Trust Boundary**: The local execution environment is assumed to be trusted. We do not currently sandbox the execution of user-provided Python plugins beyond standard OS permissions.
 - **NeuroDSL DSL**: The embedded Rust compiler (`NeuroDSL`) is designed to provide bounded memory safety for simulated clinical therapies, but is not intended to securely sandbox malicious arbitrary code execution on the host machine.
 - **Telemetry Egress**: LSL and WebSocket streams emitted by VIREON are unencrypted by default (unless ZTA/E2EE layers are explicitly enabled in the simulation config). They should not be exposed to untrusted networks.
-- **Simulated Cryptography**: No real cryptographic operations are performed by VIREON. All cryptographic components are simulated for the sake of threat modeling and testing. They are not mathematically secure.
+- **Cryptography**: VIREON implements real standard library cryptography (ECDH, SHA256, AES-GCM) for authenticating the simulation channels. However, these are for research environments and threat modeling, not production medical use.
 
 ## Supported Versions
 Only the latest release on the `main` branch is actively supported for security updates.

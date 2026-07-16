@@ -81,7 +81,7 @@ class GuardrailValidator:
             self.validate_attack_payload(attack_name, params)
             
         # 3. Check for Dual-Use (G7) framing in the report
-        if getattr(config.output, "report_prefix", "").lower() == "offensive_strike":
+        if "offensive_strike" in getattr(config.output, "report_prefix", "").lower():
             raise GuardrailViolation(
                 "[G7 Violation] Offensive framing detected in report output. "
                 "VIREON enforces the Dual-Use Trap (G7): offensive applications are explicitly out of scope."

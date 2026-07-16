@@ -9,9 +9,10 @@ VIREON supports Linux, macOS, and Windows Subsystem for Linux (WSL2). Native Win
 Before installing the Python package, ensure you have the required system dependencies.
 
 ### Rust Toolchain (Required for NeuroDSL DSL)
-VIREON uses an embedded Rust compiler to securely execute clinical scripts. You must have Cargo installed.
+VIREON uses an embedded Rust compiler to securely execute clinical scripts. You must have Cargo installed with the **nightly** toolchain.
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustup default nightly
 ```
 
 ### System Libraries (Debian/Ubuntu)
@@ -62,6 +63,15 @@ cd Vireon
 docker build -t vireon-lab .
 docker run -p 7777:7777 vireon-lab ui --host 0.0.0.0
 ```
+
+### Dependencies
+
+- Python 3.9+
+- Poetry (for package management)
+- `liblsl` (for lab streaming layer support)
+- Rust Nightly (1.85+) (mandatory for `neuro_dsl` compilation)
+
+> **Note:** macOS users can install LSL via `brew install labstreaminglayer/tap/lsl`. Linux users may need to build from source or install the appropriate binary package. For Rust, use `rustup toolchain install nightly`.
 
 ## Troubleshooting
 - **Maturin / Rust Build Errors**: If `pip install -e .` fails while building `vireon_neuro_dsl`, ensure Rust is fully updated (`rustup update`) and that you have `maturin` installed (`pip install maturin`).

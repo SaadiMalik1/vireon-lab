@@ -1,6 +1,6 @@
 import unittest
 import struct
-import hashlib
+from cryptography.hazmat.primitives.asymmetric import ed25519
 from vireon.plugins.firmware.cortex_m_stub import CortexMStub
 
 class TestOTARollback(unittest.TestCase):
@@ -12,7 +12,9 @@ class TestOTARollback(unittest.TestCase):
         payload_version = 2
         header = struct.pack('<I', payload_version)
         firmware_binary = b'ValidFirmwareData' * 10
-        signature = hashlib.sha256(firmware_binary).digest()
+        private_key = ed25519.Ed25519PrivateKey.generate()
+        stub.ota_public_key = private_key.public_key()
+        signature = private_key.sign(firmware_binary)
         full_payload = header + signature + firmware_binary
         
         success = stub.process_ota_update(full_payload)
@@ -35,7 +37,9 @@ class TestOTARollback(unittest.TestCase):
         payload_version = 0
         header = struct.pack('<I', payload_version)
         malicious_binary = b'MaliciousPayload' * 10
-        signature = hashlib.sha256(malicious_binary).digest()
+        private_key = ed25519.Ed25519PrivateKey.generate()
+        stub.ota_public_key = private_key.public_key()
+        signature = private_key.sign(malicious_binary)
         full_payload = header + signature + malicious_binary
         
         success = stub.process_ota_update(full_payload)

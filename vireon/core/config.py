@@ -38,7 +38,9 @@ class AttackerModel(BaseModel):
 
 class DeviceConfig(BaseModel):
     """Configuration for the virtual device."""
+    device_id: str = Field(default="VIRT-EEG-01")
     type: str = Field(default="synthetic")       # "synthetic", "pieeg", "replay", "cyton", "ganglion", "muse", "emotiv"
+    hardware_mode: str = Field(default="simulated") # e.g., "simulated", "hil"
     serial_port: str = Field(default="")         # e.g., "/dev/ttyUSB0" or "COM3"
     sample_rate: int = Field(default=250, gt=0)
     num_channels: int = Field(default=8, gt=0)
@@ -78,7 +80,7 @@ class SecurityConfig(BaseModel):
     enabled: bool = Field(default=False)
     nsp_enabled: bool = Field(default=False)
     enable_zta: bool = Field(default=False)
-    zta_thresholds: dict = Field(default_factory=lambda: {"ota_update": 0.9, "telemetry_read": 0.5})
+    zta_thresholds: Dict[str, float] = Field(default_factory=lambda: {"ota_update": 0.9, "telemetry_read": 0.5})
     rms_high_threshold: float = Field(default=120.0, gt=0)
     rms_low_threshold: float = Field(default=0.5, gt=0)
     beta_power_threshold: float = Field(default=35.0, gt=0)
@@ -124,6 +126,7 @@ class PrivacyConfig(BaseModel):
 
 class ExperimentConfig(BaseModel):
     """Complete experiment configuration — the root config object."""
+    schema_version: str = Field(default="1.0")
     name: str = Field(default="default")
     seed: Optional[int] = Field(default=None)    # None = non-deterministic
     duration_sec: float = Field(default=10.0, gt=0)

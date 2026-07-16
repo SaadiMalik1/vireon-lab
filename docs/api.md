@@ -11,7 +11,7 @@ The central orchestrator of the simulation.
 - `setup()`: Initializes the Digital Twin, Firmware Emulator, LSL Streamers, and ZTA Engine.
 - `run_simulation()`: Enters the blocking tick-based physics loop.
 
-### `SecurityEngine` / `ZTAPolicyEngine`
+### `SecurityEngine` / `NeuroIPS`
 The heuristic threat intelligence and zero-trust evaluation core.
 - `evaluate_request(action, context)`: Evaluates trust context against physical anomalies.
 
@@ -37,8 +37,8 @@ Simulates the Bluetooth Low Energy interface of clinical programmers.
 
 ## Abstract Interfaces (`vireon.core.plugin`)
 
-### `BaseAttack`
-Superclass for all simulated attacks (e.g., `DenialOfServiceAttack`, `BatteryDrainAttack`).
+### `ISignalModifier`
+Abstract base interface for all attack and mitigation plugins (e.g., NoiseInjectionAttack, SignalDriftAttack).
 
 ### `BaseDataset`
 Interface for dataset readers. Returns standard NumPy arrays for `Coordinator` playback.

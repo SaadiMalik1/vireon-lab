@@ -3,7 +3,6 @@ message: "If you use this software in your research, please cite it as below."
 authors:
 - family-names: "Malik"
   given-names: "Saadi"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
 title: "VIREON: Virtual Laboratory for Brain-Computer Interface Security"
 version: 1.0.0
 date-released: 2026-07-13

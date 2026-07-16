@@ -72,10 +72,12 @@ class StixMapper:
 
         stix_id = self.keyword_index.get(internal_name.lower())
         
-        # Fallback: just pick the first one if we can't map it directly
-        # so that external tools always receive *some* STIX tag for active attacks
-        if not stix_id and self.attack_patterns:
-            stix_id = list(self.attack_patterns.keys())[0]
+        # Fallback: return unclassified if we can't map it directly
+        if not stix_id:
+            return {
+                "stix_id": "unclassified",
+                "name": "Unclassified Threat"
+            }
 
         if stix_id and stix_id in self.attack_patterns:
             pattern = self.attack_patterns[stix_id]
