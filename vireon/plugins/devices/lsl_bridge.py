@@ -5,8 +5,9 @@ from vireon.plugins.devices import IDeviceWrapper
 try:
     from pylsl import resolve_stream, StreamInlet
     HAS_LSL = True
-except ImportError:
+except (ImportError, RuntimeError) as e:
     HAS_LSL = False
+    print(f"[LSLBridge] pylsl not available or missing binary: {e}")
 
 class _LSLBoardShimMock:
     """Mocks the brainflow.board_shim API used by ReplayEngine."""
