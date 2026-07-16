@@ -12,8 +12,16 @@ These guidelines cover all contributions to the VIREON repository, including cod
 
 ## Prerequisites
 - Python 3.10+
-- Rust toolchain (for NeuroDSL development)
+- Rust toolchain (nightly is required for NeuroDSL development)
 - Git
+
+## Onboarding Checklist for New Contributors
+- [ ] Fork and clone the repository.
+- [ ] Set up the development environment (`pip install -e .[dev]`).
+- [ ] Run tests to ensure everything works locally (`pytest tests/`).
+- [ ] Read the [Architecture Overview](docs/architecture.md).
+- [ ] Pick an issue labeled `good first issue` or `help wanted`.
+- [ ] Submit a Pull Request!
 
 ## How Can I Contribute?
 
@@ -42,6 +50,12 @@ This section guides you through submitting a bug report. Following these guideli
 - We follow PEP 8 standards. Use `ruff` for linting.
 - All public methods must include docstrings detailing Purpose, Parameters, Return values, Exceptions, and Security considerations.
 - Type hints are required for all new Python code.
+
+## Git & Workflow Conventions
+- **Commit Messages**: Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (e.g., `feat:`, `fix:`, `docs:`).
+- **Branch Naming**: Use the format `type/issue-number-description` (e.g., `feat/123-add-ble-plugin`).
+- **PR Size**: Keep PRs small and focused (preferably under 400 lines of changes).
+- **Merge Policy**: All PRs must be squash-merged into `main` after receiving at least one approval.
 
 ## Architecture Principles
 VIREON uses an event-driven plugin architecture. Do not tightly couple components. Use the `EventBus` for cross-component communication, and the `PluginRegistry` for adding new devices or attack vectors.

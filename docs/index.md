@@ -29,7 +29,7 @@ This documentation is divided into extensive standalone guides:
 - **[Plugin Development Guide](plugin-development.md)**: How to write custom Attack and Device plugins via the Event Bus.
 - **[Standards Derivation Log](STANDARDS-DERIVATION-LOG.md)**: The central architectural decision record tracing the alignment with clinical and cybersecurity industry standards.
 - **[Glossary & Formal Definitions](glossary.md)**: Mathematical and structural bounds defining the scope of theoretical attacks.
-- **[Frequently Asked Questions](FAQ.md)**: Troubleshooting installation, dashboards, and stream capturing.
+- **[Frequently Asked Questions](faq.md)**: Troubleshooting installation, dashboards, and stream capturing.
 
 ---
 

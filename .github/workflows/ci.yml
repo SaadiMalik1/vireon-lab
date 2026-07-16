@@ -39,6 +39,12 @@ jobs:
       run: |
         ruff check .
 
+    - name: Link Checker
+      uses: lycheeverse/lychee-action@v2
+      with:
+        args: --offline "**/*.md"
+      continue-on-error: true
+
     - name: Type check with MyPy
       run: |
         mypy vireon/

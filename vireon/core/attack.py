@@ -567,7 +567,8 @@ class FirmwareRollbackAttack(ISignalModifier):
         import struct
         malicious_binary = b'A' * 600000
         header = struct.pack('<I', self.payload_version)
-        return header + malicious_binary
+        dummy_signature = b'\x00' * 64
+        return header + dummy_signature + malicious_binary
 
     def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         if not self.has_fired:
@@ -601,15 +602,25 @@ class InsiderThreatAttack(ISignalModifier):
         if not self.has_fired:
             print("[InsiderThreatAttack] Injecting malicious clinical configuration...")
             # Force a dangerous parameter directly on the twin
-            twin.stimulation_amplitude_ma = 15.0
-            twin.set_clinical_alert(True, "Insider Threat: Dangerous parameters injected")
+            if hasattr(twin, "_lock"):
+                with twin._lock:
+                    twin.stimulation_amplitude_ma = 15.0
+                    twin.set_clinical_alert(True, "Insider Threat: Dangerous parameters injected")
+            else:
+                twin.stimulation_amplitude_ma = 15.0
+                twin.set_clinical_alert(True, "Insider Threat: Dangerous parameters injected")
             self.has_fired = True
         return data
 
     def revert(self, twin: DigitalTwin) -> None:
         if self.has_fired:
-            twin.stimulation_amplitude_ma = 5.0
-            twin.set_clinical_alert(False, "Nominal")
+            if hasattr(twin, "_lock"):
+                with twin._lock:
+                    twin.stimulation_amplitude_ma = 5.0
+                    twin.set_clinical_alert(False, "Nominal")
+            else:
+                twin.stimulation_amplitude_ma = 5.0
+                twin.set_clinical_alert(False, "Nominal")
 
 # --- NEW ATTACK STUBS FOR 13-TAXONOMY NSAE VALIDATION ---
 

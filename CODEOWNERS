@@ -4,15 +4,15 @@
 *       @SaadiMalik1
 
 # Core engine and architecture
-/vireon/core/       @SaadiMalik1
-/docs/architecture.md    @SaadiMalik1
+/vireon/core/            @SaadiMalik1 @core-engineers
+/docs/architecture.md    @SaadiMalik1 @core-engineers
 
 # Security and Attacks
-/vireon/attacks/    @SaadiMalik1
-/docs/security*.md       @SaadiMalik1
+/vireon/attacks/         @SaadiMalik1 @crypto-experts
+/docs/security*.md       @SaadiMalik1 @crypto-experts
 
 # Plugins and Firmware
-/vireon/plugins/    @SaadiMalik1
+/vireon/plugins/         @SaadiMalik1 @plugin-reviewers
 
 # Rust compiler
-/neuro_dsl/               @SaadiMalik1
+/neuro_dsl/              @SaadiMalik1 @rust-compiler-team

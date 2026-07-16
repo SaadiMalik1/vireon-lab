@@ -28,7 +28,7 @@ class AttackFactory:
             for ch in self.target_channels:
                 if ch in eeg_channels:
                     # Inject 50uV Gaussian noise for SI
-                    noise = np.random.normal(0, 50.0, size=data.shape[1])
+                    noise = rng.normal(0, 50.0, size=data.shape[1]) if rng is not None else np.random.normal(0, 50.0, size=data.shape[1])
                     mutated[ch, :] += noise
             twin.set_clinical_alert(True, f"IDS Alert: {self.technique.get('mitre_attack', 'Unknown')} ({self.technique.get('name', 'Unknown')}) Active")
             return mutated

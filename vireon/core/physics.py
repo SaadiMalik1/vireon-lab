@@ -65,73 +65,80 @@ class PhysicsEngine:
         """
         Evaluate physical constraints over time interval dt.
         """
-        # Calculate Thermodynamic tissue heating using Pennes Bioheat Equation
-        # Pennes Bioheat Equation (Lumped Approximation)
-        T_a = 37.0 - (self.thermo_const.Q_m / self.thermo_const.w_b_rho_b_c_b) # Calibrated arterial blood temp to keep equilibrium at 37.0
-        
-        Q_ext = 0.0
-        if twin.stimulation_enabled and twin.stimulation_amplitude_ma > 0:
-            # Joule heating: P = I^2 * R * duty_cycle
-            I_A = twin.stimulation_amplitude_ma * 1e-3
-            R_ohms = twin.electrode_impedances.get(0, 5.0) * 1000.0
-            duty_cycle = twin.stimulation_frequency_hz * self.thermo_const.pulse_width_s
-            power_W = (I_A ** 2) * R_ohms * duty_cycle
-            Q_ext = power_W / self.thermo_const.vol_m3
+        if hasattr(twin, "_lock"):
+            twin._lock.acquire()
             
-        def get_dT_dt(T):
-            return (self.thermo_const.w_b_rho_b_c_b * (T_a - T) + self.thermo_const.Q_m + Q_ext) / self.thermo_const.rho_c
-
-        # RK4 Integration for stability
-        k1 = get_dT_dt(twin.temperature_celsius)
-        k2 = get_dT_dt(twin.temperature_celsius + 0.5 * dt * k1)
-        k3 = get_dT_dt(twin.temperature_celsius + 0.5 * dt * k2)
-        k4 = get_dT_dt(twin.temperature_celsius + dt * k3)
-        
-        dT_total = (dt / 6.0) * (k1 + 2*k2 + 2*k3 + k4)
-        twin.temperature_celsius = max(37.0, twin.temperature_celsius + dT_total)
-        
-        # Calculate theoretical DC leakage
-        # Simplified heuristic: high amplitude/frequency causes imperfect charge balancing leading to leakage
-        if twin.stimulation_enabled and twin.stimulation_amplitude_ma > 0:
-            leakage_ua = 0.1 * twin.stimulation_amplitude_ma * (twin.stimulation_frequency_hz / 130.0)
-        else:
-            leakage_ua = 0.0
-
-        # Check violations
-        temp_rise = twin.temperature_celsius - 37.0
-        
-        violation_msg = None
-        if temp_rise > self.max_temp_rise_c:
-            violation_msg = f"Tissue temp rise limit exceeded: {temp_rise:.2f}°C > {self.max_temp_rise_c}°C"
-        elif leakage_ua > self.max_dc_leakage_ua:
-            violation_msg = f"DC leakage limit exceeded: {leakage_ua:.2f}µA > {self.max_dc_leakage_ua}µA"
-
-        if violation_msg:
-            if getattr(twin, "hardware_mode", False):
-                # Hard Hardware Failsafe
-                twin.stimulation_enabled = False
-                twin.stimulation_amplitude_ma = 0.0
-                twin.stimulation_frequency_hz = 0.0
-                twin.hazard_state = "HARDWARE_SHUTDOWN"
-                twin.iso_severity = "CRITICAL"
-                twin.clinical_alert_active = True
-                twin.clinical_status = f"Hardware Failsafe: {violation_msg}"
-                twin._log_state_change(twin.clinical_status)
+        try:
+            # Calculate Thermodynamic tissue heating using Pennes Bioheat Equation
+            # Pennes Bioheat Equation (Lumped Approximation)
+            T_a = 37.0 - (self.thermo_const.Q_m / self.thermo_const.w_b_rho_b_c_b) # Calibrated arterial blood temp to keep equilibrium at 37.0
+            
+            Q_ext = 0.0
+            if twin.stimulation_enabled and twin.stimulation_amplitude_ma > 0:
+                # Joule heating: P = I^2 * R * duty_cycle
+                I_A = twin.stimulation_amplitude_ma * 1e-3
+                R_ohms = twin.electrode_impedances.get(0, 5.0) * 1000.0
+                duty_cycle = twin.stimulation_frequency_hz * self.thermo_const.pulse_width_s
+                power_W = (I_A ** 2) * R_ohms * duty_cycle
+                Q_ext = power_W / self.thermo_const.vol_m3
+                
+            def get_dT_dt(T):
+                return (self.thermo_const.w_b_rho_b_c_b * (T_a - T) + self.thermo_const.Q_m + Q_ext) / self.thermo_const.rho_c
+    
+            # RK4 Integration for stability
+            k1 = get_dT_dt(twin.temperature_celsius)
+            k2 = get_dT_dt(twin.temperature_celsius + 0.5 * dt * k1)
+            k3 = get_dT_dt(twin.temperature_celsius + 0.5 * dt * k2)
+            k4 = get_dT_dt(twin.temperature_celsius + dt * k3)
+            
+            dT_total = (dt / 6.0) * (k1 + 2*k2 + 2*k3 + k4)
+            twin.temperature_celsius = max(37.0, twin.temperature_celsius + dT_total)
+            
+            # Calculate theoretical DC leakage
+            # Simplified heuristic: high amplitude/frequency causes imperfect charge balancing leading to leakage
+            if twin.stimulation_enabled and twin.stimulation_amplitude_ma > 0:
+                leakage_ua = 0.1 * twin.stimulation_amplitude_ma * (twin.stimulation_frequency_hz / 130.0)
             else:
-                # Simulation Warning Mode
-                twin.tissue_damage_risk = "HIGH"
-                twin.clinical_alert_active = True
-                if twin.hazard_state != "WARNING" or twin.iso_severity != "HIGH":
-                    twin.clinical_status = f"Physics Violation (Sim): {violation_msg}"
-                    twin.hazard_state = "WARNING"
-                    twin.iso_severity = "HIGH"
+                leakage_ua = 0.0
+    
+            # Check violations
+            temp_rise = twin.temperature_celsius - 37.0
+            
+            violation_msg = None
+            if temp_rise > self.max_temp_rise_c:
+                violation_msg = f"Tissue temp rise limit exceeded: {temp_rise:.2f}°C > {self.max_temp_rise_c}°C"
+            elif leakage_ua > self.max_dc_leakage_ua:
+                violation_msg = f"DC leakage limit exceeded: {leakage_ua:.2f}µA > {self.max_dc_leakage_ua}µA"
+    
+            if violation_msg:
+                if getattr(twin, "hardware_mode", False):
+                    # Hard Hardware Failsafe
+                    twin.stimulation_enabled = False
+                    twin.stimulation_amplitude_ma = 0.0
+                    twin.stimulation_frequency_hz = 0.0
+                    twin.hazard_state = "HARDWARE_SHUTDOWN"
+                    twin.iso_severity = "CRITICAL"
+                    twin.clinical_alert_active = True
+                    twin.clinical_status = f"Hardware Failsafe: {violation_msg}"
                     twin._log_state_change(twin.clinical_status)
-        else:
-            # Decay risk if we're back in safe margins and it was high just from physics
-            if twin.tissue_damage_risk == "HIGH" and twin.hazard_state == "WARNING":
-                twin.tissue_damage_risk = "NONE"
-                twin.clinical_alert_active = False
-                twin.clinical_status = "Nominal"
-                twin.hazard_state = "NOMINAL"
-                twin.iso_severity = "NEGLIGIBLE"
-                twin._log_state_change("Physics states returned to nominal")
+                else:
+                    # Simulation Warning Mode
+                    twin.tissue_damage_risk = "HIGH"
+                    twin.clinical_alert_active = True
+                    if twin.hazard_state != "WARNING" or twin.iso_severity != "HIGH":
+                        twin.clinical_status = f"Physics Violation (Sim): {violation_msg}"
+                        twin.hazard_state = "WARNING"
+                        twin.iso_severity = "HIGH"
+                        twin._log_state_change(twin.clinical_status)
+            else:
+                # Decay risk if we're back in safe margins and it was high just from physics
+                if twin.tissue_damage_risk == "HIGH" and twin.hazard_state == "WARNING":
+                    twin.tissue_damage_risk = "NONE"
+                    twin.clinical_alert_active = False
+                    twin.clinical_status = "Nominal"
+                    twin.hazard_state = "NOMINAL"
+                    twin.iso_severity = "NEGLIGIBLE"
+                    twin._log_state_change("Physics states returned to nominal")
+        finally:
+            if hasattr(twin, "_lock"):
+                twin._lock.release()

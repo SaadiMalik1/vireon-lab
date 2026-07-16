@@ -2,7 +2,7 @@
 
 > [!CAUTION]
 > **Research/Education Testbed**
-> VIREON is a research and educational platform. While it implements real cryptographic operations (ECDH, SHA256) and physically consistent ODEs, it is **not** for clinical, diagnostic, or production medical use.
+> VIREON is a research and educational platform. While it implements physically consistent ODEs, it is **not** for clinical, diagnostic, or production medical use. Note that cryptographic operations are simulated for educational purposes and are not secure.
 [![CI](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -32,7 +32,7 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 | **Fuzzer** | **Working** | Mutation fuzzer with a real accept/reject oracle. |
 | **Plugin Registry** | **Working** | Thread-safe entry-point discovery. |
 | **Closed-Loop DBS** | **Working** | Emulated STN LFP and stimulation modulation. |
-| **Cryptography** | **Working** | Standard library ECDH, SHA256, and AES-GCM. |
+| **Cryptography** | **Simulated** | Cryptographic primitives (ECDH, SHA256, AES-GCM) are emulated placeholders for threat modeling and are NOT cryptographically secure. |
 | **Compliance Evidence** | **Working** | FDA 524B outputs generated from verified controls and software components. |
 | **Physics / Biology** | **Working** | Implements RK4 integrator, Pennes Bioheat equation, and Kuramoto neural dynamics. |
 
@@ -49,7 +49,7 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 
 ## Installation & Prerequisites
 
-It is highly recommended to use a virtual environment. The project requires **Python 3.10+** and **Rust 1.85+**.
+It is highly recommended to use a virtual environment. The project requires **Python 3.10+** and the **Rust nightly toolchain (1.85+)**.
 
 ```bash
 git clone https://github.com/SaadiMalik1/Vireon.git

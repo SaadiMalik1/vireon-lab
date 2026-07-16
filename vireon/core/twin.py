@@ -99,6 +99,30 @@ class DigitalTwin(ITwin):
 
         # Log initial state
         self._log_state_change("Initialization")
+        self._initialized = True
+
+    def __setattr__(self, name, value):
+        if name.startswith('_') or name in ['history', 'physics_engine', 'neural_dynamics']:
+            super().__setattr__(name, value)
+            return
+
+        if hasattr(self, '_lock'):
+            with self._lock:
+                # Log state change for critical security/clinical fields if they change
+                if hasattr(self, '_initialized') and self._initialized:
+                    old_value = getattr(self, name, None)
+                    if old_value != value:
+                        super().__setattr__(name, value)
+                        # Only log important changes to avoid spamming the history
+                        if name in ['stimulation_enabled', 'stimulation_amplitude_ma', 
+                                    'stimulation_frequency_hz', 'connected', 'clinical_status',
+                                    'hazard_state', 'active_attack', 'dbs_mode', 'secure_mode',
+                                    'nsp_mode', 'e2ee_mode']:
+                            self._log_state_change(f"State mutation: {name} changed to {value}")
+                else:
+                    super().__setattr__(name, value)
+        else:
+            super().__setattr__(name, value)
 
     def _load_atlas_mapping(self):
         """Loads Threat Atlas to map device channels to brain regions."""

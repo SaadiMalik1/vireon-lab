@@ -75,7 +75,7 @@ class CryptoEmulator:
             derived_key = HKDF(
                 algorithm=hashes.SHA256(),
                 length=32,
-                salt=None,
+                salt=b'vireon-fixed-salt-or-exchange',
                 info=b'vireon handshake data',
             ).derive(shared_secret)
             return derived_key

@@ -5,7 +5,7 @@ import time
 import ssl
 from vireon.core.twin import DigitalTwin
 from vireon.core.attack import SignalAttackEngine
-from vireon.plugins.reports.web_server import start_web_server, simulation_context
+from vireon.plugins.reports.web_server import start_web_server
 
 class TestWebUIRESTAPI(unittest.TestCase):
     def setUp(self):
@@ -58,9 +58,9 @@ class TestWebUIRESTAPI(unittest.TestCase):
         self.assertTrue(data["context"]["secure_mode"])
         self.assertTrue(data["context"]["dbs_mode"])
 
-        # Verify globals updated
-        self.assertTrue(simulation_context["secure_mode"])
-        self.assertTrue(simulation_context["dbs_mode"])
+        # Verify server state updated
+        self.assertTrue(self.server.simulation_context["secure_mode"])
+        self.assertTrue(self.server.simulation_context["dbs_mode"])
 
     def test_post_api_control_attacks(self):
         status, data = self._post_json('/api/control', {"active_attack": "noise"})
@@ -69,7 +69,7 @@ class TestWebUIRESTAPI(unittest.TestCase):
 
         # Verify attack modifier added to engine
         self.assertEqual(len(self.attack_engine.modifiers), 1)
-        self.assertEqual(simulation_context["active_attack"], "noise")
+        self.assertEqual(self.server.simulation_context["active_attack"], "noise")
 
 if __name__ == "__main__":
     unittest.main()

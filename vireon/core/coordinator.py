@@ -7,15 +7,13 @@ that can be used both programmatically and from the CLI.
 
 import time
 import sys
-import os
 import threading
-import numpy as np
 import logging
 from typing import Optional, Any
 
 from vireon.core.twin import DigitalTwin
 from vireon.core.engine import ReplayEngine
-from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
+from vireon.core.attack import SignalAttackEngine
 from vireon.core.event_bus import EventBus, Event
 from vireon.core.config import ExperimentConfig
 from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
@@ -104,7 +102,7 @@ class Coordinator:
             device_id=self.config.device.device_id,
             sample_rate=self.config.device.sample_rate,
             num_channels=self.config.device.num_channels,
-            hardware_mode=self.config.device.hardware_mode,
+            hardware_mode=self.config.emulation.hardware_loopback,
             seed=self.config.seed
         )
         self.attack_engine = SignalAttackEngine(self.twin, self.event_bus)
@@ -115,8 +113,11 @@ class Coordinator:
         # Enable event logging for reproducibility
         self.event_bus.enable_logging(True)
 
+        from vireon.core.coordinator_builder import SimulationBuilder
+        builder = SimulationBuilder(self)
+
         # 2. Configure attacks
-        self._setup_attacks()
+        builder.setup_attacks()
 
         # Configure timed scenarios if scenario steps are defined
         self.scenario = None
@@ -134,8 +135,8 @@ class Coordinator:
             self.scenario = AttackScenario(self.config.name, steps, self.event_bus)
 
         # 3. Configure data source
-        device_wrapper = self._setup_device()
-        dataset_reader = self._setup_dataset()
+        device_wrapper = builder.setup_device()
+        dataset_reader = builder.setup_dataset()
 
         from vireon.core.data_provider import DeviceProviderAdapter, DatasetProviderAdapter
         provider = None
@@ -204,13 +205,13 @@ class Coordinator:
 
         # 7. Web server & LSL
         if getattr(self.config.web, 'lsl_only', False):
-            self._setup_lsl_streamer()
+            builder.setup_lsl_streamer()
         elif self.config.web.enabled:
-            self._setup_web_server()
+            builder.setup_web_server()
 
         # 8. BLE emulation
         if self.config.emulation.ble:
-            self._setup_ble()
+            builder.setup_ble()
 
         # 8.5 Privacy Engine
         self.privacy_filter = None
@@ -220,8 +221,11 @@ class Coordinator:
             self.privacy_filter = DifferentialPrivacyFilter(epsilon=self.config.privacy.epsilon)
             self.privacy_tracker = PrivacyBudgetTracker(max_epsilon=10.0)
 
+        from vireon.core.coordinator_callbacks import CoordinatorCallbacks
+        self.callbacks = CoordinatorCallbacks(self)
+        
         # 9. Register the unified simulation callback
-        self.engine.add_callback(self._simulation_callback)
+        self.engine.add_callback(self.callbacks.simulation_callback)
 
         # 10. OpenBCI emulator
         if self.config.emulation.openbci:
@@ -316,370 +320,11 @@ class Coordinator:
         else:
             self._compile_reports()
 
-    def _ws_broadcast_callback(self, data, channels, sample_rate):
-        """Callback to serialize and broadcast simulation state over WebSockets."""
-        if self.ws_server is not None:
-            import json
-            state = self.twin.get_state()
-            # Send Channel 1 signal chunk as JSON-serializable list (Ch 0 is often package count)
-            # Replace NaNs with 0.0 because standard JSON (and JS JSON.parse) cannot handle NaN
-            signal_chunk = data[1, :]
-            
-            # Apply Differential Privacy if enabled
-            if self.privacy_filter is not None:
-                # We need to reshape slightly or just pass the 1D array
-                signal_chunk = self.privacy_filter.filter_signal(signal_chunk.copy())
-                if self.privacy_tracker:
-                    self.privacy_tracker.consume(0.001)  # Nominal budget consumption per chunk
-                    
-            signal_list = signal_chunk.tolist()
-            state["signal_chunk"] = [0.0 if np.isnan(x) else x for x in signal_list]
-            
-            active_attack = self.twin.active_attack
-            state["active_attack"] = active_attack
-            if self.threat_intel and active_attack != "none":
-                tara_intel = self.threat_intel.resolve_attack(active_attack)
-                if tara_intel:
-                    state["threat_intel"] = tara_intel
-            
-            if hasattr(self, 'ids') and self.ids:
-                state["security_logs"] = list(self.ids.detections)
-                
-            if hasattr(self, 'ips') and self.ips:
-                state["blocked_attacks_count"] = self.ips.blocked_attacks_count
-                state["clamping_active"] = self.ips.clamping_active
-                state["blocked_mtu_abuses"] = self.ips.blocked_mtu_abuses
-                
-            if self.twin.nsp_mode and self.nsp_wrapper:
-                state = self.nsp_wrapper.encrypt_payload(state)
-                
-            self.ws_server.broadcast_sync(json.dumps(state))
+    # --- WebSocket broadcast callback moved to coordinator_callbacks.py ---
 
-    # --- Private setup helpers ---
+    # --- Builder setup helpers were moved to coordinator_builder.py ---
 
-    def _setup_attacks(self):
-        """Configure signal modifiers from config."""
-        target_channels = self.config.attacks.target_channels
-
-        for attack_name in self.config.attacks.active:
-            if attack_name == "noise":
-                print(f"[VIREON] Injecting Noise Attack (SD={self.config.attacks.noise_level_uv} uV)")
-                self.attack_engine.add_modifier(
-                    NoiseInjectionAttack(target_channels, self.config.attacks.noise_level_uv)
-                )
-            elif attack_name == "drift":
-                print("[VIREON] Injecting Signal Drift Attack")
-                self.attack_engine.add_modifier(
-                    SignalDriftAttack(target_channels, self.config.attacks.drift_rate_uv_per_sec)
-                )
-            elif attack_name == "impedance":
-                print("[VIREON] Injecting Impedance Spike Attack")
-                self.attack_engine.add_modifier(
-                    ImpedanceSpikeAttack(target_channels, self.config.attacks.spike_impedance_kohm)
-                )
-            elif attack_name == "suppression":
-                print("[VIREON] Injecting Signal Suppression Attack")
-                self.attack_engine.add_modifier(
-                    SignalSuppressionAttack(target_channels, self.config.attacks.attenuation_factor)
-                )
-            elif attack_name == "stimulation_leak":
-                print("[VIREON] Injecting Stimulation Leak Attack")
-                if self.config.security.enabled:
-                    from vireon.core.detection import SecurityEngine
-                    from vireon.core.clinical import NeuroIPS
-                    temp_ids = SecurityEngine(self.twin)
-                    temp_ips = NeuroIPS(self.twin, temp_ids)
-                    amp, freq = temp_ips.sanitize_stimulation_write(10.0, 130.0)
-                    self.twin.update_therapy(True)
-                    self.twin.update_stimulation_params(amp, freq)
-                else:
-                    from vireon.plugins.clinical.closed_loop import UncontrolledStimulationAttack
-                    leak = UncontrolledStimulationAttack(self.twin)
-                    leak.apply()
-            else:
-                print(f"[VIREON] Warning: Unknown attack type: {attack_name}")
-
-        self.event_bus.publish(Event(
-            topic="attack.configured",
-            data={"attacks": self.config.attacks.active},
-            source="coordinator"
-        ))
-
-    def _setup_device(self):
-        """Load device wrapper from config."""
-        device_wrapper = None
-        try:
-            if self.registry.has("devices", self.config.device.type):
-                device_wrapper = self.registry.create(
-                    "devices", 
-                    self.config.device.type,
-                    serial_port=self.config.device.serial_port
-                )
-            else:
-                print(f"[VIREON] Warning: Unknown device type '{self.config.device.type}'")
-        except Exception as e:
-            logger.error(f"Error loading device module: {e}", exc_info=True)
-            sys.exit(1)
-        return device_wrapper
-
-    def _setup_dataset(self):
-        """Load dataset reader from config."""
-        dataset_reader = None
-
-        if self.config.emulation.hardware_loopback:
-            print("[VIREON] Configuring Hardware-in-the-loop (HIL) Socket Bridge...")
-            from vireon.plugins.devices.hardware_bridge import HardwareBridge
-            self.bridge = HardwareBridge(host="127.0.0.1", port=9090)
-            self.bridge.start()
-            dataset_reader = self.bridge
-        elif self.config.dataset.path:
-            path = self.config.dataset.path
-            ext = os.path.splitext(path)[1].lower()
-            if ext in [".edf", ".bdf"]:
-                from vireon.plugins.datasets.edf_reader import EDFReader
-                dataset_reader = EDFReader(path)
-            elif ext == ".csv":
-                from vireon.plugins.datasets.csv_reader import CSVReader
-                dataset_reader = CSVReader(path)
-            else:
-                print(f"[VIREON] Unsupported dataset extension: {ext}. Using synthetic stream.")
-
-        return dataset_reader
-
-    def _setup_lsl_streamer(self):
-        """
-        Initialize LSL Streamer instead of Web UI.
-        This is an intentional headless execution path used primarily for 
-        automated testing and CI environments where a Web UI cannot be spawned.
-        """
-        print("[VIREON] Starting headless mode for automated testing. Initializing LSL Streamer...")
-        try:
-            from vireon.core.lsl_streamer import LSLStreamer
-            self.lsl_streamer = LSLStreamer(num_channels=self.twin.num_channels, srate=self.twin.sample_rate)
-            self.config.duration_sec = 100000.0  # Run indefinitely in LSL mode
-        except Exception as e:
-            logger.error(f"Failed to start LSL Streamer: {e}", exc_info=True)
-            raise RuntimeError(f"LSL Streamer failed to initialize: {e}") from e
-
-    def _setup_web_server(self):
-        """Start the Web UI dashboard."""
-        import secrets
-        from vireon.plugins.reports.web_server import start_web_server, simulation_context
-        
-        # Generate a secure session token for WebSocket authentication
-        self.ws_token = secrets.token_urlsafe(16)
-
-        # Pre-seed the context with current settings
-        simulation_context["secure_mode"] = self.config.security.enabled
-        simulation_context["hardware_mode"] = self.config.emulation.hardware_loopback
-        
-        self.web_server = start_web_server(
-            twin=self.twin,
-            attack_engine=self.attack_engine,
-            port=self.config.web.port,
-            ips=self.ips,
-            link_guard=self.link_guard,
-            ws_token=self.ws_token
-        )
-        
-        # Also start the fast telemetry websocket server
-        from vireon.plugins.reports.ws_server import NeuroWebSocketServer
-        self.ws_server = NeuroWebSocketServer(port=self.config.web.port + 1, token=self.ws_token)
-        self.ws_server.start()
-
-        # Add WebSocket broadcast callback to the engine
-        self.engine.add_callback(self._ws_broadcast_callback)
-
-    def _setup_ble(self):
-        """Initialize BLE emulation stack."""
-        from vireon.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
-        from vireon.plugins.ble.attacks import PairingFailureAttack, MTUAbuseAttack
-
-        print("[VIREON] Initializing Virtual BLE Stack...")
-        self.ble_server = VirtualBLEServer()
-        self.ble_link = VirtualBLELink(self.ble_server)
-        self.ble_client = VirtualBLEClient(self.ble_link)
-
-        self.ble_client.connect()
-        self.ble_client.pair(self.ble_link.pairing_code)
-
-        requested_mtu = 247
-        if self.config.emulation.ble_attack == "mtu_abuse":
-            requested_mtu = 5
-        if self.config.security.enabled and self.link_guard:
-            requested_mtu = self.link_guard.verify_mtu(requested_mtu)
-        self.ble_client.negotiate_mtu(requested_mtu)
-        self.ble_client.enable_notifications("FE8D", "2D30", True)
-
-        if self.config.emulation.ble_attack == "pairing_fail":
-            PairingFailureAttack(self.twin).apply(self.ble_client, self.ble_link)
-        elif self.config.emulation.ble_attack == "mtu_abuse" and not self.config.security.enabled:
-            MTUAbuseAttack(self.twin, abnormal_mtu=5).apply(self.ble_client, self.ble_link)
-
-    def _build_trust_context(self):
-        from vireon.core.zta import TrustContext
-        
-        # Determine biometric confidence
-        bio_conf = 1.0
-        if self.biometric_gate and self.biometric_gate.is_locked:
-            bio_conf = 0.0
-        elif self.ids and self.ids.history_confidence:
-            bio_conf = self.ids.history_confidence[-1]
-
-        return TrustContext(
-            biometric_confidence=bio_conf,
-            firmware_healthy=not getattr(self.emulator, 'crashed', False) if self.emulator else True,
-            e2ee_established=self.twin.e2ee_mode,
-            clinical_mode=getattr(self.config.security, 'clinical_mode', False)
-        )
-
-    def _simulation_callback(self, raw_data, eeg_channels, sample_rate):
-        """Unified callback executed every block by the ReplayEngine."""
-        
-        # 0. ZTA Telemetry Check
-        if self.zta_engine:
-            from vireon.core.zta import AuthorizationDecision
-            ctx = self._build_trust_context()
-            decision = self.zta_engine.evaluate_request("telemetry_read", ctx)
-            if decision == AuthorizationDecision.DENY:
-                # Do not emit telemetry if trust is too low
-                return
-        import random
-
-        num_samples = raw_data.shape[1]
-
-        # 0. Update timed attack scenario if loaded
-        if self.scenario and self.engine:
-            self.scenario.update(self.engine.sim_clock, self.attack_engine, self.registry)
-
-        # Resolve active flags dynamically (supports web UI live toggling)
-        dbs_active = self.twin.dbs_mode
-        secure_active = self.twin.secure_mode
-
-        # 1. Acquire signal source
-        if dbs_active and self.dbs_controller:
-            data_to_process = self.dbs_controller.lfp_generator.read_chunk(
-                num_samples, self.dbs_controller.stimulation_mode
-            )
-            raw_data[:data_to_process.shape[0], :] = data_to_process[:, :]
-        else:
-            data_to_process = raw_data.copy()
-
-        # Simulate physical ADC input amplifier saturation limits
-        data_to_process = self.twin.simulate_adc_saturation(data_to_process)
-
-        # IDS/IPS signal filtering
-        if secure_active and self.ids and self.ips:
-            anomalies = self.ids.analyze_signal(data_to_process)
-            data_to_process = self.ips.mitigate_signal_anomalies(data_to_process, anomalies)
-
-            if anomalies:
-                self.event_bus.publish(Event(
-                    topic="ids.anomaly_detected",
-                    data={"anomalies": anomalies, "sim_clock": self.engine.sim_clock},
-                    source="ids"
-                ))
-
-        # 2. BLE transmission layer
-        if self.config.emulation.ble and self.ble_link and self.ble_client:
-            if not self.ble_link.connected:
-                self.twin.set_connection(False)
-                return
-
-            payload = data_to_process.tobytes()
-
-            from vireon.plugins.ble.attacks import GATTCorruptionAttack, MalformedNotificationAttack
-            if self.config.emulation.ble_attack == "gatt_corrupt":
-                payload = GATTCorruptionAttack(corruption_probability=1.0).apply(payload)
-            elif self.config.emulation.ble_attack == "malformed_notify":
-                attack = MalformedNotificationAttack(packet_size=len(payload))
-                payload = attack.apply()
-
-            self.ble_client.receive_notification(payload)
-
-            try:
-                reconstructed_bytes = b"".join(self.ble_client.received_packets)
-                self.ble_client.received_packets.clear()
-
-                if self.ble_link.mtu < 23:
-                    if random.random() < 0.8:
-                        raise ValueError("Packet loss under restricted MTU")
-
-                data_to_process = np.frombuffer(
-                    reconstructed_bytes[:raw_data.nbytes], dtype=raw_data.dtype
-                ).copy().reshape(raw_data.shape)
-            except Exception as e:
-                logger.error(f"BLE packet reconstruction failed: {e}", exc_info=True)
-                self.twin.hazard_state = "FAULT"
-                data_to_process = np.full(raw_data.shape, np.nan)
-
-            if secure_active and self.ids and self.ips:
-                anomalies = self.ids.analyze_signal(data_to_process)
-                data_to_process = self.ips.mitigate_signal_anomalies(data_to_process, anomalies)
-
-        # 3. Clinical closed-loop evaluation
-        if dbs_active and self.dbs_controller:
-            dbs_attack_type = "phase_shift" if self.twin.active_attack == "phase_shift" else ""
-            self.dbs_controller.process_lfp(
-                data_to_process, eeg_channels, sample_rate,
-                attack_active=(dbs_attack_type == "phase_shift")
-            )
-            if secure_active and self.ids and self.ips and self.dbs_controller.history_beta_power:
-                curr_pow = self.dbs_controller.history_beta_power[-1]
-                stim_active = self.twin.stimulation_enabled
-                stim_amp = self.twin.stimulation_amplitude_ma
-                clinical_anomalies = self.ids.analyze_clinical(curr_pow, stim_active, stim_amp)
-                self.ips.mitigate_pathological_sync(clinical_anomalies)
-        else:
-            self.clinical_sim.process_signal(data_to_process, eeg_channels, sample_rate)
-
-        # 3.5 Biometric Authentication
-        if getattr(self.config.security, 'biometric_auth', False) and self.biometric_gate:
-            self.biometric_gate.authenticate_window(data_to_process, sample_rate)
-            if self.biometric_gate.is_locked:
-                print("[Coordinator] Egress blocked by BiometricGate.")
-                return
-
-        # 4. Push final data to LSL if active
-        if self.lsl_streamer:
-            lsl_data = data_to_process
-            if self.privacy_filter is not None:
-                lsl_data = self.privacy_filter.filter_signal(lsl_data.copy())
-                if self.privacy_tracker:
-                    self.privacy_tracker.consume(0.001)
-                    
-            if self.p300_analyzer is not None:
-                leakage_report = self.p300_analyzer.scan_for_leakage(lsl_data)
-                self.total_p300_leakage_events += leakage_report["p300_events_detected"]
-                    
-            self.lsl_streamer.push_eeg_chunk(lsl_data)
-            
-            active_attack = self.twin.active_attack
-            telemetry = {
-                "sim_clock": self.engine.sim_clock,
-                "niss_score": self.twin.niss_score,
-                "hazard_state": self.twin.hazard_state,
-                "iso_severity": self.twin.iso_severity,
-                "temperature_celsius": self.twin.temperature_celsius,
-                "active_attack": active_attack
-            }
-            
-            # Map Active Attack to Threat Intel
-            if self.threat_intel and active_attack != "none":
-                tara_intel = self.threat_intel.resolve_attack(active_attack)
-                if tara_intel:
-                    telemetry["threat_intel"] = tara_intel
-            
-            if self.config.security.enabled and self.ids:
-                telemetry["mean_confidence"] = self.ids.history_confidence[-1] if self.ids.history_confidence else 1.0
-                
-            if self.twin.nsp_mode and self.nsp_wrapper:
-                telemetry = self.nsp_wrapper.encrypt_payload(telemetry)
-                
-            if self.twin.e2ee_mode and self.e2ee_channel:
-                telemetry = {"e2ee_payload": self.e2ee_channel.encrypt_payload(telemetry)}
-                
-            self.lsl_streamer.push_telemetry(telemetry)
+    # --- Trust context and Simulation callbacks moved to coordinator_callbacks.py ---
     def simulate_firmware_update(self, payload: bytes) -> bool:
         """Simulates an OTA firmware update with anti-rollback support and ZTA checks."""
         if self.emulator:
@@ -759,3 +404,13 @@ class Coordinator:
         print(f"  - Markdown Log: {self.config.output.report_prefix}_report.md")
         print(f"  - JSON DB:      {self.config.output.report_prefix}_telemetry.json")
         print("=" * 60)
+
+    def _build_trust_context(self):
+        from vireon.core.zta import TrustContext
+        
+        return TrustContext(
+            biometric_confidence=getattr(self.twin, 'decoder_confidence', 0.0),
+            firmware_healthy=getattr(self.twin, 'clinical_status', '') != "Crashed",
+            e2ee_established=getattr(self.twin, 'secure_mode', False),
+            clinical_mode=getattr(self.twin, 'clinical_status', '') == "Nominal"
+        )
