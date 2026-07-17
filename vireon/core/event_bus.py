@@ -56,6 +56,7 @@ class EventBus:
         self._subscriptions: Dict[str, List[_Subscription]] = {}
         self._lock = threading.Lock()
         self._event_log: deque = deque(maxlen=10000)
+        self._dead_letters: List[Dict[str, Any]] = []
         self._log_enabled = False
         self._max_log_size = 10000
         self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix="EventBus-")
@@ -123,11 +124,29 @@ class EventBus:
                 h(e)
             except Exception as ex:
                 import sys
+                import traceback
                 print(f"[EventBus] Handler error on '{e.topic}': {ex}", file=sys.stderr)
+                with self._lock:
+                    self._dead_letters.append({
+                        "event": e,
+                        "error": str(ex),
+                        "handler": getattr(h, "__name__", str(h)),
+                        "traceback": traceback.format_exc()
+                    })
 
         for handler in handlers_to_call:
             self._executor.submit(_run_handler, handler, event)
 
+    def get_dead_letters(self) -> List[Dict[str, Any]]:
+        """Return all failed events (dead-letter queue)."""
+        with self._lock:
+            return list(self._dead_letters)
+            
+    def clear_dead_letters(self):
+        """Clear the dead-letter queue."""
+        with self._lock:
+            self._dead_letters.clear()
+            
     def enable_logging(self, enabled: bool = True, max_size: int = 10000):
         """Enable/disable event logging for debugging and replay."""
         with self._lock:

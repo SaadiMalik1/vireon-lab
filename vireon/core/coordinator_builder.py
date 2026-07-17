@@ -119,7 +119,8 @@ class SimulationBuilder:
         import secrets
         from vireon.plugins.reports.web_server import start_web_server, simulation_context
         
-        self.c.ws_token = secrets.token_urlsafe(16)
+        self.c.admin_token = secrets.token_urlsafe(16)
+        self.c.view_token = secrets.token_urlsafe(16)
 
         simulation_context["secure_mode"] = self.config.security.enabled
         simulation_context["hardware_mode"] = self.config.emulation.hardware_loopback
@@ -130,11 +131,12 @@ class SimulationBuilder:
             port=self.config.web.port,
             ips=self.c.ips,
             link_guard=self.c.link_guard,
-            ws_token=self.c.ws_token
+            admin_token=self.c.admin_token,
+            view_token=self.c.view_token
         )
         
         from vireon.plugins.reports.ws_server import NeuroWebSocketServer
-        self.c.ws_server = NeuroWebSocketServer(port=self.config.web.port + 1, token=self.c.ws_token)
+        self.c.ws_server = NeuroWebSocketServer(port=self.config.web.port + 1, admin_token=self.c.admin_token, view_token=self.c.view_token)
         self.c.ws_server.start()
 
         self.c.engine.add_callback(self.c._ws_broadcast_callback)

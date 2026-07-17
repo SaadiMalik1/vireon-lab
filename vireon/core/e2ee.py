@@ -74,18 +74,23 @@ class E2EEChannel:
             self.establish_session()
             
         self._rotate_key_if_needed()
-        self.packets_since_rotation += 1
         
         # Serialize data
         plaintext = json.dumps(data).encode('utf-8')
         
         iv = os.urandom(12)
+        import struct
+        aad = b'vireon-e2ee-context' + struct.pack(">Q", self.packets_since_rotation)
+        self.packets_since_rotation += 1
+
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         aesgcm = AESGCM(self.session_key)
-        ciphertext = aesgcm.encrypt(iv, plaintext, b'vireon-e2ee-context')
+        ciphertext = aesgcm.encrypt(iv, plaintext, aad)
         
         # AESGCM.encrypt returns ciphertext with the tag appended
-        final_payload = iv + ciphertext
+        # We need to prepend the sequence number (8 bytes) so the decryptor can reconstruct the AAD
+        seq_bytes = struct.pack(">Q", self.packets_since_rotation - 1)
+        final_payload = seq_bytes + iv + ciphertext
         return base64.b64encode(final_payload).decode('utf-8')
 
     def decrypt_payload(self, encrypted_b64: str) -> Dict[str, Any]:
@@ -96,16 +101,19 @@ class E2EEChannel:
             raise ValueError("No session key established")
             
         raw = base64.b64decode(encrypted_b64)
-        if len(raw) < 28:
+        if len(raw) < 8 + 12 + 16:
             raise ValueError("Invalid AES-GCM payload size")
             
-        iv = raw[:12]
-        ciphertext = raw[12:]
+        seq_bytes = raw[:8]
+        iv = raw[8:20]
+        ciphertext = raw[20:]
+        
+        aad = b'vireon-e2ee-context' + seq_bytes
         
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         aesgcm = AESGCM(self.session_key)
         try:
-            plaintext = aesgcm.decrypt(iv, ciphertext, b'vireon-e2ee-context')
+            plaintext = aesgcm.decrypt(iv, ciphertext, aad)
         except Exception as e:
             raise ValueError("AES-GCM Auth Tag verification failed") from e
             

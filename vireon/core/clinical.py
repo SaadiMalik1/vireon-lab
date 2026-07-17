@@ -9,6 +9,21 @@ from vireon.core.safety_envelope import SafetyEnvelope
 from vireon.core.utils import calculate_rms
 from vireon.core.detection import SecurityEngine
 
+class NeuroIPSConstants:
+    SAFE_FALLBACK_AMPLITUDE_MA = 1.0
+    SAFE_FALLBACK_FREQUENCY_HZ = 130.0
+    STIM_HISTORY_WINDOW_SEC = 10.0
+    THERMAL_TAU_DISSIPATION_SEC = 60.0
+    MAX_TISSUE_TEMP_CELSIUS = 40.5
+    MAX_AMPLITUDE_DELTA = 0.5
+    MIN_BETA_POWER = 15.0
+    ANOMALY_ACTIVE_WINDOW_SEC = 3.0
+
+class BLEConstants:
+    MIN_MTU_SIZE = 23
+    MAX_MTU_SIZE = 512
+    JAMMING_DROP_RATE_THRESHOLD = 0.3
+
 class NeuroIPS:
     """
     Intrusion Prevention System for Brain-Computer Interfaces.
@@ -46,7 +61,37 @@ class NeuroIPS:
         if math.isnan(frequency) or math.isinf(frequency):
             frequency = 0.0
             
-        # Closed-Loop Safety Envelope check (ISO 14971 bounds)
+        current_time = self.twin.get_sim_clock()
+        
+        # 1. Safety Envelope Check
+        is_safe, new_amp, new_freq = self._check_safety_envelope(amplitude, frequency)
+        if not is_safe:
+            return new_amp, new_freq
+
+        # 2. Command Rate Limit Check
+        is_safe, new_amp, new_freq = self._check_command_rate_limit(amplitude, frequency)
+        if not is_safe:
+            return new_amp, new_freq
+
+        # 3. Thermal Dose (Leaky Integrator)
+        is_safe, new_amp, new_freq = self._update_leaky_integrator(amplitude, frequency, current_time)
+        if not is_safe:
+            return new_amp, new_freq
+
+        # 4. Thermodynamic protection
+        is_safe, new_amp, new_freq = self._check_thermodynamic_limit(amplitude, frequency)
+        if not is_safe:
+            return new_amp, new_freq
+
+        # 5. Patient State Coherence
+        coherence_clamped, amplitude, frequency = self._check_patient_coherence(amplitude, frequency, current_time)
+        if coherence_clamped:
+            return amplitude, frequency
+
+        # 6. Hard Limit Ceiling
+        return self._check_hard_limit(amplitude, frequency, current_time)
+
+    def _check_safety_envelope(self, amplitude: float, frequency: float) -> Tuple[bool, float, float]:
         is_safe, envelope_metrics = self.safety_envelope.evaluate(self.twin)
         if not is_safe:
             self.blocked_attacks_count += 1
@@ -58,14 +103,12 @@ class NeuroIPS:
                 tissue_damage_risk=envelope_metrics['tissue_damage_risk'],
                 clinical_action=envelope_metrics['clinical_action']
             )
-            # Revert to safe mode or shutdown
             if envelope_metrics['clinical_action'] == "FALLBACK_SAFE_MODE":
-                return min(amplitude, 1.0), min(frequency, 130.0)
-            return 1.0, 130.0  # Safe open-loop fallback instead of hard-clamping to zero
-            
-        current_time = self.twin.get_sim_clock()
-        
-        # Check command behavioral rate limit
+                return False, min(amplitude, NeuroIPSConstants.SAFE_FALLBACK_AMPLITUDE_MA), min(frequency, NeuroIPSConstants.SAFE_FALLBACK_FREQUENCY_HZ)
+            return False, NeuroIPSConstants.SAFE_FALLBACK_AMPLITUDE_MA, NeuroIPSConstants.SAFE_FALLBACK_FREQUENCY_HZ
+        return True, amplitude, frequency
+
+    def _check_command_rate_limit(self, amplitude: float, frequency: float) -> Tuple[bool, float, float]:
         cmd_anomalies = self.ids.analyze_commands(amplitude, frequency)
         if "HIGH_FREQUENCY_COMMAND_ANOMALY" in cmd_anomalies:
             self.blocked_attacks_count += 1
@@ -77,31 +120,26 @@ class NeuroIPS:
                 tissue_damage_risk="NONE",
                 clinical_action="RATE_LIMIT"
             )
-            # Revert to last stable stimulation settings
             if len(self.stim_history) > 0:
-                return self.stim_history[-1][1], self.stim_history[-1][2]
-            return 1.0, 130.0
+                return False, self.stim_history[-1][1], self.stim_history[-1][2]
+            return False, NeuroIPSConstants.SAFE_FALLBACK_AMPLITUDE_MA, NeuroIPSConstants.SAFE_FALLBACK_FREQUENCY_HZ
+        return True, amplitude, frequency
 
-        # Calculate Leaky Integrator Thermal Dose (Pennes Bioheat Equation approximation)
+    def _update_leaky_integrator(self, amplitude: float, frequency: float, current_time: float) -> Tuple[bool, float, float]:
         dt = 0.0
         power_injected = 0.0
         if len(self.stim_history) > 0:
             dt = current_time - self.stim_history[-1][0]
             last_amp = self.stim_history[-1][1]
             last_freq = self.stim_history[-1][2]
-            # Power injected by the PREVIOUS pulse over the interval dt
             power_injected = abs(last_amp) * abs(last_freq)
 
         self.stim_history.append((current_time, amplitude, frequency))
-        # Keep recent history for coherence checks, though leaky integrator doesn't strictly need it all
-        self.stim_history = [x for x in self.stim_history if current_time - x[0] <= 10.0]
+        self.stim_history = [x for x in self.stim_history if current_time - x[0] <= NeuroIPSConstants.STIM_HISTORY_WINDOW_SEC]
 
         if dt > 0:
-            # Dissipation factor (tau = 60 seconds thermal relaxation time)
-            tau_dissipation = 60.0
+            tau_dissipation = NeuroIPSConstants.THERMAL_TAU_DISSIPATION_SEC
             decay_factor = np.exp(-dt / tau_dissipation)
-
-            # Update Leaky Integrator
             self.accumulated_thermal_dose = (self.accumulated_thermal_dose * decay_factor) + (power_injected * dt)
 
         if self.accumulated_thermal_dose > self.max_cumulative_charge:
@@ -124,10 +162,11 @@ class NeuroIPS:
                     },
                     source="ips"
                 ))
-            return 1.0, 130.0  # Force safe fallback to protect tissue
+            return False, NeuroIPSConstants.SAFE_FALLBACK_AMPLITUDE_MA, NeuroIPSConstants.SAFE_FALLBACK_FREQUENCY_HZ
+        return True, amplitude, frequency
 
-        # Thermodynamic temperature protection (Pulsed-load / Evasion mitigation)
-        if self.twin.temperature_celsius >= 40.5:
+    def _check_thermodynamic_limit(self, amplitude: float, frequency: float) -> Tuple[bool, float, float]:
+        if self.twin.temperature_celsius >= NeuroIPSConstants.MAX_TISSUE_TEMP_CELSIUS:
             self.blocked_attacks_count += 1
             self.clamping_active = True
             self.twin.set_clinical_alert(True, "IPS: Thermal Tissue Hazard Detected")
@@ -137,30 +176,28 @@ class NeuroIPS:
                 tissue_damage_risk="HIGH",
                 clinical_action="SHUTDOWN"
             )
-            return 1.0, 130.0
+            return False, NeuroIPSConstants.SAFE_FALLBACK_AMPLITUDE_MA, NeuroIPSConstants.SAFE_FALLBACK_FREQUENCY_HZ
+        return True, amplitude, frequency
 
-        # Patient State Coherence Model (Paradox 3 solution)
+    def _check_patient_coherence(self, amplitude: float, frequency: float, current_time: float) -> Tuple[bool, float, float]:
         coherence_clamped = False
         if len(self.stim_history) > 1:
             last_amp = self.stim_history[-2][1]
             
-            # 1. Delta rate limit (Max change of 0.5 mA per write)
-            if abs(amplitude - last_amp) > 0.5:
-                amplitude = last_amp + np.sign(amplitude - last_amp) * 0.5
+            if abs(amplitude - last_amp) > NeuroIPSConstants.MAX_AMPLITUDE_DELTA:
+                amplitude = last_amp + np.sign(amplitude - last_amp) * NeuroIPSConstants.MAX_AMPLITUDE_DELTA
                 self.clamping_active = True
                 coherence_clamped = True
                 self.blocked_attacks_count += 1
                 self.twin.set_clinical_alert(True, "IPS Clamped: Coherence Delta Rate Limit")
                 self.stim_history[-1] = (current_time, amplitude, frequency)
                 
-            # 2. Clinical state coherence (Cannot increase stimulation if beta power is low, OR if IDS anomalies are active)
             if len(self.ids.history_beta_power) > 0:
                 last_beta = self.ids.history_beta_power[-1]
-                # Cross-reference with active anomalies to prevent beta inflation evasion
-                active_anomalies = self.ids.detections[-5:] # check recent detections
-                has_active_anomaly = any(d["timestamp"] >= current_time - 3.0 for d in active_anomalies)
+                active_anomalies = self.ids.detections[-5:]
+                has_active_anomaly = any(d["timestamp"] >= current_time - NeuroIPSConstants.ANOMALY_ACTIVE_WINDOW_SEC for d in active_anomalies)
                 
-                if (last_beta < 15.0 or has_active_anomaly) and amplitude > last_amp:
+                if (last_beta < NeuroIPSConstants.MIN_BETA_POWER or has_active_anomaly) and amplitude > last_amp:
                     amplitude = last_amp
                     self.clamping_active = True
                     coherence_clamped = True
@@ -169,15 +206,12 @@ class NeuroIPS:
                     self.twin.set_clinical_alert(True, msg)
                     self.stim_history[-1] = (current_time, amplitude, frequency)
 
-        if coherence_clamped:
-            return amplitude, frequency
+        return coherence_clamped, amplitude, frequency
 
-        # Hard limit ceiling check
+    def _check_hard_limit(self, amplitude: float, frequency: float, current_time: float) -> Tuple[float, float]:
         if amplitude > self.max_stimulation_amplitude_ma:
             self.blocked_attacks_count += 1
             self.clamping_active = True
-
-            # Log command blocking directly into Digital Twin history
             self.twin.set_clinical_alert(True, "IPS Command Clamping Warning")
             self.twin.update_clinical_risk(
                 hazard_state="WARNING",
@@ -185,7 +219,6 @@ class NeuroIPS:
                 tissue_damage_risk="NONE",
                 clinical_action="MONITOR"
             )
-
             if self.event_bus:
                 self.event_bus.publish(Event(
                     topic="ips.stimulation_clamped",
@@ -196,7 +229,6 @@ class NeuroIPS:
                     },
                     source="ips"
                 ))
-
             return self.max_stimulation_amplitude_ma, frequency
 
         self.clamping_active = False
@@ -348,7 +380,7 @@ class BLELinkGuard:
     def _check_rf_environment(self):
         drop_rate = getattr(self.twin, "rf_packet_drop_rate", 0.0)
         # If dropping more than 30% of packets, trigger RF Jamming Alert
-        if drop_rate >= 0.3:
+        if drop_rate >= BLEConstants.JAMMING_DROP_RATE_THRESHOLD:
             self.jamming_alerts += 1
             self.twin.set_clinical_alert(True, f"BLE Link Guard: Severe RF Jamming Detected ({drop_rate*100:.0f}% drops)")
             if self.event_bus:
@@ -364,7 +396,7 @@ class BLELinkGuard:
 
     def _verify_mtu(self, requested_mtu: int) -> int:
         # BLE specification minimum MTU size is 23 bytes, maximum is 512 bytes (BLE 5.2)
-        if requested_mtu < 23 or requested_mtu > 512:
+        if requested_mtu < BLEConstants.MIN_MTU_SIZE or requested_mtu > BLEConstants.MAX_MTU_SIZE:
             self.blocked_mtu_abuses += 1
             self.twin.set_clinical_alert(True, "BLE Link Guard: Blocked MTU Abuse")
 
@@ -373,12 +405,12 @@ class BLELinkGuard:
                     topic="link_guard.mtu_abuse_blocked",
                     data={
                         "requested_mtu": requested_mtu,
-                        "enforced_mtu": 23,
+                        "enforced_mtu": BLEConstants.MIN_MTU_SIZE,
                         "sim_clock": self.twin.get_sim_clock()
                     },
                     source="link_guard"
                 ))
 
             # Enforce spec limits
-            return max(23, min(requested_mtu, 512))
+            return max(BLEConstants.MIN_MTU_SIZE, min(requested_mtu, BLEConstants.MAX_MTU_SIZE))
         return requested_mtu

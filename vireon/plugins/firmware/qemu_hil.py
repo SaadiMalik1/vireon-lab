@@ -45,8 +45,9 @@ class QemuCortexMEmulator:
             # We still enable GDB stub in background
             cmd.extend(["-s"])
             
-        print(f"[QemuHIL] Launching QEMU: {' '.join(cmd)}")
-        self.process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"[QemuHIL] Launching QEMU (sandboxed): {' '.join(cmd)}")
+        from vireon.core.runner import popen_sandboxed
+        self.process = popen_sandboxed(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.running = True
         
         # Give QEMU a moment to bind sockets

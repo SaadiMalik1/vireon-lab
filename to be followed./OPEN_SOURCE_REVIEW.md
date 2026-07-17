@@ -802,7 +802,9 @@ All knowledge, all review authority, and all decision-making authority reside wi
 | Critical | Decompose God Coordinator | 4-6 weeks |
 | Critical | Fix shared mutable state | 3-4 weeks |
 | Critical | Fix poisoned lockfile | 1 week |
-| High | Increase test coverage to 80% | 4-8 weeks |
+| Medium | Address missing test coverage | 4-8 weeks |
+| Low | Clean up dead code and magic numbers | 2-3 weeks |
+
 | High | Add persistence layer | 3-4 weeks |
 | High | Recruit co-maintainers | Ongoing |
 | High | Document all architectural decisions | 2-3 days |

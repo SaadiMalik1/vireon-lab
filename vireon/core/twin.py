@@ -247,13 +247,13 @@ class DigitalTwin(ITwin):
 
     # --- Snapshot / Restore (for experiment reproducibility) ---
 
-    def snapshot(self) -> Dict[str, Any]:
+    def snapshot(self, include_history: bool = False) -> Dict[str, Any]:
         """
         Return a complete frozen state copy suitable for serialization.
         Used to save/restore experiment states for reproducibility.
         """
         with self._lock:
-            return {
+            snap = {
                 "device_id": self.device_id,
                 "connected": self.connected,
                 "battery_level": self.battery_level,
@@ -288,8 +288,10 @@ class DigitalTwin(ITwin):
                 "neural_dynamics": self.neural_dynamics.get_state() if hasattr(self.neural_dynamics, 'get_state') else None,
                 "neural_coherence": self.neural_dynamics.coherence,
                 "beta_power": self.neural_dynamics.beta_power,
-                "history": list(self.history),
             }
+            if include_history:
+                snap["history"] = list(self.history)
+            return snap
 
     def restore(self, snap: Dict[str, Any]):
         """

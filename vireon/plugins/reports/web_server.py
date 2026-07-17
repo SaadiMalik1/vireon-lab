@@ -106,11 +106,13 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             
         return True
 
-    def _check_auth(self) -> bool:
+    def _check_auth(self, require_admin: bool = False) -> bool:
         auth_header = self.headers.get("Authorization")
-        expected_token = self.simulation_context.get("ws_token")
         
-        if not expected_token:
+        admin_token = self.simulation_context.get("admin_token")
+        view_token = self.simulation_context.get("view_token")
+        
+        if not admin_token and not view_token:
             return True
             
         if not auth_header or not auth_header.startswith("Bearer "):
@@ -118,7 +120,14 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             return False
             
         token = auth_header.split(" ")[1]
-        if token != expected_token:
+        
+        if require_admin:
+            if token != admin_token:
+                self.send_error(403, "Forbidden: Admin token required for this operation")
+                return False
+            return True
+            
+        if token != admin_token and token != view_token:
             self.send_error(401, "Unauthorized: Invalid token")
             return False
             
@@ -158,7 +167,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
             if os.path.exists(full_path):
                 with open(full_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                content = content.replace("WS_TOKEN_PLACEHOLDER", self.simulation_context.get("ws_token", ""))
+                content = content.replace("WS_TOKEN_PLACEHOLDER", self.simulation_context.get("admin_token", ""))
                 content_bytes = content.encode("utf-8")
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/html')
@@ -173,7 +182,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/api/control":
-            if not self._check_cors() or not self._check_rate_limit() or not self._check_auth():
+            if not self._check_cors() or not self._check_rate_limit() or not self._check_auth(require_admin=True):
                 return
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -206,7 +215,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                         self.ips.blocked_attacks_count += 1
                 self.send_error(400, f"Bad Request: {e}")
         elif self.path == "/api/neuro_dsl/compile":
-            if not self._check_cors() or not self._check_rate_limit() or not self._check_auth():
+            if not self._check_cors() or not self._check_rate_limit() or not self._check_auth(require_admin=True):
                 return
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -218,12 +227,11 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 dsl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../neuro_dsl"))
                 cmd = ["cargo", "run", "--bin", "forge"]
                 
-                result = subprocess.run(
+                from vireon.core.runner import run_sandboxed
+                result = run_sandboxed(
                     cmd, 
-                    input=source_code, 
-                    cwd=dsl_dir, 
-                    capture_output=True, 
-                    text=True
+                    input_data=source_code, 
+                    cwd=dsl_dir
                 )
                 
                 if result.returncode != 0:
@@ -369,7 +377,7 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
     simulation_context: Dict[str, Any]
     web_dir: str
 
-def start_web_server(twin: DigitalTwin, attack_engine: SignalAttackEngine, port: int = 7777, ips = None, link_guard = None, ws_token: str = "") -> ThreadedHTTPServer:
+def start_web_server(twin: DigitalTwin, attack_engine: SignalAttackEngine, port: int = 7777, ips = None, link_guard = None, admin_token: str = "", view_token: str = "") -> ThreadedHTTPServer:
     server = ThreadedHTTPServer(("127.0.0.1", port), BCIAPIRequestHandler)
     
     server.twin = twin
@@ -391,7 +399,8 @@ def start_web_server(twin: DigitalTwin, attack_engine: SignalAttackEngine, port:
         "noise_intensity": 50.0,
         "attenuation_factor": 0.1,
         "impedance_kohm": 60.0,
-        "ws_token": ws_token
+        "admin_token": admin_token,
+        "view_token": view_token
     }
     
     # Sync initial state to twin

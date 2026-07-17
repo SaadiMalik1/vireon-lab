@@ -11,10 +11,11 @@ class NeuroWebSocketServer:
     Runs its own asyncio loop inside a dedicated background thread.
     """
 
-    def __init__(self, host: str = "0.0.0.0", port: int = 7778, token: str = ""):
+    def __init__(self, host: str = "0.0.0.0", port: int = 7778, admin_token: str = "", view_token: str = ""):
         self.host = host
         self.port = port
-        self.token = token
+        self.admin_token = admin_token
+        self.view_token = view_token
         self.clients: Set[Any] = set()
         self.loop: Optional[asyncio.AbstractEventLoop] = None
         self.server = None
@@ -23,7 +24,7 @@ class NeuroWebSocketServer:
     async def handler(self, websocket: Any):
         """Handle incoming client connections."""
         
-        # Authenticate connection using WS_TOKEN
+        # Authenticate connection using tokens
         if hasattr(websocket, 'request'):
             path = getattr(websocket.request, 'path', '')
         else:
@@ -32,9 +33,17 @@ class NeuroWebSocketServer:
         query = urllib.parse.urlparse(path).query
         params = urllib.parse.parse_qs(query)
         
-        if self.token and params.get("token", [""])[0] != self.token:
-            await websocket.close(1008, "Unauthorized")
+        token_provided = params.get("token", [""])[0]
+        
+        # Require a token to be present if tokens are configured
+        if (self.admin_token or self.view_token) and not token_provided:
+            await websocket.close(1008, "Unauthorized: No token provided")
             return
+            
+        if self.admin_token or self.view_token:
+            if token_provided != self.admin_token and token_provided != self.view_token:
+                await websocket.close(1008, "Unauthorized: Invalid token")
+                return
 
         self.clients.add(websocket)
         try:

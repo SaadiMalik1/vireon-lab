@@ -64,6 +64,7 @@ class TestAdversarialMitigations(unittest.TestCase):
         # clinical_status is updated differently by the safety envelope check, we just verify hazard_state
 
     def test_spectral_consistency_check(self):
+        np.random.seed(42)
         # 1. Broadband normal signal (high entropy)
         broadband_signal = np.random.normal(0, 15.0, (8, 250))
         anomalies = self.ids.analyze_signal(broadband_signal)

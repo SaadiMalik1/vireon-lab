@@ -53,6 +53,30 @@ security_assumptions:
 
 potential_attack_paths:
   - path: L2 -> tb_calibration_link -> wearable_processor
+    severity: HIGH
     technique: Decoder Model Poisoning
   - path: L5 -> wearable_processor -> tb_transcutaneous -> bci_implant
+    severity: HIGH
     technique: Malicious Stimulation Injection
+
+platform_threats:
+  - id: PT-001
+    name: Simulation Escape
+    severity: CRITICAL
+    description: Attack escapes the NeuroDSL VM to compromise the researcher's host environment.
+  - id: PT-002
+    name: State Tampering
+    severity: HIGH
+    description: Attack modifies the DigitalTwin state directly, bypassing physics constraints.
+  - id: PT-003
+    name: Web API Unauthenticated Access
+    severity: CRITICAL
+    description: Attack targets the unauthenticated Web API to manipulate simulation parameters and intercept telemetry streams without authorization.
+  - id: PT-004
+    name: Remote Code Execution (RCE)
+    severity: CRITICAL
+    description: Exploitation of vulnerable dependencies or unsafe platform inputs to achieve arbitrary code execution on the simulation host.
+  - id: PT-005
+    name: Supply Chain Compromise
+    severity: HIGH
+    description: Malicious modification of the platform's dependencies (e.g. requirements.txt) leading to a compromised runtime environment.

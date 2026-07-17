@@ -1,5 +1,5 @@
 import numpy as np
-from vireon.core.twin import DigitalTwin
+from typing import Any
 
 def calculate_rms(signal: np.ndarray) -> float:
     """Calculates the Root Mean Square (RMS) of a 1D signal."""
@@ -30,7 +30,7 @@ def calculate_bandpower(signal: np.ndarray, sample_rate: int, band: tuple[float,
         
     return float(np.mean(psd[idx]))
 
-def format_telemetry_table(twin: DigitalTwin) -> str:
+def format_telemetry_table(twin: Any) -> str:
     """Formats the current digital twin state as an ASCII table."""
     state = twin.get_state()
     

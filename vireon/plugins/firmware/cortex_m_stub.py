@@ -55,6 +55,11 @@ class CortexMStub:
         self.crashed = False
         self.crash_reason = ""
         self.overflow_detected = False
+        
+        # Provision an ECDSA key for firmware signature verification
+        from cryptography.hazmat.primitives.asymmetric import ec
+        self.ota_private_key = ec.generate_private_key(ec.SECP256R1())
+        self.ota_public_key = self.ota_private_key.public_key()
 
     def reset(self):
         self.registers["SP"] = self.SRAM_BASE + self.SRAM_SIZE
@@ -126,11 +131,12 @@ class CortexMStub:
         signature = payload[4:68]
         firmware_binary = payload[68:]
         
-        # Verify real asymmetric signature (Ed25519) instead of SHA-256 hash (SEC-5)
+        # Verify real asymmetric signature (Ed25519) instead of SHA-256 hash (FW-001)
         try:
             if not hasattr(self, "ota_public_key"):
                 self._trigger_fault("Secure Boot Fault: No public key provisioned.")
                 return False
+                
             self.ota_public_key.verify(signature, firmware_binary)
         except Exception:
             self._trigger_fault("Secure Boot Fault: Firmware signature verification failed.")

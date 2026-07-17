@@ -9,7 +9,7 @@ reproducible experiments by capturing all parameters in a single file.
 import os
 from typing import Dict, Any, List, Optional
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 # TOML parsing: use stdlib tomllib (3.11+) or fallback to tomli
 try:
@@ -77,7 +77,7 @@ class AttackConfig(BaseModel):
 
 class SecurityConfig(BaseModel):
     """Configuration for the IDS/IPS security layer."""
-    enabled: bool = Field(default=False)
+    enabled: bool = Field(default=True)
     nsp_enabled: bool = Field(default=False)
     enable_zta: bool = Field(default=False)
     zta_thresholds: Dict[str, float] = Field(default_factory=lambda: {"ota_update": 0.9, "telemetry_read": 0.5})
@@ -144,6 +144,27 @@ class ExperimentConfig(BaseModel):
     stix: StixConfig = Field(default_factory=StixConfig)
     privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
 
+    @model_validator(mode="before")
+    @classmethod
+    def parse_scenario(cls, data: Any) -> Any:
+        if isinstance(data, dict) and "scenario" in data:
+            scenario = data.pop("scenario")
+            if "steps" in scenario:
+                if "attacks" not in data:
+                    data["attacks"] = {}
+                data["attacks"]["scenario_steps"] = []
+                for step in scenario["steps"]:
+                    params = {k: v for k, v in step.items() if k not in ("time_sec", "attack", "duration_sec", "target_channels")}
+                    step_obj = {
+                        "time_sec": float(step.get("time_sec", 0.0)),
+                        "attack": step.get("attack", "noise"),
+                        "duration_sec": float(step.get("duration_sec", 5.0)),
+                        "target_channels": step.get("target_channels", [0, 1, 2, 3]),
+                        "params": params
+                    }
+                    data["attacks"]["scenario_steps"].append(step_obj)
+        return data
+
 
 def load_config(path: str) -> ExperimentConfig:
     """
@@ -161,26 +182,7 @@ def load_config(path: str) -> ExperimentConfig:
     with open(path, "rb") as f:
         raw = tomllib.load(f)
 
-    # Convert scenario config format correctly
-    if "scenario" in raw:
-        # Our TOML scenario section is a dict with "steps" array
-        # e.g., [scenario] \n [[scenario.steps]]
-        if "steps" in raw["scenario"]:
-            raw["attacks"] = raw.get("attacks", {})
-            raw["attacks"]["scenario_steps"] = []
-            for step in raw["scenario"]["steps"]:
-                params = {k: v for k, v in step.items() if k not in ("time_sec", "attack", "duration_sec", "target_channels")}
-                step_obj = {
-                    "time_sec": float(step.get("time_sec", 0.0)),
-                    "attack": step.get("attack", "noise"),
-                    "duration_sec": float(step.get("duration_sec", 5.0)),
-                    "target_channels": step.get("target_channels", [0, 1, 2, 3]),
-                    "params": params
-                }
-                raw["attacks"]["scenario_steps"].append(step_obj)
-        del raw["scenario"]
-        
-    return ExperimentConfig(**raw)
+    return ExperimentConfig.model_validate(raw)
 
 
 def config_from_cli_args(args) -> ExperimentConfig:

@@ -47,6 +47,29 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 
 ---
 
+## System Architecture
+VIREON's architecture is event-driven and isolated, allowing plugins to interact with the simulated physical `DigitalTwin` without causing thread contention.
+
+```mermaid
+graph TD
+    A[CLI / Dashboard] --> B(Coordinator)
+    B --> C{Event Bus}
+    C --> D[Simulation Engine]
+    D --> E((Digital Twin))
+    D --> F[Physics Integrator]
+    C --> G[Security / IDS Plugins]
+    C --> H[Attack Engine]
+    H --> I[Modulators / Adversarial Payload]
+```
+
+## Environment Variables
+The following environment variables can optionally configure VIREON's behavior:
+- `VIREON_LOG_LEVEL`: Set to `DEBUG`, `INFO`, `WARNING`, or `ERROR` (default: `INFO`).
+- `VIREON_PLUGIN_DIR`: Path to load custom plugins (default: `vireon/plugins/`).
+- `VIREON_STRICT_MODE`: Set to `1` to crash on missing dependencies instead of warning.
+
+---
+
 ## Installation & Prerequisites
 
 It is highly recommended to use a virtual environment. The project requires **Python 3.10+** and the **Rust nightly toolchain (1.85+)**.
@@ -61,7 +84,7 @@ source .venv/bin/activate
 pip install -e ".[all]"
 ```
 
-*Note: For detailed instructions regarding Rust toolchains for the NeuroDSL compiler, see the [Installation Guide](INSTALL.md).*
+*Note: For detailed instructions regarding Rust toolchains for the NeuroDSL compiler, see the [Installation Guide](INSTALL.md) or the [Developer Guide](CONTRIBUTING.md).*
 
 ---
 

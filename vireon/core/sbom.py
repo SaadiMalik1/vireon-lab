@@ -72,8 +72,6 @@ def _parse_toml_minimal(toml_path: str) -> Dict[str, Any]:
                     if m:
                         result["project"]["requires-python"] = m.group(1)
 
-            if current_section == "project" and "dependencies" in current_section:
-                pass
 
     # Second pass: extract dependency arrays
     with open(toml_path, "r", encoding="utf-8") as f:
