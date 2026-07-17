@@ -117,14 +117,11 @@ class SimulationBuilder:
     def setup_web_server(self):
         """Start the Web UI dashboard."""
         import secrets
-        from vireon.plugins.reports.web_server import start_web_server, simulation_context
+        from vireon.plugins.reports.web_server import start_web_server
         
         self.c.admin_token = secrets.token_urlsafe(16)
         self.c.view_token = secrets.token_urlsafe(16)
 
-        simulation_context["secure_mode"] = self.config.security.enabled
-        simulation_context["hardware_mode"] = self.config.emulation.hardware_loopback
-        
         self.c.web_server = start_web_server(
             twin=self.c.twin,
             attack_engine=self.c.attack_engine,
@@ -134,6 +131,9 @@ class SimulationBuilder:
             admin_token=self.c.admin_token,
             view_token=self.c.view_token
         )
+        
+        self.c.web_server.simulation_context["secure_mode"] = self.config.security.enabled
+        self.c.web_server.simulation_context["hardware_mode"] = self.config.emulation.hardware_loopback
         
         from vireon.plugins.reports.ws_server import NeuroWebSocketServer
         self.c.ws_server = NeuroWebSocketServer(port=self.config.web.port + 1, admin_token=self.c.admin_token, view_token=self.c.view_token)

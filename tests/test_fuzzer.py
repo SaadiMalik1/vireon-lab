@@ -44,9 +44,10 @@ def test_print_and_save_report(tmp_path, capsys):
         assert data["total_iterations"] == 10
 
 def test_fuzzer_strategies():
+    from unittest.mock import MagicMock
     fuzzer = ProtocolFuzzer(seed=42)
     # Test individual strategies for coverage
-    fuzzer._make_valid_frame(None) # we don't need a real processor here if we mock it, wait _make_valid_frame needs RFFrameProcessor
+    fuzzer._make_valid_frame(MagicMock()) # we don't need a real processor here if we mock it, wait _make_valid_frame needs RFFrameProcessor
     # We will test strategies by ensuring run_campaign uses all strategies since we pass random bytes
     # But specifically covering _fuzz_seq_overflow, _fuzz_oversized_payload which need a processor
     # run_campaign with iterations=1000 will likely cover all of them.

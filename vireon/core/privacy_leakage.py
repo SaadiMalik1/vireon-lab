@@ -31,7 +31,7 @@ class P300Analyzer:
         Otherwise, it does a blind morphological search for P300-like peaks.
         """
         if signal.size == 0 or signal.ndim < 2:
-            return {"leakage_detected": False, "risk_level": "LOW", "p300_events": 0}
+            return {"leakage_detected": False, "risk_level": "LOW", "p300_events_detected": 0}
 
         n_channels, n_samples = signal.shape
         p300_events = 0

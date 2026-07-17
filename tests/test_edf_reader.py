@@ -63,7 +63,7 @@ def test_edf_reader_without_pyedflib(monkeypatch):
     
     # Check properties delegating to mock reader
     assert reader.total_samples == -1 # mock reader default
-    assert reader.channel_names == [f"CH{i}" for i in range(8)]
+    assert reader.channel_names == [f"Ch{i}" for i in range(8)]
     assert isinstance(reader.metadata, dict)
     
     chunk = reader.read_chunk(0, 10)

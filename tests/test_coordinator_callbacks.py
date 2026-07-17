@@ -58,7 +58,7 @@ def test_ws_broadcast_callback():
     state = json.loads(args[0])
     
     assert "signal_chunk" in state
-    assert np.isnan(state["signal_chunk"][0]) is False
+    assert not np.isnan(state["signal_chunk"][0])
     assert state["signal_chunk"][0] == 0.0
     assert state["active_attack"] == "none"
 
