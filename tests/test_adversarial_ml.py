@@ -43,7 +43,7 @@ def test_pgd_attack():
 
 def test_cw_attack():
     twin = DigitalTwin(num_channels=8)
-    attack = CWAttack(target_channels=[0], target_frequency_hz=5.0, target_amplitude_uv=6.0)
+    attack = CWAttack(target_channels=[0], target_frequency_hz=6.0, target_amplitude_uv=6.0)
     
     data = np.zeros((2, 100))
     mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
@@ -58,7 +58,7 @@ def test_cw_attack():
 
 def test_backdoor_trigger_injector():
     twin = DigitalTwin(num_channels=8)
-    attack = BackdoorTriggerInjector(target_channels=[0], trigger_frequency_hz=20.0, trigger_amplitude_uv=30.0)
+    attack = BackdoorTriggerInjector(target_channels=[0], trigger_frequency_hz=21.0, trigger_amplitude_uv=30.0)
     
     data = np.zeros((2, 100))
     mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
