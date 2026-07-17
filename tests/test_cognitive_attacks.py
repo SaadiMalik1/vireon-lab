@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 from vireon.core.twin import DigitalTwin
 from vireon.core.attack.cognitive import (
     NeuroPhishingAttack,
