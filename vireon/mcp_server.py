@@ -37,9 +37,10 @@ else:
 def _verify_capability(session_token: str, required_capability: str) -> bool:
     try:
         raw = base64.b64decode(session_token)
-        if b"|" not in raw:
+        if len(raw) < 32:
             return False
-        payload_bytes, sig = raw.rsplit(b"|", 1)
+        payload_bytes = raw[:-32]
+        sig = raw[-32:]
         expected_sig = hmac.new(SERVER_SECRET, payload_bytes, hashlib.sha256).digest()
         if not hmac.compare_digest(sig, expected_sig):
             return False
@@ -96,7 +97,7 @@ def mock_authenticate_session(biomarker_hash: str, role: str = "patient", auth_s
     # using a stateless JWT-like signed token system with HMAC
     payload = json.dumps({"b": biomarker_hash, "r": role, "c": capabilities})
     sig = hmac.new(SERVER_SECRET, payload.encode(), hashlib.sha256).digest()
-    session_token = base64.b64encode(payload.encode() + b"|" + sig).decode()
+    session_token = base64.b64encode(payload.encode() + sig).decode()
     
     return json.dumps({
         "status": "Authentication Successful",
