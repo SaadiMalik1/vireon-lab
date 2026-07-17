@@ -46,9 +46,10 @@ def test_scan_blind():
     analyzer = P300Analyzer(sample_rate=100, threshold_uv=10.0)
     
     signal = np.zeros((2, 300))
-    # Inject a triangle wave that will survive the moving average (window=10) and have a strict unique peak
-    peak = np.array([5.0, 10.0, 15.0, 20.0, 25.0, 20.0, 15.0, 10.0, 5.0])
-    signal[0, 100:109] = peak
+    # Inject a wide peak (width 20) that will survive the moving average (window=10)
+    # and have a strict unique peak
+    peak = np.sin(np.linspace(0, np.pi, 20)) * 25.0
+    signal[0, 100:120] = peak
     
     result = analyzer.scan_for_leakage(signal)
     
@@ -63,11 +64,11 @@ def test_scan_blind_high_risk():
     signal = np.zeros((2, 400))
     
     # Inject multiple sharp peaks
-    peak = np.array([5.0, 10.0, 15.0, 20.0, 25.0, 20.0, 15.0, 10.0, 5.0])
-    signal[0, 50:59] = peak
-    signal[0, 150:159] = peak
-    signal[0, 250:259] = peak
-    signal[0, 350:359] = peak
+    peak = np.sin(np.linspace(0, np.pi, 20)) * 25.0
+    signal[0, 50:70] = peak
+    signal[0, 150:170] = peak
+    signal[0, 250:270] = peak
+    signal[0, 350:370] = peak
     
     result = analyzer.scan_for_leakage(signal)
     

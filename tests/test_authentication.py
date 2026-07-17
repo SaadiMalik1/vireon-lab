@@ -19,7 +19,7 @@ def test_authenticate_window_success():
     data = np.vstack([signal, signal + np.random.normal(0, 0.5, len(t))])
     
     from unittest.mock import patch
-    with patch("vireon.core.authentication.calculate_spectral_features", return_value=(1.0, 1.0)):
+    with patch("vireon.core.detection.calculate_spectral_features", return_value=(1.0, 1.0)):
         result = gate.authenticate_window(data, 250)
     assert result is True
     assert gate.consecutive_failures == 0
@@ -89,7 +89,7 @@ def test_authenticate_window_lockout_and_recovery(monkeypatch):
     good_signal = np.sin(2 * np.pi * 10 * t) + np.random.normal(0, 0.1, len(t))
     good_data = np.vstack([good_signal, good_signal + np.random.normal(0, 0.5, len(t))])
     
-    with patch("vireon.core.authentication.calculate_spectral_features", return_value=(1.0, 1.0)):
+    with patch("vireon.core.detection.calculate_spectral_features", return_value=(1.0, 1.0)):
         assert gate.authenticate_window(good_data, 250) is True
     assert gate.consecutive_failures == 0
 
