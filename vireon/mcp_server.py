@@ -182,7 +182,7 @@ def run_simulation(
         },
         "emulation": {
             "dbs_mode": dbs_mode,
-            "dbs_attack": dbs_attack
+            "dbs_attack": dbs_attack if dbs_attack is not None else ""
         }
     }
 

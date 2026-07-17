@@ -62,7 +62,7 @@ def test_security_engine_analyze_commands():
     
     # High frequency changes
     for _ in range(6):
-        twin.sim_clock += 0.1
+        twin._sim_clock += 0.1
         anomalies = engine.analyze_commands(np.random.rand(), 130.0)
         
     assert "HIGH_FREQUENCY_COMMAND_ANOMALY" in anomalies
@@ -86,9 +86,11 @@ def test_spectral_spoofing():
     twin = DigitalTwin(num_channels=8)
     engine = SecurityEngine(twin)
     
-    # Extremely impulsive signal (high crest factor)
+    # Pure tone signal (high spectral crest factor, low spectral entropy)
+    t = np.linspace(0, 1, 100)
     data = np.zeros((8, 100))
-    data[:, 0] = 1000.0
+    for i in range(8):
+        data[i, :] = 1000.0 * np.sin(2 * np.pi * 50 * t)
     
     anomalies = engine.analyze_signal(data)
     assert "SPECTRAL_SPOOFING_ANOMALY" in anomalies

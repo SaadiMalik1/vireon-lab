@@ -187,7 +187,7 @@ class Coordinator:
         # 6.6 Firmware Emulation
         from vireon.plugins.firmware.cortex_m_stub import CortexMStub
         self.emulator = CortexMStub()
-        self.fw_monitor = self.registry.create("security", "fw_monitor", firmware_emulator=self.emulator)
+        self.fw_monitor = self.registry.create("security", "fw_monitor", emulator=self.emulator)
 
         # 6.7 P300 Leakage Analyzer
         self.p300_analyzer = self.registry.create("security", "p300_analyzer")

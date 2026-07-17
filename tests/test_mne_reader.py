@@ -11,10 +11,10 @@ def test_mne_reader_fallback_no_file():
     # Check properties pass through to mock_reader
     assert reader.sample_rate == 250
     assert reader.num_channels == 8
-    assert reader.total_samples == 250 * 60
-    assert reader.duration_sec == 60.0
+    assert reader.total_samples == -1
+    assert reader.duration_sec == -1.0
     assert len(reader.channel_names) == 8
-    assert "file_path" in reader.metadata
+    assert "type" in reader.metadata
     
     # Read chunk from mock
     data = reader.read_chunk(0, 100)

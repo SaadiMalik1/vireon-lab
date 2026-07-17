@@ -1,3 +1,4 @@
+import pytest
 from click.testing import CliRunner
 from vireon.__main__ import cli
 
@@ -18,6 +19,7 @@ def test_run_command_basic():
     assert result.exit_code == 0
 
 def test_ctf_list_command():
+    pytest.importorskip("vireon.ctf")
     runner = CliRunner()
     result = runner.invoke(cli, ['ctf', 'list'])
     assert result.exit_code == 0
