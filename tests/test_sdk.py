@@ -1,4 +1,3 @@
-import pytest
 from vireon.plugins.sdk import VireonPluginSDK
 
 class DummyPlugin(VireonPluginSDK):
@@ -24,7 +23,7 @@ def test_vireon_sdk():
     
     meta = plugin.get_metadata()
     assert meta["name"] == "dummy"
-    assert meta["running"] == True
+    assert meta["running"] is True
     
     plugin.stop()
     assert not plugin.is_running()

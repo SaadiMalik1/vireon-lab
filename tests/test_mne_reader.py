@@ -1,13 +1,12 @@
 import pytest
 import numpy as np
-import os
-from vireon.plugins.datasets.mne_reader import MNEReader, HAS_MNE
+from vireon.plugins.datasets.mne_reader import MNEReader
 
 def test_mne_reader_fallback_no_file():
     # If file doesn't exist and fallback is True, it should use MockEEGReader
     reader = MNEReader("nonexistent.vhdr", fallback_on_error=True)
     assert reader.mock_reader is not None
-    assert reader.supports_seeking == True
+    assert reader.supports_seeking is True
     
     # Check properties pass through to mock_reader
     assert reader.sample_rate == 250

@@ -1,7 +1,5 @@
-import pytest
 from click.testing import CliRunner
 from vireon.__main__ import cli
-import os
 
 def test_info_command():
     runner = CliRunner()

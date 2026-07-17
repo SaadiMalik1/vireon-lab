@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 import time
 from vireon.core.twin import DigitalTwin
@@ -33,11 +32,11 @@ def test_replay_engine_start_stop():
     
     replay = ReplayEngine(twin, engine, provider=provider)
     replay.start(interval_sec=0.01)
-    assert replay.running == True
+    assert replay.running is True
     time.sleep(0.05)
     replay.stop()
-    assert replay.running == False
-    assert provider._stopped == True
+    assert replay.running is False
+    assert provider._stopped is True
 
 def test_replay_engine_inject_attack():
     twin = DigitalTwin(num_channels=4)
