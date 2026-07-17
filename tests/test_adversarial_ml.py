@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 from vireon.attacks.adversarial_ml import (
     FGSMAttack,
     PGDAttack,
