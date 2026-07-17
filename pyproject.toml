@@ -49,8 +49,8 @@ lsl = ["pylsl~=1.16.2"]
 dev = [
     "pytest>=9.0.3",
     "pytest-asyncio>=0.23.8",
+    "pytest-cov>=4.1.0",
     "tomli~=2.0.0;python_version<'3.11'",
-    "ruff~=0.1.0",
     "mypy>=1.10.0",
 ]
 reports = ["weasyprint>=68.0"]
@@ -94,3 +94,4 @@ ignore = ["E402"]
 python_version = "3.12"
 ignore_missing_imports = true
 strict_optional = false
+exclude = ["openbci_reference/"]

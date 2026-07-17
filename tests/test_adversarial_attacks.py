@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from vireon.core.attack.adversarial import (
     AdversarialOptimizerAttack,
@@ -70,8 +69,8 @@ def test_session_replay():
     data1 = np.ones((1, 5)) # 0.02s
     
     # Capture phase
-    out1 = attack.apply(data1, eeg_channels=[0], sample_rate=250, twin=twin)
-    assert attack.is_capturing == False
+    attack.apply(data1, eeg_channels=[0], sample_rate=250, twin=twin)
+    assert attack.is_capturing is False
     
     # Replay phase
     data2 = np.zeros((1, 5))

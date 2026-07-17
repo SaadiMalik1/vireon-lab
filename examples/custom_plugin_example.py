@@ -1,17 +1,19 @@
 """
 Example showing how to create and register a custom VIREON attack plugin.
 """
-from vireon.core.attack import BaseAttack
+from vireon.core.attack import ISignalModifier
+import numpy as np
+from typing import List, Optional
+from vireon.core.twin import DigitalTwin
 
-class CustomBatteryDrainAttack(BaseAttack):
-    def __init__(self, target_twin, drain_rate=50.0):
-        super().__init__(target_twin)
+class CustomBatteryDrainAttack(ISignalModifier):
+    def __init__(self, drain_rate=50.0):
         self.drain_rate = drain_rate
 
-    def apply(self, client, link):
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: Optional[np.random.Generator] = None) -> np.ndarray:
         print(f"Applying custom battery drain attack with rate {self.drain_rate}...")
-        link.inject_malformed_packet(b"DRAIN_MAX")
-        print("Attack payload delivered.")
+        twin.battery_level = max(0.0, twin.battery_level - self.drain_rate)
+        return data
 
 def get_plugin_info():
     """

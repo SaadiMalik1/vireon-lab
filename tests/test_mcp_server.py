@@ -1,6 +1,4 @@
-import pytest
 import json
-import base64
 from vireon.mcp_server import mock_authenticate_session, get_available_plugins, run_simulation, _verify_capability
 
 def test_mock_authenticate_session_patient():
@@ -10,8 +8,8 @@ def test_mock_authenticate_session_patient():
     assert "session_token" in res
     
     token = res["session_token"]
-    assert _verify_capability(token, "log.read") == True
-    assert _verify_capability(token, "simulation.run") == False
+    assert _verify_capability(token, "log.read") is True
+    assert _verify_capability(token, "simulation.run") is False
 
 def test_mock_authenticate_session_clinician_fail():
     res_str = mock_authenticate_session("dummy_hash", "clinician", "wrong_sig")
@@ -26,7 +24,7 @@ def test_mock_authenticate_session_clinician_success(monkeypatch):
     assert "session_token" in res
     
     token = res["session_token"]
-    assert _verify_capability(token, "simulation.run") == True
+    assert _verify_capability(token, "simulation.run") is True
 
 def test_get_available_plugins():
     res_str = get_available_plugins()

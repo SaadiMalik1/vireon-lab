@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from vireon.core.twin import DigitalTwin
 from vireon.core.detection import (
@@ -27,7 +26,7 @@ def test_linear_autoencoder_ids():
     for _ in range(105):
         err = ids.detect(data)
     
-    assert ids.is_fitted == True
+    assert ids.is_fitted is True
     assert err >= 0.0
 
 def test_coherence_engine():
@@ -109,5 +108,5 @@ if TORCH_AVAILABLE:
         for _ in range(55):
             err = ids.detect(data)
         
-        assert ids.is_fitted == True
+        assert ids.is_fitted is True
         assert err >= 0.0

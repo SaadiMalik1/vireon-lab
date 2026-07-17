@@ -11,7 +11,7 @@ import sys
 import hashlib
 
 # Disable SSL verification for simplicity in some locked-down environments
-ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
 
 DATASETS = {
     "eegmmi_baseline": {
