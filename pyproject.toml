@@ -2,6 +2,9 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["vireon_lab"]
+
 [project]
 name = "vireon-lab"
 version = "1.0.0"
@@ -10,7 +13,7 @@ readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 dependencies = [
-    "vireon>=1.0.0",
+    "vireon @ git+https://github.com/SaadiMalik1/vireon.git@main",
     "streamlit>=1.54.0",
     "pandas~=2.2.0",
     "plotly~=5.18.0",
