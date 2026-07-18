@@ -15,8 +15,10 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from vireon.sdk.state import IStateStore as StateStore
 from vireon.sdk.utils import calculate_rms
+from vireon.sdk.interfaces import IProvider, OrchestratorContext
+from vireon.sdk.manifest import CapabilityManifest
+from vireon.core.twin import DigitalTwin
 
 class IClinicalEvaluator(ABC):
     @abstractmethod
@@ -47,8 +49,6 @@ class UncontrolledStimulationAttack:
         self.twin.update_stimulation_params(10.0, 130.0) # 10 mA (Dangerous current limit)
         self.twin.set_clinical_alert(True, "Uncontrolled Stimulation")
 
-from vireon.sdk.interfaces import IProvider, OrchestratorContext
-from vireon.sdk.manifest import CapabilityManifest
 
 class ClosedLoopSimulator(IProvider, IClinicalEvaluator):
     def __init__(self, twin: DigitalTwin = None):

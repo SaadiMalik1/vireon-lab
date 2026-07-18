@@ -22,12 +22,12 @@ import sys
 # Ensure vireon is in path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from vireon.core.state_store import StateStore
 from vireon.engine.engine import ReplayEngine
 from vireon.core.detection import SecurityEngine
 from vireon_lab.core_examples.clinical import NeuroIPS
 from vireon.validation.threat_intel import ThreatIntelligence
 from vireon.core.attack import SignalAttackEngine
+from vireon.core.twin import DigitalTwin
 
 st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠")
 

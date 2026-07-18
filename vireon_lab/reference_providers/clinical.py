@@ -17,11 +17,11 @@ from typing import List, Tuple, Optional
 import math
 import threading
 
-from vireon.core.state_store import StateStore
 from vireon.core.event_bus import EventBus, Event
 from vireon.core.safety_envelope import SafetyEnvelope
 from vireon.core.utils import calculate_rms
 from vireon.core.detection import SecurityEngine
+from vireon.core.twin import DigitalTwin
 
 class NeuroIPSConstants:
     SAFE_FALLBACK_AMPLITUDE_MA = 1.0

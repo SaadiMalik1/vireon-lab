@@ -28,13 +28,13 @@ import time
 import subprocess
 import ssl
 from typing import Dict, Any
-from vireon.sdk.state import IStateStore as StateStore
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
 from vireon.core.protocol import RFFrameProcessor
 from vireon.core.detection import SecurityEngine
 from vireon_lab.core_examples.clinical import NeuroIPS
 from vireon.core.attack_factory import AttackFactory
 from vireon_lab.providers.clinical.closed_loop import UncontrolledStimulationAttack
+from vireon.core.twin import DigitalTwin
 class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
     server: 'ThreadedHTTPServer'
     

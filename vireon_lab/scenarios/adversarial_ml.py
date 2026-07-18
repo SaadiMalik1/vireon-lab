@@ -29,7 +29,7 @@ import numpy as np
 from typing import List
 
 from vireon.core.attack import ISignalModifier
-from vireon.core.state_store import StateStore
+from vireon.core.twin import DigitalTwin
 
 try:
     import importlib.util

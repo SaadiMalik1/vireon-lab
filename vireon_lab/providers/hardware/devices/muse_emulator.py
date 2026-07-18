@@ -16,8 +16,8 @@ import threading
 import time
 import numpy as np
 from typing import List, Any
-from vireon.sdk.state import IStateStore as StateStore
 from vireon_lab.providers.devices import IDeviceWrapper
+from vireon.core.twin import DigitalTwin
 
 class MuseEmulator(IDeviceWrapper):
     """

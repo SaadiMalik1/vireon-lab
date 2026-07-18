@@ -17,7 +17,7 @@ import time
 from typing import Dict, Any, List
 from jinja2 import Environment, BaseLoader, select_autoescape
 from markupsafe import Markup
-from vireon.sdk.state import IStateStore as StateStore
+from vireon.core.twin import DigitalTwin
 
 # Premium Glassmorphic HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>

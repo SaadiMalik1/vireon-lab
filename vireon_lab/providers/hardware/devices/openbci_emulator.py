@@ -23,7 +23,7 @@ from typing import List, Optional
 import numpy as np
 import logging
 
-from vireon.sdk.state import IStateStore as StateStore
+from vireon.core.twin import DigitalTwin
 
 logger = logging.getLogger(__name__)
 

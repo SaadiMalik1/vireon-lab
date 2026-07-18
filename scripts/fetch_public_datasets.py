@@ -23,9 +23,10 @@ import ssl
 from pathlib import Path
 import sys
 import hashlib
+import certifi
 
 # Disable SSL verification for simplicity in some locked-down environments
-ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
+ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
 DATASETS = {
     "eegmmi_baseline": {
