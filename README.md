@@ -1,20 +1,23 @@
-# VIREON Lab
+# VIREON-LAB
 
 ## What is this?
-VIREON Lab is the educational platform and experimental environment for the VIREON ecosystem. It provides tutorials, Jupyter notebooks, example deployments, and datasets for interacting with the VIREON runtime and NeuroDSL.
+The educational platform, dashboard, and research playground for the VIREON ecosystem.
 
 ## Who is it for?
-This repository is for students, researchers, data scientists, and end-users who want to learn how to use VIREON or run predefined experiments.
+End-users, students, researchers, and tutorial consumers looking to learn or demonstrate VIREON capabilities.
 
-## How do I install it?
-To run the lab environment locally, we recommend using the ecosystem workspace:
+## Installation
 ```bash
-git clone https://github.com/VIREON/workspace.git
-cd workspace
-docker compose up --build
+pip install vireon-lab
 ```
-For detailed instructions, see the official [Installation Guide](https://github.com/VIREON/vireon/tree/main/docs/INSTALLATION.md).
+
+## Quick Example
+```bash
+streamlit run vireon_lab/dashboard/app.py
+```
 
 ## Where is the documentation?
-- **Ecosystem Documentation:** Hosted centrally in [vireon/docs](https://github.com/VIREON/vireon/tree/main/docs/).
-- **Lab Examples:** See the `tutorials/` and `examples/` directories in this repository for hands-on guides.
+The canonical documentation for the entire VIREON ecosystem is located in the `vireon` repository under `docs/`.
+
+## Repository Status
+Active / Maintained. Educational content only.
