@@ -21,14 +21,6 @@ from typing import Callable, Dict, List, Any, Optional
 from dataclasses import dataclass, field
 
 
-@dataclass
-class Event:
-    """An event payload published to the bus."""
-    topic: str
-    data: Dict[str, Any] = field(default_factory=dict)
-    timestamp: float = 0.0  # Simulation clock time (set by publisher)
-    source: str = ""        # Component name that published
-
 
 @dataclass
 class _Subscription:
@@ -38,7 +30,9 @@ class _Subscription:
     priority: int  # Lower = fires first
 
 
-class EventBus:
+from vireon.sdk.events import Event, IEventBus
+
+class EventBus(IEventBus):
     """
     Synchronous publish-subscribe event bus.
 

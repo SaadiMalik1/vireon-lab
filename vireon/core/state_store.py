@@ -1,13 +1,14 @@
 import threading
 from typing import Any, Dict, Optional
-from vireon.core.event_bus import EventBus, Event
+from vireon.sdk.events import IEventBus, Event
+from vireon.sdk.state import IStateStore
 
-class StateStore:
+class StateStore(IStateStore):
     """
     Central, thread-safe Key-Value store replacing the DigitalTwin God-class.
     All state mutations are broadcast over the EventBus.
     """
-    def __init__(self, event_bus: EventBus):
+    def __init__(self, event_bus: IEventBus):
         self._state: Dict[str, Any] = {}
         self._lock = threading.RLock()
         self.event_bus = event_bus

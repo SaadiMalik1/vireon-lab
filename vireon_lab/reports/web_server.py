@@ -14,7 +14,7 @@ import time
 import subprocess
 import ssl
 from typing import Dict, Any
-from vireon.core.state_store import StateStore
+from vireon.sdk.state import IStateStore as StateStore
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
 from vireon.sdk.protocol import RFFrameProcessor
 from vireon.core.detection import SecurityEngine
@@ -227,7 +227,7 @@ class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
                 dsl_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../neuro_dsl"))
                 cmd = ["cargo", "run", "--bin", "forge"]
                 
-                from vireon.core.runner import run_sandboxed
+                from vireon.sdk.runner import run_sandboxed
                 result = run_sandboxed(
                     cmd, 
                     input_data=source_code, 

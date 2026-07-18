@@ -1,60 +1,35 @@
-# Plugin Lifecycle
+# Plugin Lifecycle Management
 
-## Overview
-To prevent complex neurotechnology simulations from degrading into race conditions and deadlocks, VIREON strictly defines the plugin execution lifecycle. 
+To ensure deterministic behavior, resource safety, and secure capability isolation, all VIREON plugins must adhere to a strict state machine lifecycle managed by the Core Orchestrator. 
 
-This document describes how a Provider (Plugin) moves from discovery to execution and eventual removal.
+## The 10-Phase Lifecycle
 
-## The Lifecycle Phases
+### 1. Discover
+The Orchestrator scans configured plugin directories or endpoints. It looks for valid package structures containing an implementation of `IVireonPlugin`. At this phase, no third-party code is executed.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Installation
-    Installation --> Discovery
-    Discovery --> Capability_Negotiation
-    Capability_Negotiation --> Dependency_Resolution
-    Dependency_Resolution --> Initialization
-    Initialization --> Runtime
-    Runtime --> Failure_Recovery : Error
-    Failure_Recovery --> Runtime : Recovered
-    Failure_Recovery --> Shutdown : Fatal
-    Runtime --> Shutdown
-    Shutdown --> Cleanup
-    Cleanup --> [*]
-```
+### 2. Validate
+The Orchestrator statically parses the plugin's `manifest` property or `manifest.json`. It verifies cryptographic signatures (if enabled), checks framework SDK compatibility, and ensures requested capabilities are well-formed.
 
-### 1. Installation
-Plugins are installed into the `vireon_plugins/` directory or compiled as standalone binaries that the `SubprocessProvider` wrapper knows how to execute. Installation defines the static presence of the plugin.
+### 3. Load
+The plugin module is dynamically imported into the Python runtime. The `IVireonPlugin` class is instantiated. Constructor logic must be minimal, purely allocating necessary internal state without acquiring external resources or starting threads.
 
-### 2. Discovery
-During Orchestrator boot, the `PluginRegistry` scans known directories, parses Entry Points, and loads the `CapabilityManifest` for each available plugin.
+### 4. Initialize
+The Orchestrator invokes `plugin.initialize(context)`. The plugin is handed an `OrchestratorContext` containing strictly scoped references to the `IEventBus` and `IStateStore`. The plugin sets up its internal routes and prepares for execution.
 
-### 3. Capability Negotiation
-The `CapabilityEngine` cross-references the requested capabilities of the plugin against the `ExperimentConfig` overrides. If a plugin demands `WRITE_STATE` but the user config forces `READ_ONLY`, negotiation fails and the plugin is unloaded before initialization.
+### 5. Capability Negotiation
+The Orchestrator evaluates the plugin's requested capabilities against the global security policy. If the plugin requests `NetworkAccess` but the runtime is configured in offline mode, negotiation fails, and the plugin is transitioned directly to `Shutdown`.
 
-### 4. Dependency Resolution
-Plugins may depend on events emitted by other plugins (e.g., the `ClinicalProvider` requires the `PhysicsProvider` to exist). The Orchestrator builds a Directed Acyclic Graph (DAG) to ensure the `initialize()` methods are called in the correct, non-blocking order.
+### 6. Run
+The Orchestrator starts the simulation loop. The plugin's `start()` method is called (for active providers), or its `on_tick(sim_clock, dt)` method begins receiving regular invocations. The plugin actively processes data, modifies state, and publishes events.
 
-### 5. Initialization
-The Orchestrator calls `IProvider.initialize(context)`. The plugin:
-- Subscribes to necessary `EventBus` topics.
-- Pre-allocates memory or buffers.
-- Spawns any internal threads (if in-process).
+### 7. Suspend
+Triggered by the Orchestrator during debugging, pause requests, or resource contention. The plugin must immediately halt active processing, stop emitting events, and save any volatile state. Network connections may be kept alive but must not transmit payload data.
 
-### 6. Runtime Execution
-The primary simulation loop. The plugin reacts exclusively to events (like the `system.tick`) over the `EventBus`. It publishes results back to the bus or mutates permitted keys in the `StateStore`.
+### 8. Resume
+The Orchestrator signals the plugin to wake up from suspension. Time-sensitive logic must account for the delta elapsed during the suspension window.
 
-### 7. Failure Recovery
-If a plugin crashes (especially relevant for `SubprocessProvider` wrapped binaries):
-- The Orchestrator captures the `SIGSEGV` or exception.
-- It logs the failure and attempts to restart the binary **once**, restoring its state from the `StateStore`.
-- If it fails again, it triggers a cascade `ShutdownEvent`.
+### 9. Unload
+Triggered prior to system termination or during hot-reloading. The plugin must unregister from all event bus topics and flush any pending data.
 
-### 8. Shutdown
-Triggered by test completion or a fatal error. The Orchestrator publishes `system.shutdown`. Providers must close sockets, terminate threads, and cease operations.
-
-### 9. Cleanup
-The Orchestrator aggressively garbage collects the Python instances or SIGKILLs the subprocesses to ensure no orphaned processes leak into the host operating system.
-
-### 10. Upgrade & Removal
-Plugins can be hot-swapped between simulation runs (but never during). Upgrading a plugin requires a new Discovery phase to re-verify the `CapabilityManifest`.
+### 10. Shutdown
+The terminal state. The plugin's `shutdown()` method is called. The plugin must release all system resources (sockets, file handles, subprocesses). After this phase, the object is dereferenced for garbage collection.

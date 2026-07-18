@@ -2,11 +2,13 @@
 
 > [!CAUTION]
 > **Research/Education Testbed**
-> VIREON is a research and educational platform. While it implements physically consistent ODEs, it is **not** for clinical, diagnostic, or production medical use. Note that cryptographic operations are simulated for educational purposes and are not secure.
+> VIREON is a research and educational platform. While it implements physically consistent ODEs, it is **not** for clinical, diagnostic, or production medical use. Note that while real cryptographic algorithms are utilized, their implementations contain intentional flaws for educational threat modeling and are not cryptographically secure.
+
 [![CI](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml/badge.svg)](https://github.com/SaadiMalik1/Vireon/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 **Audience**: Security Researchers, Academic Researchers, Developers
 
 ## What is VIREON?
@@ -14,27 +16,21 @@ VIREON is an open-source research platform for simulating, validating, and evalu
 
 It provides a complete **cyber-physical kill chain evaluator** that allows researchers to model the entire attacker lifecycle—from reconnaissance and initial access to physical signal manipulation—across different neurotechnology ecosystems (DBS, VNS, Cochlear, BCI).
 
-## Core Features
-- **Attack Lifecycle Engine**: Model threat actors from passive observers (L0) up to supply-chain root compromises (L6) across 7 distinct attack stages.
-- **Structured Threat Models**: Declarative YAML models defining assets, boundaries, and assumptions for standard neurotech ecosystems.
-- **Intrusion Detection & ZTA**: Test and validate neuro-IDS heuristics and Zero-Trust architectures dynamically.
-- **Capture-The-Flag (CTF)**: Built-in interactive neurosecurity challenges to teach and evaluate threat-modeling concepts.
-- **Web Dashboard**: Real-time telemetry monitoring through a Streamlit UI.
-- **Hardware-in-the-Loop (HIL)**: Connect and validate physical devices or run actual firmware images inside QEMU.
-- **Compliance Tooling**: Generate FDA 524B-compliant SBOMs, compliance reports, and audit SPDF practices automatically.
+## Architectural Split: Framework vs. Lab
+VIREON is explicitly divided into two strictly isolated domains:
+1. **`VIREON Framework` (`vireon.core`, `vireon.sdk`)**: The deeply isolated simulation engine, deterministic state store, and physics integrators. Third-party vendors interact strictly via the `vireon.sdk` interfaces.
+2. **`VIREON Lab` (`vireon_lab`)**: The educational host and consumer of the framework. It contains the interactive web dashboard, tutorials, Capture-The-Flag scenarios, and educational emulators (like OpenBCI).
 
 ## Component Status Matrix
-| Component | Status | Description |
-|-----------|--------|-------------|
-| **OpenBCI Cyton Emulator** | **Working** | Real PTY, accurate framing at correct scale. |
-| **QEMU HIL Emulator** | **Working** | Runs real ARM cortex-m firmware images bridged to the platform. |
-| **True BLE Client** | **Working** | Live Bluetooth Low Energy integration with physical hardware. |
-| **Fuzzer** | **Working** | Mutation fuzzer with a real accept/reject oracle. |
-| **Plugin Registry** | **Working** | Thread-safe entry-point discovery. |
-| **Closed-Loop DBS** | **Working** | Emulated STN LFP and stimulation modulation. |
-| **Cryptography** | **Simulated** | Cryptographic primitives (ECDH, SHA256, AES-GCM) are emulated placeholders for threat modeling and are NOT cryptographically secure. |
-| **Compliance Evidence** | **Working** | FDA 524B outputs generated from verified controls and software components. |
-| **Physics / Biology** | **Working** | Implements RK4 integrator, Pennes Bioheat equation, and Kuramoto neural dynamics. |
+| Component | Domain | Status | Description |
+|-----------|--------|--------|-------------|
+| **Core Runtime Engine** | `VIREON Framework` | **Working** | Event-driven Orchestrator, State Store, and Physics Engine. |
+| **Provider SDK** | `VIREON Framework` | **Working** | Frozen `vireon.sdk` interfaces for vendor interoperability. |
+| **OpenBCI Cyton Emulator** | `VIREON Lab` | **Working** | Educational plugin emulator with accurate framing. |
+| **QEMU HIL Emulator** | `VIREON Lab` | **Working** | Runs real ARM cortex-m firmware images bridged to the platform. |
+| **Web Dashboard** | `VIREON Lab` | **Working** | Streamlit UI telemetry and reports dashboard. |
+| **Cryptography** | `VIREON Framework` | **Vulnerable** | Uses real algorithms (ECDH, SHA256, AES-GCM) with intentional implementation flaws (e.g., zero-salt HKDF) for threat modeling; NOT secure. |
+| **Capture-The-Flag** | `VIREON Lab` | **Working** | Built-in interactive neurosecurity challenges. |
 
 ## Who Should Use It?
 - **Academic Researchers**: To model the physiological impact of adversarial stimuli without human subjects.
@@ -48,27 +44,19 @@ It provides a complete **cyber-physical kill chain evaluator** that allows resea
 ---
 
 ## System Architecture
-VIREON's architecture is event-driven and isolated, allowing plugins to interact with the simulated physical `DigitalTwin` without causing thread contention.
+
+VIREON's architecture enforces strict Dependency Inversion. All third-party plugins (including `VIREON Lab` emulators) interact through the public `vireon.sdk`.
 
 ```mermaid
 graph TD
-    A[CLI / Dashboard] --> B(Coordinator)
-    B --> C{Event Bus}
-    C --> D[Simulation Engine]
-    D --> E((Digital Twin))
+    A[VIREON Lab / Hosts] --> B(vireon.sdk)
+    B <--> C{Event Bus}
+    C --> D[vireon.core Engine]
+    D --> E((State Store))
     D --> F[Physics Integrator]
     C --> G[Security / IDS Plugins]
     C --> H[Attack Engine]
-    H --> I[Modulators / Adversarial Payload]
 ```
-
-## Environment Variables
-The following environment variables can optionally configure VIREON's behavior:
-- `VIREON_LOG_LEVEL`: Set to `DEBUG`, `INFO`, `WARNING`, or `ERROR` (default: `INFO`).
-- `VIREON_PLUGIN_DIR`: Path to load custom plugins (default: `vireon/plugins/`).
-- `VIREON_STRICT_MODE`: Set to `1` to crash on missing dependencies instead of warning.
-
----
 
 ## Installation & Prerequisites
 
@@ -83,8 +71,6 @@ source .venv/bin/activate
 # Install the project and all optional dependencies (including UI and Docs)
 pip install -e ".[all]"
 ```
-
-*Note: For detailed instructions regarding Rust toolchains for the NeuroDSL compiler, see the [Installation Guide](INSTALL.md) or the [Developer Guide](CONTRIBUTING.md).*
 
 ---
 
@@ -122,34 +108,29 @@ vireon compliance-report -o output/compliance.json
 vireon audit-spdf
 ```
 
-### 5. Fuzzing & Diagnostics
-Run protocol fuzzing or view loaded plugins:
-```bash
-vireon info
-vireon fuzz --iterations 5000 --protocol vireon
-```
-
 ---
 
 ## Project Structure
 ```text
-vireon/
+vireon/             # Core Framework & Public SDK
 ├── attack_chain/   # 7-stage cyber kill chain lifecycle models
-├── core/           # Coordinator, Engine, ZTA, IDS, Digital Twin
+├── core/           # Engine, ZTA, IDS, State Store
+├── sdk/            # Public Plugin Interfaces (IVireonPlugin, IEventBus)
+vireon_lab/         # Educational & Host Consumer 
 ├── ctf/            # Capture-the-Flag challenge engine & content
 ├── dashboard/      # Streamlit interactive Web UI
-├── plugins/        # Firmware Emulators, BLE clients, Datasets
-├── tests/          # Pytest validation scripts
-├── neuro_dsl/      # Embedded Rust DSL Compiler
-└── __main__.py     # Unified CLI entry point
+├── providers/      # Educational firmware emulators & BLE clients
+├── reports/        # Reports Web Server & hosts
+tests/              # Pytest boundary and unit validation scripts
+neuro_dsl/          # Embedded Rust DSL Compiler
 threat_models/      # Declarative YAML ecosystem threat models
 docs/               # Technical, scientific, and API documentation
 ```
 
 ## Documentation Links
 - [Full Documentation Index](docs/index.md)
-- [System Architecture](docs/architecture.md)
-- [Threat Modeling & Security](docs/threat-model/README.md)
+- [Architectural Boundaries](docs/ARCHITECTURAL_BOUNDARIES.md)
+- [Plugin Lifecycle](docs/PLUGIN_LIFECYCLE.md)
 - [API Reference](docs/api.md)
 - [Plugin Development Guide](docs/plugin-development.md)
 

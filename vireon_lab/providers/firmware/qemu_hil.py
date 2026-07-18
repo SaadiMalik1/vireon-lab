@@ -46,7 +46,7 @@ class QemuCortexMEmulator:
             cmd.extend(["-s"])
             
         print(f"[QemuHIL] Launching QEMU (sandboxed): {' '.join(cmd)}")
-        from vireon.core.runner import popen_sandboxed
+        from vireon.sdk.runner import popen_sandboxed
         self.process = popen_sandboxed(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.running = True
         

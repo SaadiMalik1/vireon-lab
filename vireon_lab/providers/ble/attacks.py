@@ -1,6 +1,6 @@
 import random
 from vireon.plugins.ble.emulator import VirtualBLELink, VirtualBLEClient
-from vireon.core.state_store import StateStore
+from vireon.sdk.state import IStateStore as StateStore
 
 class PairingFailureAttack:
     def __init__(self, twin: DigitalTwin):

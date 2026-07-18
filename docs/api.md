@@ -1,52 +1,67 @@
 # API & Interfaces Reference
 
-**Audience**: Developers, Data Scientists
+**Audience**: Framework Maintainers, External Vendors, Data Scientists
 
-*Note: The interfaces described below represent the logical components of the system. In the current prototype implementation, these modules are tightly coupled and run synchronously on the main Python thread.*
+The VIREON ecosystem strictly enforces Dependency Inversion. External vendors interact with the core simulation solely through the frozen `vireon.sdk` boundaries. Internal orchestration logic resides in `vireon.core`.
 
-## Core Modules (`vireon.core`)
+## The Public SDK (`vireon.sdk`)
 
-### `Coordinator`
-The central orchestrator of the simulation.
-- `setup()`: Initializes the Digital Twin, Firmware Emulator, LSL Streamers, and ZTA Engine.
-- `run_simulation()`: Enters the blocking tick-based physics loop.
+The `vireon.sdk` module provides the abstract contracts necessary for building compatible third-party plugins. This boundary is statically guaranteed and enforces backward compatibility.
+
+### `IVireonPlugin`
+The single entry point base class for all third-party firmware, emulators, and analytical decoders.
+- `manifest`: Property returning a dictionary with the plugin's metadata and requested capabilities.
+- `initialize(context)`: Called during phase 4 of the lifecycle. Provided an `OrchestratorContext`.
+- `start()`: Called when the simulation transitions to the `Run` state.
+- `shutdown()`: Invoked upon termination for resource cleanup.
+
+### `IEventBus`
+The globally accessible interface for asynchronous message dispatch.
+- `subscribe(topic: str, callback: Callable)`
+- `publish(event: Event)`
+
+### `IStateStore`
+The deterministic, lock-free interface replacing the legacy `DigitalTwin`. It guarantees authoritative read/write access to physical and clinical variables.
+- `get(key: str)`
+- `set(key: str, value: Any)`
+- `increment(key: str, value: float)`
+
+### `Event`
+The standard data carrier for pub-sub messaging.
+- `topic`: String indicating the event type.
+- `payload`: Dictionary containing serializable event data.
+
+---
+
+## Core Orchestration (`vireon.core`)
+
+The `vireon.core` namespace handles the internal lifecycle and physics orchestration. **Third-party code must not import from this namespace.**
+
+### `Orchestrator`
+The central state machine that manages the 10-phase plugin lifecycle (Discover -> ... -> Shutdown).
+- `load_plugins()`: Scans the registry and instantiates objects.
+- `start()`: Enters the physics time-stepping loop.
 
 ### `SecurityEngine` / `NeuroIPS`
 The heuristic threat intelligence and zero-trust evaluation core.
-- `evaluate_request(action, context)`: Evaluates trust context against physical anomalies.
+- `evaluate_request(action, context)`: Assesses physical anomalies and blocks unverified state transitions before they reach the `StateStore`.
 
-### `DigitalTwin`
-Models the physiological and physical state of the patient/device.
-- `tick(time_delta, active_draw)`: Advances state of battery and temperature.
-- `set_clinical_alert(status, reason)`: Flags anomalies.
+### `PhysicsEngine`
+Calculates thermodynamics, battery sag, and electrical impedance across the `StateStore`.
 
-### `EventBus`
-Global pub-sub broker for synchronous event dispatch across plugins and engines.
-- `subscribe(event_type, callback)`
-- `publish(event_type, payload)`
+---
 
-## Engines & Emulators
+## The Educational Toolkit (`vireon_lab`)
 
-### `NeuroIPS`
-The Intrusion Prevention System. Intercepts `EventBus` messages and blocks malicious instructions before they hit the DigitalTwin.
+The `vireon_lab` directory contains implementations built *on top of* the `vireon.sdk`.
 
-### `BLE Emulator`
-Simulates the Bluetooth Low Energy interface of clinical programmers.
-- `inject_packet(payload)`: Simulates over-the-air injection.
-- `read_characteristic(uuid)`: Fetches simulated device state.
+### `Web Dashboard`
+An interactive Streamlit application that consumes the `IEventBus` over WebSockets to display telemetry.
 
-## Abstract Interfaces (`vireon.core.plugin`)
+### `Educational Providers`
+Implementations of `IVireonPlugin` that emulate real-world BCIs for educational CTFs (e.g., the OpenBCI emulator, QEMU HIL bridge).
 
-### `ISignalModifier`
-Abstract base interface for all attack and mitigation plugins (e.g., NoiseInjectionAttack, SignalDriftAttack).
-
-### `BaseDataset`
-Interface for dataset readers. Returns standard NumPy arrays for `Coordinator` playback.
-
-### `PluginRegistry`
-Singleton manager for dynamically loaded capabilities.
-- `register(plugin_type, class_ref)`
-- `list_category(category)`
+---
 
 ## CLI (`__main__.py`)
 The `main.py` entry point exposes the `vireon` CLI via Click.
@@ -55,7 +70,7 @@ The `main.py` entry point exposes the `vireon` CLI via Click.
 - `fuzz`: Protocol fuzzing.
 - `sbom`: FDA 524B compliance exports.
 - `compile`: Compiles NeuroDSL scripts.
-- `info`: Lists loaded plugins.
+- `info`: Lists loaded plugins and their negotiated capabilities.
 
-## Configuration (`vireon.core.config`)
-- `ExperimentConfig`: Strongly-typed Pydantic model for loading and validating `default.toml` constraints (replaces loose dictionaries).
+## Configuration
+- `ExperimentConfig`: Strongly-typed Pydantic model for loading and validating `default.toml` constraints.

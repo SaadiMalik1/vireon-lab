@@ -3,7 +3,7 @@ import time
 from typing import Dict, Any, List
 from jinja2 import Environment, BaseLoader, select_autoescape
 from markupsafe import Markup
-from vireon.core.state_store import StateStore
+from vireon.sdk.state import IStateStore as StateStore
 
 # Premium Glassmorphic HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -471,7 +471,7 @@ class ReportGenerator:
         history = self.twin.get_history()
         
         if anonymize_exports:
-            from vireon.core.anonymizer import NeuroDataAnonymizer
+            from vireon.sdk.anonymizer import NeuroDataAnonymizer
             print("[ReportGenerator] Applying NeuroData Anonymization to exported telemetry...")
             anonymizer = NeuroDataAnonymizer()
             history = anonymizer.anonymize_export(history)

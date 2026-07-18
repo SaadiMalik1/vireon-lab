@@ -5,7 +5,7 @@ from typing import Optional
 
 from vireon.sdk.interfaces import IProvider, OrchestratorContext
 from vireon.sdk.manifest import CapabilityManifest
-from vireon.core.event_bus import Event
+from vireon.sdk.events import Event
 
 class SubprocessProvider(IProvider):
     """

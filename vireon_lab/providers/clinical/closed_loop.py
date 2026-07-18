@@ -1,8 +1,8 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from vireon.core.state_store import StateStore
-from vireon.core.utils import calculate_rms
+from vireon.sdk.state import IStateStore as StateStore
+from vireon.sdk.utils import calculate_rms
 
 class IClinicalEvaluator(ABC):
     @abstractmethod
