@@ -1,87 +1,36 @@
 [build-system]
-requires = ["maturin>=1.0,<2.0"]
-build-backend = "maturin"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
-[tool.maturin]
-manifest-path = "neuro_dsl/python_ext/Cargo.toml"
 [project]
-name = "vireon"
+name = "vireon-lab"
 version = "1.0.0"
-description = "Virtual neurosecurity laboratory for reproducible BCI/DBS/VNS security research"
+description = "Educational platform, tutorials, dashboard, and CTFs for VIREON"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
-authors = [
-    {name = "VIREON Contributors"}
-]
-keywords = ["neurosecurity", "BCI", "EEG", "DBS", "simulation", "digital-twin", "security"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Medical Science Apps.",
-    "Topic :: Security",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
-]
 dependencies = [
-    "numpy>=1.26.0",
-    "jinja2>=3.1.6",
-    "pydantic>=2.8.0",
-    "mcp>=1.23.0",
-    "websockets~=11.0",
-    "pyyaml~=6.0.0",
-    "cryptography>=48.0.1",
-    "click>=8.3.3",
-    "bleak>=0.21.1",
-    "setuptools>=83.0.0",
-]
-
-[project.optional-dependencies]
-brainflow = ["brainflow~=5.0.0"]
-edf = ["pyedflib~=0.1.30"]
-mne = ["mne>=1.6.0"]
-science = ["scipy>=1.11.0"]
-lsl = ["pylsl~=1.16.2"]
-dev = [
-    "pytest>=9.0.3",
-    "pytest-asyncio>=0.23.8",
-    "pytest-cov>=4.1.0",
-    "tomli~=2.0.0;python_version<'3.11'",
-    "mypy>=1.10.0",
-]
-reports = ["weasyprint>=68.0"]
-docs = [
-    "mkdocs-material~=9.0.0",
-    "mkdocstrings[python]>=0.24.0",
-]
-ui = [
+    "vireon>=1.0.0",
     "streamlit>=1.54.0",
     "pandas~=2.2.0",
     "plotly~=5.18.0",
+    "brainflow~=5.0.0",
+    "pyedflib~=0.1.30",
+    "mne>=1.6.0",
+    "scipy>=1.11.0",
+    "pylsl~=1.16.2",
+    "weasyprint>=68.0"
 ]
-all = [
-    "vireon[brainflow,edf,mne,science,lsl,dev,reports,docs,ui]",
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-asyncio>=0.23.8",
 ]
-
-[project.scripts]
-vireon = "vireon.__main__:main"
-
-[project.entry-points."vireon.plugins"]
-# Example: my_plugin = "my_package:get_plugin_info"
-
-[project.urls]
-Repository = "https://github.com/SaadiMalik1/Vireon.git"
-Documentation = "https://vireon.readthedocs.io"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
 addopts = "-v --tb=short"
 
 [tool.ruff]
@@ -89,9 +38,3 @@ line-length = 120
 target-version = "py310"
 exclude = [".venv", "venv", "__pycache__"]
 ignore = ["E402"]
-
-[tool.mypy]
-python_version = "3.12"
-ignore_missing_imports = true
-strict_optional = false
-exclude = ["openbci_reference/"]
