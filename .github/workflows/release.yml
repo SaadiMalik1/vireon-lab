@@ -35,7 +35,7 @@ jobs:
           git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --oneline >> CHANGELOG_STUB.md || echo "Initial release" >> CHANGELOG_STUB.md
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           body_path: CHANGELOG_STUB.md
           files: |
