@@ -1,1 +1,0 @@
-# VIREON BLE Plugin Package
