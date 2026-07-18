@@ -15,7 +15,7 @@ requires-python = ">=3.10"
 dependencies = [
     "vireon @ git+https://github.com/SaadiMalik1/vireon.git@main",
     "streamlit>=1.54.0",
-    "pandas~=2.2.0",
+    "pandas>=2.2,<2.4",
     "plotly~=5.18.0",
     "brainflow~=5.0.0",
     "pyedflib~=0.1.30",
