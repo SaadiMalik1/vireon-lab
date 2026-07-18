@@ -1,6 +1,6 @@
 import time
 import threading
-from vireon.plugins.devices import IDeviceWrapper
+from vireon_lab.providers.devices import IDeviceWrapper
 import numpy as np
 from typing import List, Dict, Any, Optional
 

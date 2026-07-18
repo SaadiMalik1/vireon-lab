@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List
-from vireon.plugins.devices import IDeviceWrapper
+from vireon_lab.providers.devices import IDeviceWrapper
 
 try:
     from pylsl import resolve_stream, StreamInlet

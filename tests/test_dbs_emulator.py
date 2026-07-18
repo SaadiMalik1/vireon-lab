@@ -1,6 +1,6 @@
 import unittest
 from vireon.core.twin import DigitalTwin
-from vireon.plugins.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
+from vireon_lab.providers.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
 
 class TestDBSClosedLoop(unittest.TestCase):
     def setUp(self):

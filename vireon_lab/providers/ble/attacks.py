@@ -1,5 +1,5 @@
 import random
-from vireon.plugins.ble.emulator import VirtualBLELink, VirtualBLEClient
+from vireon_lab.providers.ble.emulator import VirtualBLELink, VirtualBLEClient
 from vireon.sdk.state import IStateStore as StateStore
 
 class PairingFailureAttack:

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import time
-from vireon.plugins.devices.pieeg import PiEEGBoardWrapper
+from vireon_lab.providers.devices.pieeg import PiEEGBoardWrapper
 
 class TestPiEEGHardwareEmulator(unittest.TestCase):
     def setUp(self):

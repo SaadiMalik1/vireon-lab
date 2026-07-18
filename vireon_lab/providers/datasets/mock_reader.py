@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List, Dict, Any
-from vireon.plugins.datasets import IDatasetReader
+from vireon_lab.providers.datasets import IDatasetReader
 
 
 class MockEEGReader(IDatasetReader):

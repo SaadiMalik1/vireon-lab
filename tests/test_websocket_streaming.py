@@ -4,7 +4,7 @@ import time
 import asyncio
 import threading
 import os
-from vireon.plugins.reports.ws_server import NeuroWebSocketServer
+from vireon_lab.reports.ws_server import NeuroWebSocketServer
 
 # Prevent proxy environment variables from intercepting loopback connections
 for key in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY']:

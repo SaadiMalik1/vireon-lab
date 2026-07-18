@@ -3,7 +3,7 @@ import time
 import numpy as np
 from typing import List, Any
 from vireon.sdk.state import IStateStore as StateStore
-from vireon.plugins.devices import IDeviceWrapper
+from vireon_lab.providers.devices import IDeviceWrapper
 
 class EmotivEpocEmulator(IDeviceWrapper):
     """

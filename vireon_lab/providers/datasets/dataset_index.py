@@ -2,10 +2,10 @@ import os
 import json
 import re
 from typing import Dict, Any, List, Optional
-from vireon.plugins.datasets.edf_reader import EDFReader
-from vireon.plugins.datasets.csv_reader import CSVReader
-from vireon.plugins.datasets.fif_reader import FIFReader
-from vireon.plugins.datasets.mne_reader import MNEReader
+from vireon_lab.providers.datasets.edf_reader import EDFReader
+from vireon_lab.providers.datasets.csv_reader import CSVReader
+from vireon_lab.providers.datasets.fif_reader import FIFReader
+from vireon_lab.providers.datasets.mne_reader import MNEReader
 
 
 class DatasetIndexer:

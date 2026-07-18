@@ -6,11 +6,11 @@ import numpy as np
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from vireon.plugins.datasets.mock_reader import MockEEGReader
-from vireon.plugins.datasets.edf_reader import EDFReader
-from vireon.plugins.datasets.csv_reader import CSVReader
-from vireon.plugins.datasets.fif_reader import FIFReader
-from vireon.plugins.datasets.dataset_index import DatasetIndexer
+from vireon_lab.providers.datasets.mock_reader import MockEEGReader
+from vireon_lab.providers.datasets.edf_reader import EDFReader
+from vireon_lab.providers.datasets.csv_reader import CSVReader
+from vireon_lab.providers.datasets.fif_reader import FIFReader
+from vireon_lab.providers.datasets.dataset_index import DatasetIndexer
 
 
 class TestDatasetManagement(unittest.TestCase):

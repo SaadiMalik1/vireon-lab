@@ -3,7 +3,7 @@ import os
 import hashlib
 import json
 from typing import Any, List
-from vireon.plugins.devices import IDeviceWrapper
+from vireon_lab.providers.devices import IDeviceWrapper
 
 class NSPCryptographicWrapper(IDeviceWrapper):
     """

@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from vireon.plugins.datasets.mne_reader import MNEReader
+from vireon_lab.providers.datasets.mne_reader import MNEReader
 
 def test_mne_reader_fallback_no_file():
     # If file doesn't exist and fallback is True, it should use MockEEGReader
@@ -38,8 +38,8 @@ def test_mne_reader_various_extensions():
     assert reader3.mock_reader is not None
 
 def test_mne_reader_without_mne(monkeypatch):
-    import vireon.plugins.datasets.mne_reader
-    monkeypatch.setattr(vireon.plugins.datasets.mne_reader, 'HAS_MNE', False)
+    import vireon_lab.providers.datasets.mne_reader
+    monkeypatch.setattr(vireon_lab.providers.datasets.mne_reader, 'HAS_MNE', False)
     
     reader = MNEReader("test.vhdr", fallback_on_error=True)
     assert reader.mock_reader is not None

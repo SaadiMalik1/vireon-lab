@@ -1,5 +1,5 @@
 import numpy as np
-from vireon.attacks.adversarial_ml import (
+from vireon_lab.scenarios.adversarial_ml import (
     FGSMAttack,
     PGDAttack,
     CWAttack,

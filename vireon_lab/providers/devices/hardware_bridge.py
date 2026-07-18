@@ -2,7 +2,7 @@ import socket
 import threading
 import numpy as np
 from typing import Any, List
-from vireon.plugins.devices import IDeviceWrapper
+from vireon_lab.providers.devices import IDeviceWrapper
 
 class HardwareBridge(IDeviceWrapper):
     """

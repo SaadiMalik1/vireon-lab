@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from vireon.core.twin import DigitalTwin
-from vireon.plugins.clinical.closed_loop import ClosedLoopSimulator, UncontrolledStimulationAttack
+from vireon_lab.providers.clinical.closed_loop import ClosedLoopSimulator, UncontrolledStimulationAttack
 
 class TestClinicalRiskModeling(unittest.TestCase):
     def setUp(self):

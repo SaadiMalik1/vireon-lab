@@ -1,8 +1,8 @@
 import numpy as np
 import os
 from typing import List, Dict, Any
-from vireon.plugins.datasets import IDatasetReader
-from vireon.plugins.datasets.mock_reader import MockEEGReader
+from vireon_lab.providers.datasets import IDatasetReader
+from vireon_lab.providers.datasets.mock_reader import MockEEGReader
 
 try:
     import mne

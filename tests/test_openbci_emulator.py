@@ -3,7 +3,7 @@ import numpy as np
 import time
 import os
 from vireon.core.twin import DigitalTwin
-from vireon.plugins.devices.openbci_emulator import OpenBCICytonEmulator
+from vireon_lab.providers.devices.openbci_emulator import OpenBCICytonEmulator
 
 class TestOpenBCICytonEmulator(unittest.TestCase):
     def setUp(self):

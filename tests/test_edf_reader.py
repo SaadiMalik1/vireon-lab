@@ -1,11 +1,11 @@
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
-from vireon.plugins.datasets.edf_reader import EDFReader
+from vireon_lab.providers.datasets.edf_reader import EDFReader
 
 @pytest.fixture
 def mock_pyedflib():
-    with patch("vireon.plugins.datasets.edf_reader.pyedflib", create=True) as mock_lib:
+    with patch("vireon_lab.providers.datasets.edf_reader.pyedflib", create=True) as mock_lib:
         mock_reader = MagicMock()
         mock_reader.getSampleFrequency.return_value = 250
         mock_reader.signals_in_file = 2
@@ -23,7 +23,7 @@ def mock_pyedflib():
         yield mock_lib
 
 def test_edf_reader_with_pyedflib(mock_pyedflib, monkeypatch):
-    monkeypatch.setattr("vireon.plugins.datasets.edf_reader.HAS_PYEDFLIB", True, raising=False)
+    monkeypatch.setattr("vireon_lab.providers.datasets.edf_reader.HAS_PYEDFLIB", True, raising=False)
     reader = EDFReader("test.edf")
     
     assert reader.sample_rate == 250
@@ -53,7 +53,7 @@ def test_edf_reader_with_pyedflib(mock_pyedflib, monkeypatch):
     assert np.all(chunk_err == 0.0)
 
 def test_edf_reader_without_pyedflib(monkeypatch):
-    monkeypatch.setattr("vireon.plugins.datasets.edf_reader.HAS_PYEDFLIB", False, raising=False)
+    monkeypatch.setattr("vireon_lab.providers.datasets.edf_reader.HAS_PYEDFLIB", False, raising=False)
     
     # Should fallback to mock reader
     reader = EDFReader("test.edf", fallback_on_error=True)
@@ -73,13 +73,13 @@ def test_edf_reader_without_pyedflib(monkeypatch):
     reader.seek(100) # Should not raise
 
 def test_edf_reader_without_pyedflib_no_fallback(monkeypatch):
-    monkeypatch.setattr("vireon.plugins.datasets.edf_reader.HAS_PYEDFLIB", False, raising=False)
+    monkeypatch.setattr("vireon_lab.providers.datasets.edf_reader.HAS_PYEDFLIB", False, raising=False)
     
     with pytest.raises(ImportError):
         EDFReader("test.edf", fallback_on_error=False)
 
 def test_edf_reader_exception_during_init(mock_pyedflib, monkeypatch):
-    monkeypatch.setattr("vireon.plugins.datasets.edf_reader.HAS_PYEDFLIB", True, raising=False)
+    monkeypatch.setattr("vireon_lab.providers.datasets.edf_reader.HAS_PYEDFLIB", True, raising=False)
     mock_pyedflib.EdfReader.side_effect = Exception("Init Error")
     
     # Should fallback

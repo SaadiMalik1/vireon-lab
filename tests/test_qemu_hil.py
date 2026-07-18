@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from vireon.plugins.firmware.qemu_hil import QemuCortexMEmulator
+from vireon_lab.providers.firmware.qemu_hil import QemuCortexMEmulator
 
 @patch("os.path.exists", return_value=True)
 @patch("subprocess.Popen")

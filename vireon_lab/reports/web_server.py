@@ -16,11 +16,11 @@ import ssl
 from typing import Dict, Any
 from vireon.sdk.state import IStateStore as StateStore
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
-from vireon.sdk.protocol import RFFrameProcessor
+from vireon.core.protocol import RFFrameProcessor
 from vireon.core.detection import SecurityEngine
-from vireon.core.clinical import NeuroIPS
+from vireon_lab.core_examples.clinical import NeuroIPS
 from vireon.core.attack_factory import AttackFactory
-from vireon.plugins.clinical.closed_loop import UncontrolledStimulationAttack
+from vireon_lab.providers.clinical.closed_loop import UncontrolledStimulationAttack
 class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
     server: 'ThreadedHTTPServer'
     

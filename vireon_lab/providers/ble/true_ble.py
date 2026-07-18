@@ -1,6 +1,6 @@
 from typing import Optional, Callable
 from bleak import BleakClient, BleakScanner
-from vireon.plugins.devices.hardware_bridge import HardwareBridge
+from vireon_lab.providers.devices.hardware_bridge import HardwareBridge
 
 class TrueBLEClient:
     """

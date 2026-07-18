@@ -1,8 +1,8 @@
 import os
 import numpy as np
 from typing import List, Dict, Any, Optional
-from vireon.plugins.datasets import IDatasetReader
-from vireon.plugins.datasets.mock_reader import MockEEGReader
+from vireon_lab.providers.datasets import IDatasetReader
+from vireon_lab.providers.datasets.mock_reader import MockEEGReader
 
 
 class CSVReader(IDatasetReader):

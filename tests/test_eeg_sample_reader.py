@@ -1,6 +1,6 @@
 import json
 from unittest.mock import patch, mock_open
-from vireon.plugins.datasets.eeg_sample_reader import EEGSampleReader
+from vireon_lab.providers.datasets.eeg_sample_reader import EEGSampleReader
 
 def test_eeg_sample_reader_default():
     with patch("os.path.exists", return_value=False):

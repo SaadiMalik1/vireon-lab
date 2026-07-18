@@ -1,7 +1,7 @@
 import unittest
 from vireon.core.twin import DigitalTwin
-from vireon.plugins.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
-from vireon.plugins.ble.attacks import (
+from vireon_lab.providers.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
+from vireon_lab.providers.ble.attacks import (
     PairingFailureAttack,
     GATTCorruptionAttack,
     MTUAbuseAttack,
