@@ -19,7 +19,7 @@ Uses BrainFlow to stream live clinical data from a Cyton or Ganglion board.
 from typing import List
 import numpy as np
 import threading
-from vireon_lab.providers.devices import IDeviceWrapper
+from vireon_lab.providers.hardware.devices import IDeviceWrapper
 
 try:
     from brainflow.board_shim import BoardShim, BoardIds, BrainFlowInputParams

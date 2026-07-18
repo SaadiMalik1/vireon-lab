@@ -16,7 +16,7 @@ import unittest
 import socket
 import time
 import numpy as np
-from vireon_lab.providers.devices.hardware_bridge import HardwareBridge
+from vireon_lab.providers.hardware.devices.hardware_bridge import HardwareBridge
 
 def pack_24bit(val: int) -> bytes:
     val = int(val)

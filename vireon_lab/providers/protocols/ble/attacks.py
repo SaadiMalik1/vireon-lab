@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import random
-from vireon_lab.providers.ble.emulator import VirtualBLELink, VirtualBLEClient
+from vireon_lab.providers.protocols.ble.emulator import VirtualBLELink, VirtualBLEClient
 from vireon.core.twin import DigitalTwin
 
 class PairingFailureAttack:

@@ -14,7 +14,7 @@
 
 import numpy as np
 from typing import List, Any
-from vireon_lab.providers.devices import IDeviceWrapper
+from vireon_lab.providers.hardware.devices import IDeviceWrapper
 
 # Graceful check for brainflow
 try:
