@@ -14,9 +14,9 @@ import time
 import subprocess
 import ssl
 from typing import Dict, Any
-from vireon.core.twin import DigitalTwin
+from vireon.core.state_store import StateStore
 from vireon.core.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
-from vireon.core.protocol import RFFrameProcessor
+from vireon.sdk.protocol import RFFrameProcessor
 from vireon.core.detection import SecurityEngine
 from vireon.core.clinical import NeuroIPS
 from vireon.core.attack_factory import AttackFactory

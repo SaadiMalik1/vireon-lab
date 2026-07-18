@@ -9,7 +9,7 @@ from typing import List, Optional
 import numpy as np
 import logging
 
-from vireon.core.twin import DigitalTwin
+from vireon.core.state_store import StateStore
 
 logger = logging.getLogger(__name__)
 

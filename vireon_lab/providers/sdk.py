@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 
-from vireon.core.twin import DigitalTwin
+from vireon.core.state_store import StateStore
 from vireon.core.event_bus import EventBus
 
 class VireonPluginSDK(ABC):
