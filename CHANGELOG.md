@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0-alpha] - Phase 9 Architecture Implementation
+
+### Added
+- `vireon.core.orchestrator.Orchestrator` as the new thin runtime replacing the monolithic `Coordinator`.
+- `vireon.core.state_store.StateStore` providing a decentralized, thread-safe blackboard for cross-plugin state sharing.
+- `vireon.core.event_bus.EventBus` enabling completely decoupled, pub/sub inter-plugin communication.
+- `vireon.sdk.interfaces.IProvider` specifying the unified Plugin SDK interface.
+- `vireon.sdk.manifest.CapabilityManifest` allowing capability negotiation and runtime dependency injection.
+- `vireon.sdk.subprocess_provider.SubprocessProvider` enforcing Level 1 Isolation via standard JSON-RPC over `stdin/stdout`.
+- `vireon.core.capability_engine.CapabilityEngine` governing plugin access to the system via capability proxies.
+
+### Changed
+- Refactored `ReplayEngine` to eliminate dependencies on `DigitalTwin` and hardcoded physics simulations.
+- Ported `ClosedLoopSimulator` and `CortexMStub` to the new `IProvider` architecture.
+- Deprecated direct dependencies on the legacy `DigitalTwin` God class.
+
 ## [Unreleased]
 
 ### Added

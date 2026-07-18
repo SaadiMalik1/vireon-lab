@@ -33,14 +33,40 @@ class UncontrolledStimulationAttack:
         self.twin.update_stimulation_params(10.0, 130.0) # 10 mA (Dangerous current limit)
         self.twin.set_clinical_alert(True, "Uncontrolled Stimulation")
 
-class ClosedLoopSimulator(IClinicalEvaluator):
-    def __init__(self, twin: DigitalTwin):
+from vireon.sdk.interfaces import IProvider, OrchestratorContext
+from vireon.sdk.manifest import CapabilityManifest
+
+class ClosedLoopSimulator(IProvider, IClinicalEvaluator):
+    def __init__(self, twin: DigitalTwin = None):
         self.twin = twin
         self.history_confidences: List[float] = []
         self.hazard_state = "NOMINAL"
         self.iso_severity = "NEGLIGIBLE"
         self.tissue_damage_risk = "NONE"
         self.clinical_action = "MONITOR"
+        
+    @property
+    def manifest(self) -> CapabilityManifest:
+        return CapabilityManifest(
+            name="closed_loop_simulator",
+            version="1.0.0",
+            category="clinical",
+            reads_state=["*"],
+            mutates_state=["*"],
+            publishes_events=["clinical.alert", "device.stimulate"]
+        )
+        
+    def initialize(self, context: OrchestratorContext) -> None:
+        self.context = context
+        # Retrieve legacy twin if not provided in constructor
+        if not self.twin:
+            self.twin = context.state_store.get("legacy_twin")
+
+    def on_tick(self, sim_clock: float, dt: float) -> None:
+        pass
+
+    def shutdown(self) -> None:
+        pass
 
     def process_signal(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int):
         # 1. Fetch current digital twin state

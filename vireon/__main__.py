@@ -35,7 +35,7 @@ def cli():
 def run(config_file, duration, board, serial_port, dataset, attack, seed):
     """Run a headless simulation experiment."""
     from vireon.core.config import load_config, ExperimentConfig
-    from vireon.core.coordinator import Coordinator
+    from vireon.core.orchestrator import Orchestrator
 
     if config_file and os.path.exists(config_file):
         click.echo(f"[VIREON] Loading experiment config: {config_file}")
@@ -52,10 +52,10 @@ def run(config_file, duration, board, serial_port, dataset, attack, seed):
     if seed is not None:
         config.seed = seed
 
-    coordinator = Coordinator(config)
-    coordinator.setup()
-    coordinator.run()
-    coordinator.teardown()
+    orchestrator = Orchestrator(config)
+    orchestrator.setup()
+    orchestrator.run()
+    orchestrator.teardown()
 
 
 @cli.command()

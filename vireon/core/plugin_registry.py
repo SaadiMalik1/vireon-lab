@@ -109,15 +109,26 @@ class PluginRegistry:
             ValueError: If the plugin has no factory or class.
         """
         info = self.get(category, name)
-
+        
+        from vireon.sdk.interfaces import IProvider
+        
+        # Determine instantiation method
         if info.factory is not None:
-            return info.factory(**kwargs)
+            instance = info.factory(**kwargs)
         elif info.plugin_class is not None:
-            return info.plugin_class(**kwargs)
+            instance = info.plugin_class(**kwargs)
         else:
             raise ValueError(
                 f"Plugin '{name}' in '{category}' has no factory or class to instantiate"
             )
+            
+        # If it's a new IProvider plugin and we have context kwargs, initialize it
+        if isinstance(instance, IProvider):
+            context = kwargs.get('context')
+            if context:
+                instance.initialize(context)
+                
+        return instance
 
     def list_category(self, category: str) -> List[PluginInfo]:
         """List all plugins in a category."""

@@ -9,7 +9,10 @@ memory corruption and buffer overflows during OTA updates or command handling.
 from typing import Tuple
 import struct
 
-class CortexMStub:
+from vireon.sdk.interfaces import IProvider, OrchestratorContext
+from vireon.sdk.manifest import CapabilityManifest
+
+class CortexMStub(IProvider):
     def __init__(self):
         # Simplified Memory Map
         self.BOOTLOADER_BASE = 0x08000000
@@ -60,6 +63,26 @@ class CortexMStub:
         from cryptography.hazmat.primitives.asymmetric import ec
         self.ota_private_key = ec.generate_private_key(ec.SECP256R1())
         self.ota_public_key = self.ota_private_key.public_key()
+
+    @property
+    def manifest(self) -> CapabilityManifest:
+        return CapabilityManifest(
+            name="cortex_m_stub",
+            version="1.0.0",
+            category="firmware",
+            reads_state=["*"],
+            mutates_state=["*"],
+            publishes_events=["firmware.fault", "firmware.ota_success"]
+        )
+
+    def initialize(self, context: OrchestratorContext) -> None:
+        self.context = context
+
+    def on_tick(self, sim_clock: float, dt: float) -> None:
+        pass
+
+    def shutdown(self) -> None:
+        pass
 
     def reset(self):
         self.registers["SP"] = self.SRAM_BASE + self.SRAM_SIZE

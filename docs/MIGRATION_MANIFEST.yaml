@@ -1,0 +1,45 @@
+version: "1.0"
+description: "Ecosystem Split Import Migration Rules"
+
+api_migrations:
+  # API changes are applied after structural import migrations
+  - old: vireon.core.twin.DigitalTwin
+    new: vireon.core.state_store.StateStore
+
+import_migrations:
+  # Explicit mappings for directory extraction
+  - old: vireon.core.authentication
+    new: vireon.security.authentication
+  - old: vireon.core.e2ee
+    new: vireon.security.e2ee
+  - old: vireon.core.guardrails
+    new: vireon.security.guardrails
+  - old: vireon.core.zta
+    new: vireon.security.zta
+    
+  - old: vireon.core.validation
+    new: vireon.validation.validation
+  - old: vireon.core.compliance
+    new: vireon.validation.compliance
+  - old: vireon.core.fuzzer
+    new: vireon.validation.fuzzer
+  - old: vireon.core.sbom
+    new: vireon.validation.sbom
+  - old: vireon.core.redteam
+    new: vireon.validation.redteam
+  - old: vireon.core.threat_intel
+    new: vireon.validation.threat_intel
+  - old: vireon.core.spdf_auditor
+    new: vireon.validation.spdf_auditor
+    
+  - old: vireon.core.engine
+    new: vireon.engine.engine
+    
+  - old: vireon.sdk
+    new: vireon.sdk
+  - old: vireon.core.interfaces
+    new: vireon.sdk.interfaces
+  - old: vireon.core.protocol
+    new: vireon.sdk.protocol
+  - old: vireon.core.data_provider
+    new: vireon.sdk.data_provider

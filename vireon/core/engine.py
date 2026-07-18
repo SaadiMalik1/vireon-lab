@@ -21,22 +21,15 @@ logger = logging.getLogger(__name__)
 class ReplayEngine:
     """
     Core simulation loop that drives data through the VIREON pipeline.
-
-    Supports:
-    - Deterministic seeding for reproducible experiments
-    - Pause/resume control
-    - Configurable playback speed multiplier
-    - Dataset looping on exhaustion
-    - Monotonic simulation clock (not wall-clock)
     """
 
     def __init__(self,
-                 twin: ITwin,
-                 attack_engine: SignalAttackEngine,
-                 provider=None,  # Should be IDataProvider
+                 state_store,
+                 attack_engine,
+                 provider=None,
                  seed: Optional[int] = None,
                  loop_dataset: bool = True):
-        self.twin = twin
+        self.state_store = state_store
         self.attack_engine = attack_engine
         self.provider = provider
 
@@ -49,40 +42,29 @@ class ReplayEngine:
             print("[ReplayEngine] NeuroDSL Scribe VM successfully loaded.")
         except ImportError:
             self.scribe = None
-            print("[ReplayEngine] NeuroDSL Scribe VM not available (requires compilation with maturin).")
+            print("[ReplayEngine] NeuroDSL Scribe VM not available.")
 
         self.running = False
         self.thread: Optional[threading.Thread] = None
 
-        # Callbacks that receive (mutated_data, eeg_channels, sample_rate)
         self.callbacks: List[Callable[[np.ndarray, List[int], int], None]] = []
 
-        # Read position for dataset replay
         self.dataset_sample_position = 0
 
-        # Deterministic RNG (None = use global numpy random state for backward compat)
         self._seed = seed
         self._rng: Optional[np.random.Generator] = None
         if seed is not None:
             self._rng = np.random.default_rng(seed)
 
-        # Pause/resume
         self._paused = False
         self._pause_event = threading.Event()
-        self._pause_event.set()  # Start unpaused
+        self._pause_event.set()
 
-        # Speed multiplier (1.0 = real-time, 2.0 = double speed, 0.5 = half speed)
         self._speed_multiplier = 1.0
-
-        # Dataset looping
         self._loop_dataset = loop_dataset
-
-        # Simulation clock (monotonic, incremented by interval each tick)
         self._sim_clock = 0.0
 
-        # Executor for running callbacks without blocking the timing loop
         self._executor: Optional[concurrent.futures.ThreadPoolExecutor] = None
-        
         self._buffer_lock = threading.Lock()
 
     @property
@@ -147,9 +129,9 @@ class ReplayEngine:
             self._executor = None
 
     def _loop(self, interval_sec: float):
-        # Determine sample rate and channels
-        sr = self.twin.sample_rate
-        num_channels = self.twin.num_channels
+        # Determine sample rate and channels from state store
+        sr = self.state_store.get("sample_rate", 250)
+        num_channels = self.state_store.get("num_channels", 8)
 
         # EEG channels indices (normally 0 to num_channels-1, or specified by device)
         if self.provider is not None:
@@ -181,17 +163,17 @@ class ReplayEngine:
 
             last_time = now
 
-            # Advance simulation clock (simulating 100 ppm oscillator clock drift & jitter)
+            # Advance simulation clock
             drift = self.rng.uniform(-1.0, 1.0) * (interval_sec * 0.0001)
             actual_dt = interval_sec + drift
             self._sim_clock += actual_dt
             
-            # Step the digital twin clock and physics/dynamics
-            self.twin.set_sim_clock(self._sim_clock)
-            self.twin.physics_engine.tick(self.twin, actual_dt)
-            self.twin.neural_dynamics.set_forcing(self.twin.stimulation_amplitude_ma, self.twin.stimulation_frequency_hz)
-            self.twin.neural_dynamics.tick(actual_dt, self._sim_clock)
+            # Update state store sim clock
+            self.state_store.set("sim_clock", self._sim_clock, source="engine")
 
+            # Publish tick event for providers to hook into (replaces hardcoded physics/dynamics)
+            from vireon.core.event_bus import Event
+            
             accumulated_samples += sr * actual_dt
             num_samples_per_chunk = int(accumulated_samples)
 
