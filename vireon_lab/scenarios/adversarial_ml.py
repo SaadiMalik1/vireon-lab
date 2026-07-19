@@ -28,8 +28,8 @@ References:
 import numpy as np
 from typing import List
 
-from vireon.core.attack import ISignalModifier
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.attack import ISignalModifier
+from vireon.runtime.twin import DigitalTwin
 
 try:
     import importlib.util

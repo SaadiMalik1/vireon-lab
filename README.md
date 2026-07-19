@@ -1,23 +1,19 @@
-# VIREON-LAB
+# VIREON Lab
 
-## What is this?
-The educational platform, dashboard, and research playground for the VIREON ecosystem.
+**VIREON Lab** is the official educational platform and reference implementation for the VIREON ecosystem. It provides interactive tools, Streamlit dashboards, and pre-packaged attack scenarios to help researchers and students understand neuro-security validation.
 
-## Who is it for?
-End-users, students, researchers, and tutorial consumers looking to learn or demonstrate VIREON capabilities.
+## Features
+- **Interactive Dashboard**: A Streamlit application for real-time visualization of attacks, telemetry, and threat intelligence.
+- **Example Providers**: Reference implementations of clinical algorithms (e.g. `NeuroIPS`) and protocols (e.g. `BLELinkGuard`) built on the `vireon.sdk`.
+- **Attack Scenarios**: Pre-built signal modifiers and threat models for CTFs and labs.
 
-## Installation
+## Running the Dashboard
+The dashboard orchestrates the core `vireon` `ReplayEngine` underneath the hood.
+
 ```bash
-pip install vireon-lab
+cd vireon_lab/dashboard
+streamlit run app.py
 ```
 
-## Quick Example
-```bash
-streamlit run vireon_lab/dashboard/app.py
-```
-
-## Where is the documentation?
-The canonical documentation for the entire VIREON ecosystem is located in the `vireon` repository under `docs/`.
-
-## Repository Status
-Active / Maintained. Educational content only.
+## Documentation
+All canonical framework architecture documentation is hosted in the core [vireon repository](https://github.com/SaadiMalik1/Vireon/tree/main/docs).

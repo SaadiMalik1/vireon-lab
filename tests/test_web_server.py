@@ -17,8 +17,8 @@ import http.client
 import json
 import ssl
 import time
-from vireon.core.twin import DigitalTwin
-from vireon.core.attack import SignalAttackEngine
+from vireon.runtime.twin import DigitalTwin
+from vireon.runtime.attack import SignalAttackEngine
 from vireon_lab.reports.web_server import start_web_server
 
 @pytest.fixture(scope="module")

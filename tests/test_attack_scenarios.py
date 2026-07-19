@@ -19,10 +19,10 @@ import time
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from vireon.core.twin import DigitalTwin
-from vireon.core.event_bus import EventBus
-from vireon.core.attack import SignalAttackEngine, AttackStep, AttackScenario
-from vireon.core.plugin_registry import PluginRegistry, register_builtin_plugins
+from vireon.runtime.twin import DigitalTwin
+from vireon.runtime.event_bus import EventBus
+from vireon.runtime.attack import SignalAttackEngine, AttackStep, AttackScenario
+from vireon.runtime.plugin_registry import PluginRegistry, register_builtin_plugins
 
 
 class TestAttackScenarios(unittest.TestCase):

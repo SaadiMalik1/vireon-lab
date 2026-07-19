@@ -14,7 +14,7 @@
 
 import random
 from vireon_lab.providers.protocols.ble.emulator import VirtualBLELink, VirtualBLEClient
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 class PairingFailureAttack:
     def __init__(self, twin: DigitalTwin):

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import unittest
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 from vireon_lab.providers.protocols.ble.emulator import VirtualBLEServer, VirtualBLELink, VirtualBLEClient
 from vireon_lab.providers.protocols.ble.attacks import (
     PairingFailureAttack,

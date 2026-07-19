@@ -19,8 +19,8 @@ import sys
 # Ensure vireon is in path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from vireon.core.twin import DigitalTwin
-from vireon.core.config import ExperimentConfig
+from vireon.runtime.twin import DigitalTwin
+from vireon.runtime.config import ExperimentConfig
 
 @pytest.fixture
 def mock_twin():

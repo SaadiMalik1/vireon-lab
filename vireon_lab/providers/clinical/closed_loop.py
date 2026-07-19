@@ -18,7 +18,7 @@ from typing import List, Dict, Any
 from vireon.sdk.utils import calculate_rms
 from vireon.sdk.interfaces import IProvider, OrchestratorContext
 from vireon.sdk.manifest import CapabilityManifest
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 class IClinicalEvaluator(ABC):
     @abstractmethod

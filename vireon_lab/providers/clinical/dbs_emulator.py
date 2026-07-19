@@ -15,7 +15,7 @@
 import numpy as np
 from typing import List, Dict, Any
 from vireon.sdk.utils import calculate_bandpower
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 
 class LFPGenerator:

@@ -19,7 +19,7 @@ from vireon_lab.scenarios.adversarial_ml import (
     CWAttack,
     BackdoorTriggerInjector
 )
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 def test_fgsm_attack():
     twin = DigitalTwin(num_channels=8)

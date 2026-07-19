@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import unittest
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 from vireon_lab.providers.clinical.dbs_emulator import LFPGenerator, ClosedLoopDBSController
 
 class TestDBSClosedLoop(unittest.TestCase):

@@ -17,7 +17,7 @@ import time
 import numpy as np
 from typing import List, Any
 from vireon_lab.providers.hardware.devices import IDeviceWrapper
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 class EmotivEpocEmulator(IDeviceWrapper):
     """

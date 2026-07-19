@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import numpy as np
-from vireon.core.attack.adversarial import (
+from vireon.runtime.attack.adversarial import (
     AdversarialOptimizerAttack,
     TraceReplayAttack,
     RFJammingAttack,
@@ -21,7 +21,7 @@ from vireon.core.attack.adversarial import (
     SessionReplayAttack,
     TemporalEvasionAttack
 )
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 class MockDigitalTwin(DigitalTwin):
     def __init__(self):

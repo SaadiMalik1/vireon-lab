@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import numpy as np
-from vireon.core.twin import DigitalTwin
-from vireon.core.attack.cognitive import (
+from vireon.runtime.twin import DigitalTwin
+from vireon.runtime.attack.cognitive import (
     NeuroPhishingAttack,
     FirmwareRollbackAttack,
     InsiderThreatAttack

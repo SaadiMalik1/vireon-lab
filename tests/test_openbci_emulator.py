@@ -16,7 +16,7 @@ import unittest
 import numpy as np
 import time
 import os
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 from vireon_lab.providers.hardware.devices.openbci_emulator import OpenBCICytonEmulator
 
 class TestOpenBCICytonEmulator(unittest.TestCase):
