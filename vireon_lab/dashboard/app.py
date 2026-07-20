@@ -61,27 +61,42 @@ def init_system():
     # In a full migration, physics_engine would publish to state_store. 
     # Since the physics engine doesn't take state_store yet, we'll manually push to state_store in the UI loop
     
-    ids = SecurityEngine(state_store)
-    ips = NeuroIPS(state_store, ids, event_bus)
+    from vireon.runtime.orchestrator import VireonOrchestrator
+    from vireon.reference_providers.physics.v2_provider import V2PhysicsProvider, get_physics_descriptor
+    from vireon.reference_providers.ids.v2_provider import V2IDSProvider, get_ids_descriptor
+    from vireon.reference_providers.clinical.v2_provider import V2ClinicalProvider, get_clinical_descriptor
+    
     ti = ThreatIntelligence(registry_path="vireon/libraries/stix/data/stride_threats.json") # Updated path
     attack_engine = SignalAttackEngine(state_store, event_bus)
     
-    # We pass the state_store and physics to the engine directly
-    engine = ReplayEngine(state_store=state_store, attack_engine=attack_engine)
+    # --- V2 Orchestrator Integration ---
+    orchestrator = VireonOrchestrator(state_store, event_bus)
+    
+    # Register V2 Physics Provider
+    v2_physics = V2PhysicsProvider()
+    orchestrator.register_provider(v2_physics, get_physics_descriptor())
+    
+    # Register V2 IDS Provider
+    v2_ids = V2IDSProvider()
+    orchestrator.register_provider(v2_ids, get_ids_descriptor())
+    
+    # Register V2 Clinical Provider
+    v2_clinical = V2ClinicalProvider(ids_provider=v2_ids)
+    orchestrator.register_provider(v2_clinical, get_clinical_descriptor())
+    
+    orchestrator.initialize_all()
+    orchestrator.start_all()
+    
+    # We pass the state_store and orchestrator to the engine
+    engine = ReplayEngine(state_store=state_store, attack_engine=attack_engine, orchestrator=orchestrator)
     engine.last_anomaly_score = 0.0
     engine.active_anomalies = []
     
     def ui_callback(data):
         if data.shape[1] > 0:
-            anomalies = ids.analyze_signal(data)
-            score = ids.score_signal(data)
-            engine.last_anomaly_score = score
-            engine.active_anomalies = anomalies
-            # Apply IPS
-            amp = state_store.get("stimulation_amplitude_ma", 0.0)
-            freq = state_store.get("stimulation_frequency_hz", 0.0)
-            ips.sanitize_stimulation_write(amp, freq)
-            ips.mitigate_signal_anomalies(data, anomalies)
+            # We now read the processed outputs from the state_store
+            engine.last_anomaly_score = state_store.get("last_anomaly_score", 0.0)
+            engine.active_anomalies = state_store.get("active_anomalies", [])
             
             # Simple simulation for dashboard
             state_store.set("beta_power", float(np.mean(np.abs(data))))
@@ -91,9 +106,9 @@ def init_system():
     # Start the replay engine (it creates its own thread)
     engine.start()
     
-    return state_store, engine, attack_engine, ti
+    return state_store, engine, attack_engine, ti, orchestrator
 
-state_store, engine, attack_engine, ti = init_system()
+state_store, engine, attack_engine, ti, orchestrator = init_system()
 
 # --- Sidebar Controls ---
 st.sidebar.title("VIREON Control")
@@ -170,4 +185,16 @@ else:
 
 # Auto-refresh mechanism
 time.sleep(0.5)
+
+# --- Evidence Generation ---
+st.sidebar.subheader("Compliance & Validation")
+if st.sidebar.button("Generate Evidence Package"):
+    import uuid
+    run_id = f"sim_{uuid.uuid4().hex[:8]}"
+    evidence = orchestrator.gather_evidence(run_id)
+    
+    st.sidebar.success(f"Generated Evidence: {evidence.verdict}")
+    with st.sidebar.expander("View Cryptographic Package"):
+        st.json(evidence.model_dump())
+
 st.rerun()
