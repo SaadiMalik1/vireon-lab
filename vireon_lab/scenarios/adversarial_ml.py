@@ -26,7 +26,13 @@ References:
 """
 
 import numpy as np
-from typing import List
+from typing import List, Any, Optional
+try:
+    from vireon.sdk.base_interfaces import IStateStore
+except ImportError:
+    IStateStore = Any
+
+
 
 class ISignalModifier:
     """Base interface for signal modification in educational scenarios."""
