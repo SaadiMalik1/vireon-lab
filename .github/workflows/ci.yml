@@ -10,10 +10,25 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout vireon-lab
+        uses: actions/checkout@v4
+        with:
+          path: vireon-lab
+
+      - name: Checkout Vireon runtime
+        uses: actions/checkout@v4
+        with:
+          repository: SaadiMalik1/Vireon
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: vireon
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: |
-          pip install -e ".[dev]"
-          pytest
+
+      - name: Install dependencies and run tests
+        run: |
+          pip install ./vireon
+          pip install -e "./vireon-lab[dev]"
+          cd vireon-lab && pytest
