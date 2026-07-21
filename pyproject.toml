@@ -22,7 +22,8 @@ dependencies = [
     "mne>=1.6.0",
     "scipy>=1.11.0",
     "pylsl~=1.16.2",
-    "weasyprint>=68.0"
+    "weasyprint>=68.0",
+    "bleak>=0.21.0"
 ]
 
 [project.optional-dependencies]
