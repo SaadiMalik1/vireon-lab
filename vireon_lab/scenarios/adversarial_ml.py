@@ -28,14 +28,10 @@ References:
 import numpy as np
 from typing import List
 
-from vireon.runtime.attack import ISignalModifier
-from vireon.sdk.state import IStateStore
-
-try:
-    import importlib.util
-    TORCH_AVAILABLE = importlib.util.find_spec('torch') is not None
-except ImportError:
-    TORCH_AVAILABLE = False
+class ISignalModifier:
+    """Base interface for signal modification in educational scenarios."""
+    def modify_signal(self, data: np.ndarray) -> np.ndarray:
+        return data
 
 
 class FGSMAttack(ISignalModifier):

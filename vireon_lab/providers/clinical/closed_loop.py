@@ -116,8 +116,8 @@ class ClosedLoopSimulator(IProvider, IClinicalEvaluator):
         # Analyze each EEG channel
         for ch in eeg_channels:
             # Check impedance from digital twin state
-            ch_str = str(ch)
-            impedance = twin_state["electrode_impedances"].get(ch_str, 5.0)
+            impedance = twin_state["electrode_impedances"].get(ch, twin_state["electrode_impedances"].get(str(ch), 5.0))
+
             if impedance > 25.0:  # Threshold for bad contact
                 bad_electrodes += 1
                 penalties += 0.25

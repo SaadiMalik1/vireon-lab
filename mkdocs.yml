@@ -1,65 +1,17 @@
-site_name: VIREON
-site_description: Virtual Neurosecurity Laboratory for Reproducible Research
-repo_url: https://github.com/SaadiMalik1/Vireon
-repo_name: SaadiMalik1/Vireon
+site_name: vireon-lab
+site_description: Educational Platform & Interactive Laboratory for Neurosecurity
+repo_url: https://github.com/SaadiMalik1/vireon-lab
+repo_name: SaadiMalik1/vireon-lab
 
 theme:
   name: material
   palette:
     - scheme: slate
-      primary: teal
-      accent: cyan
+      primary: indigo
+      accent: deep purple
 
 plugins:
   - search
-  - mkdocstrings:
-      handlers:
-        python:
-          paths: [.]
 
 nav:
-  - Overview: index.md
-  - Architecture: architecture.md
-  - Physics & Biology: physics.md
-  - Tutorials:
-    - Your First Simulation: tutorials/your-first-simulation.md
-    - Creating a Custom Attack: tutorials/creating-a-custom-attack.md
-    - Hardware-in-the-Loop: tutorials/hardware-in-the-loop.md
-    - Validating an IDS: tutorials/validating-an-ids.md
-    - Writing NeuroDSL: tutorials/writing-neurodsl.md
-  - Threat Modeling:
-    - Overview: threat-model/README.md
-    - Assumptions: threat-model/assumptions.md
-    - Attack Surface: threat-model/attack-surface.md
-  - Validation:
-    - Validation Matrix: benchmarks/validation-matrix.md
-    - Battery: validation/battery.md
-    - EEG: validation/eeg.md
-    - BLE: validation/ble.md
-    - Thermal: validation/thermal.md
-    - Standards Mapping: validation/standards-mapping.md
-    - Standards Derivation Log: STANDARDS-DERIVATION-LOG.md
-  - Benchmarks:
-    - Latency: benchmarks/latency.md
-    - Throughput: benchmarks/throughput.md
-  - Design Decisions:
-    - 0001 Plugin System: design-decisions/0001-plugin-system.md
-    - 0002 Simulation Engine: design-decisions/0002-simulation-engine.md
-    - 0003 Telemetry: design-decisions/0003-telemetry.md
-    - 0004 Threat Model: design-decisions/0004-threat-model.md
-    - 0005 NSAE over IDS: design-decisions/0005-nsae-over-ids.md
-    - 0006 Digital Twin Physics: design-decisions/0006-digital-twin-physics.md
-    - 0007 Standardized Taxonomy: design-decisions/0007-standardized-taxonomy.md
-    - 0008 Dynamic Spectral Calibration: design-decisions/0008-dynamic-spectral-calibration.md
-    - 0009 Pure Numpy Validation: design-decisions/0009-pure-numpy-validation.md
-    - 0010 Security Refactoring: design-decisions/0010-security-refactoring.md
-  - Reference:
-    - API Reference: api.md
-    - Plugin Development: plugin-development.md
-    - Technical Report: technical-report.md
-  - Project Info:
-    - FAQ: faq.md
-    - Glossary: glossary.md
-    - Roadmap: roadmap.md
-    - Progress Report: progress-report.md
-    - Config Migration: config-migration.md
+  - Overview: README.md

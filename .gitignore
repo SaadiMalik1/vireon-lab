@@ -1,82 +1,48 @@
-# Environments
-.env
-.venv/
-venv/
-env/
-ENV/
-.ruff_venv/
-.ruff_cache/
-.mypy_cache/
-*.egg-info/
-
-# Python Cache and Binaries
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-*.pyd
-.pytest_cache/
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# IDEs and Tools
-.vscode/
-.idea/
-.agents/
-.gemini/
-*.swp
-*.swo
+# Virtual Environment
+.venv/
+venv/
+ENV/
 
-# Project specific dynamic output
-neuroshield_run_*
-vireon_run_*
-sbom.json
-
-# Local planning notes
-plans/
-scratch/
+# Testing & Coverage
 .pytest_cache/
 .coverage
-coverage.xml
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# Ad-hoc Scratch Scripts
-rename.py
-test_ids.py
-test_run.sh
-simulate_board.py
-main.py
+# Security & Secrets
+*.pem
+*.key
+*.p12
+*.crt
+*.csr
+cert.pem
+key.pem
 
-# Local References
-openbci_reference/
-*.log
-
-# Rust Build Artifacts
-target/
-neuro_dsl/target/
-**/target/
-**/.fingerprint/
-
-# Project specific / Large data
-experiments/
-knowledge/
-reviews/
-labs/
-
-# Large media and datasets
-*.csv
-*.edf
-*.bdf
-*.gdf
-*.dat
-*.mat
-*.fif
-*.db
-*.sqlite
-*.sqlite3
-*.png
-*.jpg
-*.jpeg
-*.webp
-*.mp4
-*.gif
-
-to be followed./
-reports/key.pem
+# IDEs & OS
+.DS_Store
+.vscode/
+.idea/
