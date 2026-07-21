@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from vireon.runtime.threat_intel import ThreatIntelligence
+from providers.threat_models.intel import ThreatIntelligence
 import unittest
 
 class TestStandardsMapping(unittest.TestCase):

@@ -14,7 +14,7 @@
 
 import numpy as np
 from vireon.runtime.twin import DigitalTwin
-from vireon.runtime.attack.cognitive import (
+from vireon.libraries.attack_factory.attack.cognitive import (
     NeuroPhishingAttack,
     FirmwareRollbackAttack,
     InsiderThreatAttack

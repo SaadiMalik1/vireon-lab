@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import numpy as np
-from vireon.runtime.privacy_leakage import P300Analyzer
+from providers.privacy.leakage import P300Analyzer
 
 def test_p300_analyzer_init():
     analyzer = P300Analyzer(sample_rate=250, threshold_uv=15.0)

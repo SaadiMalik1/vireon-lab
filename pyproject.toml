@@ -41,3 +41,8 @@ line-length = 120
 target-version = "py310"
 exclude = [".venv", "venv", "__pycache__"]
 ignore = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+strict_optional = false

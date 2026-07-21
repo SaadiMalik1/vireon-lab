@@ -29,7 +29,7 @@ def test_fgsm_attack():
     data = np.ones((2, 100))
     data[0, :50] = -1.0 # First half negative, second half positive
     
-    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     
     # For FGSM, gradient_sign is np.sign(data)
     # mutated should be data + epsilon * sign(data)
@@ -47,7 +47,7 @@ def test_pgd_attack():
     data = np.zeros((2, 100))
     data[1, :] = 5.0
     
-    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     
     # Original is 5.0, sign is 1.0
     # Iterations will add alpha (2.0) and clip to original + epsilon (5.0 + 15.0 = 20.0)
@@ -60,14 +60,14 @@ def test_cw_attack():
     attack = CWAttack(target_channels=[0], target_frequency_hz=6.0, target_amplitude_uv=6.0)
     
     data = np.zeros((2, 100))
-    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     
     # Should inject a sine wave
     assert not np.allclose(mutated[0, :], 0)
     assert np.allclose(mutated[1, :], 0)
     
     # Check that phase is updated by calling it again
-    mutated2 = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    mutated2 = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     assert not np.allclose(mutated[0, :], mutated2[0, :])
 
 def test_backdoor_trigger_injector():
@@ -75,12 +75,12 @@ def test_backdoor_trigger_injector():
     attack = BackdoorTriggerInjector(target_channels=[0], trigger_frequency_hz=21.0, trigger_amplitude_uv=30.0)
     
     data = np.zeros((2, 100))
-    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    mutated = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     
     # Should inject a 20Hz sine wave
     assert not np.allclose(mutated[0, :], 0)
     assert np.allclose(mutated[1, :], 0)
     
     # Phase update check
-    mutated2 = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    mutated2 = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     assert not np.allclose(mutated[0, :], mutated2[0, :])

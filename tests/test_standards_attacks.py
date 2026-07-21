@@ -16,7 +16,7 @@ import unittest
 import numpy as np
 from vireon.runtime.twin import DigitalTwin
 from vireon.runtime.attack_factory import AttackFactory
-from vireon.runtime.threat_intel import ThreatIntelligence
+from providers.threat_models.intel import ThreatIntelligence
 
 class TestStandardAttacks(unittest.TestCase):
     def test_dynamic_attack_generation(self):

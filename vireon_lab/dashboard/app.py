@@ -15,24 +15,18 @@
 import streamlit as st
 import pandas as pd
 import time
-import threading
 import os
 import sys
+import numpy as np
 
 # Ensure vireon is in path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from vireon.services.engine import ReplayEngine
-from vireon.reference_providers.ids.detection import SecurityEngine
-from vireon.reference_providers.clinical.neuroips import NeuroIPS
-from vireon.libraries.stix.threat_intel import ThreatIntelligence
-from vireon.libraries.attack_factory.attack.engine import SignalAttackEngine
-from vireon.sdk.state import IStateStore
-from vireon.runtime.state_store import StateStore
-from vireon.sdk.events import IEventBus
-from vireon.runtime.event_bus import EventBus
-from vireon.reference_providers.physics.physics import PhysicsEngine
-from vireon.reference_providers.physics.dynamics import KuramotoModel
+from vireon.services.engine import ReplayEngine  # noqa: E402
+from vireon.libraries.stix.threat_intel import ThreatIntelligence  # noqa: E402
+from vireon.libraries.attack_factory.attack.engine import SignalAttackEngine  # noqa: E402
+from vireon.runtime.state_store import StateStore  # noqa: E402
+from vireon.runtime.event_bus import EventBus  # noqa: E402
 
 st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠")
 

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import numpy as np
-from vireon.runtime.attack.adversarial import (
+from vireon.libraries.attack_factory.attack.adversarial import (
     AdversarialOptimizerAttack,
     TraceReplayAttack,
     RFJammingAttack,
@@ -41,7 +41,7 @@ def test_adversarial_optimizer():
     data = np.zeros((2, 250))
     # Evolve a few times
     for _ in range(6):
-        out = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin, rng=rng)
+        out = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin, rng=rng)
         assert out.shape == data.shape
 
 def test_trace_replay(tmp_path):
@@ -52,7 +52,7 @@ def test_trace_replay(tmp_path):
     attack = TraceReplayAttack(target_channels=[1], trace_file_path=str(trace_file))
     
     data = np.zeros((2, 5))
-    out = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin)
+    out = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin)
     assert out.shape == data.shape
     # Check if trace is injected in channel 1
     np.testing.assert_array_equal(out[1, :], [1.0, 2.0, 3.0, 1.0, 2.0])
@@ -61,7 +61,7 @@ def test_rf_jamming():
     twin = MockDigitalTwin()
     attack = RFJammingAttack(drop_rate=0.8)
     data = np.zeros((2, 10))
-    out = attack.apply(data, eeg_channels=[0], sample_rate=250, twin=twin)
+    out = attack.apply(data, eeg_channels=[0], sample_rate=250, state_store=twin)
     assert twin.rf_packet_drop_rate == 0.8
     assert np.array_equal(out, data)
 
@@ -69,12 +69,12 @@ def test_framing_desynchronization():
     twin = MockDigitalTwin()
     attack = FramingDesynchronizationAttack(target_channels=[0], inject_start_byte=True)
     data = np.zeros((2, 10))
-    out = attack.apply(data, eeg_channels=[0], sample_rate=250, twin=twin)
+    out = attack.apply(data, eeg_channels=[0], sample_rate=250, state_store=twin)
     assert out.shape == data.shape
     assert out[0, 0] != 0.0
 
     attack2 = FramingDesynchronizationAttack(target_channels=[0], inject_start_byte=False)
-    out2 = attack2.apply(data, eeg_channels=[0], sample_rate=250, twin=twin)
+    out2 = attack2.apply(data, eeg_channels=[0], sample_rate=250, state_store=twin)
     assert out2[0, 0] != 0.0
 
 def test_session_replay():
@@ -83,12 +83,12 @@ def test_session_replay():
     data1 = np.ones((1, 5)) # 0.02s
     
     # Capture phase
-    attack.apply(data1, eeg_channels=[0], sample_rate=250, twin=twin)
+    attack.apply(data1, eeg_channels=[0], sample_rate=250, state_store=twin)
     assert attack.is_capturing is False
     
     # Replay phase
     data2 = np.zeros((1, 5))
-    out2 = attack.apply(data2, eeg_channels=[0], sample_rate=250, twin=twin)
+    out2 = attack.apply(data2, eeg_channels=[0], sample_rate=250, state_store=twin)
     assert np.array_equal(out2[0], np.ones(5))
 
 def test_temporal_evasion():
@@ -97,5 +97,5 @@ def test_temporal_evasion():
     attack = TemporalEvasionAttack(target_channels=[0], burst_duration_sec=0.01, quiet_duration_sec=0.01)
     
     data = np.zeros((2, 5)) # 0.02s
-    out = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, twin=twin, rng=rng)
+    out = attack.apply(data, eeg_channels=[0, 1], sample_rate=250, state_store=twin, rng=rng)
     assert out.shape == data.shape

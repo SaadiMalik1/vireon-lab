@@ -29,7 +29,7 @@ import numpy as np
 from typing import List
 
 from vireon.runtime.attack import ISignalModifier
-from vireon.runtime.twin import DigitalTwin
+from vireon.sdk.state import IStateStore
 
 try:
     import importlib.util
@@ -50,7 +50,7 @@ class FGSMAttack(ISignalModifier):
         self.target_channels = target_channels
         self.epsilon = epsilon
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, state_store: IStateStore, rng: np.random.Generator | None = None) -> np.ndarray:
         mutated_data = data.copy()
         
         # Approximate gradient sign by taking the sign of the signal itself
@@ -78,7 +78,7 @@ class PGDAttack(ISignalModifier):
         self.alpha = alpha
         self.steps = steps
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, state_store: IStateStore, rng: np.random.Generator | None = None) -> np.ndarray:
         mutated_data = data.copy()
         
         for ch in self.target_channels:
@@ -115,7 +115,7 @@ class CWAttack(ISignalModifier):
         self.target_amplitude = target_amplitude_uv
         self.phase = 0.0
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, state_store: IStateStore, rng: np.random.Generator | None = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         t = np.arange(num_samples) / sample_rate
@@ -147,7 +147,7 @@ class BackdoorTriggerInjector(ISignalModifier):
         self.trigger_amplitude = trigger_amplitude_uv
         self.phase = 0.0
 
-    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, twin: DigitalTwin, rng: np.random.Generator | None = None) -> np.ndarray:
+    def apply(self, data: np.ndarray, eeg_channels: List[int], sample_rate: int, state_store: IStateStore, rng: np.random.Generator | None = None) -> np.ndarray:
         mutated_data = data.copy()
         num_samples = data.shape[1]
         t = np.arange(num_samples) / sample_rate

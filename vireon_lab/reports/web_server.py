@@ -31,7 +31,7 @@ from typing import Dict, Any
 from vireon.runtime.attack import SignalAttackEngine, NoiseInjectionAttack, SignalDriftAttack, ImpedanceSpikeAttack, SignalSuppressionAttack
 from vireon.runtime.protocol import RFFrameProcessor
 from vireon.runtime.detection import SecurityEngine
-from vireon_lab.reference_providers.clinical import NeuroIPS
+from vireon.reference_providers.clinical.neuroips import NeuroIPS
 from vireon.runtime.attack_factory import AttackFactory
 from vireon_lab.providers.clinical.closed_loop import UncontrolledStimulationAttack
 from vireon.runtime.twin import DigitalTwin

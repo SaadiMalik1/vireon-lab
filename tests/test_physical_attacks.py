@@ -15,7 +15,7 @@
 import pytest
 import numpy as np
 from vireon.runtime.twin import DigitalTwin
-from vireon.runtime.attack.physical import (
+from vireon.libraries.attack_factory.attack.physical import (
     ElectrodeSaturationAttack,
     PacketLossAttack,
     TimingJitterAttack,

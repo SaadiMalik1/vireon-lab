@@ -16,7 +16,7 @@ import unittest
 import numpy as np
 from vireon.runtime.twin import DigitalTwin
 from vireon.runtime.detection import SecurityEngine
-from vireon_lab.reference_providers.clinical import NeuroIPS
+from vireon.reference_providers.clinical.neuroips import NeuroIPS
 from vireon.runtime.protocol import RFFrameProcessor, ProtocolError
 
 class TestAdversarialMitigations(unittest.TestCase):
