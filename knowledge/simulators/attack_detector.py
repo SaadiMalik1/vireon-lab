@@ -33,12 +33,25 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 from typing import Optional
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-from scipy import signal as scipy_signal
-from scipy.stats import ks_2samp
+try:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
+    plt = None
+
+try:
+    from scipy import signal as scipy_signal
+    from scipy.stats import ks_2samp
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
+    scipy_signal = None
+    ks_2samp = None
+
+
 
 
 # ============================================================================

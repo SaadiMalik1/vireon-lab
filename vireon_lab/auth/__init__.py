@@ -12,14 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""vireon-lab educational platform and interactive dashboard package."""
+"""Authentication and Telemetry Role-Based Access Control (RBAC) Module."""
 
-from vireon_lab import auth, config, logging, middleware, workers
+from vireon_lab.auth.session_manager import (
+    Permission,
+    Role,
+    SessionToken,
+    TelemetrySessionManager,
+)
 
 __all__ = [
-    "config",
-    "auth",
-    "middleware",
-    "logging",
-    "workers",
+    "Role",
+    "Permission",
+    "SessionToken",
+    "TelemetrySessionManager",
 ]

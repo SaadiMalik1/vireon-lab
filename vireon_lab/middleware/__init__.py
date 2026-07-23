@@ -12,14 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""vireon-lab educational platform and interactive dashboard package."""
+"""Boundary Middleware for Auth, Rate-Limiting, and Error Handling."""
 
-from vireon_lab import auth, config, logging, middleware, workers
+from vireon_lab.middleware.auth_middleware import require_permission
+from vireon_lab.middleware.rate_limiter import TokenBucketRateLimiter
+from vireon_lab.middleware.exception_handler import (
+    NeurosecurityException,
+    AuthorizationError,
+    RateLimitExceededError,
+    SimulationFaultError,
+    handle_exceptions,
+)
 
 __all__ = [
-    "config",
-    "auth",
-    "middleware",
-    "logging",
-    "workers",
+    "require_permission",
+    "TokenBucketRateLimiter",
+    "NeurosecurityException",
+    "AuthorizationError",
+    "RateLimitExceededError",
+    "SimulationFaultError",
+    "handle_exceptions",
 ]

@@ -17,9 +17,13 @@
   - **NL-004**: Wireless Protocol Security for Neurostimulators (MICS/BLE Telemetry, Protocol Reverse Engineering, Challenges, References).
   - **NL-005**: Closed-Loop System Security for Neurostimulators (Sensor Spoofing, Delay Injection, Benchmarks, Challenges, References).
 - **Hands-on Labs & Simulators**: Interactive Python simulation engines (`knowledge/simulators/`) for signal generation, DSP filtering, firmware reverse engineering, protocol attacks, and closed-loop control.
-- **Threat Modeling & Data Benchmarks**: STRIDE threat modeling lab templates (`knowledge/labs/`) and empirical benchmark datasets/session dumps (`knowledge/data/`).
-- **Test Suite Verification:** 59 Python tests passed (`pytest`).
-
+- **Architecture & Infrastructure Modules**:
+  - **Configuration Management** (`vireon_lab/config.py`, `.env.example`): Centralized environment variable management.
+  - **Telemetry RBAC & Auth** (`vireon_lab/auth/`): Scoped role-based access tokens (`PATIENT`, `CLINICIAN`, `MANUFACTURER_TECH`, `AUDITOR`).
+  - **Boundary Middleware** (`vireon_lab/middleware/`): Auth checks, Token-Bucket Rate Limiter, and domain Exception Handlers.
+  - **Structured Audit Logging** (`vireon_lab/logging/`): IEC 62304 / FDA compliant JSON lines audit trail.
+  - **Async Simulation Workers** (`vireon_lab/workers/`): Non-blocking Thread/Process pool for multi-cycle Monte Carlo simulations.
+- **Tiered Test Suite:** Unit, Integration, and Benchmark suites (`tests/unit/`, `tests/integration/`, `tests/benchmarks/`).
 
 ---
 
@@ -42,11 +46,15 @@ cd vireon-lab
 ## 3. Verification & Testing
 
 ```bash
-.venv/bin/pytest       # Runs pytest suite (59 passed)
+.venv/bin/pytest       # Runs unit, integration, and benchmark test suites
 ```
 
 ---
 
-## 4. Architecture & Dependencies
+## 4. Architecture & Documentation
 
-`vireon-lab` depends on `vireon` as its underlying simulation core. Core orchestrator logic, deterministic clocks, and capability engines reside in the **[Vireon](https://github.com/SaadiMalik1/Vireon)** runtime repository.
+- **[System Architecture Reference](knowledge/architecture.md)**: Detailed technical specifications for Config, Telemetry RBAC, Middleware, Audit Logging, and Async Workers.
+- **[Package Reference](vireon_lab/README.md)**: Developer quickstart and API usage guide for the `vireon_lab` Python package.
+- **Underlying Core**: `vireon-lab` depends on `vireon` as its underlying simulation core. Core orchestrator logic, deterministic clocks, and capability engines reside in the **[Vireon](https://github.com/SaadiMalik1/Vireon)** runtime repository.
+
+
