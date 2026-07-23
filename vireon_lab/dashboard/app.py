@@ -20,7 +20,6 @@ import plotly.express as px
 import time
 import os
 import sys
-import json
 from datetime import datetime
 
 # Ensure local imports work reliably
@@ -307,7 +306,7 @@ clinical_status = "HAZARD DETECTED" if (is_attack or (dbs_enable and dbs_amp > 7
 # Top Metric Row
 m1, m2, m3, m4, m5 = st.columns(5)
 with m1:
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Battery Level</div><div class="glass-metric-val" style="color:#00f2fe;">98.5%</div></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="glass-metric"><div class="glass-metric-lbl">Battery Level</div><div class="glass-metric-val" style="color:#00f2fe;">98.5%</div></div>""", unsafe_allow_html=True)
 with m2:
     coherence = 0.42 if is_attack else 0.96
     st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Neural Coherence</div><div class="glass-metric-val" style="color: {'#ff0055' if is_attack else '#00f5d4'};">{coherence:.3f}</div></div>""", unsafe_allow_html=True)

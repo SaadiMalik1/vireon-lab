@@ -52,10 +52,14 @@ class JansenRitNeuralMassGenerator(ISignalGenerator):
                 # Membrane potential difference
                 v_pyr = y1 - y2
                 
+                # Jansen-Rit connectivity constants
+                C1 = self.C * 0.8
+                C3 = self.C * 0.25
+
                 # Sigmoidal transformation into firing rates
                 S_pyr = self._sigmoid(v_pyr)
-                S_exc = self._sigmoid(C1 * S_pyr) if 'C1' in locals() else self._sigmoid(self.C * 0.8 * S_pyr)
-                S_inh = self._sigmoid(C3 * S_pyr) if 'C3' in locals() else self._sigmoid(self.C * 0.25 * S_pyr)
+                S_exc = self._sigmoid(C1 * S_pyr)
+                S_inh = self._sigmoid(C3 * S_pyr)
                 
                 # Differential equations step (Euler-Maruyama integration)
                 dy0 = y3

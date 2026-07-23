@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import numpy as np
-from typing import Dict, Tuple, List, Any, Optional
+from typing import Dict, Tuple
 
 from vireon_lab.engine.circular_buffer import CircularBuffer
 from vireon_lab.engine.generators.jansen_rit import JansenRitNeuralMassGenerator, ColoredNoiseARGenerator
