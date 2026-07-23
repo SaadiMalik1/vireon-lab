@@ -14,7 +14,6 @@
 
 """Integration test for RBAC session tokens, rate limiter, and JSON audit logging."""
 
-import os
 import pytest
 from pathlib import Path
 from vireon_lab.auth import Permission, Role, TelemetrySessionManager

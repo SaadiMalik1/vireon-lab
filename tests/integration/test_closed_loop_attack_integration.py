@@ -15,7 +15,6 @@
 """Integration test for full closed-loop signal simulation, control, and attack detection."""
 
 import numpy as np
-import pytest
 from knowledge.simulators.closed_loop_simulator import ClosedLoopSystem
 from knowledge.simulators.attack_detector import AttackDetector, DetectionResult
 

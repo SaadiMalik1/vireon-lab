@@ -26,7 +26,7 @@ References:
 """
 
 import numpy as np
-from typing import List, Any, Optional
+from typing import List, Any
 try:
     from vireon.sdk.base_interfaces import IStateStore
 except ImportError:

@@ -16,7 +16,7 @@
 
 import asyncio
 import concurrent.futures
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Tuple
 
 
 class AsyncSimulationExecutor:

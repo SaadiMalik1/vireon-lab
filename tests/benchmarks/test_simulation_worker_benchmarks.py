@@ -15,7 +15,6 @@
 """Benchmark test for Asynchronous Simulation Executor throughput."""
 
 import pytest
-import asyncio
 from vireon_lab.workers import AsyncSimulationExecutor
 from knowledge.simulators.closed_loop_simulator import ClosedLoopSystem
 

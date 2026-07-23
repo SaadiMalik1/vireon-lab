@@ -15,7 +15,7 @@
 """Authorization Middleware Decorator."""
 
 import functools
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 from vireon_lab.auth.session_manager import Permission, TelemetrySessionManager
 from vireon_lab.middleware.exception_handler import AuthorizationError
 

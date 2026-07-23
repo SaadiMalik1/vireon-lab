@@ -27,8 +27,41 @@ import urllib.parse
 import time
 import subprocess
 import ssl
-from vireon.runtime.twin import DigitalTwin
+from typing import Any, Dict
+
 from vireon_lab.providers.clinical.closed_loop import UncontrolledStimulationAttack
+
+try:
+    from vireon.runtime.twin import DigitalTwin
+except ImportError:
+    DigitalTwin = Any  # type: ignore[misc, assignment]
+
+try:
+    from vireon.security.rf import (
+        RFFrameProcessor,
+        SignalAttackEngine,
+        AttackFactory,
+        NoiseInjectionAttack,
+        SignalDriftAttack,
+        ImpedanceSpikeAttack,
+        SignalSuppressionAttack,
+    )
+except ImportError:
+    RFFrameProcessor = Any  # type: ignore[misc, assignment]
+    SignalAttackEngine = Any  # type: ignore[misc, assignment]
+    AttackFactory = Any  # type: ignore[misc, assignment]
+    NoiseInjectionAttack = Any  # type: ignore[misc, assignment]
+    SignalDriftAttack = Any  # type: ignore[misc, assignment]
+    ImpedanceSpikeAttack = Any  # type: ignore[misc, assignment]
+    SignalSuppressionAttack = Any  # type: ignore[misc, assignment]
+
+try:
+    from vireon.security.ips import SecurityEngine, NeuroIPS
+except ImportError:
+    SecurityEngine = Any  # type: ignore[misc, assignment]
+    NeuroIPS = Any  # type: ignore[misc, assignment]
+
+
 
 class BCIAPIRequestHandler(http.server.SimpleHTTPRequestHandler):
     server: 'ThreadedHTTPServer'
