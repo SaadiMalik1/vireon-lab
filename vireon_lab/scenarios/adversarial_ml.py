@@ -28,9 +28,10 @@ References:
 import numpy as np
 from typing import List, Any
 try:
-    from vireon.sdk.base_interfaces import IStateStore
-except ImportError:
-    IStateStore = Any
+    from vireon.sdk.base_interfaces import IStateStore  # type: ignore[attr-defined]
+except (ImportError, AttributeError):
+    IStateStore = Any  # type: ignore[misc, assignment]
+
 
 
 
