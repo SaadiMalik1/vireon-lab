@@ -1,0 +1,1981 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../challenges/">
+      
+      
+        <link rel="next" href="../../../labs/lab002_stride_threat_modeling/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>References - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-005-references" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              References
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-textbooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Textbooks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neurostimulation-clinical-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neurostimulation &amp; Clinical Systems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neural-signal-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neural Signal Processing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implantable-security-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implantable Security &amp; Safety
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#control-theory-for-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Theory for Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adversarial-ml-for-neural-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adversarial ML for Neural Systems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formal-methods-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formal Methods &amp; Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distance-bounding-cryptography" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distance Bounding &amp; Cryptography
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-side-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Energy &amp; Side Channels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standards-regulations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standards &amp; Regulations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#digital-twin-simulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Digital Twin &amp; Simulation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-textbooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Textbooks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neurostimulation-clinical-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neurostimulation &amp; Clinical Systems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#neural-signal-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Neural Signal Processing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implantable-security-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implantable Security &amp; Safety
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#control-theory-for-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Theory for Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adversarial-ml-for-neural-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adversarial ML for Neural Systems
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formal-methods-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formal Methods &amp; Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distance-bounding-cryptography" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distance Bounding &amp; Cryptography
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-side-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Energy &amp; Side Channels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standards-regulations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standards &amp; Regulations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#digital-twin-simulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Digital Twin &amp; Simulation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-005-references">NL-005 References</h1>
+<h2 id="core-textbooks">Core Textbooks</h2>
+<ol>
+<li>
+<p>Ogata, K. (2010). <em>Modern Control Engineering</em> (5th ed.). Prentice Hall. Chapters 7-8: Discrete-time control systems, Z-transform analysis, stability criteria, and PID controller design in the digital domain. Foundation for the transfer function and stability analysis in Sections 2-3.</p>
+</li>
+<li>
+<p>Franklin, G. F., Powell, J. D., &amp; Emami-Naeini, A. (2019). <em>Feedback Control of Dynamic Systems</em> (8th ed.). Pearson. Chapter 4: Block diagram algebra, closed-loop transfer functions, and the fundamental feedback equation. Referenced for the control-theoretic framework in Sections 2-3.</p>
+</li>
+<li>
+<p>Nise, N. S. (2019). <em>Control Systems Engineering</em> (8th ed.). Wiley. Chapter 10: Frequency response techniques, gain margin, phase margin, and Bode plot analysis. Basis for the stability margin analysis in Section 4.</p>
+</li>
+<li>
+<p>Astrom, K. J., &amp; Murray, R. M. (2021). <em>Feedback Systems: An Introduction for Scientists and Engineers</em> (2nd ed.). Princeton University Press. Chapters 10-11: Robustness, uncertainty, and fundamental limits of feedback. Referenced for the responsiveness-security tradeoff analysis in Section 33.</p>
+</li>
+<li>
+<p>Oppenheim, A. V., &amp; Schafer, R. W. (2010). <em>Discrete-Time Signal Processing</em> (3rd ed.). Prentice Hall. Chapters 3-4: Z-transform, discrete-time Fourier transform, and digital filter design. Foundation for the DSP pipeline analysis in Sections 3 and 15.</p>
+</li>
+</ol>
+<h2 id="neurostimulation-clinical-systems">Neurostimulation &amp; Clinical Systems</h2>
+<ol>
+<li>
+<p>Little, S., Pogosyan, A., Neal, S., et al. (2013). Adaptive deep brain stimulation in advanced Parkinson disease. <em>Annals of Neurology</em>, 74(3), 449-457. Seminal clinical demonstration of aDCS using beta-band LFP as the control biomarker. Primary reference for the CL-DBS architecture in Section 3.</p>
+</li>
+<li>
+<p>Malekmohammadi, M., Herron, J., Velisar, A., et al. (2016). Kinematic adaptive deep brain stimulation for Parkinson's disease. <em>Journal of Neural Engineering</em>, 13(6), 064004. Demonstrates kinematic-triggered adaptive DBS with clinical outcomes. Referenced for the case study in Section 37.</p>
+</li>
+<li>
+<p>Heck, C. N., King-Stephens, D., Massey, A. D., et al. (2014). Two-year seizure reduction in adults with medically intractable partial onset epilepsy treated with responsive neurostimulation. <em>Epilepsia</em>, 55(11), 1774-1781. RNS System clinical trial results. Primary reference for the epilepsy case study in Section 38.</p>
+</li>
+<li>
+<p>Deer, T. R., Mekhail, N., Provenzano, D., et al. (2021). The Neuromodulation Appropriateness Consensus Committee (NACC) recommendations on best practices for spinal cord stimulation. <em>Neuromodulation</em>, 24(1), 1-35. Comprehensive SCS clinical guidelines. Referenced for the SCS case study in Section 39.</p>
+</li>
+<li>
+<p>Lozano, A. M., Lipsman, N., Bergman, H., et al. (2019). Deep brain stimulation: current challenges and future directions. <em>Nature Reviews Neurology</em>, 15(3), 148-160. Review of DBS mechanisms, adaptive approaches, and emerging applications. Context for the paradigm shift discussion in Section 1.</p>
+</li>
+</ol>
+<h2 id="neural-signal-processing">Neural Signal Processing</h2>
+<ol>
+<li>
+<p>Brucke, C., Huebl, J., Schonecker, K., et al. (2013). Scaling of subthalamic gamma activity with movement speed in patients with Parkinson's disease. <em>Neuromodulation</em>, 16(3), 210-214. Characterizes beta-band LFP dynamics during movement and stimulation. Basis for the neural signal model in Section 4.</p>
+</li>
+<li>
+<p>Brown, P. (2003). Oscillatory nature of human basal ganglia activity: Relationship to the pathophysiology of Parkinson's disease. <em>Movement Disorders</em>, 18(3), 357-363. Establishes the pathological beta oscillation hypothesis central to aDBS. Referenced for Sections 1 and 4.</p>
+</li>
+<li>
+<p>Gilron, R., De Hemptinne, C., Eskandar, E. N., et al. (2021). Standardizing methods for evaluating closed-loop neuromodulation technologies. <em>Nature Biomedical Engineering</em>, 5(12), 1361-1372. Multi-center standardization of aDBS signal processing pipelines. Referenced for bilateral coherence analysis in VAL-010 challenge.</p>
+</li>
+<li>
+<p>Quinn, E. J., Blumenfeld, Z., Velisar, A., et al. (2015). Beta oscillations in the Parkinsonian dorsal striatum reflect an imbalance of direct and indirect pathway activity. <em>Journal of Neuroscience</em>, 35(7), 3046-3056. Neural mechanisms underlying beta oscillations and their modulation by stimulation. Basis for the stimulus-response model in Section 4.</p>
+</li>
+</ol>
+<h2 id="implantable-security-safety">Implantable Security &amp; Safety</h2>
+<ol>
+<li>
+<p>Burleson, W., Clark, S. S., Ransford, B., et al. (2012). Design and implementation of a neural digital to analog converter for an implantable neural stimulation system. <em>IEEE Transactions on Biomedical Circuits and Systems</em>, 6(5), 455-466. Hardware-level analysis of implantable stimulator design including charge balance circuits. Referenced for Section 8 (actuation pipeline security).</p>
+</li>
+<li>
+<p>Halperin, D., Heydt-Benjamin, T. S., Ransford, B., et al. (2008). Pacemakers and implantable cardiac defibrillators: Software radio attacks and zero-power defenses. <em>IEEE Symposium on Security and Privacy</em>, 129-142. Foundational work on implantable medical device security. Context for the threat model in Sections 11-12.</p>
+</li>
+<li>
+<p>Coburn, J., &amp; Ransford, B. (2020). The neural interface as a security-critical system. <em>IEEE Security &amp; Privacy</em>, 18(5), 74-80. Frames neural interfaces through a security engineering lens. Referenced for the attack surface taxonomy in Section 11.</p>
+</li>
+<li>
+<p>Xu, T., Wendt, J., &amp; Potkonjak, M. (2015). Security of implantable medical devices with wireless open-loop stimulation. <em>IEEE Design &amp; Test</em>, 32(2), 52-60. Security analysis of open-loop IMDs with extension to closed-loop considerations. Basis for the feedback bypass analysis in Section 20.</p>
+</li>
+<li>
+<p>IEC 62443-3-3:2013. <em>Industrial communication networks - Network and system security - Part 3-3: System security requirements and security levels</em>. International Electrotechnical Commission. Security levels and defense-in-depth framework adapted for neurostimulator safety monitors in Section 10.</p>
+</li>
+</ol>
+<h2 id="control-theory-for-security">Control Theory for Security</h2>
+<ol>
+<li>
+<p>Teixeira, A., Perez, D., Sandberg, H., &amp; Johansson, K. H. (2015). Attack models and scenarios for networked control systems. In <em>Control of Cyber-Physical Systems</em> (pp. 21-38). Springer. Classification of attacks on control systems including sensor, actuator, and denial-of-service. Direct basis for the perturbation taxonomy in Section 11.</p>
+</li>
+<li>
+<p>Pasqualetti, F., Dorfler, F., &amp; Bullo, F. (2013). Attack detection and identification in cyber-physical systems. <em>IEEE Transactions on Automatic Control</em>, 58(11), 2715-2729. Fundamental detection theory for control systems. Referenced for the attack detection architecture in Section 25.</p>
+</li>
+<li>
+<p>Mo, Y., Kim, T. H., Brancik, K., et al. (2012). Cyber-physical security of a smart grid infrastructure. <em>Proceedings of the IEEE</em>, 100(1), 195-209. Delay-based attacks on feedback control loops. Direct basis for the delay injection analysis in Section 19.</p>
+</li>
+<li>
+<p>Fawzi, H., Tabuada, P., &amp; Diggavi, S. (2014). Secure estimation and control for cyber-physical systems under adversarial attacks. <em>IEEE Transactions on Automatic Control</em>, 59(6), 1454-1467. Formal verification approach for control system security. Referenced for the formal verification section in Section 28.</p>
+</li>
+</ol>
+<h2 id="adversarial-ml-for-neural-systems">Adversarial ML for Neural Systems</h2>
+<ol>
+<li>
+<p>Madry, A., Makelov, A., Schmidt, L., et al. (2018). Towards deep learning models resistant to adversarial attacks. <em>International Conference on Learning Representations (ICLR)</em>. Projected gradient descent for adversarial example generation. Adapted for the adversarial perturbation formulation in Section 18.</p>
+</li>
+<li>
+<p>Carlini, N., &amp; Wagner, D. (2017). Towards evaluating the robustness of neural networks. <em>IEEE Symposium on Security and Privacy</em>, 39-57. Comprehensive adversarial attack evaluation framework. Methodological basis for benchmarking adversarial perturbation resilience in CL-002.</p>
+</li>
+<li>
+<p>Goodfellow, I. J., Shlens, J., &amp; Szegedy, C. (2015). Explaining and harnessing adversarial examples. <em>International Conference on Learning Representations (ICLR)</em>. Fast gradient sign method (FGSM). Referenced for the adversarial sensor signal generation approach in Section 18 and CTF-010.</p>
+</li>
+</ol>
+<h2 id="formal-methods-verification">Formal Methods &amp; Verification</h2>
+<ol>
+<li>
+<p>Baier, C., &amp; Katoen, J. P. (2008). <em>Principles of Model Checking</em>. MIT Press. Comprehensive textbook on model checking algorithms and temporal logic. Referenced for the formal verification approach in Section 28.</p>
+</li>
+<li>
+<p>Alur, R. (2015). <em>Principles of Cyber-Physical Systems</em>. MIT Press. Hybrid automata models for systems with continuous and discrete dynamics. Basis for the reachability analysis discussion in Section 28.</p>
+</li>
+<li>
+<p>Platzer, A. (2018). <em>Logical Foundations of Cyber-Physical Systems</em>. Springer. Differential dynamic logic for verifying cyber-physical systems. Referenced for the VIREON formal verification integration in Section 28.</p>
+</li>
+</ol>
+<h2 id="distance-bounding-cryptography">Distance Bounding &amp; Cryptography</h2>
+<ol>
+<li>
+<p>Brands, S., &amp; Chaum, D. (1993). Distance-bounding protocols. In <em>Advances in Cryptology - EUROCRYPT '93</em> (pp. 344-359). Springer. Original distance bounding protocol. Foundation for the RES-009 challenge.</p>
+</li>
+<li>
+<p>NIST. (2024). Post-Quantum Cryptography Standardization. National Institute of Standards and Technology. CRYSTALS-Kyber, CRYSTALS-Dilithium, and SPHINCS+ standards. Referenced for the RES-010 challenge on post-quantum secure parameter authentication.</p>
+</li>
+<li>
+<p>Hancke, G. P., &amp; Kuhn, M. G. (2005). An RFID distance bounding protocol. <em>IEEE International Conference on Security and Privacy for Emerging Areas in Communications Networks</em>, 67-73. Mafia fraud and distance fraud attacks on distance bounding protocols. Security analysis framework for RES-009.</p>
+</li>
+</ol>
+<h2 id="energy-side-channels">Energy &amp; Side Channels</h2>
+<ol>
+<li>
+<p>Kocher, P., Jaffe, J., &amp; Jun, B. (1999). Differential power analysis. In <em>Advances in Cryptology - CRYPTO '99</em> (pp. 388-397). Springer. Foundational DPA methodology adapted for energy side-channel analysis in BENCH-010.</p>
+</li>
+<li>
+<p>Mangard, S., Oswald, E., &amp; Popp, T. (2007). <em>Power Analysis Attacks: Revealing the Secrets of Smart Cards</em>. Springer. Comprehensive treatment of power analysis techniques. Referenced for the CPA/DPA pipeline in BENCH-010.</p>
+</li>
+</ol>
+<h2 id="standards-regulations">Standards &amp; Regulations</h2>
+<ol>
+<li>
+<p>FDA. (2021). <em>Technical Considerations for Additive Manufacturing of Medical Devices</em>. U.S. Food and Drug Administration. Guidance on software validation for medical devices including closed-loop algorithms.</p>
+</li>
+<li>
+<p>ISO 14708-3:2017. <em>Implantable devices - Part 3: Implantable neurostimulators</em>. International Organization for Standardization. Safety and performance requirements for implantable neurostimulators.</p>
+</li>
+<li>
+<p>IEEE 11073 SDC. <em>Health informatics - Point-of-care medical device communication - Service-oriented device connectivity</em>. Institute of Electrical and Electronics Engineers. Standard for medical device communication profiles relevant to secure parameter exchange.</p>
+</li>
+<li>
+<p>IEC 62304:2006+A1:2015. <em>Medical device software - Software life cycle processes</em>. International Electrotechnical Commission. Software lifecycle processes for medical device software, including safety classification.</p>
+</li>
+</ol>
+<h2 id="digital-twin-simulation">Digital Twin &amp; Simulation</h2>
+<ol>
+<li>
+<p>Tao, F., Zhang, H., Liu, A., &amp; Nee, A. Y. C. (2019). Digital twin in industry: State-of-the-art. <em>IEEE Transactions on Industrial Informatics</em>, 15(4), 2405-2415. Digital twin architecture and fidelity levels. Adapted for the digital twin integration in Section 30.</p>
+</li>
+<li>
+<p>Razavi-Far, R., Drakopoulos, E., Palade, V., et al. (2019). Model-based fault detection and isolation of a wind turbine using a bond graph and neural networks. <em>IEEE Transactions on Systems, Man, and Cybernetics: Systems</em>, 49(7), 1406-1418. Model-based fault detection methodology applicable to neurostimulator digital twin divergence monitoring.</p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2639 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../../NL-001/references/">
+      
+      
+        <link rel="next" href="../part2_deep_analysis/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Part 1 Foundations - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-002-neural-signal-processing-for-security-analysts-part-1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 1 Foundations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-historical-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Historical Background
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Historical Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-from-analog-to-digital-neural-signal-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 From Analog to Digital Neural Signal Processing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-security-implications-of-the-digital-transition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Security Implications of the Digital Transition
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scientific-foundations-digital-signal-processing-for-neural-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scientific Foundations: Digital Signal Processing for Neural Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scientific Foundations: Digital Signal Processing for Neural Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-sampling-theorem-and-its-security-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Sampling Theorem and Its Security Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-quantization-and-its-information-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Quantization and Its Information Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-windowing-and-spectral-leakage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Windowing and Spectral Leakage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-digital-filtering-the-first-processing-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Digital Filtering: The First Processing Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Digital Filtering: The First Processing Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-why-neural-signals-must-be-filtered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Why Neural Signals Must Be Filtered
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-filter-types-and-their-security-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Filter Types and Their Security Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 Filter Types and Their Security Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#high-pass-filter-removes-low-frequencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High-Pass Filter (removes low frequencies)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#low-pass-filter-removes-high-frequencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Low-Pass Filter (removes high frequencies)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandpass-filter-combination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bandpass Filter (combination)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notch-filter-removes-a-specific-frequency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notch Filter (removes a specific frequency)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-iir-vs-fir-filters-security-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 IIR vs. FIR Filters: Security Trade-offs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-filter-implementation-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Filter Implementation Vulnerabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-artifact-detection-and-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Artifact Detection and Classification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Artifact Detection and Classification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-what-are-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 What Are Artifacts?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-artifact-types-and-their-security-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Artifact Types and Their Security Implications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 Artifact Types and Their Security Implications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#eye-blink-and-eye-movement-artifacts-eeg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eye Blink and Eye Movement Artifacts (EEG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#muscle-emg-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Muscle (EMG) Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cardiac-ecg-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cardiac (ECG) Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#electrode-pop-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Electrode Pop Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-artifact-removal-methods-and-their-security-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Artifact Removal Methods and Their Security Implications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3 Artifact Removal Methods and Their Security Implications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rejection-zeroing-out-artifact-segments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rejection (zeroing out artifact segments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ica-independent-component-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICA (Independent Component Analysis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wavelet-based-denoising" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wavelet-Based Denoising
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-signal-quality-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Signal Quality Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Signal Quality Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-why-signal-quality-matters-for-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Why Signal Quality Matters for Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-key-quality-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Key Quality Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-vireon-signal-quality-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 VIREON Signal Quality Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-historical-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Historical Background
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Historical Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-from-analog-to-digital-neural-signal-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 From Analog to Digital Neural Signal Processing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-security-implications-of-the-digital-transition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Security Implications of the Digital Transition
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scientific-foundations-digital-signal-processing-for-neural-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scientific Foundations: Digital Signal Processing for Neural Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scientific Foundations: Digital Signal Processing for Neural Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-sampling-theorem-and-its-security-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Sampling Theorem and Its Security Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-quantization-and-its-information-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Quantization and Its Information Impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-windowing-and-spectral-leakage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Windowing and Spectral Leakage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-digital-filtering-the-first-processing-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Digital Filtering: The First Processing Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Digital Filtering: The First Processing Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-why-neural-signals-must-be-filtered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Why Neural Signals Must Be Filtered
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-filter-types-and-their-security-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Filter Types and Their Security Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 Filter Types and Their Security Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#high-pass-filter-removes-low-frequencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High-Pass Filter (removes low frequencies)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#low-pass-filter-removes-high-frequencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Low-Pass Filter (removes high frequencies)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandpass-filter-combination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bandpass Filter (combination)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notch-filter-removes-a-specific-frequency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notch Filter (removes a specific frequency)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-iir-vs-fir-filters-security-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 IIR vs. FIR Filters: Security Trade-offs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-filter-implementation-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Filter Implementation Vulnerabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-artifact-detection-and-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Artifact Detection and Classification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Artifact Detection and Classification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-what-are-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 What Are Artifacts?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-artifact-types-and-their-security-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Artifact Types and Their Security Implications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 Artifact Types and Their Security Implications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#eye-blink-and-eye-movement-artifacts-eeg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eye Blink and Eye Movement Artifacts (EEG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#muscle-emg-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Muscle (EMG) Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cardiac-ecg-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cardiac (ECG) Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#electrode-pop-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Electrode Pop Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-artifact-removal-methods-and-their-security-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Artifact Removal Methods and Their Security Implications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.3 Artifact Removal Methods and Their Security Implications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rejection-zeroing-out-artifact-segments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rejection (zeroing out artifact segments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ica-independent-component-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICA (Independent Component Analysis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptive-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wavelet-based-denoising" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wavelet-Based Denoising
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-signal-quality-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Signal Quality Assessment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Signal Quality Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-why-signal-quality-matters-for-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Why Signal Quality Matters for Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-key-quality-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Key Quality Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-vireon-signal-quality-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 VIREON Signal Quality Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-002-neural-signal-processing-for-security-analysts-part-1">NL-002: Neural Signal Processing for Security Analysts (Part 1)</h1>
+<h2 id="1-overview">1. Overview</h2>
+<p>Signal processing is the computational backbone of every neurotechnology system. Raw neural signals — noisy, high-dimensional, information-dense — are useless without processing. Filtering removes interference. Feature extraction distills clinical biomarkers. Compression enables wireless transmission. Every transform changes the signal's representation, and every change in representation creates both a defense opportunity and a potential blind spot for security.</p>
+<p>This module teaches signal processing not as an abstract discipline but as a security-critical engineering practice. You will learn to implement the same processing chains that run inside implantable pulse generators, external programmers, and BCI decoders — and you will learn to attack and defend each step.</p>
+<p>The central thesis: <strong>the signal processing pipeline is itself a trust boundary.</strong> Data enters as raw samples and exits as features, decisions, or compressed packets. At each stage, an attacker can manipulate the data, the processing parameters, or the processing algorithm itself. Understanding these manipulation vectors requires understanding the processing chain in depth.</p>
+<h2 id="2-historical-background">2. Historical Background</h2>
+<h3 id="21-from-analog-to-digital-neural-signal-processing">2.1 From Analog to Digital Neural Signal Processing</h3>
+<p>The history of neural signal processing parallels the history of digital computing, but with a 20-30 year delay due to the extreme computational demands of real-time neural data processing.</p>
+<ul>
+<li>
+<p><strong>1960s-1970s:</strong> Analog signal processing dominates. EEG machines use analog filters (RC circuits) for bandpass filtering. No digital storage — signals are written directly to paper. The only "processing" is analog filtering and amplification. Security is irrelevant because there is no digital representation to manipulate.</p>
+</li>
+<li>
+<p><strong>1980s:</strong> Digital EEG becomes practical. ADCs with sufficient resolution (12-bit) and sampling rate (256 Hz) become affordable. Digital filtering replaces analog filters. The transition creates the first opportunity for digital manipulation of neural data, though the threat is not recognized for decades.</p>
+</li>
+<li>
+<p><strong>1990s:</strong> Real-time digital signal processing becomes feasible on low-power processors. This enables implantable devices with digital processing (first generation of programmable DBS systems). The DSP algorithms running on these devices become part of the trusted computing base — but are not treated as security-critical.</p>
+</li>
+<li>
+<p><strong>2000s:</strong> Advanced signal processing enters neurotechnology. Wavelet transforms for seizure detection. Independent component analysis (ICA) for artifact removal. Time-frequency analysis for neural oscillation characterization. These algorithms increase the information that can be extracted from neural signals — and consequently increase the impact of data exfiltration.</p>
+</li>
+<li>
+<p><strong>2010s:</strong> Machine learning transforms neural signal processing. Deep learning classifiers for BCI. Adaptive filtering for closed-loop stimulation. The introduction of learned models creates new attack vectors (adversarial examples, model inversion, data poisoning) that did not exist in traditional DSP.</p>
+</li>
+<li>
+<p><strong>2020s:</strong> Edge computing enables on-implant AI. Neuralink's N1 chip performs spike detection and feature extraction on the implant itself. The security boundary shifts — the attack target is no longer just the wireless link but the on-chip processing pipeline.</p>
+</li>
+</ul>
+<h3 id="22-security-implications-of-the-digital-transition">2.2 Security Implications of the Digital Transition</h3>
+<p>The transition from analog to digital processing created the fundamental preconditions for neurosecurity concerns:</p>
+<ol>
+<li>
+<p><strong>Digital representation enables manipulation.</strong> An analog signal on a wire can be contaminated by noise but cannot be precisely edited. A digital signal in memory can be modified bit-by-bit with perfect precision.</p>
+</li>
+<li>
+<p><strong>Programmability enables firmware attacks.</strong> Analog circuits are fixed-function. Digital processors execute firmware, which can be replaced if the firmware update mechanism is compromised.</p>
+</li>
+<li>
+<p><strong>Compression creates information loss.</strong> Lossy compression removes information that an attacker might use to detect manipulation. The question becomes: does compression also remove the evidence of an attack?</p>
+</li>
+<li>
+<p><strong>Feature extraction creates a semantic gap.</strong> Raw samples and extracted features are different representations of the same data. An attack that is detectable in the raw domain may be invisible in the feature domain, and vice versa.</p>
+</li>
+</ol>
+<h2 id="3-scientific-foundations-digital-signal-processing-for-neural-data">3. Scientific Foundations: Digital Signal Processing for Neural Data</h2>
+<h3 id="31-sampling-theorem-and-its-security-implications">3.1 Sampling Theorem and Its Security Implications</h3>
+<p>The Nyquist-Shannon sampling theorem states that a continuous signal can be perfectly reconstructed from its samples if the sampling rate is at least twice the highest frequency component. For neural signals:</p>
+<ul>
+<li>EEG: highest relevant frequency ~100 Hz → minimum sampling rate 200 Hz (clinical standard: 250-500 Hz)</li>
+<li>ECoG: highest relevant frequency ~500 Hz → minimum 1000 Hz (clinical: 500-2000 Hz)</li>
+<li>LFP: highest relevant frequency ~100 Hz → minimum 200 Hz (clinical: 250-500 Hz)</li>
+<li>Spike trains: action potential bandwidth ~6000 Hz → minimum 12000 Hz (clinical: 20,000-30,000 Hz)</li>
+</ul>
+<p><strong>Security implications of sampling:</strong></p>
+<p>An attacker who can control the ADC sampling rate (through firmware manipulation) can create aliasing — high-frequency interference that folds into the signal band after sampling. If the sampling rate is reduced below Nyquist, legitimate high-frequency neural activity (e.g., gamma oscillations in ECoG) aliases into lower frequencies and corrupts the signal. This is a denial-of-service attack that is difficult to detect because the corrupted signal appears to be low-frequency neural activity rather than obvious interference.</p>
+<p>Conversely, oversampling (sampling well above Nyquist) provides a security benefit: it leaves headroom for detecting out-of-band energy that indicates EMI injection. If you sample at 1000 Hz but only use 0-100 Hz, the 100-500 Hz band serves as a canary — energy in this band indicates interference that should not be present after proper anti-aliasing. This is why VIREON's validation framework recommends oversampling by at least 2x when power budget allows.</p>
+<h3 id="32-quantization-and-its-information-impact">3.2 Quantization and Its Information Impact</h3>
+<p>ADC resolution determines how precisely the analog signal is represented digitally. Clinical neural recording systems typically use 16-24 bit ADCs:</p>
+<ul>
+<li>16-bit: 65,536 levels, LSB size = full-scale range / 65536</li>
+<li>24-bit: 16,777,216 levels, LSB size = full-scale range / 16777216</li>
+</ul>
+<p>For EEG with a ±500 uV input range:
+- 16-bit: LSB = 1000/65536 ≈ 0.015 uV (sufficient — EEG noise floor is ~1 uV)
+- 24-bit: LSB = 1000/16777216 ≈ 0.00006 uV (excessive — below thermal noise)</p>
+<p><strong>Security implications:</strong></p>
+<p>Quantization creates a noise floor that sets the minimum detectable signal change. An attacker's injection must exceed the quantization noise floor to have any effect. However, for 16-bit neural recording, the quantization noise (0.015 uV for EEG) is far below typical injection amplitudes, so quantization does not provide meaningful security. For spike trains, where the signal is larger (100-1000 uV), quantization is even less relevant.</p>
+<p>Quantization is more security-relevant for <strong>covert channel analysis.</strong> If an attacker exfiltrates data by modulating stimulation parameters at sub-LSB levels, the modulation would be invisible to the 16-bit ADC but could potentially be detected by a higher-resolution analyzer. This is a theoretical attack vector that has not been demonstrated but is plausible for high-precision systems.</p>
+<h3 id="33-windowing-and-spectral-leakage">3.3 Windowing and Spectral Leakage</h3>
+<p>When computing the frequency content of a finite-length signal, we implicitly multiply the signal by a rectangular window. This causes spectral leakage — energy from one frequency spreads into adjacent frequencies, making it difficult to distinguish closely-spaced spectral components.</p>
+<p>Window functions (Hann, Hamming, Blackman, etc.) reduce spectral leakage by tapering the signal edges to zero, at the cost of reduced frequency resolution. The choice of window function affects the ability to detect narrowband attacks:</p>
+<ul>
+<li><strong>Rectangular window:</strong> Best frequency resolution, worst leakage. Can resolve closely-spaced spectral peaks but also creates sidelobes that obscure weak signals.</li>
+<li><strong>Hann window:</strong> Good compromise. Reduces sidelobes by ~31 dB compared to rectangular. Standard choice for neural signal PSD estimation.</li>
+<li><strong>Blackman window:</strong> Best sidelobe suppression (~58 dB) but worst frequency resolution. Used when detecting weak signals near strong ones.</li>
+</ul>
+<p><strong>Security implications:</strong></p>
+<p>An attacker injecting a narrowband signal (e.g., a 50 Hz powerline interference attack) wants the injection to be as narrowband as possible to minimize detectability. The analyst's window function choice affects detectability: a Hann window will spread the attack energy across neighboring frequencies, potentially making it harder to distinguish from legitimate neural activity. A rectangular window will show the attack as a sharp spectral line, making it more detectable.</p>
+<p>VIREON's spectral analysis tools should use multiple window functions and compare results. If an anomaly appears with one window but not another, it may indicate a narrowband injection that is being masked by windowing. This multi-window approach is a defense-in-depth strategy for spectral attack detection.</p>
+<h2 id="4-digital-filtering-the-first-processing-layer">4. Digital Filtering: The First Processing Layer</h2>
+<h3 id="41-why-neural-signals-must-be-filtered">4.1 Why Neural Signals Must Be Filtered</h3>
+<p>Raw neural signals after digitization contain multiple contaminating signals:</p>
+<ul>
+<li><strong>Powerline interference (50/60 Hz):</strong> Electromagnetic coupling from power lines. Typically 10-100 uV in EEG, can exceed neural signal amplitude.</li>
+<li><strong>DC offset:</strong> The electrode-tissue junction creates a DC potential (up to several hundred mV for some electrode types) that must be removed to avoid saturating amplifiers.</li>
+<li><strong>Low-frequency drift:</strong> Slow changes in electrode impedance, skin potentials (for EEG), or tissue response create drift below 0.5 Hz.</li>
+<li><strong>High-frequency noise:</strong> Electronic noise from the amplifiers (thermal, 1/f), environmental EMI.</li>
+<li><strong>Physiological artifacts:</strong> Eye movements, muscle activity (EMG), cardiac signal (ECG), respiration.</li>
+</ul>
+<p>Filtering removes these contaminations. The filter design determines what is removed and what is preserved — and therefore what attacks are detectable after filtering.</p>
+<h3 id="42-filter-types-and-their-security-properties">4.2 Filter Types and Their Security Properties</h3>
+<h4 id="high-pass-filter-removes-low-frequencies">High-Pass Filter (removes low frequencies)</h4>
+<p><strong>Purpose:</strong> Remove DC offset and low-frequency drift.
+<strong>Typical cutoff:</strong> 0.5-1 Hz for EEG, 1-2 Hz for LFP.
+<strong>Implementation:</strong> Butterworth or Bessel, 2nd-4th order.</p>
+<p><strong>Security implication:</strong> A high-pass filter with a 0.5 Hz cutoff removes very slow signal variations. An attacker who injects a very low-frequency signal (&lt;0.5 Hz) to manipulate a baseline or drift-sensitive metric will have their injection removed by this filter. This is actually a defense — the high-pass filter rejects out-of-band attacks. However, it also means that very slow parameter manipulation (changing a signal's mean over tens of seconds) would be invisible to any analysis that operates only on high-pass filtered data.</p>
+<h4 id="low-pass-filter-removes-high-frequencies">Low-Pass Filter (removes high frequencies)</h4>
+<p><strong>Purpose:</strong> Remove high-frequency noise and prevent aliasing.
+<strong>Typical cutoff:</strong> 40-100 Hz for EEG (clinical), up to 500 Hz for ECoG.
+<strong>Implementation:</strong> Butterworth or Bessel, 4th-8th order.</p>
+<p><strong>Security implication:</strong> A low-pass filter with a 40 Hz cutoff removes all activity above 40 Hz. This includes gamma-band activity (30-100 Hz) which carries information in ECoG and research EEG. For an attacker, this means that any injection above 40 Hz will be removed. Conversely, if the low-pass cutoff is set too aggressively (e.g., 30 Hz for an EEG system that should preserve gamma), the filter itself is causing information loss that an attacker could exploit — if the system is designed to never see gamma, an attacker can inject gamma-band energy without fear of detection.</p>
+<h4 id="bandpass-filter-combination">Bandpass Filter (combination)</h4>
+<p><strong>Purpose:</strong> Isolate the frequency band of interest.
+<strong>Typical bands:</strong> Delta (0.5-4 Hz), Theta (4-8 Hz), Alpha (8-13 Hz), Beta (13-30 Hz), Gamma (30-100 Hz).
+<strong>Implementation:</strong> Cascaded high-pass and low-pass, or a single bandpass design.</p>
+<p><strong>Security implication:</strong> Bandpass filters are the primary tool for feature extraction in neural signal processing. In closed-loop DBS, the beta band (13-30 Hz) power is the biomarker that controls stimulation. The bandpass filter that isolates beta is therefore a critical security component:</p>
+<ul>
+<li>If the beta bandpass filter has a design flaw (e.g., too wide a passband that includes adjacent frequencies), an attacker could inject energy at adjacent frequencies that leak into the beta estimate.</li>
+<li>If the filter order is too low (poor roll-off), out-of-band energy from an attack will not be sufficiently attenuated.</li>
+<li>If the filter has a phase distortion, the temporal structure of the beta oscillation is altered, which could affect a closed-loop controller that depends on phase-locked stimulation.</li>
+</ul>
+<h4 id="notch-filter-removes-a-specific-frequency">Notch Filter (removes a specific frequency)</h4>
+<p><strong>Purpose:</strong> Remove powerline interference (50 or 60 Hz) and harmonics.
+<strong>Implementation:</strong> IIR notch (2nd order), or adaptive notch.</p>
+<p><strong>Security implication:</strong> This is the most security-critical filter in many neural systems. An attacker who injects energy at exactly the notch frequency will have their injection removed — but an attacker who injects at 49.5 Hz (just below a 50 Hz notch) will have their injection preserved. The narrowness of the notch determines how precisely the attacker must target their injection frequency.</p>
+<p>More critically: <strong>an attacker can weaponize the notch filter.</strong> If an attacker injects a strong 50 Hz signal that overwhelms the neural signal, the notch filter will remove it — but the notch filter may also remove legitimate neural activity that happens to be at 50 Hz (rare in scalp EEG, but possible in ECoG where powerline artifact can mix with neural activity through volume conduction). This is an availability attack: force the system to apply aggressive notching, which removes legitimate signal.</p>
+<p>Additionally, an adaptive notch filter (which tracks the exact interference frequency) can be manipulated: if the attacker slowly sweeps the injection frequency, the adaptive filter will follow it, potentially removing a wider range of frequencies than intended.</p>
+<h3 id="43-iir-vs-fir-filters-security-trade-offs">4.3 IIR vs. FIR Filters: Security Trade-offs</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>IIR (Infinite Impulse Response)</th>
+<th>FIR (Finite Impulse Response)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Order needed for sharp cutoff</td>
+<td>Low (4th-6th)</td>
+<td>High (100th-500th)</td>
+</tr>
+<tr>
+<td>Computational cost</td>
+<td>Low</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Phase response</td>
+<td>Non-linear (phase distortion)</td>
+<td>Can be exactly linear</td>
+</tr>
+<tr>
+<td>Stability</td>
+<td>Can be unstable</td>
+<td>Always stable</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>Requires feedback (state)</td>
+<td>No feedback</td>
+</tr>
+<tr>
+<td>Security: parameter tampering</td>
+<td>Dangerous — instability can crash firmware</td>
+<td>Safer — bounded output for bounded input</td>
+</tr>
+<tr>
+<td>Security: covert channel</td>
+<td>Feedback state could leak information</td>
+<td>No state, no covert channel</td>
+</tr>
+<tr>
+<td>Security: implementation complexity</td>
+<td>Higher (coefficient precision matters)</td>
+<td>Lower</td>
+</tr>
+</tbody>
+</table>
+<p><strong>For VIREON:</strong> FIR filters are preferred for security-critical applications because they are unconditionally stable and have no hidden state. IIR filters are commonly used in implantable devices due to their lower computational cost, but their instability risk and state-dependent behavior make them harder to validate. VIREON's validation framework should flag IIR filter usage and require additional stability analysis.</p>
+<h3 id="44-filter-implementation-vulnerabilities">4.4 Filter Implementation Vulnerabilities</h3>
+<p><strong>Coefficient quantization:</strong> Filter coefficients are stored with finite precision (typically 32-bit float in firmware). Quantization can cause the actual filter response to deviate from the designed response. For IIR filters, coefficient quantization can push poles closer to the unit circle, reducing stability margin. An attacker who understands the coefficient format could potentially craft an input that exploits the quantization-induced deviation.</p>
+<p><strong>Overflow and saturation:</strong> In fixed-point implementations (common in implantable DSP), filter computations can overflow. If overflow is not handled correctly (wraparound vs. saturation), it can produce large output spikes that propagate through the processing chain. This is a firmware vulnerability that can be triggered by a specific input pattern.</p>
+<p><strong>Filter state manipulation:</strong> IIR filters maintain internal state (previous input and output samples). If an attacker can write to the filter state (through a firmware vulnerability), they can cause the filter to produce arbitrary output. This is a more subtle attack than direct data injection because the attack occurs inside the processing pipeline rather than at the input.</p>
+<h2 id="5-artifact-detection-and-classification">5. Artifact Detection and Classification</h2>
+<h3 id="51-what-are-artifacts">5.1 What Are Artifacts?</h3>
+<p>Artifacts are signals recorded by the electrodes that do not originate from neural activity. They contaminate the neural signal and must be detected and either removed or flagged. Artifacts are security-relevant because they can be weaponized (an attacker can inject artificial artifacts) and because they can mask attacks (an artifact removal algorithm might remove evidence of an injection).</p>
+<h3 id="52-artifact-types-and-their-security-implications">5.2 Artifact Types and Their Security Implications</h3>
+<h4 id="eye-blink-and-eye-movement-artifacts-eeg">Eye Blink and Eye Movement Artifacts (EEG)</h4>
+<p><strong>Characteristics:</strong> 100-300 uV, 1-3 Hz, primarily anterior channels (Fp1, Fp2). Duration: 200-400 ms for blinks, 100-300 ms for saccades.</p>
+<p><strong>Detection methods:</strong> Amplitude threshold on anterior channels, correlation with reference EOG channels, template matching.</p>
+<p><strong>Security implication:</strong> An attacker who can inject a signal that mimics an eye blink artifact will trigger the artifact rejection algorithm, causing the system to discard the contaminated data segment. This is a <strong>denial-of-service attack on the data</strong> — the system loses neural data during the artifact window. If the artifact rejection is overly aggressive (flagging many false positives), the attacker can cause significant data loss by injecting frequent low-amplitude blink-like signals.</p>
+<p>More subtly, an attacker could inject an artifact that is <strong>just below the detection threshold.</strong> The artifact would not be flagged but would still corrupt the underlying neural signal. This is a <strong>data integrity attack</strong> that exploits the gap between the artifact's actual impact and the detection algorithm's sensitivity.</p>
+<h4 id="muscle-emg-artifacts">Muscle (EMG) Artifacts</h4>
+<p><strong>Characteristics:</strong> Broadband (20-300 Hz), high amplitude (can exceed 1000 uV), primarily temporal and neck channels.</p>
+<p><strong>Detection methods:</strong> High-frequency power ratio, spectral analysis above 30 Hz.</p>
+<p><strong>Security implication:</strong> EMG artifacts overlap with the beta and gamma bands that are clinically significant. An attacker who injects broadband noise that mimics EMG will corrupt the beta/gamma power estimates used by closed-loop controllers. Because the injected signal resembles a legitimate artifact, it may not be flagged as anomalous. This is particularly dangerous for closed-loop DBS systems that use beta power as a biomarker — the attacker can inflate beta power to suppress stimulation (denial of therapy) or depress beta power to trigger unnecessary stimulation.</p>
+<h4 id="cardiac-ecg-artifacts">Cardiac (ECG) Artifacts</h4>
+<p><strong>Characteristics:</strong> Periodic (1-1.5 Hz), sharp QRS complex, predominantly in electrodes near vasculature.</p>
+<p><strong>Detection methods:</strong> Template matching with QRS templates, correlation with reference ECG.</p>
+<p><strong>Security implication:</strong> ECG artifacts are highly stereotyped and periodic. An attacker who injects a periodic signal at the cardiac frequency could trigger ECG artifact rejection, causing systematic data loss synchronized with the heartbeat. This would selectively remove time-locked neural activity (e.g., heartbeat-evoked potentials), potentially biasing any analysis that depends on cardiac synchronization.</p>
+<h4 id="electrode-pop-artifacts">Electrode Pop Artifacts</h4>
+<p><strong>Characteristics:</strong> Sudden DC offset shift, followed by exponential recovery. Caused by sudden impedance changes at the electrode-tissue interface.</p>
+<p><strong>Detection methods:</strong> Amplitude derivative (sudden jumps), DC level monitoring.</p>
+<p><strong>Security implication:</strong> Electrode pop artifacts are particularly dangerous because they indicate a potential hardware problem (loose electrode, tissue reaction). An attacker who can inject a signal that mimics an electrode pop could trigger a device alarm or cause the system to disable the affected channel. In a multi-channel BCI, disabling channels reduces the system's capability — a denial-of-service attack at the channel level.</p>
+<h3 id="53-artifact-removal-methods-and-their-security-implications">5.3 Artifact Removal Methods and Their Security Implications</h3>
+<h4 id="rejection-zeroing-out-artifact-segments">Rejection (zeroing out artifact segments)</h4>
+<p><strong>Method:</strong> Detect artifact time windows and set the signal to zero during those windows.</p>
+<p><strong>Security implication:</strong> Creates data gaps that an attacker can exploit. If the system fills gaps with interpolation, the interpolated values are predictable and can be replaced without detection. If gaps are left empty, downstream processing must handle missing data — the handling method may create exploitable patterns.</p>
+<h4 id="ica-independent-component-analysis">ICA (Independent Component Analysis)</h4>
+<p><strong>Method:</strong> Decompose multi-channel data into independent components, identify artifact components by their topology and spectral characteristics, and remove them.</p>
+<p><strong>Security implication:</strong> ICA assumes that neural sources and artifact sources are statistically independent. An attacker who injects a signal that is statistically correlated with neural activity will not be separated by ICA — the attack will survive artifact removal. This is a more sophisticated attack than simple injection because it requires the attacker to understand the statistical structure of the neural signal.</p>
+<p>Additionally, ICA itself can be attacked. If an attacker can manipulate the input to ICA (e.g., by injecting specific patterns into specific channels), they can influence the component decomposition, potentially causing legitimate neural components to be misclassified as artifacts and removed. This is a <strong>data integrity attack through artifact removal manipulation.</strong></p>
+<h4 id="adaptive-filtering">Adaptive Filtering</h4>
+<p><strong>Method:</strong> Use a reference signal (e.g., EOG electrode for eye artifacts) to estimate the artifact contribution and subtract it.</p>
+<p><strong>Security implication:</strong> If the reference signal is compromised (an attacker injects a false reference), the adaptive filter will subtract the wrong thing — removing legitimate neural signal and leaving the artifact. This is an attack on the reference channel that propagates through the adaptive filter to corrupt all channels.</p>
+<h4 id="wavelet-based-denoising">Wavelet-Based Denoising</h4>
+<p><strong>Method:</strong> Decompose the signal using the wavelet transform, threshold small coefficients (assumed to be noise), and reconstruct.</p>
+<p><strong>Security implication:</strong> The thresholding step is a decision boundary. Coefficients below the threshold are removed, coefficients above are preserved. An attacker who crafts an injection whose wavelet coefficients are just above the threshold will have their attack preserved. An attacker whose injection coefficients are below the threshold will have their attack removed. The threshold choice is therefore a security parameter — VIREON should validate that the wavelet threshold preserves attack signatures while removing noise.</p>
+<h2 id="6-signal-quality-assessment">6. Signal Quality Assessment</h2>
+<h3 id="61-why-signal-quality-matters-for-security">6.1 Why Signal Quality Matters for Security</h3>
+<p>Signal quality metrics provide the first line of defense against signal manipulation. A sudden change in signal quality (increased noise, changed impedance, shifted frequency content) may indicate an attack. However, signal quality metrics can also be subverted — an attacker who gradually degrades the signal can desensitize quality monitors (a "boiling frog" attack).</p>
+<h3 id="62-key-quality-metrics">6.2 Key Quality Metrics</h3>
+<p><strong>Signal-to-Noise Ratio (SNR):</strong> The ratio of signal power to noise power, typically in dB. For EEG, good SNR is &gt;10 dB. For spike trains, &gt;20 dB.</p>
+<p><strong>Security implication:</strong> An EMI injection attack will change the SNR. If the attacker injects a signal that is correlated with the neural signal (e.g., a replay attack), the SNR may not change significantly — the attacker's signal adds to the neural signal rather than adding uncorrelated noise. SNR alone cannot detect replay attacks.</p>
+<p><strong>Electrode Impedance:</strong> The AC impedance at the electrode-tissue interface, measured in kOhm. Typical EEG: 1-10 kOhm. High impedance (&gt;50 kOhm for EEG) indicates poor contact and increased noise vulnerability.</p>
+<p><strong>Security implication:</strong> Impedance is typically measured at the start of a recording session and monitored periodically. A sudden impedance change may indicate electrode manipulation (physical attack) or tissue changes (post-surgical healing, scarring). An attacker who can manipulate the impedance measurement (through firmware) can mask a physical attack or trigger a false alarm (desensitizing the monitor).</p>
+<p><strong>Line Noise Level:</strong> The power at 50/60 Hz relative to the total signal power.</p>
+<p><strong>Security implication:</strong> Elevated line noise may indicate EMI injection. However, line noise also varies with environmental factors (proximity to electrical equipment, grounding quality). A gradual increase in line noise could be either an escalating attack or a legitimate environmental change. Distinguishing between these requires context that the signal processing pipeline alone cannot provide.</p>
+<p><strong>Signal Flatness:</strong> The proportion of the signal that is at or near the ADC's maximum amplitude (clipping). Clipping indicates saturation, which may be caused by an injection that exceeds the amplifier's input range.</p>
+<p><strong>Security implication:</strong> An attacker who injects a large-amplitude signal to cause clipping is performing a denial-of-service attack on the signal quality. However, clipping is also detectable — the flat-topped waveform is clearly non-physiological. A more sophisticated attacker would inject at an amplitude just below the clipping threshold, maximizing impact while avoiding detection.</p>
+<h3 id="63-vireon-signal-quality-validation">6.3 VIREON Signal Quality Validation</h3>
+<p>VIREON's validation framework should require the following signal quality checks for any neural signal processing pipeline:</p>
+<ol>
+<li><strong>SNR monitoring:</strong> Alert if SNR changes by more than 6 dB from baseline within a 10-second window.</li>
+<li><strong>Impedance monitoring:</strong> Alert if any channel's impedance changes by more than 20% from the session baseline.</li>
+<li><strong>Line noise monitoring:</strong> Alert if 50/60 Hz power exceeds 10% of total power.</li>
+<li><strong>Clipping detection:</strong> Alert if more than 0.1% of samples are at ADC limits.</li>
+<li><strong>Stationarity check:</strong> Alert if signal statistics (mean, variance) change significantly over time (using a sliding-window KS test).</li>
+<li><strong>Cross-channel consistency:</strong> Alert if the correlation between adjacent channels changes by more than 30% from baseline.</li>
+</ol>
+<p>These checks are implemented as a VIREON validation provider in Lab 001.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

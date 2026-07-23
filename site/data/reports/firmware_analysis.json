@@ -1,0 +1,274 @@
+{
+  "binary_path": "../lab-001-firmware-simulation/output/simulated_firmware.bin",
+  "file_size": 1218,
+  "sha256": "3d9c75b766bda5cc64d19bca89a88a41a038a6ec3cb181af3da8e26eaf97cf84",
+  "vector_table": [
+    {
+      "index": 0,
+      "name": "Initial_SP",
+      "address": 536903680,
+      "security_note": "Stack pointer value \u2014 security: stack overflow if misconfigured"
+    },
+    {
+      "index": 1,
+      "name": "Reset",
+      "address": 134217984,
+      "security_note": "Reset handler \u2014 entry point after boot"
+    },
+    {
+      "index": 2,
+      "name": "NMI",
+      "address": 134218240,
+      "security_note": "Non-maskable interrupt \u2014 highest priority, used for safety events"
+    },
+    {
+      "index": 3,
+      "name": "HardFault",
+      "address": 134218496,
+      "security_note": "Hard fault \u2014 last resort error handler, SECURITY CRITICAL: fault handler exploitation"
+    },
+    {
+      "index": 4,
+      "name": "MemManage",
+      "address": 134218752,
+      "security_note": "Memory management fault \u2014 MPU violation handler"
+    },
+    {
+      "index": 5,
+      "name": "BusFault",
+      "address": 134219008,
+      "security_note": "Bus fault \u2014 invalid memory access handler"
+    },
+    {
+      "index": 6,
+      "name": "UsageFault",
+      "address": 134219264,
+      "security_note": "Usage fault \u2014 undefined instruction, unaligned access"
+    },
+    {
+      "index": 7,
+      "name": "Reserved_7",
+      "address": 134219520,
+      "security_note": ""
+    },
+    {
+      "index": 8,
+      "name": "Reserved_8",
+      "address": 134219776,
+      "security_note": ""
+    },
+    {
+      "index": 9,
+      "name": "Reserved_9",
+      "address": 134220032,
+      "security_note": ""
+    },
+    {
+      "index": 10,
+      "name": "Reserved_10",
+      "address": 134220288,
+      "security_note": ""
+    },
+    {
+      "index": 11,
+      "name": "SVCall",
+      "address": 134220544,
+      "security_note": "Supervisor call \u2014 system service call"
+    },
+    {
+      "index": 12,
+      "name": "DebugMonitor",
+      "address": 134220800,
+      "security_note": "Debug monitor \u2014 debug event handler"
+    },
+    {
+      "index": 13,
+      "name": "Reserved_13",
+      "address": 134221056,
+      "security_note": ""
+    },
+    {
+      "index": 14,
+      "name": "PendSV",
+      "address": 134221312,
+      "security_note": "Pendable service \u2014 context switching"
+    },
+    {
+      "index": 15,
+      "name": "SysTick",
+      "address": 134221568,
+      "security_note": "System tick \u2014 RTOS timer interrupt"
+    }
+  ],
+  "strings": [
+    {
+      "offset": 256,
+      "string": "AES_SBOX",
+      "security_relevance": "high",
+      "category": "crypto"
+    },
+    {
+      "offset": 520,
+      "string": "vFIR_COEFF",
+      "security_relevance": "medium",
+      "category": "version"
+    },
+    {
+      "offset": 735,
+      "string": "SAFETY_MON",
+      "security_relevance": "critical",
+      "category": "safety"
+    },
+    {
+      "offset": 810,
+      "string": "CMD_PARSE",
+      "security_relevance": "low",
+      "category": "unknown"
+    },
+    {
+      "offset": 948,
+      "string": "CL_CTRL",
+      "security_relevance": "low",
+      "category": "unknown"
+    },
+    {
+      "offset": 1052,
+      "string": "VIREON IPG Firmware v3.0.0",
+      "security_relevance": "medium",
+      "category": "version"
+    },
+    {
+      "offset": 1079,
+      "string": "ERROR: Buffer overflow in command parser",
+      "security_relevance": "medium",
+      "category": "version"
+    },
+    {
+      "offset": 1120,
+      "string": "WARNING: Parameter out of range",
+      "security_relevance": "low",
+      "category": "unknown"
+    },
+    {
+      "offset": 1152,
+      "string": "SAFETY: Stimulation halted",
+      "security_relevance": "critical",
+      "category": "safety"
+    },
+    {
+      "offset": 1179,
+      "string": "Pairing secret: %s",
+      "security_relevance": "low",
+      "category": "unknown"
+    },
+    {
+      "offset": 1198,
+      "string": "Session key derived",
+      "security_relevance": "medium",
+      "category": "version"
+    }
+  ],
+  "regions": [
+    {
+      "name": "VectorTable",
+      "start_offset": 0,
+      "end_offset": 64,
+      "size_bytes": 64,
+      "region_type": "code",
+      "security_relevance": "critical",
+      "annotations": [
+        "ARM Cortex-M vector table \u2014 controls all interrupt/exception handling"
+      ]
+    },
+    {
+      "name": "AES_SBOX",
+      "start_offset": 256,
+      "end_offset": 528,
+      "size_bytes": 272,
+      "region_type": "crypto",
+      "security_relevance": "critical",
+      "annotations": [
+        "AES S-box lookup table \u2014 indicates AES implementation"
+      ]
+    },
+    {
+      "name": "FIR_COEFF",
+      "start_offset": 521,
+      "end_offset": 741,
+      "size_bytes": 220,
+      "region_type": "dsp",
+      "security_relevance": "high",
+      "annotations": [
+        "FIR filter coefficients \u2014 DSP engine component"
+      ]
+    },
+    {
+      "name": "SAFETY_MON",
+      "start_offset": 735,
+      "end_offset": 815,
+      "size_bytes": 80,
+      "region_type": "safety",
+      "security_relevance": "critical",
+      "annotations": [
+        "Safety monitor code region"
+      ]
+    },
+    {
+      "name": "CMD_PARSE",
+      "start_offset": 810,
+      "end_offset": 954,
+      "size_bytes": 144,
+      "region_type": "comms",
+      "security_relevance": "critical",
+      "annotations": [
+        "Command parser \u2014 primary wireless attack surface"
+      ]
+    },
+    {
+      "name": "CL_CTRL",
+      "start_offset": 948,
+      "end_offset": 1060,
+      "size_bytes": 112,
+      "region_type": "control",
+      "security_relevance": "high",
+      "annotations": [
+        "Closed-loop controller \u2014 clinical behavior driver"
+      ]
+    }
+  ],
+  "security_findings": [
+    {
+      "id": "CRYPTO-001",
+      "severity": "critical",
+      "type": "cryptographic_component",
+      "description": "AES S-box lookup table detected",
+      "offset": "0x109",
+      "implication": "AES encryption is used \u2014 check key storage, mode of operation, and side-channel resistance"
+    },
+    {
+      "id": "SAFETY-001",
+      "severity": "info",
+      "type": "safety_monitor_present",
+      "description": "Safety monitor region detected at offset 0x2df",
+      "implication": "Safety monitor exists \u2014 verify independence from main firmware (VIREON FW-003)"
+    },
+    {
+      "id": "KEY-001",
+      "severity": "critical",
+      "type": "potential_key_material",
+      "description": "Key-related strings detected (2 found)",
+      "details": [
+        "Pairing secret: %s",
+        "Session key derived"
+      ],
+      "implication": "Strings referencing keys/pairing may indicate hardcoded secrets or key management logic"
+    }
+  ],
+  "recommendations": [
+    "VIREON FW-001: Run command parser fuzzing against the command parser region",
+    "VIREON FW-008: Verify secure boot chain covers all firmware regions",
+    "VIREON FW-003: Test safety monitor bypass resistance",
+    "VIREON FW-004: Verify MPU configuration isolates safety-critical regions",
+    "VIREON FW-005: Perform timing analysis on cryptographic operations"
+  ]
+}

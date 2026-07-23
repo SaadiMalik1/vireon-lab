@@ -1,0 +1,243 @@
+{
+  "summary": {
+    "total_scenarios": 6,
+    "detected": 6,
+    "detection_rate": 1.0,
+    "avg_confidence": 1.0,
+    "avg_latency_s": 3.5
+  },
+  "per_scenario": [
+    {
+      "attack_type": "sinusoidal_injection",
+      "start_time_s": 5.0,
+      "duration_s": 2.0,
+      "params": {
+        "frequency_hz": 50.0,
+        "amplitude_uv": 30.0
+      },
+      "detected": true,
+      "confidence": 1.0,
+      "latency_s": 3.5,
+      "methods_triggered": 1,
+      "per_method": [
+        {
+          "method": "spectral_anomaly",
+          "detected": false,
+          "confidence": 0.0,
+          "latency": 0
+        },
+        {
+          "method": "replay_detection",
+          "detected": false,
+          "confidence": 0.295877532281286,
+          "latency": 0
+        },
+        {
+          "method": "bandpower_anomaly",
+          "detected": true,
+          "confidence": 1.0,
+          "latency": 3.5
+        },
+        {
+          "method": "distribution_anomaly",
+          "detected": "False",
+          "confidence": 0.138,
+          "latency": 0.0
+        }
+      ]
+    },
+    {
+      "attack_type": "sinusoidal_injection",
+      "start_time_s": 5.0,
+      "duration_s": 2.0,
+      "params": {
+        "frequency_hz": 15.0,
+        "amplitude_uv": 10.0
+      },
+      "detected": true,
+      "confidence": 1.0,
+      "latency_s": 3.5,
+      "methods_triggered": 1,
+      "per_method": [
+        {
+          "method": "spectral_anomaly",
+          "detected": false,
+          "confidence": 0.0,
+          "latency": 0
+        },
+        {
+          "method": "replay_detection",
+          "detected": false,
+          "confidence": 0.3775073697083487,
+          "latency": 0
+        },
+        {
+          "method": "bandpower_anomaly",
+          "detected": true,
+          "confidence": 1.0,
+          "latency": 3.5
+        },
+        {
+          "method": "distribution_anomaly",
+          "detected": "False",
+          "confidence": 0.09599999999999999,
+          "latency": 0.0
+        }
+      ]
+    },
+    {
+      "attack_type": "replay",
+      "start_time_s": 5.0,
+      "duration_s": 2.0,
+      "params": {
+        "replay_offset_s": 2.0
+      },
+      "detected": true,
+      "confidence": 1.0,
+      "latency_s": 3.5,
+      "methods_triggered": 1,
+      "per_method": [
+        {
+          "method": "spectral_anomaly",
+          "detected": false,
+          "confidence": 0.0,
+          "latency": 0
+        },
+        {
+          "method": "replay_detection",
+          "detected": false,
+          "confidence": 0.25470492137527667,
+          "latency": 0
+        },
+        {
+          "method": "bandpower_anomaly",
+          "detected": true,
+          "confidence": 1.0,
+          "latency": 3.5
+        },
+        {
+          "method": "distribution_anomaly",
+          "detected": "False",
+          "confidence": 0.062,
+          "latency": 0.0
+        }
+      ]
+    },
+    {
+      "attack_type": "amplitude_scaling",
+      "start_time_s": 5.0,
+      "duration_s": 2.0,
+      "params": {
+        "scale_factor": 1.5
+      },
+      "detected": true,
+      "confidence": 1.0,
+      "latency_s": 3.5,
+      "methods_triggered": 1,
+      "per_method": [
+        {
+          "method": "spectral_anomaly",
+          "detected": false,
+          "confidence": 0.0,
+          "latency": 0
+        },
+        {
+          "method": "replay_detection",
+          "detected": false,
+          "confidence": 0.38232243235919916,
+          "latency": 0
+        },
+        {
+          "method": "bandpower_anomaly",
+          "detected": true,
+          "confidence": 1.0,
+          "latency": 3.5
+        },
+        {
+          "method": "distribution_anomaly",
+          "detected": "False",
+          "confidence": 0.258,
+          "latency": 0.0
+        }
+      ]
+    },
+    {
+      "attack_type": "broadband_noise",
+      "start_time_s": 5.0,
+      "duration_s": 2.0,
+      "params": {
+        "noise_rms_uv": 20.0,
+        "seed": 0
+      },
+      "detected": true,
+      "confidence": 1.0,
+      "latency_s": 3.5,
+      "methods_triggered": 1,
+      "per_method": [
+        {
+          "method": "spectral_anomaly",
+          "detected": false,
+          "confidence": 0.0,
+          "latency": 0
+        },
+        {
+          "method": "replay_detection",
+          "detected": false,
+          "confidence": 0.2770153435883296,
+          "latency": 0
+        },
+        {
+          "method": "bandpower_anomaly",
+          "detected": true,
+          "confidence": 1.0,
+          "latency": 3.5
+        },
+        {
+          "method": "distribution_anomaly",
+          "detected": "False",
+          "confidence": 0.132,
+          "latency": 0.0
+        }
+      ]
+    },
+    {
+      "attack_type": "covert_injection",
+      "start_time_s": 5.0,
+      "duration_s": 2.0,
+      "params": {
+        "frequency_hz": 48.0,
+        "amplitude_uv": 5.0
+      },
+      "detected": true,
+      "confidence": 1.0,
+      "latency_s": 3.5,
+      "methods_triggered": 1,
+      "per_method": [
+        {
+          "method": "spectral_anomaly",
+          "detected": false,
+          "confidence": 0.0,
+          "latency": 0
+        },
+        {
+          "method": "replay_detection",
+          "detected": false,
+          "confidence": 0.3731474228729021,
+          "latency": 0
+        },
+        {
+          "method": "bandpower_anomaly",
+          "detected": true,
+          "confidence": 1.0,
+          "latency": 3.5
+        },
+        {
+          "method": "distribution_anomaly",
+          "detected": "False",
+          "confidence": 0.082,
+          "latency": 0.0
+        }
+      ]
+    }
+  ]
+}

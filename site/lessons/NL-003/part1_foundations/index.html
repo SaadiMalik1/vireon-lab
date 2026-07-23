@@ -1,0 +1,3134 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../../NL-002/references/">
+      
+      
+        <link rel="next" href="../part2_deep_analysis/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Part 1 Foundations - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-003-neurostimulator-firmware-architecture-and-security-part-1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 1 Foundations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-firmware-is-the-core-attack-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Why Firmware Is the Core Attack Surface
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Why Firmware Is the Core Attack Surface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-the-firmware-primacy-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 The Firmware Primacy Principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-the-immutability-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 The Immutability Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-firmware-as-trust-anchor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Firmware as Trust Anchor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-regulatory-context-iec-62304" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Regulatory Context: IEC 62304
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ipg-firmware-architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. IPG Firmware Architecture Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. IPG Firmware Architecture Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-functional-subsystem-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Functional Subsystem Decomposition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-the-concurrency-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 The Concurrency Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-memory-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Memory Budget
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-execution-time-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Execution Time Budget
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-arm-cortex-m-for-neurostimulators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ARM Cortex-M for Neurostimulators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. ARM Cortex-M for Neurostimulators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-why-cortex-m" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Why Cortex-M?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-cortex-m-memory-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Cortex-M Memory Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-exception-and-interrupt-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Exception and Interrupt Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-mpu-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 MPU Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-rtos-for-implantable-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. RTOS for Implantable Devices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. RTOS for Implantable Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-rtos-vs-bare-metal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 RTOS vs. Bare-Metal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-task-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Task Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-inter-task-communication-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Inter-Task Communication Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-memory-layout-and-firmware-image-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Memory Layout and Firmware Image Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Memory Layout and Firmware Image Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-flash-memory-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Flash Memory Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sram-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 SRAM Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-firmware-image-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Firmware Image Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-secure-boot-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Secure Boot Chain
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Secure Boot Chain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-boot-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Boot Sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-trust-anchors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Trust Anchors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-ab-partitioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 A/B Partitioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-boot-chain-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Boot Chain Vulnerabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-communication-stack-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Communication Stack Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Communication Stack Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-protocol-stack-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Protocol Stack Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-command-processing-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Command Processing Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-session-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Session Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-stimulation-pulse-generation-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Stimulation Pulse Generation Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Stimulation Pulse Generation Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-pulse-generation-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Pulse Generation Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-stimulation-parameter-safety-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Stimulation Parameter Safety Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-stimulation-timing-precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Stimulation Timing Precision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-firmware-to-hardware-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Firmware-to-Hardware Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-firmware-is-the-core-attack-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Why Firmware Is the Core Attack Surface
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Why Firmware Is the Core Attack Surface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-the-firmware-primacy-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 The Firmware Primacy Principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-the-immutability-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 The Immutability Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-firmware-as-trust-anchor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Firmware as Trust Anchor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-regulatory-context-iec-62304" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Regulatory Context: IEC 62304
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ipg-firmware-architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. IPG Firmware Architecture Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. IPG Firmware Architecture Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-functional-subsystem-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Functional Subsystem Decomposition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-the-concurrency-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 The Concurrency Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-memory-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Memory Budget
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-execution-time-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Execution Time Budget
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-arm-cortex-m-for-neurostimulators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ARM Cortex-M for Neurostimulators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. ARM Cortex-M for Neurostimulators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-why-cortex-m" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Why Cortex-M?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-cortex-m-memory-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Cortex-M Memory Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-exception-and-interrupt-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Exception and Interrupt Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-mpu-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 MPU Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-rtos-for-implantable-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. RTOS for Implantable Devices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. RTOS for Implantable Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-rtos-vs-bare-metal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 RTOS vs. Bare-Metal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-task-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Task Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-inter-task-communication-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Inter-Task Communication Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-memory-layout-and-firmware-image-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Memory Layout and Firmware Image Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Memory Layout and Firmware Image Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-flash-memory-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Flash Memory Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-sram-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 SRAM Layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-firmware-image-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Firmware Image Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-secure-boot-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Secure Boot Chain
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Secure Boot Chain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-boot-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Boot Sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-trust-anchors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Trust Anchors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-ab-partitioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 A/B Partitioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-boot-chain-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Boot Chain Vulnerabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-communication-stack-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Communication Stack Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Communication Stack Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-protocol-stack-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Protocol Stack Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-command-processing-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Command Processing Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-session-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Session Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-stimulation-pulse-generation-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Stimulation Pulse Generation Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Stimulation Pulse Generation Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-pulse-generation-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Pulse Generation Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-stimulation-parameter-safety-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Stimulation Parameter Safety Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-stimulation-timing-precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Stimulation Timing Precision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-firmware-to-hardware-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Firmware-to-Hardware Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-003-neurostimulator-firmware-architecture-and-security-part-1">NL-003: Neurostimulator Firmware Architecture and Security (Part 1)</h1>
+<h2 id="1-why-firmware-is-the-core-attack-surface">1. Why Firmware Is the Core Attack Surface</h2>
+<h3 id="11-the-firmware-primacy-principle">1.1 The Firmware Primacy Principle</h3>
+<p>In a neurostimulator, firmware is the layer that translates hardware capabilities into clinical behavior. The AFE ASIC can sample at 30 kS/s, but firmware decides what to sample, how to filter it, and what to do with the result. The RF transceiver can transmit at 800 kbps, but firmware decides what data to send and whether to encrypt it. The stimulation circuitry can deliver pulses from 0-10 mA, but firmware decides the pulse width, frequency, and amplitude — and whether to deliver them at all.</p>
+<p>This primacy makes firmware the single most consequential attack surface in the entire neurostimulator ecosystem. A vulnerability in the wireless protocol (NL-004) is serious but limited to data in transit. A vulnerability in the closed-loop algorithm (NL-005) is serious but may be detectable through output monitoring. A firmware vulnerability, however, can compromise everything simultaneously: it can disable the safety monitor, modify the stimulation parameters, exfiltrate neural data, and persist across reboots — all from a single exploit.</p>
+<h3 id="12-the-immutability-problem">1.2 The Immutability Problem</h3>
+<p>Unlike a server, a phone, or even a car's ECU, an implanted neurostimulator's firmware cannot be physically accessed after implantation. If a firmware vulnerability is discovered post-implant, the only remediation paths are:</p>
+<ul>
+<li><strong>Over-the-air (OTA) update:</strong> Wirelessly push new firmware. This is the intended path but introduces its own attack surface (Section 11). The update channel itself must be secured, and a failed update can brick the device.</li>
+<li><strong>Surgical revision:</strong> Remove and replace the device. This is the last resort — it exposes the patient to surgical risks, costs tens of thousands of dollars, and may not be feasible for all patients.</li>
+<li><strong>No remediation:</strong> Accept the vulnerability and rely on external defenses (external programmer security, hospital network security). This is the reality for many currently implanted devices.</li>
+</ul>
+<p>This immutability problem means that firmware security is not just a development concern — it is a lifecycle concern that extends for the entire device lifetime (typically 5-15 years). A firmware bug discovered in year 3 of a 10-year device lifetime affects all currently implanted patients.</p>
+<h3 id="13-firmware-as-trust-anchor">1.3 Firmware as Trust Anchor</h3>
+<p>Firmware is also the trust anchor for the entire device. The secure boot chain (Section 6) verifies firmware integrity at startup. If the firmware itself is compromised, all downstream trust is broken: the safety monitor cannot be trusted to halt unsafe stimulation, the encryption keys cannot be trusted to protect wireless communication, and the diagnostic data cannot be trusted to reflect the device's true state.</p>
+<p>This trust anchor property means that firmware is the highest-value target for an attacker. A single firmware-level compromise provides the deepest, most persistent access to the device — far beyond what protocol-level or application-level attacks can achieve.</p>
+<h3 id="14-regulatory-context-iec-62304">1.4 Regulatory Context: IEC 62304</h3>
+<p>Medical device firmware development is governed by IEC 62304 (Medical device software — Software life cycle processes). This standard defines software safety classes (A, B, C) based on the potential for injury:</p>
+<ul>
+<li><strong>Class A:</strong> No injury possible — not applicable to neurostimulators.</li>
+<li><strong>Class B:</strong> Non-serious injury possible — applicable to diagnostic-only features.</li>
+<li><strong>Class C:</strong> Death or serious injury possible — applicable to all stimulation and closed-loop features.</li>
+</ul>
+<p>For Class C software, IEC 62304 requires: formal requirements traceability, unit testing with 100% statement and branch coverage for safety-critical code, code reviews, configuration management, risk management per ISO 14971, and maintained documentation throughout the device lifecycle. However, IEC 62304 is a process standard, not a security standard. It ensures that the development process was followed but does not guarantee that the resulting firmware is secure against deliberate attack. A firmware image can be fully IEC 62304 compliant and still contain buffer overflows, hardcoded keys, or insecure update mechanisms.</p>
+<h2 id="2-ipg-firmware-architecture-overview">2. IPG Firmware Architecture Overview</h2>
+<h3 id="21-functional-subsystem-decomposition">2.1 Functional Subsystem Decomposition</h3>
+<p>IPG firmware is typically organized into the following subsystems, each with distinct security responsibilities:</p>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                 APPLICATION LAYER                    │
+│  ┌──────────┐ ┌──────────────┐ ┌────────────────┐  │
+│  │ Therapy   │ │ Closed-Loop  │ │ Diagnostic     │  │
+│  │ Manager   │ │ Controller   │ │ Data Logger    │  │
+│  └──────────┘ └──────────────┘ └────────────────┘  │
+├─────────────────────────────────────────────────────┤
+│                 SERVICE LAYER                        │
+│  ┌──────────┐ ┌──────────────┐ ┌────────────────┐  │
+│  │ DSP      │ │ Stimulation  │ │ Safety         │  │
+│  │ Engine   │ │ Pulse Gen    │ │ Monitor        │  │
+│  └──────────┘ └──────────────┘ └────────────────┘  │
+├─────────────────────────────────────────────────────┤
+│                 HAL / DRIVER LAYER                   │
+│  ┌──────────┐ ┌──────────────┐ ┌────────────────┐  │
+│  │ AFE      │ │ RF Telemetry │ │ Power Mgmt     │  │
+│  │ Driver   │ │ Driver       │ │ Driver         │  │
+│  └──────────┘ └──────────────┘ └────────────────┘  │
+├─────────────────────────────────────────────────────┤
+│                 RTOS / PLATFORM LAYER                │
+│  ┌──────────┐ ┌──────────────┐ ┌────────────────┐  │
+│  │ Scheduler │ │ Memory Mgmt  │ │ Interrupt      │  │
+│  │          │ │             │ │ Controller     │  │
+│  └──────────┘ └──────────────┘ └────────────────┘  │
+├─────────────────────────────────────────────────────┤
+│                 HARDWARE ABSTRACTION                  │
+│  ARM Cortex-M MCU + AFE ASIC + RF + Stim Circuit    │
+└─────────────────────────────────────────────────────┘
+</code></pre>
+<p>Each layer introduces its own attack surface:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Security Function</th>
+<th>Attack Surface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application</td>
+<td>Clinical logic, parameter validation</td>
+<td>Logic bugs, state machine errors, authorization bypass</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>DSP, stimulation generation, safety monitoring</td>
+<td>Algorithm manipulation, timing attacks, safety monitor bypass</td>
+</tr>
+<tr>
+<td>HAL/Driver</td>
+<td>Hardware access, DMA, interrupts</td>
+<td>Buffer overflows, DMA attacks, race conditions</td>
+</tr>
+<tr>
+<td>RTOS</td>
+<td>Task scheduling, memory protection</td>
+<td>Scheduler manipulation, MPU misconfiguration, priority inversion</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-the-concurrency-model">2.2 The Concurrency Model</h3>
+<p>Neurostimulator firmware must handle multiple concurrent real-time requirements:</p>
+<ol>
+<li><strong>Stimulation timing:</strong> Pulses must be delivered with microsecond precision. A 1 ms timing error in a 130 Hz DBS system could cause a phase error of 47 degrees — potentially reducing therapeutic efficacy or causing side effects.</li>
+<li><strong>Signal acquisition:</strong> Neural signals must be sampled at a consistent rate without dropped samples. A single dropped sample creates an impulse artifact in the frequency domain.</li>
+<li><strong>Wireless communication:</strong> Incoming commands must be processed within the protocol's timeout window (typically 100-500 ms for MICS).</li>
+<li><strong>Safety monitoring:</strong> Safety checks must run at a rate that can detect and halt unsafe stimulation before patient harm occurs. For stimulation, this means sub-millisecond response time.</li>
+</ol>
+<p>These requirements are typically met using an RTOS with priority-based preemptive scheduling. The highest priority is assigned to the stimulation pulse generator and safety monitor, followed by signal acquisition, then wireless communication, and finally background tasks like data logging and diagnostic self-tests.</p>
+<p><strong>Security implication:</strong> The priority assignment itself is a security-critical decision. If the wireless communication handler has higher priority than the safety monitor, an attacker who floods the wireless interface can starve the safety monitor of CPU time — a priority inversion attack that prevents the device from detecting unsafe stimulation. Conversely, if the safety monitor has the highest priority but is implemented with a bug that causes it to hang (e.g., deadlock, infinite loop), it can block all lower-priority tasks including stimulation, causing therapy interruption.</p>
+<h3 id="23-memory-budget">2.3 Memory Budget</h3>
+<p>A typical IPG firmware memory budget demonstrates the extreme resource constraints:</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Typical Value</th>
+<th>Primary Consumer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flash (code)</td>
+<td>256 KB - 1 MB</td>
+<td>DSP algorithms, protocol stack, clinical logic</td>
+</tr>
+<tr>
+<td>SRAM (data)</td>
+<td>64 KB - 256 KB</td>
+<td>Signal buffers, FFT buffers, state variables</td>
+</tr>
+<tr>
+<td>Register file</td>
+<td>32 x 32-bit</td>
+<td>Interrupt handling, real-time control</td>
+</tr>
+<tr>
+<td>Backup RAM</td>
+<td>4-16 KB</td>
+<td>Safety-critical state, stimulation parameters</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security implication:</strong> These constraints directly limit the security measures that can be implemented. AES-256 encryption requires 320 bytes of lookup tables (or 1 KB for T-tables) — significant in a device with 64 KB SRAM. SHA-256 requires 64 bytes of state and 64 bytes of block buffer. A full TLS 1.3 stack requires 50-100 KB of RAM — exceeding the total RAM budget of most IPGs. This is why neurostimulators typically use lightweight cryptographic protocols (e.g., AES-128-CCM, custom authenticated encryption) rather than standard TLS.</p>
+<h3 id="24-execution-time-budget">2.4 Execution Time Budget</h3>
+<p>Real-time deadlines further constrain firmware design. A typical time budget for a closed-loop DBS system operating at a 100 Hz control rate:</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Deadline</th>
+<th>Typical Duration</th>
+<th>Margin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stimulation pulse generation</td>
+<td>10 us (per pulse)</td>
+<td>2 us</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>ADC read + DMA transfer</td>
+<td>100 us</td>
+<td>30 us</td>
+<td>70%</td>
+</tr>
+<tr>
+<td>DSP processing (filter + feature)</td>
+<td>5 ms</td>
+<td>3 ms</td>
+<td>40%</td>
+</tr>
+<tr>
+<td>Closed-loop control computation</td>
+<td>5 ms</td>
+<td>1 ms</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>Wireless command processing</td>
+<td>50 ms</td>
+<td>5 ms</td>
+<td>90%</td>
+</tr>
+<tr>
+<td>Safety monitor check</td>
+<td>1 ms</td>
+<td>0.1 ms</td>
+<td>90%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security implication:</strong> Security checks must fit within these time budgets. A cryptographic signature verification (ECDSA P-256) takes approximately 10-50 ms on a Cortex-M4 — consuming the entire wireless command processing budget. This forces designers to choose between fast, insecure processing and slow, secure processing, with patient safety potentially affected by either choice.</p>
+<h2 id="3-arm-cortex-m-for-neurostimulators">3. ARM Cortex-M for Neurostimulators</h2>
+<h3 id="31-why-cortex-m">3.1 Why Cortex-M?</h3>
+<p>The ARM Cortex-M family (M0+, M3, M4, M33) dominates the neurostimulator MCU market for several reasons:</p>
+<ul>
+<li><strong>Energy efficiency:</strong> Cortex-M4 achieves 0.12 mW/MHz, critical for battery-powered implants.</li>
+<li><strong>DSP extensions:</strong> The Cortex-M4F includes hardware floating-point and SIMD instructions (MAC, saturating arithmetic) that accelerate DSP operations by 5-10x over integer-only implementations.</li>
+<li><strong>Determinism:</strong> Fixed interrupt latency (12 cycles for Cortex-M3/M4) enables precise timing for stimulation pulses.</li>
+<li><strong>MPU support:</strong> The Memory Protection Unit provides hardware-enforced memory isolation between subsystems.</li>
+<li><strong>TrustZone (M33):</strong> Hardware-enforced secure/non-secure world separation for sensitive operations.</li>
+<li><strong>Ecosystem:</strong> Extensive toolchain support (GCC, LLVM, Keil), debug infrastructure, and verified peripheral libraries.</li>
+</ul>
+<h3 id="32-cortex-m-memory-map">3.2 Cortex-M Memory Map</h3>
+<p>The Cortex-M memory map is fixed by the architecture and defines the address spaces that firmware operates within:</p>
+<pre><code>0xFFFFFFFF ┌─────────────────────────┐
+           │  System Peripherals     │  (NVIC, SysTick, SCB, MPU)
+0xE0000000 ├─────────────────────────┤
+           │  External RAM/Devices    │  (AFE, RF, Stim ASIC registers)
+0xA0000000 ├─────────────────────────┤
+           │  External Devices        │  (Memory-mapped peripherals)
+0x60000000 ├─────────────────────────┤
+           │  Peripheral Region       │  (Private peripheral bus)
+0x40000000 ├─────────────────────────┤
+           │  SRAM                    │  (On-chip data memory)
+0x20000000 ├─────────────────────────┤
+           │  Code / Flash            │  (Executable memory)
+0x00000000 └─────────────────────────┘
+</code></pre>
+<p><strong>Security implication:</strong> The fixed memory map means that peripheral register addresses are known and predictable. An attacker who achieves code execution can directly access AFE, RF, and stimulation circuitry registers by writing to their memory-mapped addresses. The MPU (Memory Protection Unit) is the primary defense against unauthorized peripheral access, but MPU configuration is itself stored in memory and can be modified by an attacker who achieves sufficient privilege.</p>
+<h3 id="33-exception-and-interrupt-model">3.3 Exception and Interrupt Model</h3>
+<p>Cortex-M uses a unified exception/interrupt model with fixed priority levels:</p>
+<ul>
+<li><strong>NMI (Priority -2):</strong> Non-maskable interrupt, used for the highest-priority safety events (e.g., watchdog timeout, brown-out detection).</li>
+<li><strong>HardFault (Priority -1):</strong> Triggered by division by zero, unaligned access, invalid memory access, or stack overflow. This is the last resort before processor reset.</li>
+<li><strong>SVCall, PendSV, SysTick:</strong> System service calls, context switching, and system timers.</li>
+<li><strong>Device interrupts (Priorities 0-255):</strong> Configurable for peripheral interrupts (ADC completion, RF receive, timer expiration).</li>
+</ul>
+<p><strong>Security implication:</strong> The interrupt vector table is stored at address 0x00000000 (or remapped to flash). An attacker who can write to this address can redirect any interrupt handler to arbitrary code — a technique called "vector table hijacking." If the vector table is in flash (read-only), this attack requires a firmware modification. If the vector table is remapped to RAM (for dynamic interrupt handling), it becomes writable and the attack requires only a write to RAM.</p>
+<h3 id="34-mpu-configuration">3.4 MPU Configuration</h3>
+<p>The Cortex-M MPU allows firmware to define up to 16 memory regions (8 on M0+/M3) with independent access permissions:</p>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No access</td>
+<td>Any access triggers a MemManage fault</td>
+</tr>
+<tr>
+<td>Read-only</td>
+<td>Writes trigger a fault</td>
+</tr>
+<tr>
+<td>Read-write</td>
+<td>Full access</td>
+</tr>
+<tr>
+<td>Execute never (XN)</td>
+<td>Code cannot be executed from this region</td>
+</tr>
+<tr>
+<td>Privileged only</td>
+<td>Unprivileged code cannot access</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ideal security configuration:</strong> Separate the firmware into privilege domains:
+1. Safety monitor code: privileged, read-only, execute-only
+2. Stimulation driver: privileged, read-write, execute
+3. DSP code: unprivileged, read-only (code), read-write (data buffers)
+4. Wireless stack: unprivileged, isolated data region
+5. Diagnostic logger: unprivileged, isolated data region</p>
+<p><strong>Reality:</strong> Many neurostimulator firmware images run entirely in privileged mode with the MPU either disabled or minimally configured. This is a legacy of older Cortex-M0/M0+ devices that lacked an MPU, and of development teams prioritizing functionality over security. VIREON's firmware validation should check MPU configuration as a first-order security indicator.</p>
+<h2 id="4-rtos-for-implantable-devices">4. RTOS for Implantable Devices</h2>
+<h3 id="41-rtos-vs-bare-metal">4.1 RTOS vs. Bare-Metal</h3>
+<p>Neurostimulator firmware can be structured as bare-metal (super-loop) or RTOS-based:</p>
+<p><strong>Bare-metal (super-loop):</strong> A single <code>while(1)</code> loop processes tasks in sequence, with interrupt service routines (ISRs) handling time-critical events. Simple, deterministic, minimal overhead. But: no memory protection between tasks, no priority-based preemption, difficult to add new features without breaking timing.</p>
+<p><strong>RTOS:</strong> A real-time operating system provides task scheduling, inter-task communication (queues, semaphores), memory management, and timing services. More complex, higher overhead, but enables modular architecture and memory isolation.</p>
+<p>Most modern neurostimulators use a small RTOS (FreeRTOS, SafeRTOS, ThreadX, or a custom RTOS). The choice of RTOS has direct security implications:</p>
+<table>
+<thead>
+<tr>
+<th>RTOS</th>
+<th>Safety Certification</th>
+<th>Memory Protection</th>
+<th>Security Features</th>
+<th>Used In</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FreeRTOS</td>
+<td>Not certified</td>
+<td>Minimal</td>
+<td>Optional MPU support</td>
+<td>Research prototypes</td>
+</tr>
+<tr>
+<td>SafeRTOS</td>
+<td>IEC 61508 SIL 3</td>
+<td>Task isolation</td>
+<td>Configurable permissions</td>
+<td>Some commercial IPGs</td>
+</tr>
+<tr>
+<td>ThreadX</td>
+<td>DO-178C (avionics)</td>
+<td>Memory protection</td>
+<td>Security middleware available</td>
+<td>Medtronic devices (reported)</td>
+</tr>
+<tr>
+<td>Custom</td>
+<td>Varies</td>
+<td>Varies</td>
+<td>Varies</td>
+<td>Most proprietary IPGs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-task-architecture">4.2 Task Architecture</h3>
+<p>A typical RTOS task architecture for a closed-loop DBS system:</p>
+<pre><code>Priority 7 (Highest):  Safety Monitor Task
+                        - Runs every 1 ms
+                        - Checks: stim parameters, battery, temperature
+                        - Can halt stimulation independently
+
+Priority 6:            Stimulation Task
+                        - Generates stimulation pulses
+                        - Real-time deadline: &lt; 10 us per pulse
+
+Priority 5:            Signal Acquisition Task
+                        - Reads ADC via DMA
+                        - Manages sample buffers
+                        - Triggers DSP processing
+
+Priority 4:            DSP Processing Task
+                        - Runs NL-002's processing pipeline
+                        - Extracts features, computes band power
+                        - Updates shared state for controller
+
+Priority 3:            Closed-Loop Controller Task
+                        - Reads features from DSP task
+                        - Computes control output
+                        - Updates stimulation parameters
+
+Priority 2:            Wireless Communication Task
+                        - Handles MICS/BLE protocol
+                        - Processes incoming commands
+                        - Manages outbound telemetry
+
+Priority 1 (Lowest):   Diagnostic/Logging Task
+                        - Stores diagnostic data
+                        - Runs self-tests
+                        - Battery monitoring
+</code></pre>
+<p><strong>Security implication:</strong> The task priority hierarchy defines which tasks can starve which other tasks. The safety monitor MUST have the highest priority to ensure it can always intervene. But if the safety monitor has the highest priority AND contains a bug that causes it to loop indefinitely (e.g., a corrupted data structure causing an infinite iteration), it will starve ALL other tasks — including the stimulation task — causing complete therapy cessation. This is a safety-security tension: the safety monitor must be both powerful enough to halt unsafe stimulation and robust enough to never halt safe stimulation.</p>
+<h3 id="43-inter-task-communication-security">4.3 Inter-Task Communication Security</h3>
+<p>Tasks communicate through shared memory, queues, and semaphores. Each communication mechanism has security implications:</p>
+<p><strong>Shared memory (globals):</strong> The DSP task writes band power values to a global variable that the closed-loop controller reads. If the controller reads the variable while the DSP task is writing it (race condition), the controller may read a partially-updated value — a torn read that could cause an incorrect control decision. Mitigation: atomic operations, double-buffering, or mutex-protected access. In security terms, a race condition in the control loop is an integrity attack vector.</p>
+<p><strong>Message queues:</strong> The wireless task receives commands and places them on a queue for the therapy manager task. If the queue is unbounded, an attacker who floods the wireless interface can exhaust memory (queue-based DoS). If the queue is bounded with overflow discard, an attacker can cause command loss ( selective DoS). If the queue is bounded with overflow overwrite, an attacker can overwrite pending legitimate commands.</p>
+<p><strong>Semaphores/Mutexes:</strong> Protect shared resources. Priority inversion occurs when a low-priority task holds a mutex needed by a high-priority task. If an attacker can cause a low-priority task (e.g., diagnostic logger) to hold a mutex for an extended period, the high-priority safety monitor may be blocked. This is the classic priority inversion problem, infamously demonstrated in the Mars Pathfinder mission.</p>
+<h2 id="5-memory-layout-and-firmware-image-structure">5. Memory Layout and Firmware Image Structure</h2>
+<h3 id="51-flash-memory-layout">5.1 Flash Memory Layout</h3>
+<p>A typical IPG firmware image in flash memory:</p>
+<pre><code>0x08000000 ┌──────────────────────────┐
+            │  Vector Table (192 bytes) │  Interrupt handlers
+0x080000C0 ├──────────────────────────┤
+            │  ROM Bootloader (4-8 KB)  │  Factory-programmed, immutable
+0x08002000 ├──────────────────────────┤
+            │  Application Firmware    │  Updatable via OTA
+            │  (200-800 KB)            │
+            │  ┌────────────────────┐  │
+            │  │ .text (code)       │  │
+            │  │ .rodata (consts)   │  │
+            │  │ .data (init vars)  │  │  (copied to SRAM at boot)
+            │  └────────────────────┘  │
+0x080C0000 ├──────────────────────────┤
+            │  Firmware Metadata (1 KB) │  Version, hash, signature
+0x080C0400 ├──────────────────────────┤
+            │  Calibration Data (4 KB) │  Per-device calibration constants
+0x080C1400 ├──────────────────────────┤
+            │  OTA Update Buffer       │  Holds incoming firmware image
+            │  (200-800 KB)            │  during OTA update
+0x080F0000 └──────────────────────────┘
+</code></pre>
+<p><strong>Security implications:</strong>
+- The vector table at the base of flash is the first thing the processor reads after reset. If an attacker can modify even one entry (e.g., the HardFault handler), they gain control of the processor's error handling path.
+- The bootloader is the trust anchor. If it is in ROM (true ROM, not flash), it cannot be modified. If it is in flash, it is vulnerable to the same attacks as the application firmware.
+- The OTA update buffer must be large enough to hold a complete firmware image. This means the flash must have spare capacity equal to the firmware size — effectively doubling the flash requirement.
+- Calibration data is device-specific and may contain information useful for attacking the device (e.g., AFE gain settings, RF frequency calibration). Exfiltrating this data enables targeted attacks.</p>
+<h3 id="52-sram-layout">5.2 SRAM Layout</h3>
+<pre><code>0x20000000 ┌──────────────────────────┐
+            │  Stack (Main)             │  Grows downward
+            │  ↓                        │
+            │                           │
+            ├──────────────────────────┤
+            │  Stack (Interrupts)       │  Separate stack for ISR context
+            │  ↓                        │
+            │                           │
+0x20001C00 ├──────────────────────────┤
+            │  .data / .bss             │  Global variables
+0x20002000 ├──────────────────────────┤
+            │  Signal Buffers           │  Circular buffers for ADC samples
+            │  (16-32 KB)              │  Most SRAM-consuming subsystem
+0x20008000 ├──────────────────────────┤
+            │  DSP Buffers              │  FFT input/output, filter state
+            │  (8-16 KB)               │
+0x2000C000 ├──────────────────────────┤
+            │  RTOS Structures          │  Task control blocks, queues
+            │  (4-8 KB)                │
+0x2000E000 ├──────────────────────────┤
+            │  Heap                     │  Dynamic allocation (if used)
+            │  (4-16 KB)               │  Often avoided in safety-critical code
+0x20010000 └──────────────────────────┘
+</code></pre>
+<p><strong>Security implications:</strong>
+- Stack overflow: If the main stack or interrupt stack grows beyond its allocated region, it overwrites adjacent memory — potentially corrupting signal buffers, DSP state, or RTOS structures. Stack canaries (compiler-inserted integrity checks) can detect stack overflow but are not universally used in medical firmware.
+- Signal buffers are the largest SRAM consumers and are often implemented as circular buffers. A buffer overflow in signal processing (e.g., writing more samples than the buffer can hold) overwrites adjacent DSP or RTOS memory. This is the most common memory corruption vector in neurostimulator firmware.
+- The heap is often disabled entirely in safety-critical firmware (static allocation only). If the heap is used, heap corruption (use-after-free, double-free, buffer overflow) is a severe vulnerability. Memory allocators for medical devices should use pool-based allocation with per-pool size limits.</p>
+<h3 id="53-firmware-image-format">5.3 Firmware Image Format</h3>
+<p>Firmware images for OTA update typically have a structured format:</p>
+<pre><code>┌──────────────────────────────────┐
+│  Header (32 bytes)               │
+│  - Magic number (4 bytes)        │
+│  - Version (4 bytes)             │
+│  - Image size (4 bytes)          │
+│  - Hardware revision (2 bytes)   │
+│  - Image type (1 byte)           │
+│  - Flags (1 byte)                │
+│  - Reserved (16 bytes)           │
+├──────────────────────────────────┤
+│  Cryptographic Signature (64 B)  │  ECDSA P-256 or RSA-2048
+├──────────────────────────────────┤
+│  Firmware Binary (N bytes)       │
+├──────────────────────────────────┤
+│  Metadata (variable)             │
+│  - Build timestamp               │
+│  - Git commit hash               │
+│  - Component versions            │
+│  - SHA-256 hash of binary        │
+└──────────────────────────────────┘
+</code></pre>
+<p><strong>Security implications:</strong> The signature covers the firmware binary but must also cover the header and metadata. If the signature only covers the binary, an attacker can modify the header (e.g., change the version number to trigger a rollback to an older, vulnerable firmware) without invalidating the signature. The VIREON firmware validator should verify that the signature covers all mutable fields.</p>
+<h2 id="6-secure-boot-chain">6. Secure Boot Chain</h2>
+<h3 id="61-boot-sequence">6.1 Boot Sequence</h3>
+<p>The secure boot chain for a neurostimulator proceeds through multiple stages, each verifying the next:</p>
+<pre><code>Power-On Reset
+    │
+    v
+[Stage 0: ROM Bootloader]  ← Hardware root of trust
+    │  - Immutable (true ROM)
+    │  - Verifies Stage 1 hash against OTP-fused hash
+    │  - Cannot be updated
+    v
+[Stage 1: Flash Bootloader]  ← Updatable, but verified by Stage 0
+    │  - Handles OTA update logic
+    │  - Verifies Stage 2 signature
+    │  - Manages firmware image selection (A/B partition)
+    │  - Can be updated via signed OTA
+    v
+[Stage 2: Application Firmware]  ← Updatable, verified by Stage 1
+    │  - RTOS initialization
+    │  - Task creation and scheduling
+    │  - Peripheral initialization
+    │  - Enters normal operation
+    v
+[Normal Operation]
+</code></pre>
+<h3 id="62-trust-anchors">6.2 Trust Anchors</h3>
+<p>The secure boot chain relies on trust anchors — values that are trusted because they cannot be modified:</p>
+<ol>
+<li>
+<p><strong>ROM bootloader hash:</strong> Fused into one-time programmable (OTP) memory during manufacturing. The ROM bootloader's hash is computed at manufacturing time and stored in OTP. At boot, the processor computes the ROM bootloader's hash and compares it to the OTP value. If they don't match, the device halts.</p>
+</li>
+<li>
+<p><strong>Flash bootloader public key:</strong> Stored in OTP or in a protected flash region. The Stage 0 bootloader uses this public key to verify the Stage 1 bootloader's signature.</p>
+</li>
+<li>
+<p><strong>Application firmware public key:</strong> Either the same as the bootloader public key (simpler) or a different key (more flexible but requires key management). Used by the Stage 1 bootloader to verify the application firmware.</p>
+</li>
+</ol>
+<p><strong>Security analysis:</strong> The entire chain's security depends on the OTP fuses. If OTP fuses can be read out through a side-channel attack (e.g., optical probing of the die), the root of trust is compromised. If the manufacturer uses the same signing key for all devices (common for cost reasons), compromising one device's key compromises all devices. Per-device keys provide stronger security but complicate the signing and update infrastructure.</p>
+<h3 id="63-ab-partitioning">6.3 A/B Partitioning</h3>
+<p>To prevent bricking during OTA updates, many neurostimulators use A/B partitioning:</p>
+<pre><code>Flash Layout with A/B Partitions:
+
+┌──────────────┐
+│  Bootloader  │  (shared, verified by ROM)
+├──────────────┤
+│  Partition A │  ← Currently running firmware
+│  (active)    │
+├──────────────┤
+│  Partition B │  ← Staging area for next update
+│  (inactive)  │
+├──────────────┤
+│  Shared Data │  ← Calibration, persistent settings
+└──────────────┘
+</code></pre>
+<p>The update process:
+1. New firmware is written to the inactive partition (B)
+2. The bootloader verifies the new firmware's signature
+3. If verification passes, the active partition flag is flipped (A→B)
+4. On next reboot, the device boots from the new partition
+5. If the new firmware fails to start (watchdog timeout), the bootloader rolls back to the previous partition</p>
+<p><strong>Security implication:</strong> A/B partitioning provides rollback protection but also creates a rollback attack surface. An attacker who can modify the partition selection flag can force the device to boot an older firmware version with known vulnerabilities — a version rollback attack. Mitigation: a monotonic version counter stored in OTP that can only be incremented, never decremented. The bootloader verifies that the new firmware's version is strictly greater than the current version.</p>
+<h3 id="64-boot-chain-vulnerabilities">6.4 Boot Chain Vulnerabilities</h3>
+<p>Known vulnerability classes in secure boot chains:</p>
+<ol>
+<li>
+<p><strong>Signature verification bypass:</strong> A bug in the cryptographic verification code that accepts invalid signatures. Demonstrated in multiple consumer IoT devices where the verification function returns success without actually checking the signature (e.g., <code>if (verify_signature(image, sig)) { /* boot */ } else { /* also boot */ }</code>).</p>
+</li>
+<li>
+<p><strong>Downgrade attack:</strong> No version enforcement allows installing an older firmware with known vulnerabilities. The monotonic counter mitigation requires OTP storage and careful implementation.</p>
+</li>
+<li>
+<p><strong>Time-of-check-to-time-of-use (TOCTOU):</strong> The bootloader verifies the firmware image, then boots it. If the image can be modified between verification and execution (e.g., through DMA), the verification is meaningless. Mitigation: verify the image immediately before jumping to it, or use XN (execute-never) protection on the flash region until verification is complete.</p>
+</li>
+<li>
+<p><strong>Bootloader deserialization attack:</strong> If the bootloader parses complex data structures (firmware manifest, metadata) before verification, a malicious manifest can exploit parsing vulnerabilities. Mitigation: verify the signature FIRST, then parse.</p>
+</li>
+</ol>
+<h2 id="7-communication-stack-firmware">7. Communication Stack Firmware</h2>
+<h3 id="71-protocol-stack-architecture">7.1 Protocol Stack Architecture</h3>
+<p>The wireless communication firmware implements the protocol stack that handles all communication between the IPG and the external programmer/clinic system:</p>
+<pre><code>┌─────────────────────────────────┐
+│  Application Protocol Layer     │  Therapy commands, parameter sets
+│  (Custom, proprietary)          │
+├─────────────────────────────────┤
+│  Security Layer                 │  Encryption, authentication, integrity
+│  (AES-CCM, ECDSA)               │
+├─────────────────────────────────┤
+│  Transport Layer                │  Packet segmentation, reassembly
+│  (Custom)                       │  Acknowledgment, retry
+├─────────────────────────────────┤
+│  MAC Layer                      │  Framing, CRC, addressing
+│  (Custom or 802.15.6-based)     │
+├─────────────────────────────────┤
+│  Physical Layer Driver          │  MICS transceiver control
+│  (Register-level)               │  Frequency, power, modulation
+└─────────────────────────────────┘
+</code></pre>
+<p><strong>Security implication:</strong> Each layer adds parsing and state management code. Each parser is a potential attack surface. The application protocol layer is particularly dangerous because it handles the highest-level commands (e.g., "change stimulation amplitude to 5 mA"). A parsing vulnerability at this layer directly controls the device's clinical behavior.</p>
+<h3 id="72-command-processing-pipeline">7.2 Command Processing Pipeline</h3>
+<p>When the IPG receives a wireless command, the firmware processes it through the following pipeline:</p>
+<ol>
+<li><strong>RF receive interrupt:</strong> The RF transceiver signals data arrival via interrupt.</li>
+<li><strong>DMA transfer:</strong> Received bytes are transferred to a buffer in SRAM via DMA.</li>
+<li><strong>CRC check:</strong> The MAC layer verifies the packet integrity using CRC-16 or CRC-32.</li>
+<li><strong>Decryption:</strong> The security layer decrypts the payload using the session key.</li>
+<li><strong>Authentication:</strong> The security layer verifies the packet's authentication tag.</li>
+<li><strong>Deserialization:</strong> The transport layer parses the packet structure (header, payload, footer).</li>
+<li><strong>Command parsing:</strong> The application layer extracts the command type and parameters.</li>
+<li><strong>Authorization:</strong> The application layer verifies that the sender is authorized to execute this command.</li>
+<li><strong>Parameter validation:</strong> The application layer validates the command parameters against safety limits.</li>
+<li><strong>Execution:</strong> The command is executed (stimulation parameter change, diagnostic request, etc.).</li>
+<li><strong>Response:</strong> A response packet is constructed, encrypted, authenticated, and transmitted.</li>
+</ol>
+<p><strong>Security analysis:</strong> Each step introduces potential vulnerabilities:
+- Step 2: DMA to a fixed-size buffer without bounds checking → buffer overflow.
+- Step 3: CRC is not a security mechanism (it provides error detection, not authentication). An attacker with knowledge of the CRC algorithm can craft packets with valid CRCs.
+- Step 4-5: If the session key is weak or reused, cryptographic attacks apply.
+- Step 6: Deserialization of complex structures is a notorious source of vulnerabilities (type confusion, integer overflow, null pointer dereference).
+- Step 7: If the command parser does not handle all possible command types, unknown commands may fall through to a default handler with unexpected behavior.
+- Step 8: If authorization is based on a single shared secret (common in legacy devices), compromise of the secret enables unauthorized command execution.
+- Step 9: If parameter validation has gaps (e.g., no upper bound on stimulation amplitude), unsafe parameters reach the stimulation hardware.</p>
+<h3 id="73-session-management">7.3 Session Management</h3>
+<p>Wireless communication sessions in neurostimulators follow a typical pattern:</p>
+<ol>
+<li><strong>Pairing:</strong> The IPG and programmer establish a shared secret (done once, during implantation or clinic visit). The pairing secret is stored in both devices.</li>
+<li><strong>Session establishment:</strong> The programmer initiates a session by sending a session request. The IPG responds with a challenge. The programmer proves knowledge of the pairing secret by responding to the challenge.</li>
+<li><strong>Session key derivation:</strong> Both sides derive a session key from the pairing secret and random nonces using a KDF (e.g., HKDF-SHA256).</li>
+<li><strong>Encrypted communication:</strong> All subsequent packets are encrypted and authenticated using the session key.</li>
+<li><strong>Session termination:</strong> Either side can terminate the session. The session key is discarded.</li>
+</ol>
+<p><strong>Security implication:</strong> The pairing secret is the most sensitive cryptographic material in the system. If the pairing secret is extracted from the programmer device (through malware, lost device, or reverse engineering), an attacker can establish sessions with the IPG. If the pairing secret is stored in plaintext in the IPG's flash, it can be extracted through firmware dump (if the attacker gains read access to flash). Mitigation: store the pairing secret in a hardware security module (HSM) or in a special-purpose register that is not directly readable.</p>
+<h2 id="8-stimulation-pulse-generation-firmware">8. Stimulation Pulse Generation Firmware</h2>
+<h3 id="81-pulse-generation-architecture">8.1 Pulse Generation Architecture</h3>
+<p>The stimulation firmware controls the delivery of electrical pulses to neural tissue. The precision and safety of this subsystem directly determines the device's therapeutic efficacy and safety profile.</p>
+<pre><code>┌─────────────────────────────────┐
+│  Stimulation Parameter Table     │  Current amplitude, pulse width,
+│  (SRAM, protected)              │  frequency, electrode config
+├─────────────────────────────────┤
+│  Pulse Sequencer                │  Generates timing for each pulse
+│  (Timer peripheral or DMA)      │  based on parameter table
+├─────────────────────────────────┤
+│  Current Source Driver          │  Controls actual current delivery
+│  (DAC + current mirror)         │  via the stimulation ASIC
+├─────────────────────────────────┤
+│  Impedance Measurement          │  Measures electrode-tissue impedance
+│  (Periodic, between pulses)     │  for safety monitoring
+└─────────────────────────────────┘
+</code></pre>
+<h3 id="82-stimulation-parameter-safety-limits">8.2 Stimulation Parameter Safety Limits</h3>
+<p>The firmware enforces safety limits on stimulation parameters. These limits are typically hardcoded constants that define the absolute maximum safe values for each parameter:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Typical Range</th>
+<th>Absolute Maximum</th>
+<th>Safety Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amplitude</td>
+<td>0-10 mA</td>
+<td>10.5 mA</td>
+<td>Tissue damage above ~15 mA</td>
+</tr>
+<tr>
+<td>Pulse width</td>
+<td>60-450 us</td>
+<td>500 us</td>
+<td>Charge density limits</td>
+</tr>
+<tr>
+<td>Frequency</td>
+<td>1-185 Hz</td>
+<td>200 Hz</td>
+<td>Tissue heating, seizure risk</td>
+</tr>
+<tr>
+<td>Duty cycle</td>
+<td>Continuous/intermittent</td>
+<td>100%</td>
+<td>Charge accumulation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security implication:</strong> These safety limits are the last line of defense between the firmware and the stimulation hardware. If an attacker can modify these limits (by patching the firmware or by exploiting a parameter validation gap), they can deliver stimulation that exceeds safe levels. The safety monitor (Section 15) provides a backup check, but if both the parameter validation and the safety monitor are compromised, there is no remaining defense.</p>
+<h3 id="83-stimulation-timing-precision">8.3 Stimulation Timing Precision</h3>
+<p>Stimulation pulses must be delivered with precise timing. The timing is generated by hardware timers that are programmed by the firmware:</p>
+<ul>
+<li><strong>Cathodic phase:</strong> Current flows from the electrode into the tissue. Duration: 60-450 us.</li>
+<li><strong>Interphase delay:</strong> No current flows. Duration: 0-100 us. Prevents net DC charge.</li>
+<li><strong>Anodic phase:</strong> Current flows from the tissue to the electrode (reversal). Duration: equal to or greater than cathodic phase for charge balance.</li>
+<li><strong>Inter-pulse interval:</strong> No current flows. Duration: determined by frequency (e.g., 5.4 ms for 185 Hz).</li>
+</ul>
+<p><strong>Security implication:</strong> The timing parameters are programmed into hardware timer registers. If the firmware writes incorrect values to these registers (due to a bug or an attack), the resulting stimulation waveform may not be charge-balanced, leading to electrochemical damage at the electrode-tissue interface. The charge balance check is typically performed by the safety monitor, but if the safety monitor is also compromised, the damage may go undetected.</p>
+<h3 id="84-firmware-to-hardware-interface">8.4 Firmware-to-Hardware Interface</h3>
+<p>The firmware controls the stimulation hardware through memory-mapped registers:</p>
+<pre><code class="language-c">// Simplified register map for stimulation ASIC
+#define STIM_CTRL       (*(volatile uint32_t *)0x40001000)  // Control register
+#define STIM_AMPLITUDE  (*(volatile uint32_t *)0x40001004)  // Amplitude (uA)
+#define STIM_PW_CATH    (*(volatile uint32_t *)0x40001008)  // Cathodic pulse width (us)
+#define STIM_PW_ANOD    (*(volatile uint32_t *)0x4000100C)  // Anodic pulse width (us)
+#define STIM_FREQ       (*(volatile uint32_t *)0x40001010)  // Frequency (Hz)
+#define STIM_ELECTRODE  (*(volatile uint32_t *)0x40001014)  // Electrode configuration
+#define STIM_STATUS     (*(volatile uint32_t *)0x40001018)  // Status register
+</code></pre>
+<p><strong>Security implication:</strong> These register addresses are fixed and documented (or can be discovered through reverse engineering). Any code running on the MCU can write to these registers. The MPU should restrict access to the stimulation register region to privileged code only, but as noted in Section 3.4, MPU configuration is often inadequate. VIREON's firmware validation should verify that stimulation register access is properly restricted.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

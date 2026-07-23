@@ -1,0 +1,2855 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../part2_deep_analysis/">
+      
+      
+        <link rel="next" href="../challenges/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Part 3 Synthesis - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-004-wireless-protocol-security-for-neurostimulators-part-3" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 3 Synthesis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#17-stride-threat-model-for-wireless-protocols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17. STRIDE Threat Model for Wireless Protocols
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-failure-modes-in-protocol-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Failure Modes in Protocol Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="18. Failure Modes in Protocol Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#181-cryptographic-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.1 Cryptographic Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#182-protocol-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.2 Protocol Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19-security-implications-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19. Security Implications Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="19. Security Implications Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#191-defense-in-depth-for-protocol-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19.1 Defense-in-Depth for Protocol Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20-known-attacks-in-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20. Known Attacks in Detail
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="20. Known Attacks in Detail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#201-halperin-et-al-pacemaker-attack-2008" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20.1 Halperin et al. Pacemaker Attack (2008)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#202-relay-attack-on-implant-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20.2 Relay Attack on Implant Communication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-common-misconceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        21. Common Misconceptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-engineering-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22. Engineering Trade-offs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="22. Engineering Trade-offs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-security-overhead-vs-bandwidth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.1 Security Overhead vs. Bandwidth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-security-overhead-vs-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.2 Security Overhead vs. Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#223-security-strength-vs-battery-life" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.3 Security Strength vs. Battery Life
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-future-directions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        23. Future Directions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-relation-to-vireon-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24. Relation to VIREON Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="24. Relation to VIREON Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-vireon-components-produced-by-nl-004" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24.1 VIREON Components Produced by NL-004
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-digital-twin-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24.2 Digital Twin Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        25. Exercises
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="25. Exercises">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercise-1-protocol-fingerprinting-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 1: Protocol Fingerprinting (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-2-replay-attack-simulation-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 2: Replay Attack Simulation (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-3-protocol-security-audit-3-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 3: Protocol Security Audit (3 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-4-battery-drain-measurement-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 4: Battery Drain Measurement (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-concept-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        26. Concept Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        27. Glossary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#28-flashcards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        28. Flashcards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#29-interview-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        29. Interview Questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#30-research-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        30. Research Questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31-books" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        31. Books
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-papers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        32. Papers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        33. Standards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34-open-source-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        34. Open Source Projects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#35-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        35. Datasets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#36-reading-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        36. Reading Roadmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#37-suggested-vireon-labs-modules-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        37. Suggested VIREON-LABS Modules (Next)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#38-suggested-github-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        38. Suggested GitHub Issues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#17-stride-threat-model-for-wireless-protocols" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17. STRIDE Threat Model for Wireless Protocols
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-failure-modes-in-protocol-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Failure Modes in Protocol Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="18. Failure Modes in Protocol Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#181-cryptographic-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.1 Cryptographic Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#182-protocol-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.2 Protocol Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19-security-implications-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19. Security Implications Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="19. Security Implications Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#191-defense-in-depth-for-protocol-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19.1 Defense-in-Depth for Protocol Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20-known-attacks-in-detail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20. Known Attacks in Detail
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="20. Known Attacks in Detail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#201-halperin-et-al-pacemaker-attack-2008" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20.1 Halperin et al. Pacemaker Attack (2008)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#202-relay-attack-on-implant-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20.2 Relay Attack on Implant Communication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-common-misconceptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        21. Common Misconceptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-engineering-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22. Engineering Trade-offs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="22. Engineering Trade-offs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-security-overhead-vs-bandwidth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.1 Security Overhead vs. Bandwidth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-security-overhead-vs-latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.2 Security Overhead vs. Latency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#223-security-strength-vs-battery-life" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22.3 Security Strength vs. Battery Life
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-future-directions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        23. Future Directions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-relation-to-vireon-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24. Relation to VIREON Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="24. Relation to VIREON Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-vireon-components-produced-by-nl-004" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24.1 VIREON Components Produced by NL-004
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-digital-twin-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24.2 Digital Twin Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        25. Exercises
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="25. Exercises">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercise-1-protocol-fingerprinting-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 1: Protocol Fingerprinting (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-2-replay-attack-simulation-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 2: Replay Attack Simulation (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-3-protocol-security-audit-3-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 3: Protocol Security Audit (3 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-4-battery-drain-measurement-2-hours" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercise 4: Battery Drain Measurement (2 hours)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-concept-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        26. Concept Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        27. Glossary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#28-flashcards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        28. Flashcards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#29-interview-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        29. Interview Questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#30-research-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        30. Research Questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#31-books" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        31. Books
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-papers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        32. Papers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        33. Standards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34-open-source-projects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        34. Open Source Projects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#35-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        35. Datasets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#36-reading-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        36. Reading Roadmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#37-suggested-vireon-labs-modules-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        37. Suggested VIREON-LABS Modules (Next)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#38-suggested-github-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        38. Suggested GitHub Issues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-004-wireless-protocol-security-for-neurostimulators-part-3">NL-004: Wireless Protocol Security for Neurostimulators (Part 3)</h1>
+<h2 id="17-stride-threat-model-for-wireless-protocols">17. STRIDE Threat Model for Wireless Protocols</h2>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Protocol-Specific Instance</th>
+<th>Impact</th>
+<th>Existing Mitigation</th>
+<th>Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spoofing</strong></td>
+<td>Impersonate clinic programmer</td>
+<td>Unauthorized command execution</td>
+<td>Session authentication (challenge-response)</td>
+<td>Weak pairing keys, session hijacking</td>
+</tr>
+<tr>
+<td><strong>Tampering</strong></td>
+<td>Modify encrypted packet</td>
+<td>Command manipulation</td>
+<td>AES-CCM authentication tag</td>
+<td>Header not covered by auth tag</td>
+</tr>
+<tr>
+<td><strong>Repudiation</strong></td>
+<td>Deny sending a command</td>
+<td>Accountability failure</td>
+<td>Packet logging with sequence numbers</td>
+<td>Logs stored only in implant (limited storage)</td>
+</tr>
+<tr>
+<td><strong>Information Disclosure</strong></td>
+<td>Eavesdrop on MICS channel</td>
+<td>Neural data/parameter exposure</td>
+<td>AES-CCM encryption</td>
+<td>Legacy devices without encryption</td>
+</tr>
+<tr>
+<td><strong>Denial of Service</strong></td>
+<td>RF jamming or packet flooding</td>
+<td>Therapy interruption</td>
+<td>Adaptive frequency selection</td>
+<td>Limited by MICS narrow bandwidth</td>
+</tr>
+<tr>
+<td><strong>Elevation of Privilege</strong></td>
+<td>Use home monitoring to send clinical commands</td>
+<td>Safety-critical command execution</td>
+<td>Per-command authorization</td>
+<td>Authorization often per-session, not per-command</td>
+</tr>
+</tbody>
+</table>
+<h2 id="18-failure-modes-in-protocol-security">18. Failure Modes in Protocol Security</h2>
+<h3 id="181-cryptographic-failure-modes">18.1 Cryptographic Failure Modes</h3>
+<table>
+<thead>
+<tr>
+<th>Failure Mode</th>
+<th>Cause</th>
+<th>Effect</th>
+<th>Detection</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nonce reuse</td>
+<td>Counter reset after reboot</td>
+<td>Keystream reuse → plaintext recovery</td>
+<td>Per-packet nonce audit</td>
+<td>Nonce includes boot counter</td>
+</tr>
+<tr>
+<td>Key exhaustion</td>
+<td>Too many sessions with derived keys</td>
+<td>Degraded key material</td>
+<td>Session count monitoring</td>
+<td>Periodic re-pairing</td>
+</tr>
+<tr>
+<td>Timing side-channel</td>
+<td>Variable crypto execution time</td>
+<td>Key bit leakage</td>
+<td>Timing analysis</td>
+<td>Constant-time implementation</td>
+</tr>
+<tr>
+<td>Random number failure</td>
+<td>Low-entropy RNG</td>
+<td>Predictable nonces</td>
+<td>Statistical tests on nonces</td>
+<td>Hardware TRNG with health tests</td>
+</tr>
+</tbody>
+</table>
+<h3 id="182-protocol-failure-modes">18.2 Protocol Failure Modes</h3>
+<table>
+<thead>
+<tr>
+<th>Failure Mode</th>
+<th>Cause</th>
+<th>Effect</th>
+<th>Detection</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session desync</td>
+<td>Seq number mismatch</td>
+<td>Legitimate packets rejected</td>
+<td>Retry counter monitoring</td>
+<td>Resync protocol</td>
+</tr>
+<tr>
+<td>Reassembly overflow</td>
+<td>Malicious fragment size</td>
+<td>Memory corruption</td>
+<td>Fragment size validation</td>
+<td>Strict total length check</td>
+</tr>
+<tr>
+<td>State machine deadlock</td>
+<td>Bug in state transitions</td>
+<td>Device stuck in one state</td>
+<td>Inactivity timeout</td>
+<td>Timeout on every state</td>
+</tr>
+<tr>
+<td>ACK storm</td>
+<td>Retransmission loop</td>
+<td>Bandwidth saturation</td>
+<td>Duplicate ACK detection</td>
+<td>Exponential backoff</td>
+</tr>
+</tbody>
+</table>
+<h2 id="19-security-implications-summary">19. Security Implications Summary</h2>
+<h3 id="191-defense-in-depth-for-protocol-security">19.1 Defense-in-Depth for Protocol Security</h3>
+<p>VIREON's protocol security approach layers multiple defenses:</p>
+<ol>
+<li><strong>Physical layer:</strong> Low transmit power, tissue attenuation, LBT (not security mechanisms, but provide range limitation)</li>
+<li><strong>MAC layer:</strong> CRC for error detection, device addressing for targeted communication</li>
+<li><strong>Security layer:</strong> AES-CCM for confidentiality and integrity, ECDSA for firmware signing</li>
+<li><strong>Transport layer:</strong> Sequence numbers for replay protection, ACK/retry for reliability</li>
+<li><strong>Application layer:</strong> Per-command authorization, parameter validation, safety limits</li>
+<li><strong>Firmware layer (NL-003):</strong> Input validation, buffer overflow protection, safety monitor</li>
+<li><strong>Behavioral layer:</strong> Anomaly detection on command patterns, rate limiting, battery monitoring</li>
+</ol>
+<p>Each layer catches attacks that the previous layer misses. The critical insight is that no single layer is sufficient — and the composition of layers must be validated, not just the individual layers.</p>
+<h2 id="20-known-attacks-in-detail">20. Known Attacks in Detail</h2>
+<h3 id="201-halperin-et-al-pacemaker-attack-2008">20.1 Halperin et al. Pacemaker Attack (2008)</h3>
+<p><strong>Method:</strong> Used an SDR to capture and analyze the communication between a pacemaker programmer and an implant. Identified the modulation scheme, packet format, and discovered that the communication was unencrypted.</p>
+<p><strong>Attack chain:</strong> (1) Capture traffic → (2) Identify packet format → (3) Extract device identifiers → (4) Craft command packets → (5) Transmit commands to modify therapy.</p>
+<p><strong>Relevance to neurostimulators:</strong> The attack methodology is directly applicable. The specific commands differ (cardiac pacing vs. neural stimulation), but the protocol-level attack steps are identical. Any neurostimulator with similar protocol weaknesses (unencrypted, no replay protection) is equally vulnerable.</p>
+<h3 id="202-relay-attack-on-implant-communication">20.2 Relay Attack on Implant Communication</h3>
+<p><strong>Method:</strong> Two attackers collaborate: one near the patient (relaying to the implant) and one near the programmer (relaying from the programmer). The patient and programmer are at different locations, but the relay makes them appear adjacent.</p>
+<p><strong>Attack chain:</strong> (1) Attacker A sends session request to implant → (2) Implant sends challenge → (3) Attacker A relays challenge to Attacker B → (4) Attacker B sends challenge to programmer → (5) Programmer responds → (6) Attacker B relays response to Attacker A → (7) Attacker A sends response to implant → (8) Session established with attacker in the middle.</p>
+<p><strong>Detection:</strong> The relay introduces latency (typically 10-100 ms depending on the relay link). If the protocol has a tight timeout on the challenge-response (e.g., 50 ms), the relay may fail. However, most neurostimulator protocols have generous timeouts (100-500 ms) to accommodate slow cryptographic operations, making relay attacks feasible.</p>
+<p><strong>Mitigation:</strong> Distance bounding protocols measure the round-trip time of the challenge-response and reject responses that take too long (indicating a relay). However, distance bounding is challenging over the MICS channel due to variable tissue propagation delays.</p>
+<h2 id="21-common-misconceptions">21. Common Misconceptions</h2>
+<p><strong>Misconception 1: "The MICS band is secure because it requires a medical device license to transmit."</strong>
+Reality: SDRs can transmit on any frequency. A license is required for legal operation, not for technical capability. An attacker does not need a license.</p>
+<p><strong>Misconception 2: "The tissue attenuation means the attacker must be touching the patient."</strong>
+Reality: With a directional antenna and LNA, an attacker can be 10-100+ meters away. Tissue attenuation is 20-40 dB, not 100 dB.</p>
+<p><strong>Misconception 3: "Encryption is all you need for protocol security."</strong>
+Reality: Encryption provides confidentiality and (with AEAD) integrity. It does NOT provide replay protection, authorization, availability, or resistance to protocol-level attacks like desynchronization or battery drain.</p>
+<p><strong>Misconception 4: "BLE is secure because it's a standard with extensive analysis."</strong>
+Reality: BLE has known vulnerabilities (KNOB, BLESA, BLUR). The standard's security is good but not perfect, and the implementation may deviate from the standard.</p>
+<p><strong>Misconception 5: "The protocol is proprietary, so attackers can't figure it out."</strong>
+Reality: Protocol reverse engineering is a well-understood discipline. Proprietary protocols have been reverse-engineered for pacemakers, insulin pumps, and neurostimulators. Obscurity is not security.</p>
+<h2 id="22-engineering-trade-offs">22. Engineering Trade-offs</h2>
+<h3 id="221-security-overhead-vs-bandwidth">22.1 Security Overhead vs. Bandwidth</h3>
+<p>AES-CCM adds 8-16 bytes of authentication tag per packet and requires a 12-byte nonce. For a typical 32-byte command packet, the security overhead is 20-28 bytes (62-87% overhead). This significantly reduces the effective data rate. Reducing the tag length to 4 bytes reduces overhead but increases the forgery probability.</p>
+<h3 id="222-security-overhead-vs-latency">22.2 Security Overhead vs. Latency</h3>
+<p>Each cryptographic operation (encrypt + MAC) takes 5-20 us on a Cortex-M4. For a protocol that processes one packet per 4 ms, this is 0.25-1.25% overhead — negligible. However, session establishment requires ECDSA verification (20-80 ms), which is a noticeable delay for the user (clinician must wait for the handshake to complete before programming).</p>
+<h3 id="223-security-strength-vs-battery-life">22.3 Security Strength vs. Battery Life</h3>
+<p>Every transmitted bit consumes battery energy. Security overhead (tags, nonces, encrypted headers) increases the number of bits per command, increasing energy per command. For a device with a 10-year battery life, the security overhead might reduce battery life by 5-15%. This is an acceptable trade-off — the alternative (no security) is not acceptable.</p>
+<h2 id="23-future-directions">23. Future Directions</h2>
+<p><strong>Ultra-wideband (UWB) for implants:</strong> UWB provides precise ranging (cm-level) that enables distance bounding protocols. If the protocol measures the round-trip distance and rejects sessions where the programmer is more than 2 meters away, relay attacks become infeasible.</p>
+<p><strong>Post-quantum cryptography:</strong> Lattice-based KEMs (e.g., Kyber) are being considered for future implant protocols to provide quantum resistance. The computational cost is 5-10x higher than ECDH, but may become feasible as hardware accelerators are developed.</p>
+<p><strong>Cognitive radio:</strong> Implants that can dynamically switch between MICS, BLE, and other bands based on interference conditions. This provides availability under jamming but increases the protocol's complexity and attack surface.</p>
+<p><strong>Physical layer security:</strong> Using the unique characteristics of the tissue channel (channel state information) as an additional authentication factor. The idea is that the channel response between the implant and the legitimate programmer is unique and difficult to spoof.</p>
+<h2 id="24-relation-to-vireon-architecture">24. Relation to VIREON Architecture</h2>
+<h3 id="241-vireon-components-produced-by-nl-004">24.1 VIREON Components Produced by NL-004</h3>
+<ul>
+<li><strong><code>ProtocolAnalyzer</code> provider:</strong> Analyzes packet captures for security properties.</li>
+<li><strong><code>PacketFuzzer</code> provider:</strong> Generates malformed packets for fuzzing.</li>
+<li><strong><code>ReplayDetector</code> provider:</strong> Detects replay attacks in packet streams.</li>
+<li><strong>Benchmark definitions:</strong> WP-001 through WP-008 standardized protocol security test scenarios.</li>
+<li><strong><code>WirelessChannel</code> model:</strong> Simulated MICS channel model for digital twin integration.</li>
+</ul>
+<h3 id="242-digital-twin-integration">24.2 Digital Twin Integration</h3>
+<p>Lab 001's protocol simulator provides the wireless channel model for VIREON's digital twin. It models: packet transmission, channel noise, packet loss, and timing — enabling protocol security testing without physical hardware.</p>
+<h2 id="25-exercises">25. Exercises</h2>
+<h3 id="exercise-1-protocol-fingerprinting-2-hours">Exercise 1: Protocol Fingerprinting (2 hours)</h3>
+<p>Using Lab 001's simulator, capture a session and identify the protocol parameters: modulation, data rate, packet format, encryption algorithm, and session establishment process.</p>
+<h3 id="exercise-2-replay-attack-simulation-2-hours">Exercise 2: Replay Attack Simulation (2 hours)</h3>
+<p>Using Lab 002, execute replay attacks (WP-002, WP-003) and measure the detection rate. Analyze which replay variants are detected and which are not.</p>
+<h3 id="exercise-3-protocol-security-audit-3-hours">Exercise 3: Protocol Security Audit (3 hours)</h3>
+<p>Given a protocol specification (provided in the exercise), perform a security audit identifying all vulnerability classes from Section 7.1. Produce a prioritized vulnerability list with recommended mitigations.</p>
+<h3 id="exercise-4-battery-drain-measurement-2-hours">Exercise 4: Battery Drain Measurement (2 hours)</h3>
+<p>Using Lab 002, simulate battery drain attacks (WP-007) and measure the energy consumed during different attack scenarios. Compare to normal operation energy.</p>
+<h2 id="26-concept-map">26. Concept Map</h2>
+<pre><code>Wireless Protocol Security
+├── Physical Layer (MICS/BLE)
+│   ├── MICS band (402-405 MHz)
+│   ├── BLE (2.4 GHz)
+│   ├── Tissue channel model
+│   └── Eavesdropping range analysis
+├── Protocol Stack
+│   ├── Packet structure (preamble, header, payload, auth, CRC)
+│   ├── Session establishment (pairing, challenge-response, KDF)
+│   ├── Sequence number management (replay window)
+│   ├── Fragmentation/reassembly
+│   └── State machine (SLEEP, IDLE, AUTH, ACTIVE)
+├── Cryptographic Mechanisms
+│   ├── AES-CCM (confidentiality + integrity)
+│   ├── ECDSA (firmware signing, optional session auth)
+│   ├── HKDF (key derivation)
+│   └── Nonce management
+├── Attack Classes
+│   ├── Eavesdropping
+│   ├── Packet injection
+│   ├── Replay (cross-session, within-session)
+│   ├── Desynchronization
+│   ├── Battery drain
+│   ├── Relay attack
+│   └── Jamming
+├── Defenses
+│   ├── Authenticated encryption
+│   ├── Per-command authorization
+│   ├── Sequence number windows
+│   ├── Rate limiting
+│   └── Inactivity timeout
+└── VIREON Integration
+    ├── Protocol Analyzer provider
+    ├── WP-001 through WP-008 benchmarks
+    └── Wireless channel digital twin model
+</code></pre>
+<h2 id="27-glossary">27. Glossary</h2>
+<ul>
+<li><strong>AEAD:</strong> Authenticated Encryption with Associated Data — encryption that also provides integrity.</li>
+<li><strong>BLE:</strong> Bluetooth Low Energy — short-range wireless protocol used as secondary channel.</li>
+<li><strong>CCM:</strong> Counter with CBC-MAC — AES mode providing both encryption and authentication.</li>
+<li><strong>CSMA/CA:</strong> Carrier Sense Multiple Access with Collision Avoidance — MAC protocol.</li>
+<li><strong>ECDHE:</strong> Elliptic Curve Diffie-Hellman Ephemeral — key exchange providing forward secrecy.</li>
+<li><strong>ECDSA:</strong> Elliptic Curve Digital Signature Algorithm.</li>
+<li><strong>ERP:</strong> Effective Radiated Power — the power radiated by the antenna.</li>
+<li><strong>GFSK:</strong> Gaussian Frequency Shift Keying — constant-envelope modulation.</li>
+<li><strong>HKDF:</strong> HMAC-based Key Derivation Function.</li>
+<li><strong>KDF:</strong> Key Derivation Function — derives keys from a shared secret.</li>
+<li><strong>LBT:</strong> Listen-Before-Talk — channel access mechanism.</li>
+<li><strong>MICS:</strong> Medical Implant Communication Service — 402-405 MHz band.</li>
+<li><strong>Nonce:</strong> A number used only once — critical for AES-CTR/CCM security.</li>
+<li><strong>RSSI:</strong> Received Signal Strength Indicator.</li>
+<li><strong>SDR:</strong> Software-Defined Radio.</li>
+<li><strong>TRNG:</strong> True Random Number Generator.</li>
+</ul>
+<h2 id="28-flashcards">28. Flashcards</h2>
+<ol>
+<li>Q: Why is CRC not a security mechanism? A: CRC has no secret key — anyone can compute the CRC of any message. It detects accidental errors, not intentional modification.</li>
+<li>Q: What is the catastrophic consequence of AES-CCM nonce reuse? A: The same keystream is produced, and XORing two ciphertexts reveals the XOR of two plaintexts.</li>
+<li>Q: Why is per-command authorization important? A: Because a session may be established with low privilege (home monitoring) but the protocol must not allow high-privilege commands (clinical programming) in that session.</li>
+<li>Q: What is the replay window, and what is the trade-off? A: The range of acceptable sequence numbers. Larger window = better reordering tolerance but larger replay attack surface.</li>
+<li>Q: How far can an attacker eavesdrop with a directional antenna and LNA? A: 100-500 meters, depending on equipment quality. Tissue attenuation (20-40 dB) is not sufficient protection.</li>
+<li>Q: What is a relay attack, and why is it hard to detect? A: Two attackers relay communication between patient and programmer. Hard to detect because the relay is transparent — both parties think they're communicating directly.</li>
+<li>Q: Why is AES-128 sufficient for neurostimulators? A: The attack is not brute-force (infeasible for both AES-128 and AES-256) but protocol-level. AES-128 has lower energy cost.</li>
+<li>Q: What information does a response code leak? A: Which commands are supported, which parameter values are accepted, and the device's current state — all useful for an attacker.</li>
+</ol>
+<h2 id="29-interview-questions">29. Interview Questions</h2>
+<ol>
+<li>
+<p>"Walk me through the session establishment protocol for a neurostimulator. What are the key security properties at each step?"</p>
+</li>
+<li>
+<p>"How would you design the nonce management for AES-CCM in an implantable device that may reboot unexpectedly?"</p>
+</li>
+<li>
+<p>"A neurostimulator uses MICS for clinical programming and BLE for home monitoring. What cross-channel attacks would you test for?"</p>
+</li>
+<li>
+<p>"An attacker records a legitimate programming session. Under what conditions can they replay those packets? How does your protocol prevent this?"</p>
+</li>
+<li>
+<p>"What is the battery impact of adding AES-128-CCM to every packet? Is it worth it?"</p>
+</li>
+<li>
+<p>"How would you detect a relay attack on a neurostimulator's MICS channel? What are the limitations of distance bounding in tissue?"</p>
+</li>
+<li>
+<p>"Design a protocol security test suite for a new neurostimulator. What would you test first, and why?"</p>
+</li>
+<li>
+<p>"The Abbott/St. Jude vulnerability involved an unencrypted home monitoring channel. How would you have designed the security requirements to prevent this?"</p>
+</li>
+</ol>
+<h2 id="30-research-questions">30. Research Questions</h2>
+<ol>
+<li>
+<p><strong>Distance bounding in tissue:</strong> Can we design a distance bounding protocol that works reliably through human tissue, given the variable propagation delay? What is the minimum achievable precision?</p>
+</li>
+<li>
+<p><strong>Post-quantum implant protocols:</strong> What is the minimum overhead (bandwidth, latency, energy) of adding post-quantum cryptography to an implantable device protocol? Is it feasible with current hardware?</p>
+</li>
+<li>
+<p><strong>Physical layer security for implants:</strong> Can channel state information (CSI) be used as a cryptographic key source? What is the entropy rate of the tissue channel, and is it sufficient for key generation?</p>
+</li>
+<li>
+<p><strong>Protocol obfuscation resistance:</strong> How long does it take to reverse-engineer a proprietary neurostimulator protocol using only passive observation? Can we design protocols that resist PRE for &gt;100 hours of observation?</p>
+</li>
+</ol>
+<h2 id="31-books">31. Books</h2>
+<ol>
+<li><strong>Stallings, W. (2017).</strong> <em>Cryptography and Network Security.</em> 7th ed. Pearson. — Comprehensive cryptography reference.</li>
+<li><strong>NIST SP 800-52 Rev. 2 (2019).</strong> <em>Guidelines for the Selection, Configuration, and Use of TLS.</em> — While not directly about MICS, the principles apply.</li>
+<li><strong>Zander, S. et al. (2023).</strong> <em>Wireless Security: Theory and Practice.</em> — Wireless protocol security.</li>
+<li><strong>Newman, H. (2021).</strong> <em>Bluetooth Application Programming with the Secure and Health-Care Profiles.</em> — BLE security for medical devices.</li>
+</ol>
+<h2 id="32-papers">32. Papers</h2>
+<ol>
+<li><strong>Halperin, D. et al. (2008).</strong> "Pacemakers and Implantable Cardiac Defibrillators: Software Radio Attacks and Zero-Power Defenses." <em>IEEE S&amp;P.</em></li>
+<li><strong>Gao, W. et al. (2022).</strong> "Security Analysis of Implantable Medical Devices." <em>IEEE IoT Journal.</em></li>
+<li><strong>Li, C. et al. (2020).</strong> "Security and Privacy of Implantable Medical Devices." <em>IEEE Reviews in Biomedical Engineering.</em></li>
+<li><strong>Cobb, W.E. et al. (2023).</strong> "Firmware Security Analysis of Neural Implant Systems." <em>IEEE TNSRE.</em></li>
+<li><strong>Braun, B. et al. (2018).</strong> "The Bypass of Bluetooth Low Energy Privacy: An Empirical Study." <em>IEEE S&amp;P.</em> — BLE privacy vulnerabilities.</li>
+<li><strong>Cao, Y. et al. (2020).</strong> "Bluetooth Low Energy (BLE) Security: A Comprehensive Survey." <em>ACM Computing Surveys.</em></li>
+</ol>
+<h2 id="33-standards">33. Standards</h2>
+<ol>
+<li><strong>IEEE 802.15.6-2012</strong> — Wireless Body Area Networks (includes MICS band)</li>
+<li><strong>IEEE 802.15.1 (Bluetooth)</strong> — BLE specification</li>
+<li><strong>FCC Part 95</strong> — Personal Radio Services (MICS regulations in the US)</li>
+<li><strong>ETSI EN 301 839</strong> — Short Range Devices (MICS regulations in Europe)</li>
+<li><strong>FDA Guidance (2023)</strong> — "Cybersecurity in Medical Devices"</li>
+<li><strong>NIST SP 800-188</strong> — Dealing with射频 (RF) Risk</li>
+<li><strong>ISO/IEEE 11073</strong> — Medical Device Communication Standards</li>
+<li><strong>IEC 60601-1-2</strong> — EMC requirements for medical electrical equipment (relevant for EMI/jamming)</li>
+</ol>
+<h2 id="34-open-source-projects">34. Open Source Projects</h2>
+<ol>
+<li><strong>GNU Radio</strong> — SDR framework for capturing and transmitting RF signals</li>
+<li><strong>HackRF One</strong> — Low-cost SDR hardware (1 MHz - 6 GHz)</li>
+<li><strong>Ubertooth</strong> — Open-source BLE monitoring platform</li>
+<li><strong>Wireshark</strong> — Packet analyzer with BLE and 802.15.4 dissectors</li>
+<li><strong>scapy</strong> — Python packet manipulation library</li>
+<li><strong>pycryptodome</strong> — Python cryptographic library (AES-CCM, ECDSA, HKDF)</li>
+<li><strong>bleak</strong> — Python BLE library for security testing</li>
+<li><strong>gr-ieee802-15-4</strong> — GNU Radio module for 802.15.4 (used in WBAN)</li>
+</ol>
+<h2 id="35-datasets">35. Datasets</h2>
+<ol>
+<li><strong>IEEE 802.15.6 Simulation Dataset</strong> — Simulated WBAN traffic for protocol testing</li>
+<li><strong>BLE Packet Capture Dataset</strong> — Captured BLE traffic from medical devices (various sources)</li>
+<li><strong>SHIELD Packet Trace Dataset</strong> — Captured implant communication traces (limited availability)</li>
+</ol>
+<h2 id="36-reading-roadmap">36. Reading Roadmap</h2>
+<p><strong>Week 1:</strong> Lesson Parts 1-2 (physical layer, packet structure, session establishment, cryptography, attacks, protocol RE)
+<strong>Week 2:</strong> Lesson Part 3 (STRIDE, failures, VIREON integration) + Lab 001 (Protocol Simulator)
+<strong>Week 3:</strong> Lab 002 (Protocol Attacks) + 2 challenges
+<strong>Week 4:</strong> Deep reading of referenced papers, begin formulating research question on distance bounding</p>
+<h2 id="37-suggested-vireon-labs-modules-next">37. Suggested VIREON-LABS Modules (Next)</h2>
+<ol>
+<li><strong>NL-005:</strong> Closed-Loop System Security — analyze how protocol latency and reliability affect the control loop</li>
+<li><strong>NL-006:</strong> Adversarial ML for Neural Signals — attack the ML classifiers in adaptive systems</li>
+<li><strong>NL-007:</strong> Digital Twin Architecture — integrate NL-004's wireless channel model into the complete digital twin</li>
+</ol>
+<h2 id="38-suggested-github-issues">38. Suggested GitHub Issues</h2>
+<ol>
+<li>"Define ProtocolAnalyzer provider interface specification" — foundation for all protocol analysis providers</li>
+<li>"Implement standardized protocol attack scenario library (WP-001 through WP-008)"</li>
+<li>"Create MICS channel model for digital twin wireless simulation"</li>
+<li>"Implement cross-channel security policy validator for MICS+BLE devices"</li>
+<li>"Design protocol fingerprint database for commercially available neurostimulators"</li>
+<li>"Implement battery drain measurement framework for wireless attack benchmarking"</li>
+</ol>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>Wireless protocol security is the gatekeeper for all remote interactions with neurostimulators. The unique constraints of the implant environment (MICS band, tissue channel, low power, limited bandwidth) force aggressive trade-offs between security strength and resource consumption. AES-128-CCM provides the necessary confidentiality and integrity with acceptable overhead. Session establishment must use strong pairing mechanisms and proper key derivation. Per-command authorization must be enforced to prevent privilege escalation. Replay protection through sequence number windows must be carefully designed to balance tolerance and security. The protocol layer is the first line of defense against remote attacks, and its security must be validated through comprehensive benchmarking (WP-001 through WP-008) as part of VIREON's validation framework.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

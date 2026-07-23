@@ -1,0 +1,950 @@
+{
+  "simulation": {
+    "vulnerable": false,
+    "num_cycles": 500,
+    "cycle_period_ms": 10,
+    "elapsed_s": 0.022,
+    "attack": null
+  },
+  "controller": {
+    "kp": 0.05,
+    "ki": 0.005,
+    "setpoint": 0.0,
+    "auth_kp": 0.05,
+    "auth_ki": 0.005,
+    "auth_setpoint": 0.0,
+    "parameter_authentic": true
+  },
+  "statistics": {
+    "stim_mean_ma": 0.7711,
+    "stim_max_ma": 1.1858,
+    "stim_min_ma": 0.1,
+    "beta_mean_db": -12.572,
+    "beta_range_db": [
+      -21.633,
+      -2.582
+    ],
+    "final_beta_amplitude": 0.8931
+  },
+  "energy": {
+    "battery_percent": 100.0,
+    "avg_power_uw": 1777.75,
+    "projected_life_hours": 2081288257558.7,
+    "total_energy_uj": 9066.5,
+    "stim_energy_pct": 82.7,
+    "wireless_packets": 5
+  },
+  "monitor": {
+    "total_alerts": 8,
+    "alert_counts": {
+      "instability": 8
+    },
+    "last_10_alerts": [
+      {
+        "cycle": 426,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.42,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 427,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.42,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 428,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.46,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 429,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.5,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 430,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.5,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 431,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.42,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 432,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.46,
+          "threshold": 0.4
+        }
+      },
+      {
+        "cycle": 433,
+        "type": "instability",
+        "severity": 4,
+        "details": {
+          "zcr": 0.46,
+          "threshold": 0.4
+        }
+      }
+    ]
+  },
+  "final_state": "SAFE_MODE",
+  "security_events": [
+    {
+      "cycle": 426,
+      "event": "monitor_triggered",
+      "response": "SWITCH_OPEN_LOOP",
+      "primary_alert": "instability"
+    },
+    {
+      "cycle": 426,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.42,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 427,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.42,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 428,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.46,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 429,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.5,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 430,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.5,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 431,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.42,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 432,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.46,
+        "threshold": 0.4
+      }
+    },
+    {
+      "cycle": 433,
+      "event": "instability",
+      "severity": 4,
+      "details": {
+        "zcr": 0.46,
+        "threshold": 0.4
+      }
+    }
+  ],
+  "cycle_log_sample": [
+    {
+      "cycle": 10,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -10.479,
+      "sensed_beta_db": -10.479,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.1,
+      "controller_integral": 0.0005,
+      "controller_error": 10.479,
+      "beta_amplitude": 0.9994,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 20,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -13.752,
+      "sensed_beta_db": -13.752,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.5998,
+      "controller_integral": 0.0067,
+      "controller_error": 13.752,
+      "beta_amplitude": 0.9777,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 30,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -9.239,
+      "sensed_beta_db": -9.239,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.5041,
+      "controller_integral": 0.0127,
+      "controller_error": 9.239,
+      "beta_amplitude": 0.9601,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 40,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -13.762,
+      "sensed_beta_db": -13.762,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6373,
+      "controller_integral": 0.0196,
+      "controller_error": 13.762,
+      "beta_amplitude": 0.9473,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 50,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -2.582,
+      "sensed_beta_db": -2.582,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.3366,
+      "controller_integral": 0.0234,
+      "controller_error": 2.582,
+      "beta_amplitude": 0.9465,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 60,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -6.352,
+      "sensed_beta_db": -6.352,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.3446,
+      "controller_integral": 0.027,
+      "controller_error": 6.352,
+      "beta_amplitude": 0.9527,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 70,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -15.359,
+      "sensed_beta_db": -15.359,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7527,
+      "controller_integral": 0.0325,
+      "controller_error": 15.359,
+      "beta_amplitude": 0.9472,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 80,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -9.347,
+      "sensed_beta_db": -9.347,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6256,
+      "controller_integral": 0.039,
+      "controller_error": 9.347,
+      "beta_amplitude": 0.9376,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 90,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -10.888,
+      "sensed_beta_db": -10.888,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6471,
+      "controller_integral": 0.0453,
+      "controller_error": 10.888,
+      "beta_amplitude": 0.9323,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 100,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -5.383,
+      "sensed_beta_db": -5.383,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.5565,
+      "controller_integral": 0.0507,
+      "controller_error": 5.383,
+      "beta_amplitude": 0.9316,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 110,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -12.458,
+      "sensed_beta_db": -12.458,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.5967,
+      "controller_integral": 0.0551,
+      "controller_error": 12.458,
+      "beta_amplitude": 0.9366,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 120,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -8.963,
+      "sensed_beta_db": -8.963,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.5692,
+      "controller_integral": 0.0607,
+      "controller_error": 8.963,
+      "beta_amplitude": 0.9355,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 130,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -8.218,
+      "sensed_beta_db": -8.218,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.4769,
+      "controller_integral": 0.066,
+      "controller_error": 8.218,
+      "beta_amplitude": 0.9348,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 140,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -9.533,
+      "sensed_beta_db": -9.533,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.4638,
+      "controller_integral": 0.07,
+      "controller_error": 9.533,
+      "beta_amplitude": 0.9418,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 150,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -16.982,
+      "sensed_beta_db": -16.982,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.8728,
+      "controller_integral": 0.0759,
+      "controller_error": 16.982,
+      "beta_amplitude": 0.9372,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 160,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -18.278,
+      "sensed_beta_db": -18.278,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.9486,
+      "controller_integral": 0.0841,
+      "controller_error": 18.278,
+      "beta_amplitude": 0.9245,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 170,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -17.397,
+      "sensed_beta_db": -17.397,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.9617,
+      "controller_integral": 0.0918,
+      "controller_error": 17.397,
+      "beta_amplitude": 0.9166,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 180,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -16.102,
+      "sensed_beta_db": -16.102,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7538,
+      "controller_integral": 0.0989,
+      "controller_error": 16.102,
+      "beta_amplitude": 0.9149,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 190,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -7.406,
+      "sensed_beta_db": -7.406,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.5324,
+      "controller_integral": 0.1038,
+      "controller_error": 7.406,
+      "beta_amplitude": 0.9221,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 200,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -16.249,
+      "sensed_beta_db": -16.249,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.9231,
+      "controller_integral": 0.1106,
+      "controller_error": 16.249,
+      "beta_amplitude": 0.9205,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 210,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -9.699,
+      "sensed_beta_db": -9.699,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7069,
+      "controller_integral": 0.1182,
+      "controller_error": 9.699,
+      "beta_amplitude": 0.9138,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 220,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -11.058,
+      "sensed_beta_db": -11.058,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.677,
+      "controller_integral": 0.1241,
+      "controller_error": 11.058,
+      "beta_amplitude": 0.9184,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 230,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -18.057,
+      "sensed_beta_db": -18.057,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0347,
+      "controller_integral": 0.1318,
+      "controller_error": 18.057,
+      "beta_amplitude": 0.9118,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 240,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -10.826,
+      "sensed_beta_db": -10.826,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6797,
+      "controller_integral": 0.1384,
+      "controller_error": 10.826,
+      "beta_amplitude": 0.9121,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 250,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -11.357,
+      "sensed_beta_db": -11.357,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.712,
+      "controller_integral": 0.1442,
+      "controller_error": 11.357,
+      "beta_amplitude": 0.9176,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 260,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -16.333,
+      "sensed_beta_db": -16.333,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.9686,
+      "controller_integral": 0.152,
+      "controller_error": 16.333,
+      "beta_amplitude": 0.9108,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 270,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -14.579,
+      "sensed_beta_db": -14.579,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.888,
+      "controller_integral": 0.1591,
+      "controller_error": 14.579,
+      "beta_amplitude": 0.9091,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 280,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -14.936,
+      "sensed_beta_db": -14.936,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.9134,
+      "controller_integral": 0.1666,
+      "controller_error": 14.936,
+      "beta_amplitude": 0.9061,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 290,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -9.82,
+      "sensed_beta_db": -9.82,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6969,
+      "controller_integral": 0.1734,
+      "controller_error": 9.82,
+      "beta_amplitude": 0.9067,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 300,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -9.498,
+      "sensed_beta_db": -9.498,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6536,
+      "controller_integral": 0.1787,
+      "controller_error": 9.498,
+      "beta_amplitude": 0.9139,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 310,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -11.412,
+      "sensed_beta_db": -11.412,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7557,
+      "controller_integral": 0.1851,
+      "controller_error": 11.412,
+      "beta_amplitude": 0.9147,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 320,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -8.544,
+      "sensed_beta_db": -8.544,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6186,
+      "controller_integral": 0.1914,
+      "controller_error": 8.544,
+      "beta_amplitude": 0.916,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 330,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -11.821,
+      "sensed_beta_db": -11.821,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7754,
+      "controller_integral": 0.1962,
+      "controller_error": 11.821,
+      "beta_amplitude": 0.9199,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 340,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -17.648,
+      "sensed_beta_db": -17.648,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0852,
+      "controller_integral": 0.2029,
+      "controller_error": 17.648,
+      "beta_amplitude": 0.9138,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 350,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -13.97,
+      "sensed_beta_db": -13.97,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.9277,
+      "controller_integral": 0.2105,
+      "controller_error": 13.97,
+      "beta_amplitude": 0.9065,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 360,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -15.081,
+      "sensed_beta_db": -15.081,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0525,
+      "controller_integral": 0.2193,
+      "controller_error": 15.081,
+      "beta_amplitude": 0.8975,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 370,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -11.725,
+      "sensed_beta_db": -11.725,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7937,
+      "controller_integral": 0.2252,
+      "controller_error": 11.725,
+      "beta_amplitude": 0.902,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 380,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -10.029,
+      "sensed_beta_db": -10.029,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.6476,
+      "controller_integral": 0.2294,
+      "controller_error": 10.029,
+      "beta_amplitude": 0.9132,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 390,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -8.661,
+      "sensed_beta_db": -8.661,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7415,
+      "controller_integral": 0.2349,
+      "controller_error": 8.661,
+      "beta_amplitude": 0.9145,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 400,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -13.068,
+      "sensed_beta_db": -13.068,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.8948,
+      "controller_integral": 0.2414,
+      "controller_error": 13.068,
+      "beta_amplitude": 0.9108,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 410,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -8.691,
+      "sensed_beta_db": -8.691,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7303,
+      "controller_integral": 0.2468,
+      "controller_error": 8.691,
+      "beta_amplitude": 0.9118,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 420,
+      "state": "CLOSED_LOOP",
+      "raw_beta_db": -10.555,
+      "sensed_beta_db": -10.555,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 0.7804,
+      "controller_integral": 0.2526,
+      "controller_error": 10.555,
+      "beta_amplitude": 0.9109,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 430,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -14.311,
+      "sensed_beta_db": -14.311,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.9061,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "SWITCH_OPEN_LOOP",
+      "n_alerts": 1
+    },
+    {
+      "cycle": 440,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -15.701,
+      "sensed_beta_db": -15.701,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.9009,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 450,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -7.742,
+      "sensed_beta_db": -7.742,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.8977,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 460,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -7.145,
+      "sensed_beta_db": -7.145,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.8958,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 470,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -16.401,
+      "sensed_beta_db": -16.401,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.8947,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 480,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -16.896,
+      "sensed_beta_db": -16.896,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.8939,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 490,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -15.238,
+      "sensed_beta_db": -15.238,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.8935,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    },
+    {
+      "cycle": 500,
+      "state": "SAFE_MODE",
+      "raw_beta_db": -14.517,
+      "sensed_beta_db": -14.517,
+      "sensor_offset_db": 0.0,
+      "stim_output_ma": 1.0,
+      "controller_integral": 0.2564,
+      "controller_error": 14.963,
+      "beta_amplitude": 0.8933,
+      "charge_balance_ok": true,
+      "battery_pct": 100.0,
+      "monitor_response": "NONE",
+      "n_alerts": 0
+    }
+  ]
+}

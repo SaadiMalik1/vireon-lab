@@ -1,0 +1,1921 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../part2_deep_analysis/">
+      
+      
+        <link rel="next" href="../challenges/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Part 3 Synthesis - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-005-closed-loop-system-security-for-neurostimulators" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 3 Synthesis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-005-closed-loop-system-security-for-neurostimulators">NL-005: Closed-Loop System Security for Neurostimulators</h1>
+<h1 id="part-3-synthesis-sections-29-42">Part 3: Synthesis (Sections 29-42)</h1>
+<hr />
+<h2 id="section-29-cl-benchmark-framework-cl-001-through-cl-008">Section 29: CL Benchmark Framework — CL-001 through CL-008</h2>
+<h3 id="291-benchmark-design-philosophy">29.1 Benchmark Design Philosophy</h3>
+<p>The CL (Closed-Loop) benchmarks extend the VIREON benchmark framework to the closed-loop domain. Unlike the WP benchmarks (NL-004) that test protocol-level security in isolation, the CL benchmarks test security properties that emerge from the interaction of sensing, processing, control, and actuation in a dynamic feedback system. Each CL benchmark specifies a threat scenario, the system configuration under test, the attack injection method, the observable outcomes, and the pass/fail criteria.</p>
+<p>The CL benchmarks are designed to be implemented in the Lab 002 simulator (loop_attacks.py) and verified against the Lab 001 closed-loop simulator (closed_loop_simulator.py). They follow the same scoring structure as WP benchmarks: 10 tests per benchmark, each worth 10 points, for a maximum of 80 points across the full suite. A system passes a benchmark if it scores &gt;= 8/10.</p>
+<h3 id="292-cl-001-sensor-spoofing-detection">29.2 CL-001: Sensor Spoofing Detection</h3>
+<p><strong>Threat:</strong> An attacker injects false neural data that causes the controller to make incorrect stimulation decisions.</p>
+<p><strong>Test configuration:</strong> The closed-loop system runs in normal mode. The attacker injects a beta-power offset (constant, +5 dB, +10 dB, +15 dB) starting at cycle 200 and persisting for 100 cycles. Ten tests vary the injection magnitude, onset speed (instantaneous vs. gradual), and spectral shape (narrowband vs. broadband).</p>
+<p><strong>Pass criteria:</strong> (a) The safety monitor detects the injection within 20 cycles of onset, (b) the system transitions to a safe mode (open-loop fallback or stimulation reduction), (c) the forensic log records the anomaly details (detection time, injection magnitude estimate).</p>
+<p><strong>Scoring:</strong> 2 points per test: 1 for detection within time window, 1 for correct response action. Maximum 20/20 for this benchmark. Scaled to 10 points for the overall CL score.</p>
+<h3 id="293-cl-002-adversarial-perturbation-resilience">29.3 CL-002: Adversarial Perturbation Resilience</h3>
+<p><strong>Threat:</strong> An attacker injects a carefully crafted perturbation optimized to shift the feature value while evading simple threshold-based detection.</p>
+<p><strong>Test configuration:</strong> The attacker computes a perturbation using a gradient-based optimization (Section 20.2) that maximizes feature shift while keeping the raw-signal perturbation magnitude below a threshold (epsilon = 0.1, 0.2, 0.5, 1.0 times the natural signal standard deviation). Ten tests vary the perturbation budget (epsilon) and the optimization objective (positive shift, negative shift, oscillatory).</p>
+<p><strong>Pass criteria:</strong> (a) The system detects the perturbation with higher probability than random guessing (detection rate &gt; 50% across 10 tests), (b) the closed-loop output deviation (stimulation error relative to no-attack baseline) remains below 2x the natural variability.</p>
+<h3 id="294-cl-003-controller-parameter-integrity">29.4 CL-003: Controller Parameter Integrity</h3>
+<p><strong>Threat:</strong> An attacker modifies the PI controller gains (Kp, Ki) to destabilize the closed-loop system or alter its behavior.</p>
+<p><strong>Test configuration:</strong> The attacker modifies Kp (x2, x5, x10 increase) and Ki (x2, x5, x10 increase) individually and in combination. Ten tests cover different parameter modification patterns, including slow (gradual over 100 cycles) and fast (instantaneous) modifications.</p>
+<p><strong>Pass criteria:</strong> (a) The system detects the parameter modification within 10 cycles, (b) the system reverts to the last authorized parameter set, (c) if the modified parameters would cause instability, the system switches to safe mode before instability manifests.</p>
+<h3 id="295-cl-004-setpoint-integrity">29.5 CL-004: Setpoint Integrity</h3>
+<p><strong>Threat:</strong> An attacker modifies the therapeutic setpoint to an incorrect value, causing the controller to pursue the wrong objective.</p>
+<p><strong>Test configuration:</strong> The attacker shifts the setpoint by -5 dB, -10 dB, +5 dB, +10 dB, and sets it equal to the current beta power (tracking attack). Ten tests vary the setpoint modification magnitude and speed.</p>
+<p><strong>Pass criteria:</strong> (a) The system detects the setpoint modification within 20 cycles, (b) the system reverts to the authorized setpoint, (c) the forensic log records the unauthorized setpoint change.</p>
+<h3 id="296-cl-005-energy-depletion-detection">29.6 CL-005: Energy Depletion Detection</h3>
+<p><strong>Threat:</strong> An attacker increases the device's energy consumption to drain the battery prematurely.</p>
+<p><strong>Test configuration:</strong> The attacker spoofs sensor data to force maximum stimulation (energy multiplier 5x, 10x), triggers excessive wireless communication (20 packets/sec, 50 packets/sec), and combines both. Ten tests vary the attack type and duration.</p>
+<p><strong>Pass criteria:</strong> (a) The energy monitor detects abnormal consumption rate (&gt; 3x baseline) within 50 cycles, (b) the system flags a projected battery life below the safety threshold, (c) the system reduces non-essential energy consumption (e.g., reduces telemetry rate).</p>
+<h3 id="297-cl-006-safety-monitor-evasion-detection">29.7 CL-006: Safety Monitor Evasion Detection</h3>
+<p><strong>Threat:</strong> A sophisticated attacker combines multiple attack techniques to evade the safety monitor while performing a destabilizing attack.</p>
+<p><strong>Test configuration:</strong> The attacker performs a composite attack: (a) timing desynchronization + sensor spoofing, (b) threshold elevation + gain manipulation, (c) alarm fatigue + setpoint modification. Ten tests vary the evasion technique and the primary attack type.</p>
+<p><strong>Pass criteria:</strong> (a) The system detects the primary attack despite the evasion technique, or (b) the system detects the evasion technique itself, or (c) the multi-metric correlation identifies inconsistencies that indicate evasion.</p>
+<h3 id="298-cl-007-protocol-loop-interaction-security">29.8 CL-007: Protocol-Loop Interaction Security</h3>
+<p><strong>Threat:</strong> An attacker exploits the wireless protocol to affect the closed-loop system's behavior through unauthorized parameter changes or communication disruption.</p>
+<p><strong>Test configuration:</strong> The attacker performs: (a) unauthorized parameter change via replayed command, (b) communication-induced jitter during closed-loop operation, (c) telemetry injection to mislead clinician. Ten tests vary the protocol attack type and its interaction with the control loop.</p>
+<p><strong>Pass criteria:</strong> (a) Protocol-level attacks do not affect the closed-loop operation (the control loop continues with authorized parameters), (b) communication disruption does not cause the control loop to destabilize (the loop operates independently of the wireless link), (c) telemetry anomalies are flagged on the clinician programmer.</p>
+<h3 id="299-cl-008-forensic-analysis-capability">29.9 CL-008: Forensic Analysis Capability</h3>
+<p><strong>Threat:</strong> After an attack (or suspected attack), the system must provide sufficient forensic data to determine what happened.</p>
+<p><strong>Test configuration:</strong> After each of the previous attack scenarios (CL-001 through CL-007), the system produces a forensic report. Ten tests evaluate the quality of the forensic data for different attack types.</p>
+<p><strong>Pass criteria:</strong> (a) The forensic report correctly identifies the attack type (at least the category: sensor, controller, setpoint, timing, energy), (b) the forensic report provides a timeline of attack events with cycle-level resolution, (c) the forensic data is cryptographically integrity-protected (cannot be modified after generation).</p>
+<hr />
+<h2 id="section-30-digital-twin-integration">Section 30: Digital Twin Integration</h2>
+<h3 id="301-digital-twin-architecture-for-closed-loop">30.1 Digital Twin Architecture for Closed-Loop</h3>
+<p>The VIREON digital twin for closed-loop neurostimulation is a high-fidelity simulation model that replicates the complete closed-loop system: neural signal generation, sensing, processing, control, actuation, and safety monitoring. The digital twin serves three purposes in the VIREON ecosystem: (a) pre-deployment validation — testing the closed-loop system's behavior under a wide range of conditions before clinical use, (b) attack simulation — evaluating the system's response to security threats in a safe environment, (c) anomaly diagnosis — comparing the device's actual behavior to the twin's predicted behavior to detect anomalies.</p>
+<p>The digital twin consists of five sub-models, each corresponding to a functional block from Section 3.1:</p>
+<p><strong>Neural signal model (Section 4):</strong> Generates realistic beta-band LFP signals with natural variability, stimulation response dynamics, and configurable anomaly injection. The model parameters (baseline beta power, variability, response time constant, stimulation coupling) are patient-specific and calibrated from clinical data.</p>
+<p><strong>Sensing model:</strong> Simulates the electrode-tissue interface, amplifier noise, ADC quantization, and blanking period effects. Includes configurable injection capability for testing sensor spoofing detection.</p>
+<p><strong>Processing model:</strong> Implements the DSP pipeline (bandpass filter, windowed spectral estimation) with configurable parameters. Supports both the primary pipeline and a simplified secondary pipeline for redundancy analysis.</p>
+<p><strong>Controller model:</strong> Implements the PI controller with configurable parameters, anti-windup, rate limiting, and output clamping. Supports parameter modification for testing CL-003 and CL-004.</p>
+<p><strong>Monitor model:</strong> Implements the safety monitor with configurable thresholds, detection algorithms, and response actions. Supports threshold elevation for testing CL-006.</p>
+<h3 id="302-model-fidelity-levels">30.2 Model Fidelity Levels</h3>
+<p>VIREON defines three fidelity levels for the digital twin:</p>
+<p><strong>Fidelity 1 (Functional):</strong> Models the system's input-output behavior without internal state. Suitable for rapid prototyping and initial security screening. Does not capture timing-sensitive effects.</p>
+<p><strong>Fidelity 2 (Behavioral):</strong> Models internal state and timing with moderate accuracy. Suitable for CL benchmark testing and attack simulation. Captures the essential dynamics but may simplify non-critical components.</p>
+<p><strong>Fidelity 3 (Cycle-Accurate):</strong> Models every computation and state transition at the control cycle level. Suitable for formal verification integration and detailed forensic analysis. Computationally expensive but provides the highest confidence.</p>
+<p>The Lab 001 simulator operates at Fidelity 2 — it models the essential closed-loop dynamics with cycle-level timing but abstracts some implementation details (e.g., fixed-point arithmetic effects, RTOS scheduling).</p>
+<h3 id="303-twin-device-divergence-monitoring">30.3 Twin-Device Divergence Monitoring</h3>
+<p>In deployed systems, the digital twin runs on the clinician programmer (or cloud server) in parallel with the actual device. The twin receives the same parameter updates and telemetry data, and it predicts the device's behavior. Divergence between the twin's prediction and the device's actual behavior indicates a potential anomaly — either a model inaccuracy (which should be corrected by recalibration) or a security event (which should be investigated).</p>
+<p>VIREON defines the divergence metric as the normalized difference between predicted and actual stimulation output, integrated over a sliding window. The divergence threshold is calibrated to the model's expected prediction error under normal operation. A divergence exceeding 3 sigma (covering 99.7% of normal variability) is flagged as anomalous.</p>
+<hr />
+<h2 id="section-31-vireon-validation-framework-mapping">Section 31: VIREON Validation Framework Mapping</h2>
+<h3 id="311-validation-points-for-closed-loop-security">31.1 Validation Points for Closed-Loop Security</h3>
+<p>The VIREON validation framework defines specific validation points (VPs) for closed-loop neurostimulator security. Each VP specifies what is checked, how it is checked, and the pass/fail criteria.</p>
+<table>
+<thead>
+<tr>
+<th>VP ID</th>
+<th>Validation Point</th>
+<th>Check Method</th>
+<th>Pass Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VP-CL-01</td>
+<td>Feature value range</td>
+<td>Per-cycle range check</td>
+<td>beta_power in [min, max] physiologic range</td>
+</tr>
+<tr>
+<td>VP-CL-02</td>
+<td>Output rate of change</td>
+<td>Per-cycle derivative check</td>
+<td>d(stim)/dt &lt;= rate_limit</td>
+</tr>
+<tr>
+<td>VP-CL-03</td>
+<td>Output absolute limits</td>
+<td>Per-cycle clamp check</td>
+<td>stim in [u_min, u_max]</td>
+</tr>
+<tr>
+<td>VP-CL-04</td>
+<td>Controller parameter integrity</td>
+<td>CRC/Hash verification</td>
+<td>Parameter hash matches authorized value</td>
+</tr>
+<tr>
+<td>VP-CL-05</td>
+<td>Setpoint integrity</td>
+<td>Authenticated source check</td>
+<td>Setpoint changed only via authenticated command</td>
+</tr>
+<tr>
+<td>VP-CL-06</td>
+<td>Stability indicator</td>
+<td>Multi-cycle oscillation detection</td>
+<td>ZCR &lt; threshold, autocorrelation &lt; threshold</td>
+</tr>
+<tr>
+<td>VP-CL-07</td>
+<td>Sensor anomaly</td>
+<td>Statistical consistency check</td>
+<td>Signal statistics within physiologic bounds</td>
+</tr>
+<tr>
+<td>VP-CL-08</td>
+<td>Timing consistency</td>
+<td>Cycle time measurement</td>
+<td>Cycle time within +/- 1 ms of nominal</td>
+</tr>
+<tr>
+<td>VP-CL-09</td>
+<td>Energy consumption</td>
+<td>Energy rate monitoring</td>
+<td>Power &lt; 3x baseline, projected life &gt; 24h</td>
+</tr>
+<tr>
+<td>VP-CL-10</td>
+<td>Monitor response time</td>
+<td>Alarm latency measurement</td>
+<td>Monitor responds within 10 cycles of anomaly</td>
+</tr>
+</tbody>
+</table>
+<h3 id="312-integration-with-previous-module-vps">31.2 Integration with Previous Module VPs</h3>
+<p>The closed-loop VPs integrate with VPs from previous modules: VP-CL-01 and VP-CL-07 depend on the DSP pipeline VPs from NL-002, VP-CL-04 and VP-CL-05 depend on the firmware VPs from NL-003, VP-CL-08 depends on the RTOS timing VPs from NL-003, and the wireless-related VPs (VP-CL-05 authenticated commands) depend on the protocol VPs from NL-004. This cross-module dependency chain is why VIREON validation must consider the complete system, not just individual modules.</p>
+<hr />
+<h2 id="section-32-responsiveness-vs-security-tension">Section 32: Responsiveness vs Security Tension</h2>
+<h3 id="321-the-fundamental-trade-off">32.1 The Fundamental Trade-off</h3>
+<p>Closed-loop neurostimulation faces a fundamental tension between responsiveness (the ability to adapt quickly to genuine clinical changes) and security (the ability to detect and respond to attacks). A highly responsive system adapts stimulation rapidly when the patient's neural state changes, providing optimal therapy. But the same rapid adaptation makes the system vulnerable to attacks that exploit the fast response — a spoofed signal that changes rapidly will be followed by the controller before the monitor can detect the spoofing.</p>
+<p>Conversely, a highly secure system with extensive validation on every control cycle is slow to respond because the validation adds latency. If the validation takes 5 ms out of a 10 ms cycle, the effective control rate drops from 100 Hz to 67 Hz (validation is parallelized but still adds latency to the feedback path). The reduced control rate degrades therapeutic performance, especially for rapidly changing neural dynamics.</p>
+<h3 id="322-quantifying-the-trade-off">32.2 Quantifying the Trade-off</h3>
+<p>The trade-off can be quantified using the concept of "security overhead" — the fraction of the control cycle budget consumed by security checks. If the total cycle budget is T = 10 ms, and security checks consume T_security, the effective cycle time is T + T_security (if checks are sequential) or max(T_processing, T_security) (if checks are parallel). The security overhead ratio is T_security / (T + T_security).</p>
+<p>For a system with T_security = 1 ms (lightweight checks): overhead = 9%, phase margin loss = approximately 3 degrees. For T_security = 5 ms (comprehensive checks): overhead = 33%, phase margin loss = approximately 15 degrees. The design challenge is to achieve adequate security within a security overhead budget of 10-20%.</p>
+<h3 id="323-architectural-solutions">32.3 Architectural Solutions</h3>
+<p>Several architectural approaches can mitigate the responsiveness-security tension:</p>
+<p><strong>Asymmetric monitoring:</strong> The control path operates at full speed with minimal validation (per-cycle range checks only). The safety monitor operates on a longer time window (every 10th cycle) but with comprehensive checks (stability analysis, statistical anomaly detection). This provides fast response for normal operation with comprehensive security coverage for abnormal situations.</p>
+<p><strong>Adaptive security level:</strong> The system dynamically adjusts its security level based on the perceived threat level. During normal operation (low threat), security checks are minimal for maximum responsiveness. When an anomaly is detected (elevated threat), security checks are increased at the cost of reduced responsiveness. This is analogous to the "combat mode" in military systems.</p>
+<p><strong>Hardware acceleration:</strong> Security-critical checks (CRC computation, range checking, NaN detection) are implemented in hardware (FPGA or dedicated logic) that operates in parallel with the software control path. This provides comprehensive checking with zero software overhead, at the cost of additional hardware complexity.</p>
+<hr />
+<h2 id="section-33-multi-objective-optimization-for-closed-loop-security">Section 33: Multi-Objective Optimization for Closed-Loop Security</h2>
+<h3 id="331-competing-objectives">33.1 Competing Objectives</h3>
+<p>Designing a secure closed-loop neurostimulation system requires optimizing for multiple competing objectives: therapeutic efficacy (how well the system controls symptoms), safety (how well the system avoids harm), security (how well the system resists attacks), energy efficiency (how long the battery lasts), and computational efficiency (whether the system fits within the hardware constraints).</p>
+<p>These objectives are often in conflict. Maximum security (comprehensive checks, independent monitoring, formal verification) requires more computation and energy. Maximum efficacy (fast response, aggressive adaptation) reduces the time available for security checks. Maximum energy efficiency (duty cycling, reduced sampling rate) degrades both efficacy and security.</p>
+<h3 id="332-pareto-optimal-design-space">33.2 Pareto-Optimal Design Space</h3>
+<p>The design space is explored using Pareto optimization: finding designs where no objective can be improved without degrading another. The Pareto frontier defines the set of optimal trade-offs. The designer (or the automated design tool) selects a specific point on the frontier based on clinical priorities.</p>
+<p>For VIREON, the primary trade-off is between security (CL benchmark score) and efficacy (control performance metric, e.g., mean squared error of beta power tracking). The Pareto frontier typically shows diminishing returns: the first 20% of security investment (per-cycle range checks) achieves 80% of the maximum security benefit, while the last 20% (formal verification, independent sensing) achieves only 5% additional security benefit but significantly increases cost and complexity.</p>
+<h3 id="333-vireon-design-space-exploration">33.3 VIREON Design Space Exploration</h3>
+<p>The VIREON SDK provides tools for exploring the design space: the digital twin (Section 30) can simulate different configurations, the benchmark framework (CL-001 through CL-008) can evaluate each configuration's security, and the optimization module can search the parameter space for Pareto-optimal designs. The designer specifies constraints (maximum energy budget, minimum efficacy, minimum security score) and the optimizer finds configurations that satisfy all constraints.</p>
+<hr />
+<h2 id="section-34-case-study-closed-loop-dbs-for-parkinsons-disease">Section 34: Case Study — Closed-Loop DBS for Parkinson's Disease</h2>
+<h3 id="341-clinical-context">34.1 Clinical Context</h3>
+<p>Parkinson's disease (PD) is a neurodegenerative disorder characterized by the loss of dopaminergic neurons in the substantia nigra, leading to excessive beta-band oscillations (13-30 Hz) in the subthalamic nucleus (STN). Conventional DBS delivers continuous high-frequency stimulation (130 Hz) to the STN, which suppresses beta oscillations and improves motor symptoms. Closed-loop DBS senses beta power in real time and adjusts stimulation amplitude to maintain beta suppression while minimizing total stimulation delivered.</p>
+<p>The clinical benefit of closed-loop over open-loop DBS has been demonstrated in multiple studies. The MEDIC (Mechanisms of Deep Brain Stimulation) study at the University of Oxford showed that adaptive DBS reduced total stimulation energy by 40-60% compared to continuous DBS while maintaining equivalent or superior symptom control. A multi-center study (Gilron et al., 2021) confirmed these findings across 12 centers.</p>
+<h3 id="342-security-analysis">34.2 Security Analysis</h3>
+<p>Applying the framework from this module to a representative closed-loop DBS system for PD:</p>
+<p><strong>Most likely attack:</strong> Sensor spoofing (CL-001) — an attacker with physical proximity can inject EM signals at beta frequencies to cause the controller to overstimulate. The attack requires a coil or antenna within 1-10 cm of the patient's head, sustained for at least 500 ms. Detection is challenging because the injected signal is in the same frequency band as genuine beta.</p>
+<p><strong>Highest-impact attack:</strong> Safety monitor evasion combined with controller parameter manipulation (CL-006 + CL-003) — a sophisticated attacker disables the monitor and sets aggressive controller gains, causing oscillatory instability. The patient experiences rapidly fluctuating stimulation, which is both ineffective and distressing.</p>
+<p><strong>Most stealthy attack:</strong> Setpoint tracking (CL-004) — the attacker dynamically adjusts the setpoint to match the current beta power, creating zero error. The system appears to function normally (no alarms, normal stimulation output) but the controller takes no corrective action. If the patient's natural beta power is high (e.g., during medication wearing off), the lack of stimulation leads to clinical deterioration.</p>
+<h3 id="343-lessons-learned">34.3 Lessons Learned</h3>
+<p>This case study demonstrates that: (a) the most dangerous attacks are not the most technically sophisticated — sensor spoofing requires only a signal generator and a coil, (b) the safety monitor is essential but not sufficient — it must be designed with evasion resistance, (c) the closed-loop system's dependence on the wireless protocol creates a remote attack surface that open-loop systems lack, (d) the clinician is part of the security chain and must be trained to recognize anomalies.</p>
+<hr />
+<h2 id="section-35-case-study-responsive-neurostimulation-for-epilepsy">Section 35: Case Study — Responsive Neurostimulation for Epilepsy</h2>
+<h3 id="351-clinical-context">35.1 Clinical Context</h3>
+<p>The NeuroPace RNS System is an FDA-approved responsive neurostimulation device for drug-resistant focal epilepsy. It continuously senses electrocorticographic (ECoG) activity from depth or surface electrodes implanted near the epileptogenic zone. When it detects electrographic seizure activity (using a proprietary detection algorithm), it delivers brief stimulation bursts to abort the seizure before it becomes clinical.</p>
+<p>The RNS system's control loop is fundamentally different from closed-loop DBS. It is event-driven rather than continuous: the system monitors continuously but only intervenes when a seizure is detected. The "controller" is a binary detector (seizure / no seizure) rather than a continuous PI controller. The "actuation" is a brief stimulation burst (milliseconds) rather than continuous adjustment.</p>
+<h3 id="352-security-analysis">35.2 Security Analysis</h3>
+<p>The event-driven architecture has different security properties than continuous closed-loop control. The attack surface is narrower (the detector is the critical component, not a continuous controller) but the consequences of a missed detection (undetected seizure) or false detection (unnecessary stimulation) are severe.</p>
+<p><strong>Detector spoofing:</strong> An attacker who can inject ECoG patterns that mimic ictal (seizure) activity can trigger unnecessary stimulation. Repeated false triggers deplete battery (energy attack, CL-005) and may cause the clinician to lower the detection sensitivity, making the system less effective for genuine seizures.</p>
+<p><strong>Detector blinding:</strong> An attacker who can suppress the ictal signal (e.g., through EM injection that cancels the seizure pattern via destructive interference) can prevent the system from detecting genuine seizures. This is a denial-of-therapy attack.</p>
+<p><strong>Detection threshold manipulation:</strong> Modifying the seizure detector's sensitivity threshold has asymmetric effects. Increasing the threshold (requiring stronger evidence for detection) reduces false positives but may miss genuine seizures. Decreasing the threshold increases detection sensitivity but increases false positives. An attacker who can modify the threshold can optimize for either false positives (battery drain, alarm fatigue) or false negatives (missed seizures).</p>
+<h3 id="353-key-differences-from-dbs">35.3 Key Differences from DBS</h3>
+<p>The RNS system's event-driven architecture means that: (a) timing attacks (Section 18) are less relevant because the system does not have a fixed control loop period, (b) stability analysis (Section 21) does not apply because there is no continuous feedback loop, (c) sensor spoofing (Section 15) is the primary attack class, (d) energy attacks (Section 24) are particularly impactful because each stimulation burst consumes a fixed amount of energy regardless of therapeutic value.</p>
+<hr />
+<h2 id="section-36-case-study-closed-loop-spinal-cord-stimulation">Section 36: Case Study — Closed-Loop Spinal Cord Stimulation</h2>
+<h3 id="361-clinical-context">36.1 Clinical Context</h3>
+<p>Closed-loop spinal cord stimulation (SCS) for chronic pain senses evoked potentials (EPs) — neural responses to test stimulation pulses — and adjusts stimulation parameters to maintain the EP within a therapeutic window. The system delivers a test pulse every few seconds, measures the neural response, and adjusts stimulation amplitude, frequency, or pulse width to keep the EP at the target level.</p>
+<p>The control loop for SCS is much slower than for DBS (seconds vs. milliseconds) because the neural response to SCS develops over a longer timescale. This slower loop is more robust to timing attacks but provides less responsive therapy.</p>
+<h3 id="362-security-analysis">36.2 Security Analysis</h3>
+<p>The SCS closed-loop system shares many attack surfaces with DBS but has unique characteristics:</p>
+<p><strong>Evoked potential spoofing:</strong> The test pulse is a known, brief stimulus, and the EP is a characteristic waveform with specific latency and morphology. Spoofing an EP requires generating a waveform that matches the expected morphology, which is more constrained than spoofing continuous beta oscillations. However, the EP amplitude is small (1-10 uV) and could potentially be masked or augmented by external EM injection.</p>
+<p><strong>Adaptive threshold manipulation:</strong> The SCS controller adjusts the stimulation to maintain the EP at a target level. If the attacker shifts the perceived EP amplitude (through injection or electrode tampering), the controller adjusts stimulation in the wrong direction. Because the loop is slow (seconds per cycle), the attack has more time per cycle to compute the optimal injection.</p>
+<p><strong>Charge balance in SCS:</strong> SCS typically uses higher stimulation amplitudes than DBS (up to 15 mA) and wider pulse widths (up to 1000 us), making charge balance more critical. An attacker who disables charge-balance checking in an SCS system risks causing more severe tissue damage than in DBS due to the higher charge per phase.</p>
+<hr />
+<h2 id="section-37-open-research-problems">Section 37: Open Research Problems</h2>
+<h3 id="371-fundamental-research-questions">37.1 Fundamental Research Questions</h3>
+<ol>
+<li>
+<p><strong>Adversarial closed-loop control:</strong> How do we design controllers that are provably robust to adversarial perturbations of their sensing input? Existing robust control theory (H-infinity, mu-synthesis) addresses bounded disturbances but not adversarially-optimized perturbations. Closing this gap requires integrating control theory with adversarial ML.</p>
+</li>
+<li>
+<p><strong>Imperfect plant models:</strong> All stability guarantees assume a known plant model, but the neural response to stimulation varies across patients, over time, and with medication state. How do we verify closed-loop security when the plant model has bounded but unknown uncertainty?</p>
+</li>
+<li>
+<p><strong>Multi-agent closed-loop attacks:</strong> If a patient has multiple implanted devices (e.g., DBS and a cardiac pacemaker), can an attack on one device cascade to affect the other through physiological coupling? The security analysis of multi-implant systems is largely unexplored.</p>
+</li>
+<li>
+<p><strong>Post-quantum closed-loop security:</strong> Future quantum computers may break the cryptographic protocols (NL-004) used for parameter authentication. How do we maintain closed-loop security in a post-quantum world where parameter updates cannot be authenticated?</p>
+</li>
+<li>
+<p><strong>Formal verification of learning-based controllers:</strong> As closed-loop neurostimulation moves toward adaptive and learning-based controllers (previewed in NL-006), how do we formally verify the safety and security of controllers whose behavior is not fully specified at design time?</p>
+</li>
+</ol>
+<h3 id="372-applied-research-directions">37.2 Applied Research Directions</h3>
+<ol>
+<li>
+<p><strong>In vivo attack experimentation:</strong> Ethical frameworks for testing closed-loop neurostimulator security in animal models. The simulation-based approach (VIREON) is necessary but not sufficient — biological systems may exhibit behaviors not captured by any model.</p>
+</li>
+<li>
+<p><strong>Standardized security testing:</strong> Development of international standards (analogous to IEC 62443 for industrial control systems) specifically for closed-loop medical device security. Current standards (IEC 60601-1, FDA guidance) address safety but not security of the feedback loop.</p>
+</li>
+<li>
+<p><strong>Privacy-preserving telemetry:</strong> Closed-loop systems generate continuous neural data that is transmitted for clinician review and research. How do we protect the privacy of this data while enabling its clinical utility? Differential privacy, federated learning, and homomorphic encryption are candidate approaches.</p>
+</li>
+</ol>
+<hr />
+<h2 id="section-38-exercises">Section 38: Exercises</h2>
+<h3 id="381-analytical-exercises">38.1 Analytical Exercises</h3>
+<p><strong>E-001:</strong> For a PI-controlled first-order system with K = 1, tau = 200 ms, T = 10 ms, Kp = 0.05, Ki = 0.005, compute the closed-loop poles and verify they are inside the unit circle. Then compute the poles for Kp = 0.5 and determine whether the system is still stable.</p>
+<p><strong>E-002:</strong> A delay attack adds 30 ms to the feedback path. For the system in E-001, compute the phase margin loss and determine whether the system remains stable. If the gain crossover frequency is 0.158 rad/s, how much additional delay can the system tolerate before instability?</p>
+<p><strong>E-003:</strong> An attacker sets the setpoint 10 dB above the current beta power. Model the controller's response over 50 cycles (500 ms) assuming a first-order neural response with tau = 200 ms. What is the maximum stimulation amplitude reached?</p>
+<p><strong>E-004:</strong> Design a sensor spoofing detection algorithm based on the rate-of-change limit. Given that natural beta variability has sigma = 2 dB and the sample period is T = 10 ms, compute the maximum allowable per-cycle change in beta power for a false alarm rate of &lt; 1 per 1000 cycles.</p>
+<p><strong>E-005:</strong> A closed-loop DBS system has a phase margin of 60 degrees and a gain margin of 12 dB. An attacker increases the controller gain by 6 dB and adds 20 ms of delay. Compute the new phase margin and gain margin. Is the system still stable?</p>
+<h3 id="382-design-exercises">38.2 Design Exercises</h3>
+<p><strong>E-006:</strong> Design a graduated safety monitor response for a closed-loop DBS system. Specify the detection metrics, thresholds, and response actions for each of the five monitor response levels (Section 10.3). Justify your threshold choices based on clinical and security requirements.</p>
+<p><strong>E-007:</strong> Design a cross-channel consistency check for a bilateral STN DBS system. Specify the metric (correlation coefficient, spectral coherence, or other), the threshold, and the response when the check fails. Consider both genuine inter-hemispheric asymmetry and attack scenarios.</p>
+<p><strong>E-008:</strong> Propose an architecture for a closed-loop neurostimulation system that achieves both high responsiveness (control cycle &lt; 10 ms) and high security (all 10 VPs from Section 31.1 pass). Specify the hardware requirements, software architecture, and timing budget.</p>
+<hr />
+<h2 id="section-39-glossary">Section 39: Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Adaptive neurostimulation</strong></td>
+<td>Stimulation that automatically adjusts based on sensed neural activity, as opposed to fixed-parameter (open-loop) stimulation</td>
+</tr>
+<tr>
+<td><strong>Anti-windup</strong></td>
+<td>Mechanism to prevent the integral term of a PI controller from accumulating error when the actuator is saturated</td>
+</tr>
+<tr>
+<td><strong>Beta-band oscillations</strong></td>
+<td>Neural oscillations in the 13-30 Hz frequency range, used as a biomarker for Parkinson's disease bradykinesia and rigidity</td>
+</tr>
+<tr>
+<td><strong>Blacking period</strong></td>
+<td>Time window during and after stimulation when the ADC does not sample, preventing stimulation artifact from entering the control loop</td>
+</tr>
+<tr>
+<td><strong>BIBO stability</strong></td>
+<td>Bounded-Input Bounded-Output stability — a system is BIBO stable if every bounded input produces a bounded output</td>
+</tr>
+<tr>
+<td><strong>Charge balance</strong></td>
+<td>Requirement that the net charge delivered by a stimulation pulse is zero, preventing electrochemical tissue damage</td>
+</tr>
+<tr>
+<td><strong>Closed-loop</strong></td>
+<td>Control architecture where the output is continuously measured and fed back to adjust the input, creating a feedback loop</td>
+</tr>
+<tr>
+<td><strong>Control cycle</strong></td>
+<td>One complete sense-process-actuate iteration of the closed-loop system, typically 10-100 ms for DBS</td>
+</tr>
+<tr>
+<td><strong>Digital twin</strong></td>
+<td>High-fidelity simulation model of the physical system, used for validation, testing, and anomaly detection</td>
+</tr>
+<tr>
+<td><strong>Evoked potential</strong></td>
+<td>Neural response elicited by a test stimulus, used as a feedback signal in closed-loop SCS</td>
+</tr>
+<tr>
+<td><strong>Feedback bypass</strong></td>
+<td>Attack that disrupts the feedback path, preventing the controller from receiving accurate sensor data</td>
+</tr>
+<tr>
+<td><strong>Gain margin</strong></td>
+<td>Factor by which the loop gain can be increased before instability, measured in dB at the phase crossover frequency</td>
+</tr>
+<tr>
+<td><strong>Integral windup</strong></td>
+<td>Condition where the integral term of a PI controller accumulates a large value during actuator saturation, causing overshoot</td>
+</tr>
+<tr>
+<td><strong>Phase margin</strong></td>
+<td>Additional phase lag required to bring the system to the stability boundary, measured in degrees at the gain crossover frequency</td>
+</tr>
+<tr>
+<td><strong>PI controller</strong></td>
+<td>Proportional-Integral controller: u(t) = Kp * e(t) + Ki * integral(e(t))</td>
+</tr>
+<tr>
+<td><strong>Rate limiting</strong></td>
+<td>Restriction on how fast the controller output can change between consecutive control cycles</td>
+</tr>
+<tr>
+<td><strong>Safety monitor</strong></td>
+<td>Independent safety mechanism that watches for dangerous conditions and can force the system into a safe state</td>
+</tr>
+<tr>
+<td><strong>Setpoint</strong></td>
+<td>Target value for the controlled variable (e.g., target beta power level) that the controller tries to maintain</td>
+</tr>
+<tr>
+<td><strong>Subthalamic nucleus (STN)</strong></td>
+<td>Brain structure targeted by DBS for Parkinson's disease; excessive beta oscillations in STN correlate with motor symptoms</td>
+</tr>
+<tr>
+<td><strong>Transfer function</strong></td>
+<td>Mathematical representation of a system's input-output relationship in the frequency domain: G(s) = Y(s)/U(s)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="section-40-flashcards">Section 40: Flashcards</h2>
+<p><strong>F-025:</strong> What is the fundamental difference between open-loop and closed-loop neurostimulation from a security perspective?
+→ Open-loop has a bounded attack surface (parameters are fixed until changed); closed-loop has an unbounded attack surface because the feedback loop can amplify small perturbations into large, self-sustaining effects.</p>
+<p><strong>F-026:</strong> Why is the safety monitor's independence from the control path critical?
+→ If the monitor shares the control path, the same attack that compromises the controller can also compromise the monitor, eliminating the defense-in-depth protection. Independence ensures that an attack on one path does not automatically compromise the other.</p>
+<p><strong>F-027:</strong> What is integral windup, and how can an attacker exploit it?
+→ Integral windup occurs when the PI integrator accumulates error during actuator saturation. An attacker can exploit it by (1) spoofing extreme sensor data to cause saturation, (2) allowing the integrator to wind up, (3) removing the trigger — the wound-up integrator then causes extended overstimulation.</p>
+<p><strong>F-028:</strong> How does delay affect closed-loop stability?
+→ Delay adds phase lag to the loop transfer function, reducing the phase margin. If the phase margin drops below zero, the system becomes oscillatory unstable. The impact is proportional to the delay-to-period ratio at the gain crossover frequency.</p>
+<p><strong>F-029:</strong> What makes sensor spoofing particularly dangerous for closed-loop systems?
+→ The controller is designed to trust its sensor input — there is no "expected" neural signal to validate against. Neural signals are inherently variable, making it difficult to distinguish injected signals from genuine neural activity.</p>
+<p><strong>F-030:</strong> Name five attack surfaces specific to closed-loop neurostimulation.
+→ Sensing surface (AS-1), Processing surface (AS-2), Controller surface (AS-3), Actuation surface (AS-4), Monitor surface (AS-5).</p>
+<p><strong>F-031:</strong> What is the "responsiveness vs. security" tension in closed-loop design?
+→ Fast response requires minimal per-cycle validation; strong security requires comprehensive per-cycle checks. These compete for the same time budget within the control cycle.</p>
+<p><strong>F-032:</strong> How does the event-driven architecture (e.g., NeuroPace RNS) differ from continuous closed-loop in terms of security?
+→ Event-driven systems have a narrower attack surface (detector is the critical component, not a continuous controller) but lack continuous feedback, making timing attacks less relevant and sensor spoofing the primary concern.</p>
+<hr />
+<h2 id="section-41-interview-questions">Section 41: Interview Questions</h2>
+<p><strong>IQ-017:</strong> "Explain how a small change in PI controller gain can cause a closed-loop DBS system to become unstable."
+→ The PI gains (Kp, Ki) determine the closed-loop pole locations. Increasing the gains shifts the poles toward the unit circle (or beyond it in the z-plane). When poles cross outside the unit circle, the system response grows without bound — in DBS, this means oscillating or diverging stimulation amplitude. The characteristic equation 1 + C(z)G(z)H(z) = 0 defines the pole locations, and the stability boundary in the (Kp, Ki) plane is found by setting poles on the unit circle.</p>
+<p><strong>IQ-018:</strong> "How would you detect a sensor spoofing attack on a closed-loop neurostimulator, given that neural signals are inherently variable?"
+→ Multi-metric physiological plausibility checking: (1) rate-of-change limit — genuine beta changes with tau &gt; 50 ms, step changes are impossible, (2) spectral shape consistency — injected tones have different spectral kurtosis than genuine oscillations, (3) cross-channel correlation — injection on one contact is suspicious, (4) high-frequency harmonic content — EM injection produces harmonics that neural oscillations do not.</p>
+<p><strong>IQ-019:</strong> "Design a safety monitor for a closed-loop DBS system. What does it check, and how does it respond?"
+→ The monitor checks: stimulation limits (amplitude, frequency, pulse width, charge), loop stability (oscillation detection via zero-crossing rate and autocorrelation), sensor anomalies (clipping, flatline, spectral anomaly), controller anomalies (windup, NaN, rate violation), and timing anomalies (missed cycles, jitter). Response levels: (1) log and continue, (2) increase monitoring, (3) switch to open-loop, (4) reduce stimulation, (5) disable stimulation, (6) emergency shutdown.</p>
+<p><strong>IQ-020:</strong> "What is the fundamental challenge of securing a closed-loop system that does not exist in open-loop systems?"
+→ The feedback loop amplifies perturbations. In an open-loop system, an attack's impact is proportional to the attack magnitude. In a closed-loop system, an attack's impact can be disproportionate to the attack magnitude because the loop's dynamics can amplify a small perturbation into a large, sustained effect (instability). Additionally, the feedback loop creates temporal dependencies where the effect of an attack at time t depends on the system state, which was itself affected by previous attacks.</p>
+<p><strong>IQ-021:</strong> "How would you extend the CL benchmark framework to cover a learning-based adaptive controller (previewed in NL-006)?"
+→ Learning-based controllers change their behavior over time based on data, so the benchmarks must test: (1) parameter drift — does the controller's behavior diverge from the clinician's intent over time? (2) training data poisoning — can an attacker influence the controller's learning process? (3) model extraction — can an attacker infer the controller's internal model from its behavior? (4) adversarial examples — can crafted inputs cause the learned model to produce unsafe outputs? The formal verification approach (Section 28) becomes much harder because the controller's behavior is not statically specified.</p>
+<hr />
+<h2 id="section-42-research-questions">Section 42: Research Questions</h2>
+<p><strong>RQ-017:</strong> Prove or disprove: for any stabilizable first-order plant with known bounds on gain and time constant, there exists a PI controller with a fixed gain margin such that no constant-offset sensor spoofing attack can destabilize the closed-loop system without being detected by a rate-of-change monitor.</p>
+<p><strong>RQ-018:</strong> Given a closed-loop DBS system with a PI controller operating at 100 Hz, what is the minimum duration of a sensor spoofing attack that causes clinically significant overstimulation (amplitude &gt; 5 mA for &gt; 1 second), assuming the attacker optimizes the injection signal subject to a power constraint of P_max watts?</p>
+<p><strong>RQ-019:</strong> Design a formal verification framework for closed-loop neurostimulator security that can prove: (a) bounded-input bounded-output stability for all sensor inputs within specified bounds, (b) detection of all destabilizing parameter modifications within N control cycles, (c) energy safety (battery depletion rate bounded by a function of the stimulation parameters). What are the computational complexity bounds of this framework?</p>
+<p><strong>RQ-020:</strong> Characterize the fundamental limits of sensor spoofing detection for closed-loop neurostimulation. Is there a minimum signal-to-noise ratio below which adversarial perturbation is information-theoretically indistinguishable from genuine neural variability? If so, what are the implications for the design of closed-loop attack detection systems?</p>
+<p><strong>RQ-021:</strong> How should the VIREON benchmark framework evolve to address multi-implant closed-loop systems (e.g., a patient with both a DBS device and a responsive neurostimulator)? What new attack classes emerge from inter-device coupling, and how should cross-device security be validated?</p>
+<p><strong>RQ-022:</strong> Investigate the interaction between closed-loop neurostimulation security and patient privacy. Does the continuous neural data generated by closed-loop systems create a "neural fingerprint" that can be used to identify the patient, infer cognitive state, or predict behavior? What privacy-preserving techniques are compatible with the real-time constraints of closed-loop control?</p>
+<hr />
+<h2 id="module-summary">Module Summary</h2>
+<p>NL-005 has analyzed the security of closed-loop neurostimulation systems across 42 sections spanning foundations, deep analysis, and synthesis. The key takeaways are:</p>
+<ol>
+<li>Closed-loop systems create a fundamentally new attack surface — the feedback loop itself — that does not exist in open-loop systems.</li>
+<li>Control theory (transfer functions, stability margins, phase/gain margins) is the mathematical framework for analyzing closed-loop security.</li>
+<li>Five attack surfaces (sensing, processing, controller, actuation, monitor) and five perturbation classes (sensor, controller, actuator, delay, reference) provide a systematic taxonomy.</li>
+<li>The safety monitor is the last line of defense but can itself be evaded through sophisticated multi-vector attacks.</li>
+<li>The CL benchmark framework (CL-001 through CL-008) provides standardized test scenarios for evaluating closed-loop security.</li>
+<li>The responsiveness-security tension is a fundamental design constraint that requires architectural solutions (asymmetric monitoring, adaptive security levels, hardware acceleration).</li>
+<li>This module integrates all previous VIREON modules (NL-001 through NL-004) and provides the foundation for NL-006 (adversarial ML) and NL-007 (digital twins).</li>
+</ol>
+<p><strong>Next:</strong> NL-006 — Adversarial Machine Learning in Neurotechnology. This module extends the adversarial perturbation concepts from Section 20 to the full scope of machine learning models used in neurotechnology: neural signal classifiers, BCI decoders, anomaly detectors, and adaptive controllers.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

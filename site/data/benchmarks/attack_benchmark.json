@@ -1,0 +1,1121 @@
+{
+  "timestamp": "2026-07-23T06:59:42.301840",
+  "config": {
+    "num_cycles": 500,
+    "seed": 42,
+    "vulnerable": true,
+    "full": false
+  },
+  "benchmarks": [
+    {
+      "benchmark": "CL-001",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.6012mA, beta -12.57->-9.47dB; alerts=243"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.4229mA, beta -12.57->-6.37dB; alerts=245"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 15,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.2916mA, beta -12.57->-3.29dB; alerts=172"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.9603mA, beta -12.57->-15.67dB; alerts=246"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.1395mA, beta -12.57->-18.76dB; alerts=251"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -15,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.3184mA, beta -12.57->-21.85dB; alerts=255"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 20,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.2545mA, beta -12.57->-0.26dB; alerts=126"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -20,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.4971mA, beta -12.57->-24.93dB; alerts=262"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 8,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.4933mA, beta -12.57->-7.61dB; alerts=246"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -8,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.0679mA, beta -12.57->-17.52dB; alerts=247"
+        }
+      ],
+      "total_score": 30,
+      "max_score": 100,
+      "grade": "F"
+    },
+    {
+      "benchmark": "CL-002",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 3,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.6931mA, beta -12.57->-11.03dB; alerts=241"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 5,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.6345mA, beta -12.57->-10.00dB; alerts=242"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 8,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.5465mA, beta -12.57->-8.45dB; alerts=242"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -3,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.8687mA, beta -12.57->-14.12dB; alerts=237"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -5,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.9272mA, beta -12.57->-15.15dB; alerts=240"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -8,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.0149mA, beta -12.57->-16.69dB; alerts=239"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 10,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.4886mA, beta -12.57->-7.41dB; alerts=242"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -10,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.0733mA, beta -12.57->-17.72dB; alerts=241"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 6,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.6051mA, beta -12.57->-9.48dB; alerts=242"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -6,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.9564mA, beta -12.57->-15.66dB; alerts=240"
+        }
+      ],
+      "total_score": 30,
+      "max_score": 100,
+      "grade": "F"
+    },
+    {
+      "benchmark": "CL-003",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 2,
+            "ki_mult": 1,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.1958mA, beta -12.57->-12.76dB; alerts=323"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 5,
+            "ki_mult": 1,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->2.5263mA, beta -12.57->-13.23dB; alerts=369"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 10,
+            "ki_mult": 1,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": true,
+          "score": 3,
+          "details": "stim 0.7809->2.5726mA, beta -12.57->-13.25dB; alerts=106"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 1,
+            "ki_mult": 2,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.8464mA, beta -12.57->-12.61dB; alerts=239"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 1,
+            "ki_mult": 5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.0443mA, beta -12.57->-12.69dB; alerts=238"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 1,
+            "ki_mult": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.3790mA, beta -12.57->-12.82dB; alerts=235"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 3,
+            "ki_mult": 3,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.7667mA, beta -12.57->-12.98dB; alerts=348"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 5,
+            "ki_mult": 5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->2.8212mA, beta -12.57->-13.31dB; alerts=367"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 2,
+            "ki_mult": 2,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.2637mA, beta -12.57->-12.79dB; alerts=323"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 0.5,
+            "ki_mult": 0.5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.5482mA, beta -12.57->-12.46dB; alerts=139"
+        }
+      ],
+      "total_score": 3,
+      "max_score": 100,
+      "grade": "F"
+    },
+    {
+      "benchmark": "CL-004",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": 5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.9603mA, beta -12.57->-12.66dB; alerts=239"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": -5,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.6012mA, beta -12.57->-12.48dB; alerts=243"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.1395mA, beta -12.57->-12.74dB; alerts=240"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": -10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.4229mA, beta -12.57->-12.39dB; alerts=238"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": 15,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.3184mA, beta -12.57->-12.82dB; alerts=240"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": -15,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.2916mA, beta -12.57->-12.32dB; alerts=159"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": 3,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.8886mA, beta -12.57->-12.63dB; alerts=237"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": -3,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.6732mA, beta -12.57->-12.52dB; alerts=243"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": 8,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->1.0679mA, beta -12.57->-12.71dB; alerts=239"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": -8,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": false,
+          "responded": false,
+          "score": 0,
+          "details": "stim 0.7809->0.4933mA, beta -12.57->-12.43dB; alerts=243"
+        }
+      ],
+      "total_score": 0,
+      "max_score": 100,
+      "grade": "F"
+    },
+    {
+      "benchmark": "CL-005",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 300
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=259"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 400
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=261"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 500
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=255"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 500
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=255"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 500
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=255"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 500
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=255"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 350
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=261"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 450
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=261"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 500
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=255"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "energy_flood",
+            "start_cycle": 200,
+            "end_cycle": 500
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=255"
+        }
+      ],
+      "total_score": 70,
+      "max_score": 100,
+      "grade": "C"
+    },
+    {
+      "benchmark": "CL-006",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "with_evasion": true,
+            "offset_db": 10,
+            "gradual": false
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=239"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "gain_modify",
+            "with_evasion": true,
+            "kp_mult": 5,
+            "ki_mult": 1,
+            "gradual": false
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=239"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "with_evasion": true,
+            "setpoint_db": 10,
+            "gradual": false
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=239"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "energy_flood",
+            "with_evasion": true
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=239"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "delay_inject",
+            "with_evasion": true,
+            "delay_cycles": 10
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=239"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "with_evasion": false,
+            "offset_db": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.4229mA, beta -12.57->-6.37dB; alerts=245"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "gain_modify",
+            "with_evasion": false,
+            "kp_mult": 5,
+            "ki_mult": 1,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->2.5263mA, beta -12.57->-13.23dB; alerts=369"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "with_evasion": false,
+            "setpoint_db": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.1395mA, beta -12.57->-12.74dB; alerts=240"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "energy_flood",
+            "with_evasion": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.3184mA, beta -12.57->-21.85dB; alerts=255"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "delay_inject",
+            "with_evasion": false,
+            "delay_cycles": 10
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=243"
+        }
+      ],
+      "total_score": 54,
+      "max_score": 100,
+      "grade": "F"
+    },
+    {
+      "benchmark": "CL-007",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 2
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=240"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 3
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=241"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 5
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=242"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 8
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=244"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 10
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=243"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 15
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.7819mA, beta -12.57->-12.58dB; alerts=243"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 20
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.7801mA, beta -12.57->-12.55dB; alerts=246"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 3
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=241"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 5
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=242"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 7
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=242"
+        }
+      ],
+      "total_score": 62,
+      "max_score": 100,
+      "grade": "D"
+    },
+    {
+      "benchmark": "CL-008",
+      "tests": [
+        {
+          "test_id": 1,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.4229mA, beta -12.57->-6.37dB; alerts=245"
+        },
+        {
+          "test_id": 2,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": 5,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.6345mA, beta -12.57->-10.00dB; alerts=242"
+        },
+        {
+          "test_id": 3,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 5,
+            "ki_mult": 1,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->2.5263mA, beta -12.57->-13.23dB; alerts=369"
+        },
+        {
+          "test_id": 4,
+          "params": {
+            "attack_type": "setpoint_modify",
+            "setpoint_db": 10,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.1395mA, beta -12.57->-12.74dB; alerts=240"
+        },
+        {
+          "test_id": 5,
+          "params": {
+            "attack_type": "energy_flood"
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.3184mA, beta -12.57->-21.85dB; alerts=255"
+        },
+        {
+          "test_id": 6,
+          "params": {
+            "attack_type": "delay_inject",
+            "delay_cycles": 10
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=243"
+        },
+        {
+          "test_id": 7,
+          "params": {
+            "attack_type": "feedback_bypass"
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.8601mA, beta -12.57->-12.62dB; alerts=103"
+        },
+        {
+          "test_id": 8,
+          "params": {
+            "attack_type": "monitor_evasion"
+          },
+          "attack_effect": false,
+          "detected": true,
+          "responded": false,
+          "score": 7,
+          "details": "No significant effect vs baseline; alerts=239"
+        },
+        {
+          "test_id": 9,
+          "params": {
+            "attack_type": "sensor_spoof",
+            "offset_db": -15,
+            "gradual": false
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->1.3184mA, beta -12.57->-21.85dB; alerts=255"
+        },
+        {
+          "test_id": 10,
+          "params": {
+            "attack_type": "gain_modify",
+            "kp_mult": 0.5,
+            "ki_mult": 0.5,
+            "gradual": true
+          },
+          "attack_effect": true,
+          "detected": true,
+          "responded": false,
+          "score": 3,
+          "details": "stim 0.7809->0.6139mA, beta -12.57->-12.49dB; alerts=164"
+        }
+      ],
+      "total_score": 38,
+      "max_score": 100,
+      "grade": "F"
+    }
+  ],
+  "summary": {
+    "total_score": 287,
+    "max_score": 800,
+    "grade": "F"
+  }
+}

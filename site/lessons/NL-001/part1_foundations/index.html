@@ -1,0 +1,2596 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../../../package_reference/">
+      
+      
+        <link rel="next" href="../part2_deep_analysis/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Part 1 Foundations - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-001-neural-signals-the-neurosecurity-problem-space" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 1 Foundations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-historical-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Historical Background
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Historical Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-neural-recording-from-animal-electricity-to-implantable-chips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Neural Recording: From Animal Electricity to Implantable Chips
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-security-evolution-in-medical-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Security Evolution in Medical Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scientific-foundations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scientific Foundations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scientific Foundations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-the-biophysical-basis-of-neural-signals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 The Biophysical Basis of Neural Signals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-volume-conduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Volume Conduction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-signal-modality-taxonomy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Signal Modality Taxonomy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Signal Modality Taxonomy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#eeg-electroencephalography" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EEG (Electroencephalography)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecog-electrocorticography" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECoG (Electrocorticography)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lfp-local-field-potential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LFP (Local Field Potential)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spike-trains-single-unit-multi-unit-activity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spike Trains (Single-Unit / Multi-Unit Activity)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-engineering-foundations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Engineering Foundations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Engineering Foundations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-neural-data-acquisition-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Neural Data Acquisition Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-implantable-pulse-generator-ipg-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Implantable Pulse Generator (IPG) Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-medical-foundations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Medical Foundations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Medical Foundations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-clinical-applications-of-neurotechnology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Clinical Applications of Neurotechnology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1 Clinical Applications of Neurotechnology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deep-brain-stimulation-dbs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Brain Stimulation (DBS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-clinical-relevance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Clinical Relevance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-current-industry-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Current Industry Practice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Current Industry Practice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-major-neurotechnology-manufacturers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Major Neurotechnology Manufacturers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-industry-security-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Industry Security Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-academic-state-of-the-art" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Academic State of the Art
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Academic State of the Art">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-key-research-contributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Key Research Contributions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-research-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Research Gaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-003/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-historical-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Historical Background
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Historical Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-neural-recording-from-animal-electricity-to-implantable-chips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Neural Recording: From Animal Electricity to Implantable Chips
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-security-evolution-in-medical-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Security Evolution in Medical Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-scientific-foundations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scientific Foundations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Scientific Foundations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-the-biophysical-basis-of-neural-signals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 The Biophysical Basis of Neural Signals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-volume-conduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Volume Conduction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-signal-modality-taxonomy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Signal Modality Taxonomy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Signal Modality Taxonomy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#eeg-electroencephalography" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EEG (Electroencephalography)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecog-electrocorticography" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECoG (Electrocorticography)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lfp-local-field-potential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LFP (Local Field Potential)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spike-trains-single-unit-multi-unit-activity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Spike Trains (Single-Unit / Multi-Unit Activity)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-engineering-foundations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Engineering Foundations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Engineering Foundations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-neural-data-acquisition-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Neural Data Acquisition Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-implantable-pulse-generator-ipg-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Implantable Pulse Generator (IPG) Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-medical-foundations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Medical Foundations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Medical Foundations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-clinical-applications-of-neurotechnology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Clinical Applications of Neurotechnology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.1 Clinical Applications of Neurotechnology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deep-brain-stimulation-dbs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deep Brain Stimulation (DBS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-clinical-relevance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Clinical Relevance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-current-industry-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Current Industry Practice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Current Industry Practice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-major-neurotechnology-manufacturers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Major Neurotechnology Manufacturers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-industry-security-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Industry Security Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-academic-state-of-the-art" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Academic State of the Art
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Academic State of the Art">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-key-research-contributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Key Research Contributions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-research-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Research Gaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-001-neural-signals-the-neurosecurity-problem-space">NL-001: Neural Signals &amp; The Neurosecurity Problem Space</h1>
+<blockquote>
+<p><strong>Module ID:</strong> NL-001 | <strong>Track:</strong> Foundations | <strong>Version:</strong> 1.0</p>
+</blockquote>
+<hr />
+<h2 id="1-overview">1. Overview</h2>
+<p>Neurosecurity is the application of cybersecurity principles to neurotechnology — the devices, systems, and algorithms that interact with the nervous system. This module establishes the foundational knowledge required to reason about neurosecurity: what neural signals are, how they are acquired and processed, what systems handle them, and why these systems present unique security challenges.</p>
+<p>This is not a module about neuroscience for its own sake. Every concept introduced here is framed by its security implications. The amplitude of an EEG signal matters because it defines the noise floor that an attacker must overcome for signal injection. The bandwidth of a neural recording matters because it determines the data rate that the wireless link must support, which constrains the cryptographic overhead that can be tolerated. The spatial resolution of ECoG matters because it determines how precisely an attacker must target electromagnetic interference to inject a specific false signal.</p>
+<p>The central thesis of this module: <strong>neural data is not merely medical data — it is a data type with unique security properties that emerge from its biological origin, its clinical significance, its information density, and the life-safety context in which it is processed.</strong> Standard medical device security approaches, while necessary, are insufficient for neurotechnology. Understanding why requires understanding what neural signals are.</p>
+<h2 id="2-historical-background">2. Historical Background</h2>
+<h3 id="21-neural-recording-from-animal-electricity-to-implantable-chips">2.1 Neural Recording: From Animal Electricity to Implantable Chips</h3>
+<p>The history of neural recording spans centuries, but the security-relevant history begins with the development of technologies that created digital representations of neural activity — because digital representations can be intercepted, modified, and replayed.</p>
+<ul>
+<li>
+<p><strong>1924</strong>: Hans Berger records the first human EEG, demonstrating that electrical activity can be measured non-invasively from the scalp. The signals are analog, recorded photographically. No digital security concerns exist because the data has no digital representation.</p>
+</li>
+<li>
+<p><strong>1950s-1960s</strong>: Development of microelectrode techniques allows recording of single-neuron action potentials (spike trains) in animals. Hubel and Wiesel's work on visual cortex neurons demonstrates the information richness of individual neural signals. The data is still primarily analog.</p>
+</li>
+<li>
+<p><strong>1970s-1980s</strong>: Digital signal processing becomes practical. ADCs with sufficient resolution and sampling rate become available for neural signals. The transition from analog to digital representation creates the fundamental precondition for all modern neurosecurity concerns — data that exists as bits can be manipulated as bits.</p>
+</li>
+<li>
+<p><strong>1990s</strong>: Cochlear implants become commercially successful. These are among the first widely deployed neural interface devices with wireless programming capability. The wireless programming interface, designed for clinical convenience, simultaneously creates the first widespread wireless attack surface on a neural device.</p>
+</li>
+<li>
+<p><strong>1997</strong>: FDA approves the first deep brain stimulation (DBS) system (Medtronic Activa) for essential tremor. DBS implants are wirelessly programmable, creating a permanent, life-critical wireless attack surface inside the patient's body.</p>
+</li>
+<li>
+<p><strong>2000s</strong>: Brain-computer interface (BCI) research accelerates. The BrainGate project demonstrates that paralyzed patients can control a computer cursor using intracortical recordings. The clinical motivation for BCIs creates pressure to deploy them, but the security implications of high-bandwidth neural data transmission are not yet addressed.</p>
+</li>
+<li>
+<p><strong>2008</strong>: Halperin et al. demonstrate wireless attacks on implantable cardiac devices using a software-defined radio. This paper does not target neural devices directly, but it establishes the methodology — protocol reverse engineering, replay attacks, command injection — that all subsequent neural implant security research builds on. This is the paper that made the medical device security field credible.</p>
+</li>
+<li>
+<p><strong>2012</strong>: Martinovic et al. demonstrate that EEG signals recorded during typing contain enough information to reconstruct typed text. This establishes neural signals as a side-channel for private information leakage, expanding the security concern beyond device security to data security.</p>
+</li>
+<li>
+<p><strong>2016</strong>: Security researchers demonstrate vulnerabilities in Abbott's (St. Jude Medical) implantable device ecosystem. The FDA issues a safety advisory. This is the first major regulatory response to neural device security vulnerabilities.</p>
+</li>
+<li>
+<p><strong>2019-present</strong>: Adversarial machine learning research demonstrates that BCI systems are vulnerable to adversarial examples. Neuralink receives FDA breakthrough device designation. The field of neurosecurity is established but fragmented — no standardized assessment methodology exists. This is the gap VIREON is designed to fill.</p>
+</li>
+</ul>
+<h3 id="22-security-evolution-in-medical-devices">2.2 Security Evolution in Medical Devices</h3>
+<p>Medical device security has evolved through distinct phases, each driven by external pressure:</p>
+<ul>
+<li>
+<p><strong>Phase 1 (pre-2008): Security through obscurity.</strong> Proprietary protocols, assumed physical proximity, no published attacks. The prevailing belief was that the short range and low power of implant telemetry provided sufficient security.</p>
+</li>
+<li>
+<p><strong>Phase 2 (2008-2014): Academic awareness.</strong> The Halperin et al. paper and subsequent research demonstrated that attacks were feasible. Manufacturers began adding basic security (authentication, encryption) to new devices. Legacy devices remained vulnerable.</p>
+</li>
+<li>
+<p><strong>Phase 3 (2014-2023): Regulatory response.</strong> FDA issues cybersecurity guidance for pre-market submissions. IEC 62443 is increasingly referenced. Security becomes a regulatory requirement, but the requirements are generic and the enforcement is inconsistent.</p>
+</li>
+<li>
+<p><strong>Phase 4 (2023-present): Maturation attempt.</strong> Updated FDA guidance, growing academic community, increasing public awareness. But the fundamental challenges remain: device lifecycle mismatch, resource constraints, lack of standardized validation methodology.</p>
+</li>
+</ul>
+<h2 id="3-scientific-foundations">3. Scientific Foundations</h2>
+<h3 id="31-the-biophysical-basis-of-neural-signals">3.1 The Biophysical Basis of Neural Signals</h3>
+<p>Neurons communicate through electrochemical signaling. The electrical component — the action potential (spike) — is the primary signal recorded by neurotechnology. Understanding the biophysics is security-relevant because it defines the physical layer that all security mechanisms are built on top of.</p>
+<p><strong>Resting membrane potential:</strong> Neurons maintain a ~-70 mV potential difference across their cell membrane, established by the Na+/K+ ATPase pump and differential membrane permeability to ions. This potential exists because the membrane is a dielectric barrier separating two conducting solutions (intracellular and extracellular fluid) with different ionic compositions. The resting potential is the baseline from which all neural signals deviate.</p>
+<p><strong>Action potential generation:</strong> When a neuron receives sufficient excitatory input, voltage-gated Na+ channels open, Na+ rushes in, the membrane depolarizes rapidly to ~+40 mV, then voltage-gated K+ channels open, K+ rushes out, and the membrane repolarizes and briefly hyperpolarizes. This ~1 ms event is the action potential — the fundamental unit of neural communication. From a security perspective, the action potential is the highest-bandwidth, highest-spatial-resolution neural signal and the most information-rich.</p>
+<p><strong>Synaptic transmission:</strong> The action potential triggers neurotransmitter release at the axon terminal. Neurotransmitters bind to receptors on the postsynaptic neuron, causing excitatory or inhibitory postsynaptic potentials (EPSPs/IPSPs). These graded potentials (typically 0.1-10 mV) decay over time and distance. They are not typically recorded directly in clinical neurotechnology but contribute to the field potentials recorded by EEG, ECoG, and LFP electrodes.</p>
+<h3 id="32-volume-conduction">3.2 Volume Conduction</h3>
+<p>The electrical signals generated by neurons propagate through biological tissue to reach recording electrodes. This propagation is called volume conduction, and it is the physical process that determines what a recording electrode actually measures.</p>
+<p>The key principle: <strong>an electrode does not record the activity of a single neuron (unless it is a microelectrode placed inside or immediately adjacent to the neuron).</strong> Instead, it records the weighted sum of all electrical activity in the surrounding tissue, with weighting determined by the distance from each neural source to the electrode and the conductivity of the intervening tissue.</p>
+<p>The implications for security:</p>
+<ul>
+<li>
+<p><strong>Spatial blurring:</strong> Volume conduction blurs the spatial specificity of neural signals. An EEG electrode records the summed activity of millions of neurons spread across several square centimeters of cortex. An attacker attempting to inject a spatially specific signal through EMI must overcome this blurring — the injected signal will be distributed across the volume conductor, not focused on a single electrode.</p>
+</li>
+<li>
+<p><strong>Frequency-dependent attenuation:</strong> High-frequency signals (action potentials) attenuate more rapidly with distance than low-frequency signals (synaptic potentials). This is why EEG primarily reflects low-frequency (0.5-100 Hz) activity — the high-frequency components are attenuated before reaching the scalp. For security, this means that spike-train-level attacks require closer proximity to the neural source than EEG-level attacks.</p>
+</li>
+<li>
+<p><strong>Reference-dependent measurement:</strong> All electrical recordings are differential — they measure the potential difference between two points. The choice of reference electrode affects the recorded signal. An attacker who can influence the reference electrode can effectively modify all channel recordings.</p>
+</li>
+</ul>
+<h3 id="33-signal-modality-taxonomy">3.3 Signal Modality Taxonomy</h3>
+<p>The four primary neural signal modalities, in order of decreasing spatial resolution and increasing invasiveness:</p>
+<h4 id="eeg-electroencephalography">EEG (Electroencephalography)</h4>
+<ul>
+<li><strong>What it is:</strong> Recording of summed postsynaptic potentials from the cortical surface, measured non-invasively from the scalp.</li>
+<li><strong>Typical amplitude:</strong> 10-100 uV (microvolts)</li>
+<li><strong>Bandwidth:</strong> 0.5-100 Hz (clinical), up to 500 Hz (research)</li>
+<li><strong>Spatial resolution:</strong> ~1-2 cm (limited by skull attenuation and volume conduction)</li>
+<li><strong>Invasiveness:</strong> Non-invasive (surface electrodes)</li>
+<li><strong>What it reflects:</strong> Synchronized cortical activity — rhythms, evoked potentials, event-related potentials</li>
+<li><strong>Clinical uses:</strong> Epilepsy diagnosis, sleep staging, coma assessment, brain death determination</li>
+<li><strong>Security relevance:</strong> Widely deployed in consumer devices (Muse, Emotiv, OpenBCI). The consumer application creates a large attack surface. EEG data contains enough information for biometric identification and cognitive state inference. The low amplitude makes it susceptible to EMI injection. The non-invasive nature means no surgical barrier to electrode access.</li>
+</ul>
+<h4 id="ecog-electrocorticography">ECoG (Electrocorticography)</h4>
+<ul>
+<li><strong>What it is:</strong> Recording from electrodes placed directly on the cortical surface (under the skull but outside the pia mater). Requires craniotomy.</li>
+<li><strong>Typical amplitude:</strong> 50-500 uV</li>
+<li><strong>Bandwidth:</strong> 0.5-500 Hz (clinical), up to several kHz (research)</li>
+<li><strong>Spatial resolution:</strong> ~1-5 mm (much better than EEG because the skull is bypassed)</li>
+<li><strong>Invasiveness:</strong> Semi-invasive (requires craniotomy, electrodes on brain surface)</li>
+<li><strong>What it reflects:</strong> Local cortical field potentials with better spatial specificity than EEG</li>
+<li><strong>Clinical uses:</strong> Epilepsy seizure focus localization (intraoperative), functional brain mapping</li>
+<li><strong>Security relevance:</strong> Used in research BCIs (higher signal quality than EEG). The implanted nature means the electrode location is fixed, providing spatial stability. The higher signal quality means more information can be extracted, increasing the impact of data exfiltration.</li>
+</ul>
+<h4 id="lfp-local-field-potential">LFP (Local Field Potential)</h4>
+<ul>
+<li><strong>What it is:</strong> Recording of summed neural activity in a local brain region, typically from depth electrodes (e.g., DBS leads used for recording). Measures the same biophysical phenomenon as EEG/ECoG but from within the brain parenchyma.</li>
+<li><strong>Typical amplitude:</strong> 100-1000 uV</li>
+<li><strong>Bandwidth:</strong> 0.5-500 Hz (most analysis focuses on 0.5-200 Hz)</li>
+<li><strong>Spatial resolution:</strong> ~1-3 mm (depends on electrode size and location)</li>
+<li><strong>Invasiveness:</strong> Invasive (electrodes penetrate brain tissue)</li>
+<li><strong>What it reflects:</strong> Local population neural activity, oscillatory dynamics in deep brain structures</li>
+<li><strong>Clinical uses:</strong> DBS lead localization, biomarker identification for closed-loop stimulation (e.g., beta-band power in subthalamic nucleus for Parkinson's disease)</li>
+<li><strong>Security relevance:</strong> LFP is increasingly used in closed-loop DBS systems (Medtronic Percept PC, Abbott Infinity). The recorded LFP drives the stimulation algorithm. If an attacker can inject false LFP data, they can manipulate the closed-loop controller. This is one of the most security-critical signal modalities because it directly controls a therapeutic intervention.</li>
+</ul>
+<h4 id="spike-trains-single-unit-multi-unit-activity">Spike Trains (Single-Unit / Multi-Unit Activity)</h4>
+<ul>
+<li><strong>What it is:</strong> Recording of individual action potentials (spikes) from one or a few neurons. Requires microelectrodes placed within or immediately adjacent to neurons.</li>
+<li><strong>Typical amplitude:</strong> 100-1000 uV (extracellular)</li>
+<li><strong>Bandwidth:</strong> 300-6000 Hz (action potential bandwidth)</li>
+<li><strong>Spatial resolution:</strong> Single-neuron (theoretical), practically multi-neuron (50-200 um)</li>
+<li><strong>Invasiveness:</strong> Highly invasive (microelectrodes in brain tissue)</li>
+<li><strong>What it reflects:</strong> Individual neuron firing patterns — the most information-rich neural signal</li>
+<li><strong>Clinical uses:</strong> Research BCIs (BrainGate), experimental neuroprosthetics</li>
+<li><strong>Security relevance:</strong> The highest-bandwidth neural signal. Neuralink's high-channel-count system records spike data. The information density makes spike data the most valuable target for exfiltration (it encodes detailed motor intentions, sensory representations, and potentially cognitive content). However, the high bandwidth requirements make secure transmission more challenging (more data to encrypt, authenticate, and protect).</li>
+</ul>
+<h2 id="4-engineering-foundations">4. Engineering Foundations</h2>
+<h3 id="41-neural-data-acquisition-pipeline">4.1 Neural Data Acquisition Pipeline</h3>
+<p>Every neurotechnology system implements a version of the following pipeline. Understanding this pipeline is essential because each stage represents a potential attack surface and a potential validation point.</p>
+<pre><code>Neural Source (neurons)
+    |
+    v
+[Electrodes] — transduce ionic current to electronic current
+    |
+    v
+[Analog Front-End (AFE)] — amplify (10,000-100,000x), filter, impedance matching
+    |
+    v
+[ADC] — digitize (16-24 bit, 500 Hz - 30 kS/s depending on modality)
+    |
+    v
+[Digital Signal Processing] — notch filter (powerline), bandpass, artifact removal
+    |
+    v
+[Feature Extraction / Compression] — reduce data rate for transmission
+    |
+    v
+[Encryption / Authentication] — protect data for wireless transmission
+    |
+    v
+[RF Telemetry] — transmit wirelessly (BLE, MICS, proprietary)
+    |
+    v
+[External Receiver / Programmer] — decrypt, authenticate, display
+    |
+    v
+[Clinical Application / Cloud Storage / BCI Decoder]
+</code></pre>
+<p>Each stage has security-relevant properties:</p>
+<ul>
+<li>
+<p><strong>Electrodes:</strong> Physical interface to neural tissue. Vulnerable to EMI injection at the electrode-tissue interface. The electrode-tissue impedance is a physiological parameter that can be measured remotely — changes in impedance may indicate electrode migration (failure mode) or tampering.</p>
+</li>
+<li>
+<p><strong>AFE:</strong> High-gain amplification means any interference injected before the AFE is amplified along with the neural signal. The AFE's input impedance and noise performance determine the minimum detectable signal and therefore the minimum signal an attacker must inject to be effective.</p>
+</li>
+<li>
+<p><strong>ADC:</strong> The ADC's resolution and sampling rate determine the dynamic range and bandwidth of the digitized signal. Quantization noise from the ADC sets a noise floor that affects signal quality and the detectability of subtle attacks.</p>
+</li>
+<li>
+<p><strong>Digital Signal Processing:</strong> DSP firmware is a potential attack surface. Buffer overflows in filter implementations could compromise the entire system. DSP parameters (filter coefficients, notch frequency) could be manipulated to alter the recorded signal.</p>
+</li>
+<li>
+<p><strong>Feature Extraction:</strong> Data compression and feature extraction reduce the information content. This can be either a security feature (less data to exfiltrate) or a security risk (compression artifacts could mask attack indicators).</p>
+</li>
+<li>
+<p><strong>Encryption/Authentication:</strong> The cryptographic layer. Its correctness, completeness, and implementation quality determine the security of the wireless link.</p>
+</li>
+<li>
+<p><strong>RF Telemetry:</strong> The wireless link. Its protocol, modulation, and implementation determine the attack surface accessible to a remote attacker.</p>
+</li>
+</ul>
+<h3 id="42-implantable-pulse-generator-ipg-architecture">4.2 Implantable Pulse Generator (IPG) Architecture</h3>
+<p>The IPG is the core implanted component in most neurostimulation systems. It is a hermetically sealed titanium capsule containing:</p>
+<ul>
+<li>
+<p><strong>Microcontroller (MCU):</strong> Executes firmware for signal acquisition, processing, stimulation control, and telemetry. Typically ARM Cortex-M class. Power-constrained.</p>
+</li>
+<li>
+<p><strong>Analog Front-End (AFE) ASIC:</strong> Custom-designed integrated circuit for neural signal amplification and digitization. The AFE is the interface between the biological and digital domains.</p>
+</li>
+<li>
+<p><strong>RF Telemetry Module:</strong> Implements the wireless protocol for communication with the external programmer. Typically operates in the MICS band (402-405 MHz) for implantable devices.</p>
+</li>
+<li>
+<p><strong>Stimulation Circuitry:</strong> Constant-current or constant-voltage sources that generate therapeutic stimulation pulses. Connected to the electrodes through the lead.</p>
+</li>
+<li>
+<p><strong>Battery:</strong> Primary (non-rechargeable, 3-9 year life) or secondary (rechargeable, weekly/daily charging). The battery is the primary constraint on all design decisions — power determines what computations are feasible.</p>
+</li>
+<li>
+<p><strong>Safety Monitor:</strong> Independent hardware circuit that enforces hard limits on stimulation parameters (voltage, current, charge, duty cycle). Cannot be bypassed by firmware.</p>
+</li>
+</ul>
+<p>Understanding the IPG architecture is essential for security analysis because the trust boundaries, attack surfaces, and defense mechanisms are all determined by this architecture.</p>
+<h2 id="5-medical-foundations">5. Medical Foundations</h2>
+<h3 id="51-clinical-applications-of-neurotechnology">5.1 Clinical Applications of Neurotechnology</h3>
+<p>Neurosecurity cannot be understood without understanding the clinical context. The clinical application determines:
+- What neural signals are recorded
+- What stimulation is delivered
+- What the consequences of a security failure would be
+- What safety mechanisms exist
+- What regulatory constraints apply</p>
+<h4 id="deep-brain-stimulation-dbs">Deep Brain Stimulation (DBS)</h4>
+<p><strong>Indication:</strong> Parkinson's disease, essential tremor, dystonia, obsessive-compulsive disorder, epilepsy, treatment-resistant depression (investigational).</p>
+<p><strong>Mechanism:</strong> Electrodes are surgically implanted into deep brain structures (subthalamic nucleus, globus pallidus interna, ventral intermediate nucleus of thalamus). Continuous high-frequency electrical stimulation (130-185 Hz) modulates pathological neural circuit activity. The exact mechanism is still debated — proposed mechanisms include local inhibition, axonal activation, and network desynchronization.</p>
+<p><strong>Device architecture:</strong> The IPG is typically implanted in the chest wall (subclavicular), similar to a cardiac pacemaker. Leads extend from the IPG to the brain through a subcutaneous tunnel. The lead contains 4-8 electrodes at the distal tip. The IPG contains the battery, MCU, AFE, RF telemetry, and stimulation circuitry.</p>
+<p><strong>Patient lifecycle:</strong>
+1. <strong>Diagnosis:</strong> Patient is diagnosed with a movement disorder
+2. <strong>Surgical implantation:</strong> Lead placement under stereotactic guidance, IPG implantation in chest
+3. <strong>Initial programming:</strong> First programming session 2-4 weeks post-surgery
+4. <strong>Titration:</strong> Multiple programming sessions over months to optimize parameters
+5. <strong>Maintenance:</strong> Periodic programming adjustments, battery replacement surgery every 3-9 years
+6. <strong>Device explant:</strong> Device is surgically removed (end of life, infection, or patient decision)</p>
+<p><strong>Security relevance at each lifecycle stage:</strong>
+- <strong>Surgical implantation:</strong> Physical access to device. An attacker with surgical access could tamper with the device before implantation (supply chain attack). The surgical procedure itself creates a window where the device is unpowered and unmonitored.
+- <strong>Initial programming:</strong> First wireless session. If the device has no pre-installed security credentials (some legacy devices), this session may establish credentials insecurely. The programming session must occur in a clinical setting, which provides some physical security.
+- <strong>Titration:</strong> Multiple programming sessions create multiple opportunities for attack. Each session is a window where the device is in a higher-power communication mode and more receptive to commands.
+- <strong>Maintenance:</strong> Battery replacement surgery requires the device to be powered down and may involve firmware updates. This is a high-risk lifecycle stage from a security perspective.
+- <strong>Device explant:</strong> Device is surgically removed. Data on the device must be securely erased. <strong>Some devices retain therapy history that could be extracted.</strong></p>
+<h2 id="6-clinical-relevance">6. Clinical Relevance</h2>
+<p>The clinical relevance of neurosecurity is not theoretical. Documented clinical consequences of medical device cyberattacks include:</p>
+<ul>
+<li><strong>ICD reprogramming</strong> causing inappropriate shocks (theoretical demonstration, no known clinical incidents — but the theoretical pathway is validated)</li>
+<li><strong>Insulin pump manipulation</strong> causing hypoglycemia (demonstrated by researchers, FDA recall issued for the Animas OneTouch Ping)</li>
+<li><strong>Hospital network breaches</strong> exposing patient neural data (multiple documented incidents through ransomware attacks on hospital networks, including the 2017 WannaCry impact on UK NHS hospitals where neuroimaging and EEG data was potentially exposed)</li>
+</ul>
+<p>For neural implants specifically, the clinical consequences of a successful attack depend on the device type and the attack's nature:</p>
+<table>
+<thead>
+<tr>
+<th>Attack Type</th>
+<th>Clinical Consequence</th>
+<th>Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data exfiltration</td>
+<td>Privacy breach, neural pattern exposure</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Stimulation parameter modification</td>
+<td>Therapeutic failure or direct harm</td>
+<td>High-Critical</td>
+</tr>
+<tr>
+<td>Firmware manipulation</td>
+<td>Full device control, arbitrary stimulation</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Battery drain attack</td>
+<td>Loss of therapy, emergency surgery required</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Replay attack</td>
+<td>Incorrect parameter delivery, unintended state change</td>
+<td>Medium-High</td>
+</tr>
+<tr>
+<td>Denial of service</td>
+<td>Loss of therapy, patient harm from underlying condition</td>
+<td>High</td>
+</tr>
+<tr>
+<td>EMI injection at electrode</td>
+<td>False signal generation, closed-loop malfunction</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-current-industry-practice">7. Current Industry Practice</h2>
+<h3 id="71-major-neurotechnology-manufacturers">7.1 Major Neurotechnology Manufacturers</h3>
+<p><strong>Medtronic:</strong> Largest manufacturer of implantable neural devices (DBS, SCS, cochlear implants via subsidiary). Uses proprietary MICS-band telemetry (402-405 MHz). Authentication in newer systems uses challenge-response with AES-128. Older systems used minimal or no authentication. Security through obscurity was the dominant approach until approximately 2015. The Medtronic InterStim (sacral neuromodulation) and Activa (DBS) lines represent the largest deployed base of wirelessly programmable neural implants globally.</p>
+<p><strong>Abbott (formerly St. Jude Medical):</strong> Manufacturer of DBS (Infinity system) and SCS (Proclaim system). The Merlin@home transmitter was found vulnerable in 2016 — researchers from MedSec and investment firm Muddy Waters demonstrated remote compromise of the transmitter, which could then relay malicious commands to the implant. This led to FDA advisory and mandatory firmware updates. The Abbott case is significant because it demonstrated that the attack surface includes not just the implant-programmer link but the entire ecosystem including home monitoring equipment.</p>
+<p><strong>Boston Scientific:</strong> DBS (Vercise system) and SCS (WaveWriter system). Uses proprietary telemetry with improving security posture. Less publicly documented security research than Medtronic or Abbott, which does not imply better security — it implies less scrutiny.</p>
+<p><strong>Cochlear Ltd:</strong> Leading cochlear implant manufacturer (Nucleus system). Uses a proprietary RF link for programming. Security research has shown that the wireless programming interface can be intercepted and that stimulation parameters can be modified. The clinical consequence is non-life-threatening but includes potential for auditory discomfort or device malfunction.</p>
+<p><strong>Neuralink:</strong> High-bandwidth intracortical BCI. Architecture is less publicly documented but known to use a custom wireless link from the implanted N1 chip to an external receiver. As a first-generation device with FDA breakthrough device designation, cybersecurity documentation is required but the actual security posture is not publicly verifiable. The high bandwidth (reportedly 1024 channels at 20 kS/s each) creates a data exfiltration concern that exceeds any previous neural implant.</p>
+<p><strong>Blackrock Neurotech:</strong> Research-grade intracortical recording systems (Utah array). Used in BrainGate and other academic BCI systems. Security engineering is minimal — these are research devices, not commercial products. The transition of this technology from research to clinical use (as BrainGate approaches FDA approval) creates a security gap.</p>
+<p><strong>Synchron:</strong> Endovascular BCI (Stentrode). Placed in the jugular vein, positioned in the superior sagittal sinus to record motor cortex activity. Uses Bluetooth for data transmission. The endovascular approach means the device is not implanted in the brain parenchyma, reducing surgical risk but maintaining the same wireless attack surface.</p>
+<h3 id="72-industry-security-patterns">7.2 Industry Security Patterns</h3>
+<p>The current industry approach to neurotechnology security follows an uneven trajectory that reflects the broader medical device industry's security maturation:</p>
+<ul>
+<li>
+<p><strong>Legacy devices (pre-2015):</strong> Minimal security. Proprietary protocols with no authentication, no encryption, no integrity protection. Assumed physical proximity provided sufficient security. These devices are still implanted in patients and will remain in service for years.</p>
+</li>
+<li>
+<p><strong>Current devices (2015-present):</strong> Improving but inconsistent. Most new device submissions to FDA now include cybersecurity risk analysis per the 2014 FDA pre-market guidance. Most implement some form of authentication and encryption, but implementation quality varies significantly. Some devices use AES-128 but with hardcoded keys. Some implement authentication but only unidirectional (programmer authenticates to implant, but implant does not verify programmer). Some use encryption but without replay protection.</p>
+</li>
+<li>
+<p><strong>Next-generation devices (in development):</strong> Designed with security from the ground up. Secure boot, hardware security modules (HSMs), mutual authentication, end-to-end encryption, forward secrecy. But these are still in development or early deployment, and the security claims have not been independently validated by third parties.</p>
+</li>
+</ul>
+<p>The fundamental industry problem: <strong>device lifecycles are 5-15 years, but security best practices evolve much faster.</strong> A device implanted in 2020 may still be in a patient in 2035, running firmware that was state-of-the-art in 2019. The cryptographic algorithms, key lengths, and protocol designs that were acceptable at implantation may be breakable by the time the device is explanted. There is currently no mechanism for meaningful security updates to most implanted devices — firmware updates, where supported, are rare and patients must visit a clinic. VIREON's validation approach must account for this lifecycle mismatch and provide security assessment that is meaningful at the time of implantation and throughout the device's service life.</p>
+<h2 id="8-academic-state-of-the-art">8. Academic State of the Art</h2>
+<h3 id="81-key-research-contributions">8.1 Key Research Contributions</h3>
+<p><strong>Medical device security (foundational, non-neural but methodologically essential):</strong></p>
+<ul>
+<li>
+<p><strong>Halperin et al. (2008)</strong> — "Pacemakers and Implantable Cardiac Defibrillators: Software Radio Attacks and Zero-Power Defenses." Demonstrated wireless attacks on implantable cardiac devices using a software-defined radio. Established the methodology — protocol reverse engineering, replay attacks, command injection — that all subsequent neural implant security research builds on. The zero-power defense concept (device goes silent when it detects excessive RF energy) is relevant to neural implants.</p>
+</li>
+<li>
+<p><strong>Kim et al. (2012)</strong> — "Implantable Medical Device Security: A Systematic Review." Comprehensive taxonomy of attack surfaces and defenses for implantable devices. Identified that the lack of standardized security assessment methodologies is a fundamental gap.</p>
+</li>
+</ul>
+<p><strong>Neural implant security (specific):</strong></p>
+<ul>
+<li>
+<p><strong>Koris et al. (2017)</strong> — Security analysis of neurostimulators. Focused on DBS systems, demonstrated that stimulation parameters could be wirelessly modified. Identified that the safety monitor in the IPG provides some defense against out-of-range parameters but cannot detect in-range-but-wrong parameters.</p>
+</li>
+<li>
+<p><strong>Ali et al. (2020)</strong> — "A Survey of Brain-Computer Interface Security and Privacy." Comprehensive identification of threat categories including signal injection, data exfiltration, adversarial examples, and model inversion. This paper established the modern taxonomy of BCI security threats.</p>
+</li>
+<li>
+<p><strong>Martinovic et al. (2012)</strong> — "My Brain Knows What You're Typing: A Novel Keylogging System Based on Brain-Computer Interfaces." Demonstrated that EEG signals contain enough information to extract private data (keystrokes, PINs, banking information). This established neural data as a privacy-sensitive biometric that goes beyond traditional medical data concerns.</p>
+</li>
+</ul>
+<p><strong>Adversarial machine learning on neural data:</strong></p>
+<ul>
+<li>
+<p><strong>Zhang et al. (2019)</strong> — "Adversarial Attacks on EEG-Based Brain-Computer Interfaces." Demonstrated that small, imperceptible perturbations to EEG signals could cause misclassification in BCI decoders. The adversarial perturbations were successful across multiple BCI paradigms (motor imagery, P300, SSVEP).</p>
+</li>
+<li>
+<p><strong>Majumdar et al. (2020)</strong> — "Adversarial Robustness of Neural Signal Classifiers: A Systematic Evaluation." Systematic evaluation of attack and defense methods. Found that most BCI classifiers are highly vulnerable to adversarial examples and that adversarial training provides only marginal improvement.</p>
+</li>
+</ul>
+<p><strong>Neural data privacy:</strong></p>
+<ul>
+<li><strong>LaRue et al. (2020)</strong> — "Brain Data Privacy: Challenges and Opportunities." Comprehensive analysis of what can be inferred from neural signals (cognitive states, emotional responses, neurological conditions, identity) and current privacy protection methods. Identified that neural data is uniquely sensitive because it can reveal information that the person themselves may not be consciously aware of.</li>
+</ul>
+<h3 id="82-research-gaps">8.2 Research Gaps</h3>
+<ul>
+<li>
+<p><strong>Formal verification of neural implant firmware:</strong> No published work applies formal methods to verify the safety-critical firmware of commercial neural implants. This is a significant gap given the life-safety consequences of firmware bugs or malicious modifications.</p>
+</li>
+<li>
+<p><strong>Benchmark datasets for neural signal security:</strong> No standardized datasets exist for evaluating attack detection, integrity verification, or authentication methods on neural signals. Researchers use ad hoc datasets with different recording systems, signal qualities, and task paradigms, making results incomparable. <strong>VIREON aims to fill this gap through its benchmarking framework.</strong></p>
+</li>
+<li>
+<p><strong>Reproducible security assessment methodologies:</strong> Existing security assessments are one-off academic exercises. No standardized, reproducible methodology exists for evaluating the security of neurotechnology systems. Each research group uses different tools, different threat models, and different evaluation criteria. <strong>VIREON's validation framework directly addresses this gap.</strong></p>
+</li>
+<li>
+<p><strong>Closed-loop system security:</strong> Most research focuses on open-loop recording or stimulation. Closed-loop systems (where recording drives stimulation in real-time) create new attack classes — data injection attacks that exploit the feedback loop, oscillation attacks that destabilize the control system, and covert channel attacks that use the stimulation-recording loop as a communication channel.</p>
+</li>
+<li>
+<p><strong>Regulatory science for neurotechnology security:</strong> No regulatory framework specifically addresses the unique properties of neural data and neural implants. Current FDA guidance (Content of Premarket Submissions for Management of Cybersecurity in Medical Devices) is generic across all medical devices and does not address the specific risks of neurotechnology.</p>
+</li>
+<li>
+<p><strong>Long-term neural implant security:</strong> No research addresses the security implications of devices implanted for decades. How do cryptographic keys degrade over time? How do firmware vulnerabilities accumulate? What is the attack surface evolution over a 15-year device lifetime?</p>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

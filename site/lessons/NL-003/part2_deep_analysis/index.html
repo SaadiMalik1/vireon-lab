@@ -1,0 +1,3355 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Educational Platform & Interactive Laboratory for Neurosecurity">
+      
+      
+      
+      
+        <link rel="prev" href="../part1_foundations/">
+      
+      
+        <link rel="next" href="../part3_synthesis/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Part 2 Deep Analysis - vireon-lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nl-003-neurostimulator-firmware-architecture-and-security-part-2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="vireon-lab" class="md-header__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            vireon-lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 2 Deep Analysis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="vireon-lab" class="md-nav__button md-logo" aria-label="vireon-lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    vireon-lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SaadiMalik1/vireon-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SaadiMalik1/vireon-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../package_reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Neurosecurity Lessons
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Neurosecurity Lessons
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-001 Neural Signals & Problem Space
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-001/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-002 Neural Signal Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-002 Neural Signal Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-002/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-003 Firmware Architecture & Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-003 Firmware Architecture & Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#9-dsp-engine-firmware-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. DSP Engine Firmware Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. DSP Engine Firmware Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-from-algorithm-to-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 From Algorithm to Firmware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-fir-filter-firmware-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 FIR Filter Firmware Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-fft-firmware-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 FFT Firmware Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-dsp-firmware-security-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 DSP Firmware Security Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-closed-loop-controller-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Closed-Loop Controller Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Closed-Loop Controller Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-controller-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Controller Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-control-algorithm-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Control Algorithm Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-controller-task-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Controller Task Timing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-state-machine-for-therapy-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 State Machine for Therapy Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-ota-firmware-update-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. OTA Firmware Update Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. OTA Firmware Update Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111-ota-update-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 OTA Update Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112-update-process-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.2 Update Process Vulnerabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#113-update-verification-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3 Update Verification Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-power-management-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Power Management Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Power Management Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-battery-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Battery Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-power-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Power States
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-safety-monitor-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Safety Monitor Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Safety Monitor Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#131-safety-monitor-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.1 Safety Monitor Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#132-safety-monitor-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.2 Safety Monitor Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#133-safety-monitor-independence-mechanisms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3 Safety Monitor Independence Mechanisms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#134-safety-monitor-bypass-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.4 Safety Monitor Bypass Techniques
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-diagnostic-and-telemetry-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Diagnostic and Telemetry Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Diagnostic and Telemetry Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#141-diagnostic-data-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.1 Diagnostic Data Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#142-data-exfiltration-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.2 Data Exfiltration Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#143-telemetry-bandwidth-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.3 Telemetry Bandwidth Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-firmware-attack-surface-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Firmware Attack Surface Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Firmware Attack Surface Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#151-comprehensive-attack-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15.1 Comprehensive Attack Surface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#152-attack-surface-ordering-vireon-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15.2 Attack Surface Ordering (VIREON Priority)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-known-firmware-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Known Firmware Vulnerabilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="16. Known Firmware Vulnerabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#161-abbott-st-jude-medical-devices-2016-2017" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.1 Abbott (St. Jude) Medical Devices (2016-2017)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#162-medtronic-insulin-pump-2011-2019-multiple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.2 Medtronic Insulin Pump (2011-2019, Multiple)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#163-generic-cortex-m-exploitation-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.3 Generic Cortex-M Exploitation Techniques
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-firmware-reverse-engineering-methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17. Firmware Reverse Engineering Methodology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="17. Firmware Reverse Engineering Methodology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#171-static-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.1 Static Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#172-dynamic-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.2 Dynamic Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#173-vireon-firmware-analysis-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.3 VIREON Firmware Analysis Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-firmware-hardening-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Firmware Hardening Techniques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="18. Firmware Hardening Techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#181-compile-time-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.1 Compile-Time Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#182-runtime-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.2 Runtime Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#183-architecture-level-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.3 Architecture-Level Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-004 Wireless Protocol Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-004 Wireless Protocol Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-004/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL-005 Closed-Loop System Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NL-005 Closed-Loop System Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part1_foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 1 Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part2_deep_analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 2 Deep Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/part3_synthesis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part 3 Synthesis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/challenges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../NL-005/references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    References
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs & Threat Models
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Labs & Threat Models
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../labs/lab002_stride_threat_modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STRIDE Threat Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#9-dsp-engine-firmware-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. DSP Engine Firmware Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. DSP Engine Firmware Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-from-algorithm-to-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 From Algorithm to Firmware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-fir-filter-firmware-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 FIR Filter Firmware Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-fft-firmware-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 FFT Firmware Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-dsp-firmware-security-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 DSP Firmware Security Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-closed-loop-controller-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Closed-Loop Controller Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Closed-Loop Controller Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-controller-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Controller Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-control-algorithm-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Control Algorithm Implementation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-controller-task-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Controller Task Timing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-state-machine-for-therapy-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 State Machine for Therapy Modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-ota-firmware-update-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. OTA Firmware Update Security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. OTA Firmware Update Security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111-ota-update-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 OTA Update Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112-update-process-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.2 Update Process Vulnerabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#113-update-verification-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.3 Update Verification Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-power-management-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Power Management Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Power Management Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-battery-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Battery Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-power-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Power States
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-safety-monitor-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Safety Monitor Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Safety Monitor Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#131-safety-monitor-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.1 Safety Monitor Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#132-safety-monitor-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.2 Safety Monitor Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#133-safety-monitor-independence-mechanisms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3 Safety Monitor Independence Mechanisms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#134-safety-monitor-bypass-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.4 Safety Monitor Bypass Techniques
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-diagnostic-and-telemetry-firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Diagnostic and Telemetry Firmware
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Diagnostic and Telemetry Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#141-diagnostic-data-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.1 Diagnostic Data Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#142-data-exfiltration-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.2 Data Exfiltration Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#143-telemetry-bandwidth-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.3 Telemetry Bandwidth Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-firmware-attack-surface-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Firmware Attack Surface Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Firmware Attack Surface Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#151-comprehensive-attack-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15.1 Comprehensive Attack Surface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#152-attack-surface-ordering-vireon-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15.2 Attack Surface Ordering (VIREON Priority)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-known-firmware-vulnerabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Known Firmware Vulnerabilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="16. Known Firmware Vulnerabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#161-abbott-st-jude-medical-devices-2016-2017" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.1 Abbott (St. Jude) Medical Devices (2016-2017)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#162-medtronic-insulin-pump-2011-2019-multiple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.2 Medtronic Insulin Pump (2011-2019, Multiple)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#163-generic-cortex-m-exploitation-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16.3 Generic Cortex-M Exploitation Techniques
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-firmware-reverse-engineering-methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17. Firmware Reverse Engineering Methodology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="17. Firmware Reverse Engineering Methodology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#171-static-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.1 Static Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#172-dynamic-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.2 Dynamic Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#173-vireon-firmware-analysis-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17.3 VIREON Firmware Analysis Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-firmware-hardening-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Firmware Hardening Techniques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="18. Firmware Hardening Techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#181-compile-time-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.1 Compile-Time Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#182-runtime-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.2 Runtime Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#183-architecture-level-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18.3 Architecture-Level Hardening
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="nl-003-neurostimulator-firmware-architecture-and-security-part-2">NL-003: Neurostimulator Firmware Architecture and Security (Part 2)</h1>
+<h2 id="9-dsp-engine-firmware-implementation">9. DSP Engine Firmware Implementation</h2>
+<h3 id="91-from-algorithm-to-firmware">9.1 From Algorithm to Firmware</h3>
+<p>The DSP algorithms described in NL-002 (filtering, feature extraction, artifact detection) must be implemented in firmware that runs on the IPG's MCU. This translation from mathematical algorithm to C code running on a Cortex-M4F involves trade-offs that affect both performance and security.</p>
+<p><strong>Fixed-point vs. floating-point:</strong> The Cortex-M4F includes a hardware floating-point unit (FPU) that enables single-precision (32-bit float) arithmetic at nearly the same speed as integer arithmetic. However, floating-point has security-relevant properties:</p>
+<ul>
+<li><strong>Non-determinism:</strong> Floating-point operations are not associative (a + b + c may not equal a + (b + c)). Different compiler optimization levels may reorder operations, producing slightly different results. This non-determinism can cause the same signal to produce slightly different feature values depending on compiler flags — a reproducibility concern for VIREON's validation framework.</li>
+<li><strong>Special values:</strong> NaN, infinity, and denormalized numbers can propagate through computations and produce unexpected results. A firmware vulnerability that produces a NaN in the band power computation (e.g., 0/0 from a zero-variance segment) could cause the closed-loop controller to make incorrect decisions. Mitigation: check for NaN/infinity before using computed values, and enable the Cortex-M FPU's flush-to-zero mode for denormals.</li>
+<li><strong>Side channels:</strong> Floating-point operations on some Cortex-M4 implementations have timing that depends on operand values (e.g., denormals take longer). This creates a timing side-channel that could leak information about signal values.</li>
+</ul>
+<p><strong>Fixed-point arithmetic</strong> (using integer types with implicit scaling) avoids these issues but requires careful manual management of scaling, overflow, and precision. In safety-critical code paths, many manufacturers prefer fixed-point because its behavior is fully deterministic and its overflow behavior is well-defined (saturating or wrapping).</p>
+<h3 id="92-fir-filter-firmware-implementation">9.2 FIR Filter Firmware Implementation</h3>
+<p>The bandpass filter from NL-002 (used for beta-band extraction) is implemented in firmware as a direct-form FIR filter:</p>
+<pre><code class="language-c">// Simplified FIR filter implementation for beta-band extraction
+// 4th-order Butterworth bandpass, 13-30 Hz, Fs=250 Hz
+// Converted to FIR via impulse response truncation (51 taps)
+
+#define FIR_TAPS 51
+const int16_t fir_coefficients[FIR_TAPS] = { /* ... precomputed ... */ };
+int32_t fir_delay_line[FIR_TAPS];  // Q15 format, allocated in dedicated SRAM region
+
+// Called from DSP task at 250 Hz (every 4 ms)
+int32_t fir_filter(int16_t input_sample) {
+    int32_t acc = 0;
+    int32_t input_q15 = (int32_t)input_sample &lt;&lt; 15;  // Convert to Q15
+
+    // Shift delay line
+    for (int i = FIR_TAPS - 1; i &gt; 0; i--) {
+        fir_delay_line[i] = fir_delay_line[i-1];
+    }
+    fir_delay_line[0] = input_q15;
+
+    // Compute output
+    for (int i = 0; i &lt; FIR_TAPS; i++) {
+        // Q15 * Q15 = Q30, accumulate in Q30
+        acc += (int32_t)fir_coefficients[i] * fir_delay_line[i];
+    }
+
+    // Convert Q30 back to Q15 with rounding
+    return (acc + (1 &lt;&lt; 14)) &gt;&gt; 15;
+}
+</code></pre>
+<p><strong>Security vulnerabilities in this implementation:</strong></p>
+<ol>
+<li>
+<p><strong>Delay line overflow:</strong> <code>fir_delay_line[i] = fir_delay_line[i-1]</code> copies values without bounds checking. If the function is called from an ISR (which can interrupt itself on Cortex-M), the delay line can be corrupted by a reentrant call. Mitigation: make the function non-interruptible (disable interrupts during execution) or use double-buffering.</p>
+</li>
+<li>
+<p><strong>Accumulator overflow:</strong> The accumulator <code>acc</code> is 32 bits (Q30). With 51 taps and Q15 inputs, the maximum possible accumulator value is 51 * 32767 * 32767 = 54.7 billion, which exceeds the 32-bit signed range (2.1 billion). This WILL overflow for large-amplitude inputs, producing incorrect results. Mitigation: use 64-bit accumulator (<code>int64_t acc</code>) or scale the coefficients to prevent overflow.</p>
+</li>
+<li>
+<p><strong>Coefficient tampering:</strong> The coefficients are stored in flash as <code>const</code>. If an attacker modifies flash (through a firmware exploit), they can change the filter's frequency response. For example, widening the passband to include 50 Hz powerline interference would cause the beta power estimate to be contaminated by line noise. VIREON should verify coefficient integrity at runtime.</p>
+</li>
+<li>
+<p><strong>Timing side-channel:</strong> The filter execution time depends on the input value if the accumulator overflows and triggers a hardware exception (which takes additional cycles). An attacker who can measure the filter's execution time (through a timing side-channel) can infer information about the input signal values.</p>
+</li>
+</ol>
+<h3 id="93-fft-firmware-implementation">9.3 FFT Firmware Implementation</h3>
+<p>The FFT is the most computationally intensive operation in the DSP pipeline. On a Cortex-M4F, a 256-point complex FFT takes approximately 5,000-15,000 cycles (20-60 us at 250 MHz). The CMSIS-DSP library provides optimized FFT implementations that use the hardware FPU and SIMD instructions.</p>
+<p><strong>Security implications of FFT implementation:</strong></p>
+<ul>
+<li>
+<p><strong>Input validation:</strong> The FFT operates on a buffer of samples. If the buffer contains uninitialized data (e.g., due to a race condition where the DMA hasn't finished filling the buffer when the FFT starts), the output will be garbage. The DSP task must verify that the buffer is ready before starting the FFT.</p>
+</li>
+<li>
+<p><strong>Windowing function storage:</strong> The window function (Hann, Hamming) is typically stored as a lookup table. If the table is in modifiable memory (SRAM), an attacker can corrupt it, changing the spectral properties of the output. This would affect all downstream features and could mask or create attack artifacts in the spectral domain.</p>
+</li>
+<li>
+<p><strong>Bit-reversal permutation:</strong> The FFT algorithm requires bit-reversal permutation of either the input or output. This permutation is implemented as a sequence of memory accesses with specific addressing patterns. An attacker who can observe the memory access pattern (through a cache side-channel) can infer the FFT size and structure.</p>
+</li>
+</ul>
+<h3 id="94-dsp-firmware-security-checklist">9.4 DSP Firmware Security Checklist</h3>
+<p>VIREON should verify the following properties of the DSP firmware:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Method</th>
+<th>Severity if Failed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No accumulator overflow</td>
+<td>Static analysis + boundary testing</td>
+<td>High — incorrect features</td>
+</tr>
+<tr>
+<td>No reentrant calls to filter functions</td>
+<td>Audit call graph from ISRs</td>
+<td>High — state corruption</td>
+</tr>
+<tr>
+<td>Coefficients in read-only memory</td>
+<td>Disassembly verification</td>
+<td>Medium — filter manipulation</td>
+</tr>
+<tr>
+<td>Window function in read-only memory</td>
+<td>Disassembly verification</td>
+<td>Medium — spectral manipulation</td>
+</tr>
+<tr>
+<td>NaN/infinity handling</td>
+<td>Inject NaN inputs, verify behavior</td>
+<td>High — control loop corruption</td>
+</tr>
+<tr>
+<td>Deterministic output for same input</td>
+<td>Repeatability testing</td>
+<td>Medium — reproducibility failure</td>
+</tr>
+<tr>
+<td>Execution time bounded</td>
+<td>Worst-case execution time analysis</td>
+<td>Medium — timing side-channel</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-closed-loop-controller-firmware">10. Closed-Loop Controller Firmware</h2>
+<h3 id="101-controller-architecture">10.1 Controller Architecture</h3>
+<p>The closed-loop controller is the firmware component that reads DSP features and computes stimulation parameters. It implements the control algorithm that adapts stimulation to the patient's neural state in real time.</p>
+<pre><code>DSP Features          Controller          Stimulation
+(band power,  ──────&gt; │  Setpoint ────────&gt; │  Parameters
+ Hjorth, etc.)        │  Error = SP - PV   │  (amplitude,
+                      │  Output = f(Error)  │   frequency, PW)
+                      │                     │
+                      │  Safety Limits ─────&gt;│  Clamped output
+                      └─────────────────────┘
+</code></pre>
+<h3 id="102-control-algorithm-implementation">10.2 Control Algorithm Implementation</h3>
+<p>The most common control algorithm for closed-loop DBS is a proportional-integral (PI) controller:</p>
+<pre><code class="language-c">// Closed-loop PI controller for adaptive DBS
+// Input: beta_band_power (from DSP task)
+// Output: stimulation_amplitude (to stimulation task)
+
+typedef struct {
+    float setpoint;          // Target beta power
+    float kp;                // Proportional gain
+    float ki;                // Integral gain
+    float integral_state;    // Accumulated error
+    float output_min;        // 0.0 mA
+    float output_max;        // 7.0 mA (safety limit)
+    float integral_max;      // Anti-windup limit
+    uint32_t last_update_ms; // For derivative computation
+} PIController;
+
+float pi_update(PIController *ctrl, float process_variable, uint32_t now_ms) {
+    float error = ctrl-&gt;setpoint - process_variable;
+
+    // Integrate with anti-windup
+    ctrl-&gt;integral_state += error * 0.01;  // dt = 10ms
+    if (ctrl-&gt;integral_state &gt; ctrl-&gt;integral_max) {
+        ctrl-&gt;integral_state = ctrl-&gt;integral_max;  // Clamp
+    } else if (ctrl-&gt;integral_state &lt; -ctrl-&gt;integral_max) {
+        ctrl-&gt;integral_state = -ctrl-&gt;integral_max;
+    }
+
+    // PI output
+    float output = ctrl-&gt;kp * error + ctrl-&gt;ki * ctrl-&gt;integral_state;
+
+    // Clamp to safety limits
+    if (output &gt; ctrl-&gt;output_max) output = ctrl-&gt;output_max;
+    if (output &lt; ctrl-&gt;output_min) output = ctrl-&gt;output_min;
+
+    return output;
+}
+</code></pre>
+<p><strong>Security vulnerabilities in this implementation:</strong></p>
+<ol>
+<li>
+<p><strong>Setpoint manipulation:</strong> The <code>setpoint</code> value determines the target beta power. If an attacker can modify this value (through firmware access or a command injection attack that writes to the controller's memory), they can change the controller's behavior. Setting the setpoint to zero would cause the controller to maximize stimulation (since error = 0 - PV = -PV, always negative, integral winds up negatively, output goes to maximum). Setting the setpoint very high would minimize stimulation.</p>
+</li>
+<li>
+<p><strong>Gain manipulation:</strong> The proportional and integral gains (<code>kp</code>, <code>ki</code>) determine the controller's responsiveness. If an attacker increases <code>kp</code>, the controller becomes more aggressive — potentially causing rapid stimulation oscillations. If <code>ki</code> is increased, the integral term dominates, causing slow drift and eventual saturation.</p>
+</li>
+<li>
+<p><strong>Integral windup attack:</strong> The anti-windup limit (<code>integral_max</code>) prevents the integral from growing unboundedly. If an attacker sets <code>integral_max</code> to a very large value (or disables anti-windup), a sustained error (caused by the attacker manipulating the beta power estimate) will cause the integral to wind up to a large value, and when the error reverses, the controller will overshoot dramatically.</p>
+</li>
+<li>
+<p><strong>Parameter injection via command:</strong> If the wireless command parser allows modification of controller parameters without adequate authorization and validation, an attacker can directly control the closed-loop behavior. Even if parameter modification requires authorization, a session hijacking attack (compromising the pairing secret) provides the necessary authorization.</p>
+</li>
+</ol>
+<h3 id="103-controller-task-timing">10.3 Controller Task Timing</h3>
+<p>The closed-loop controller runs as a periodic RTOS task. The task period (control loop rate) is a critical design parameter:</p>
+<ul>
+<li><strong>Too fast (e.g., 1 kHz):</strong> The controller reacts to every fluctuation in the beta power estimate, including noise. This causes high-frequency stimulation modulation that may be clinically ineffective and may accelerate battery drain.</li>
+<li><strong>Too slow (e.g., 0.1 Hz):</strong> The controller cannot respond to rapid changes in neural state (e.g., a movement-related beta burst). The patient loses the benefit of adaptive stimulation.</li>
+<li><strong>Typical:</strong> 1-10 Hz for closed-loop DBS, matching the timescale of beta-band dynamics.</li>
+</ul>
+<p><strong>Security implication:</strong> The controller task period must be consistent with the feature extraction window (NL-002 Section 7.2). If the DSP produces a new band power estimate every second, the controller should run at approximately 1 Hz. If the controller runs faster than the feature update rate, it will make decisions based on stale features — a timing mismatch that an attacker could exploit.</p>
+<h3 id="104-state-machine-for-therapy-modes">10.4 State Machine for Therapy Modes</h3>
+<p>The closed-loop controller typically implements a state machine that governs therapy modes:</p>
+<pre><code>         ┌──────────┐
+         │  INIT     │
+         │  (boot)   │
+         └────┬─────┘
+              │ Self-test pass
+              v
+         ┌──────────┐     Parameter     ┌──────────┐
+         │  IDLE     │ &lt;──modification── │ OPEN_LOOP │
+         │  (no     │                   │  (fixed  │
+         │  stim)   │                   │  params) │
+         └────┬─────┘                   └────┬─────┘
+              │ Start command                │ Enable CL
+              v                              v
+         ┌──────────┐     Disable CL     ┌──────────┐
+         │  STIM_ON │ ───────────────&gt;   │ CLOSED   │
+         │  (simple)│                   │  _LOOP   │
+         └──────────┘                   │  (adaptive)│
+                                        └──────────┘
+</code></pre>
+<p><strong>Security implication:</strong> State transitions are triggered by commands (from wireless) or internal conditions (self-test results, safety violations). Each transition must be atomic and validated. If a state transition can be triggered while the device is in an inconsistent state (e.g., transitioning to CLOSED_LOOP while the DSP pipeline is still initializing), the controller may operate on uninitialized data. The firmware must enforce that transitions are only allowed from valid source states, and that the target state's prerequisites are met before the transition occurs.</p>
+<h2 id="11-ota-firmware-update-security">11. OTA Firmware Update Security</h2>
+<h3 id="111-ota-update-architecture">11.1 OTA Update Architecture</h3>
+<p>Over-the-air firmware updates are the primary mechanism for deploying security patches, bug fixes, and feature updates to implanted devices. The OTA update mechanism is itself a critical security component — an insecure update mechanism is worse than no update mechanism, because it provides an attacker with a direct path to firmware installation.</p>
+<pre><code>External Programmer          IPG
+      │                        │
+      │  1. Session Init        │
+      │ ──────────────────────&gt; │
+      │  2. Challenge/Response  │
+      │ &lt;────────────────────── │
+      │  3. Update Request      │
+      │ ──────────────────────&gt; │
+      │  4. Firmware Metadata   │
+      │    (version, size, hash)│
+      │ ──────────────────────&gt; │
+      │  5. Firmware Chunks     │
+      │    (N x 256 bytes)      │
+      │ ──────────────────────&gt; │
+      │  6. ACK per chunk       │
+      │ &lt;────────────────────── │
+      │  ... repeat 5-6 ...     │
+      │  7. Final Hash Verify   │
+      │ ──────────────────────&gt; │
+      │  8. Signature Verify    │
+      │     (bootloader)        │
+      │  9. Commit / Reboot     │
+      │ ──────────────────────&gt; │
+      │ 10. New firmware boots  │
+      │ &lt;────────────────────── │
+</code></pre>
+<h3 id="112-update-process-vulnerabilities">11.2 Update Process Vulnerabilities</h3>
+<p><strong>Chunk-based transmission:</strong> Firmware is transmitted in chunks (typically 256-1024 bytes) to handle the limited packet size and the need for acknowledgment. Each chunk is individually acknowledged. An attacker who can modify a chunk in transit (by compromising the wireless link) can inject malicious code into the firmware image. Mitigation: each chunk must be authenticated (HMAC or AEAD), and the complete image must be verified after all chunks are received.</p>
+<p><strong>Interruption during update:</strong> If the update is interrupted (e.g., the patient moves out of range, battery dies during update), the device must be left in a bootable state. A/B partitioning (Section 6.3) ensures that the old firmware remains intact until the new firmware is fully received and verified. Without A/B partitioning, an interrupted update can leave the device with a corrupted firmware image — bricking it until surgical replacement.</p>
+<p><strong>Rollback attack:</strong> If the update mechanism allows installation of an older firmware version, an attacker can force the device to run a firmware version with known vulnerabilities. Mitigation: monotonic version counter (Section 6.3). The challenge is that sometimes a legitimate rollback IS needed (e.g., a new firmware has a critical bug and must be reverted). The version counter must support authorized rollback while preventing unauthorized rollback.</p>
+<p><strong>Supply chain attack:</strong> If the firmware signing key is compromised (e.g., through an attack on the manufacturer's build infrastructure), an attacker can sign malicious firmware that the bootloader will accept. This is the most catastrophic attack on the OTA mechanism because it bypasses all cryptographic protections. Mitigation: hardware security modules (HSMs) for key storage, multi-party signing ceremonies, code review of all firmware changes.</p>
+<h3 id="113-update-verification-pipeline">11.3 Update Verification Pipeline</h3>
+<p>The bootloader's firmware verification pipeline before committing an update:</p>
+<ol>
+<li><strong>Size check:</strong> Verify the firmware image size matches the metadata. Prevents buffer overflows during verification.</li>
+<li><strong>Hash verification:</strong> Compute SHA-256 of the firmware binary and compare to the metadata. Detects corruption during transmission.</li>
+<li><strong>Signature verification:</strong> Verify the ECDSA/RSA signature over the hash using the stored public key. Authenticates the firmware source.</li>
+<li><strong>Version check:</strong> Verify the firmware version is greater than or equal to the current version (or equal to the current version if rollback is explicitly authorized).</li>
+<li><strong>Hardware compatibility check:</strong> Verify the firmware's target hardware revision matches the device's hardware revision. Prevents installing firmware for a different device variant.</li>
+<li><strong>Image integrity verification (deep):</strong> Optionally, verify the internal structure of the firmware image (valid vector table, sane section sizes, no overlapping regions).</li>
+</ol>
+<p><strong>Security implication:</strong> Each verification step is code that can itself contain vulnerabilities. A bug in the signature verification code (e.g., accepting any signature, skipping verification for certain image types, or a buffer overflow in the parsing code) compromises the entire update mechanism. The verification code should be as simple as possible and formally verified if feasible.</p>
+<h2 id="12-power-management-firmware">12. Power Management Firmware</h2>
+<h3 id="121-battery-constraints">12.1 Battery Constraints</h3>
+<p>Neurostimulator batteries are typically lithium-ion or lithium-carbon monofluoride (Li/CFx) cells with capacities of 100-500 mAh. The firmware must manage this energy budget carefully because:</p>
+<ul>
+<li><strong>Battery life is a clinical requirement:</strong> Patients expect 3-15 years of battery life. Premature battery depletion requires surgical replacement.</li>
+<li><strong>Power consumption is attack-detectable:</strong> Unusual power consumption patterns (e.g., continuous RF transmission due to a firmware bug) can indicate a security incident.</li>
+<li><strong>Low-power modes affect security:</strong> Deep sleep modes disable the RF receiver, preventing the device from receiving security commands. An attacker who forces the device into deep sleep can create a DoS condition.</li>
+</ul>
+<h3 id="122-power-states">12.2 Power States</h3>
+<pre><code>┌──────────┐  Therapy ON  ┌──────────┐  Wireless   ┌──────────┐
+│  SLEEP   │ ──────────&gt; │  ACTIVE  │ ─────────&gt; │  TX/RX   │
+│  (1 uW)  │             │ (5-20 mW) │             │ (50-100  │
+│          │ &lt;────────── │          │ &lt;─────────  │   mW)    │
+│  RF off  │  Therapy    │  RF wake  │  Session    │          │
+│  Stim off│  complete   │  on demand│  end        │          │
+└──────────┘             └──────────┘             └──────────┘
+</code></pre>
+<p><strong>Security implications:</strong>
+- <strong>Sleep mode as attack surface:</strong> When the device is in sleep mode, the RF receiver is typically off. An attacker cannot communicate with the device. However, if the device is forced into sleep mode during an active therapy session (by exploiting the power management firmware), therapy is interrupted — a DoS attack with direct clinical impact.
+- <strong>Battery drain attack:</strong> An attacker who can increase the device's power consumption (e.g., by causing continuous RF transmission, increasing stimulation frequency, or disabling low-power modes) can drain the battery prematurely. This forces surgical replacement, causing patient harm and cost. Battery drain attacks have been demonstrated against pacemakers and are equally applicable to neurostimulators.
+- <strong>Voltage monitoring bypass:</strong> The firmware monitors the battery voltage and enters a safe state when voltage drops below a threshold. If this monitoring is disabled (through firmware modification), the device may continue operating on a depleted battery, potentially delivering inconsistent stimulation or corrupting flash memory during a write operation.</p>
+<h2 id="13-safety-monitor-firmware">13. Safety Monitor Firmware</h2>
+<h3 id="131-safety-monitor-requirements">13.1 Safety Monitor Requirements</h3>
+<p>The safety monitor is the firmware component that provides independent verification that the device is operating within safe parameters. It is the last line of defense between the firmware and patient harm.</p>
+<p><strong>Functional safety requirements (IEC 61508 / ISO 26262 adapted for medical devices):</strong></p>
+<ol>
+<li>
+<p><strong>Independence:</strong> The safety monitor must be independent of the main processing firmware. It should have its own code, its own data path, and ideally its own hardware (or at least a separate execution context that cannot be corrupted by the main firmware).</p>
+</li>
+<li>
+<p><strong>Diversity:</strong> The safety monitor should use different algorithms, different data representations, and different hardware resources than the main firmware. If the main firmware has a bug that causes incorrect stimulation, the safety monitor should detect it through an independent check.</p>
+</li>
+<li>
+<p><strong>Fail-safe:</strong> If the safety monitor detects a violation, it must halt stimulation in a safe manner (e.g., DC-blocking capacitor discharge, output relay open).</p>
+</li>
+<li>
+<p><strong>Tamper-evident:</strong> The safety monitor should be designed so that tampering is detectable. If the safety monitor's code or data is modified, it should either fail-safe or report the modification.</p>
+</li>
+</ol>
+<h3 id="132-safety-monitor-architecture">13.2 Safety Monitor Architecture</h3>
+<pre><code>Main Processing Firmware           Safety Monitor
+┌─────────────────────┐          ┌─────────────────────┐
+│ Stimulation Params  │  shadow  │ Parameter Checker    │
+│ (amplitude, PW,     │ ───────&gt; │ Compares against     │
+│  frequency, config) │          │ absolute limits       │
+└─────────────────────┘          └──────────┬──────────┘
+                                              │
+                                              v
+┌─────────────────────┐          ┌─────────────────────┐
+│ Stimulation Driver  │  actual  │ Output Monitor       │
+│ (register writes)   │ ───────&gt; │ Reads back stim      │
+│                     │          │ registers, compares   │
+└─────────────────────┘          └──────────┬──────────┘
+                                              │
+                                              v
+┌─────────────────────┐          ┌─────────────────────┐
+│ DSP Engine          │  signal  │ Signal Plausibility  │
+│ (band power, etc.)  │ ───────&gt; │ Checks SNR, clipping,│
+│                     │          │ feature ranges        │
+└─────────────────────┘          └──────────┬──────────┘
+                                              │
+                                              v
+                                   ┌─────────────────────┐
+                                   │  Safety Action      │
+                                   │  - Halt stimulation │
+                                   │  - Log event        │
+                                   │  - Alert (if able)  │
+                                   └─────────────────────┘
+</code></pre>
+<h3 id="133-safety-monitor-independence-mechanisms">13.3 Safety Monitor Independence Mechanisms</h3>
+<p>Achieving true independence in a single-MCU device is architecturally challenging:</p>
+<table>
+<thead>
+<tr>
+<th>Mechanism</th>
+<th>Independence Level</th>
+<th>Feasibility</th>
+<th>Security Strength</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Separate task (RTOS)</td>
+<td>Software separation</td>
+<td>Easy</td>
+<td>Weak — shared memory, shared MPU domain</td>
+</tr>
+<tr>
+<td>MPU-isolated region</td>
+<td>Hardware isolation</td>
+<td>Easy-medium</td>
+<td>Medium — cannot read/write monitor's memory from main code</td>
+</tr>
+<tr>
+<td>Separate core (dual-core MCU)</td>
+<td>Hardware isolation</td>
+<td>Medium</td>
+<td>Strong — independent execution, but shared bus</td>
+</tr>
+<tr>
+<td>Separate chip (safety ASIC)</td>
+<td>Full isolation</td>
+<td>Hard</td>
+<td>Strongest — independent power, execution, and I/O</td>
+</tr>
+</tbody>
+</table>
+<p>Most current neurostimulators use the RTOS task approach (software separation) because it is the simplest and cheapest. Some newer devices use MPU isolation. Very few use separate safety ASICs due to the cost and complexity of integrating a second chip.</p>
+<p><strong>Security analysis:</strong> Software-only safety monitors are vulnerable to the same memory corruption attacks as the main firmware. If an attacker exploits a buffer overflow in the wireless stack, they can potentially corrupt the safety monitor's task memory (if they can predict its address) or disable the safety monitor task (by corrupting the RTOS task control block). MPU isolation significantly raises the bar but is still bypassable through MPU misconfiguration or JTAG/SWD debug access.</p>
+<h3 id="134-safety-monitor-bypass-techniques">13.4 Safety Monitor Bypass Techniques</h3>
+<p>An attacker who compromises the main firmware can attempt to bypass the safety monitor through several techniques:</p>
+<ol>
+<li>
+<p><strong>Direct memory write:</strong> If the safety monitor's parameter limits are stored in RAM that the main firmware can access, the attacker can modify the limits to be very large, effectively disabling the safety check.</p>
+</li>
+<li>
+<p><strong>Task suspension:</strong> If the RTOS allows one task to suspend another, the attacker (running in the main firmware context) can suspend the safety monitor task.</p>
+</li>
+<li>
+<p><strong>Watchdog starvation:</strong> The safety monitor may use a hardware watchdog timer. If the attacker can prevent the watchdog from being serviced (by corrupting the kick routine or by disabling the timer), the watchdog will reset the device — which may be the attacker's goal (DoS through forced reboot).</p>
+</li>
+<li>
+<p><strong>Shadow register poisoning:</strong> The safety monitor reads a "shadow" copy of the stimulation parameters. If the attacker can make the shadow copy match the malicious parameters (by corrupting the shadow update mechanism), the safety monitor will see consistent (but unsafe) values.</p>
+</li>
+</ol>
+<p>VIREON should validate that the safety monitor cannot be bypassed by any of these techniques.</p>
+<h2 id="14-diagnostic-and-telemetry-firmware">14. Diagnostic and Telemetry Firmware</h2>
+<h3 id="141-diagnostic-data-pipeline">14.1 Diagnostic Data Pipeline</h3>
+<p>The diagnostic firmware collects operational data from the device for clinical and engineering purposes:</p>
+<pre><code>Internal Data Sources              Diagnostic Logger              External Telemetry
+┌──────────────────┐            ┌──────────────────┐            ┌──────────────────┐
+│ Stimulation      │            │ Circular buffer   │            │ Wireless TX       │
+│ parameters       │ ──────────&gt; │ (4-16 KB SRAM)    │ ──────────&gt; │ (encrypted,       │
+│ Signal quality   │            │ FIFO overwrite    │            │  authenticated)   │
+│ Battery status   │            │                   │            │                  │
+│ Impedance values │            │ Flash storage     │            │ Programmer/Cloud  │
+│ Error/Event logs │            │ (when available)  │            │                  │
+│ Safety events    │            │                   │            │                  │
+└──────────────────┘            └──────────────────┘            └──────────────────┘
+</code></pre>
+<h3 id="142-data-exfiltration-risks">14.2 Data Exfiltration Risks</h3>
+<p>The diagnostic pipeline is a potential data exfiltration channel. An attacker who compromises the firmware can use the diagnostic telemetry to exfiltrate sensitive data:</p>
+<ul>
+<li><strong>Neural signals:</strong> Raw or processed neural data reveals the patient's neural state, which can reveal medical conditions, cognitive states, or even intended actions (in BCI systems).</li>
+<li><strong>Stimulation parameters:</strong> Current therapy settings reveal the patient's diagnosis and treatment plan.</li>
+<li><strong>Calibration data:</strong> Device-specific calibration data can be used to craft targeted attacks on the specific device.</li>
+<li><strong>Encryption keys:</strong> If the firmware stores session keys or pairing secrets in a format that the diagnostic logger can access, these can be exfiltrated.</li>
+</ul>
+<p><strong>Security implication:</strong> The diagnostic logger should be the LEAST privileged subsystem in the firmware. It should not have access to encryption keys, pairing secrets, or raw neural data. The data it collects should be aggregated and anonymized to the maximum extent possible. VIREON should verify that the diagnostic data pipeline does not provide a path to sensitive data.</p>
+<h3 id="143-telemetry-bandwidth-constraints">14.3 Telemetry Bandwidth Constraints</h3>
+<p>The MICS band (402-405 MHz) provides approximately 250-800 kbps data rate. This bandwidth must support:
+- Incoming commands (low bandwidth: ~1-10 kbps)
+- Outgoing telemetry (variable: 10-250 kbps)
+- Acknowledgments and protocol overhead</p>
+<p><strong>Security implication:</strong> The limited bandwidth constrains the security measures that can be applied to telemetry. Full TLS 1.3 with certificate verification requires multiple round trips and significant overhead. Most neurostimulator telemetry uses lightweight AEAD (AES-CCM or AES-GCM) with pre-shared keys, which adds only 16 bytes of overhead per packet. The trade-off is that pre-shared keys provide weaker security properties than certificate-based authentication.</p>
+<h2 id="15-firmware-attack-surface-map">15. Firmware Attack Surface Map</h2>
+<h3 id="151-comprehensive-attack-surface">15.1 Comprehensive Attack Surface</h3>
+<table>
+<thead>
+<tr>
+<th>Attack Vector</th>
+<th>Entry Point</th>
+<th>Exploitation Method</th>
+<th>Impact</th>
+<th>Detectability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wireless command injection</td>
+<td>RF receiver → command parser</td>
+<td>Malformed packet exploits parser vulnerability</td>
+<td>Code execution, parameter modification</td>
+<td>Medium — protocol analysis</td>
+</tr>
+<tr>
+<td>Firmware update hijacking</td>
+<td>RF receiver → bootloader</td>
+<td>Supply chain attack or downgrade</td>
+<td>Persistent firmware compromise</td>
+<td>Low — appears legitimate</td>
+</tr>
+<tr>
+<td>Buffer overflow (signal)</td>
+<td>AFE → DMA → signal buffer</td>
+<td>Large signal exceeds buffer size</td>
+<td>Memory corruption, code execution</td>
+<td>High — unusual signal patterns</td>
+</tr>
+<tr>
+<td>Buffer overflow (wireless)</td>
+<td>RF → DMA → rx buffer</td>
+<td>Large packet exceeds rx buffer size</td>
+<td>Memory corruption, code execution</td>
+<td>Medium — packet monitoring</td>
+</tr>
+<tr>
+<td>Integer overflow</td>
+<td>Any arithmetic on untrusted input</td>
+<td>Out-of-bounds access via overflowed index</td>
+<td>Memory corruption</td>
+<td>Low — no visible symptoms</td>
+</tr>
+<tr>
+<td>Return-oriented programming (ROP)</td>
+<td>Any code execution primitive</td>
+<td>Chain gadgets in existing code</td>
+<td>Arbitrary code execution</td>
+<td>Low — uses legitimate code</td>
+</tr>
+<tr>
+<td>DMA attack</td>
+<td>DMA controller</td>
+<td>DMA writes to arbitrary addresses</td>
+<td>Memory corruption</td>
+<td>Low — bypasses CPU</td>
+</tr>
+<tr>
+<td>Fault injection</td>
+<td>External (EMI, laser, voltage glitch)</td>
+<td>Causes bit flips in SRAM/flash</td>
+<td>Logic change, key extraction</td>
+<td>Variable — requires physical proximity</td>
+</tr>
+<tr>
+<td>Side-channel (timing)</td>
+<td>Any secret-dependent operation</td>
+<td>Measures execution time to infer secrets</td>
+<td>Key extraction</td>
+<td>Low — passive, no modification</td>
+</tr>
+<tr>
+<td>Side-channel (power)</td>
+<td>Any secret-dependent operation</td>
+<td>Measures power consumption</td>
+<td>Key extraction</td>
+<td>Low — requires physical proximity</td>
+</tr>
+<tr>
+<td>MPU misconfiguration</td>
+<td>Boot sequence</td>
+<td>Writes to MPU registers</td>
+<td>Privilege escalation</td>
+<td>Low — no visible symptom</td>
+</tr>
+<tr>
+<td>Safety monitor bypass</td>
+<td>Any memory write</td>
+<td>Corrupts monitor state or task</td>
+<td>Disable safety checks</td>
+<td>Low — safety checks stop silently</td>
+</tr>
+</tbody>
+</table>
+<h3 id="152-attack-surface-ordering-vireon-priority">15.2 Attack Surface Ordering (VIREON Priority)</h3>
+<p>VIREON should prioritize validation of the attack surface based on exploitability and impact:</p>
+<ol>
+<li><strong>Critical:</strong> Wireless command parser (highest exposure, highest impact)</li>
+<li><strong>Critical:</strong> OTA update mechanism (persistent compromise)</li>
+<li><strong>High:</strong> Stimulation parameter validation (direct patient safety)</li>
+<li><strong>High:</strong> Safety monitor independence (last line of defense)</li>
+<li><strong>Medium:</strong> DSP engine buffer management (memory corruption)</li>
+<li><strong>Medium:</strong> RTOS task isolation (privilege escalation)</li>
+<li><strong>Low:</strong> Diagnostic data pipeline (data exfiltration, lower immediate impact)</li>
+</ol>
+<h2 id="16-known-firmware-vulnerabilities">16. Known Firmware Vulnerabilities</h2>
+<h3 id="161-abbott-st-jude-medical-devices-2016-2017">16.1 Abbott (St. Jude) Medical Devices (2016-2017)</h3>
+<p><strong>Vulnerability:</strong> The Merlin@home transmitter communicated with implantable devices using unencrypted radio frequency. Firmware updates were transmitted without adequate authentication.</p>
+<p><strong>Impact:</strong> An attacker within range (approximately 10 meters for the home transmitter, longer with specialized equipment) could:
+- Modify device settings without authorization
+- Drain the battery by causing rapid stimulation cycling
+- Potentially deliver unsafe stimulation</p>
+<p><strong>Root cause:</strong> The firmware's communication stack did not implement encryption or authentication for the home monitoring communication channel. The clinical programmer channel was encrypted, but the home monitoring channel was not (presumably for power/bandwidth reasons).</p>
+<p><strong>Remediation:</strong> FDA advisory, firmware update adding encryption to the home monitoring channel.</p>
+<p><strong>VIREON lesson:</strong> Every communication channel must be secured, not just the "primary" channel. Attackers will find and exploit the weakest link. VIREON's validation framework should test ALL communication channels, not just the clinical programmer interface.</p>
+<h3 id="162-medtronic-insulin-pump-2011-2019-multiple">16.2 Medtronic Insulin Pump (2011-2019, Multiple)</h3>
+<p><strong>Vulnerability:</strong> Multiple vulnerabilities in Medtronic's MiniMed insulin pumps, some related to firmware. While not a neurostimulator, the firmware architecture and attack patterns are directly applicable.</p>
+<p><strong>Key firmware-related issue:</strong> The pump's firmware accepted commands from any paired device without verifying the command's authorization level. A paired device with limited authorization (e.g., a blood glucose monitor) could send commands that required higher authorization (e.g., change basal rate).</p>
+<p><strong>VIREON lesson:</strong> The command parser must enforce per-command authorization, not just per-session authorization. Each command should be checked against the sender's authorization level. VIREON should verify that the firmware implements per-command authorization correctly.</p>
+<h3 id="163-generic-cortex-m-exploitation-techniques">16.3 Generic Cortex-M Exploitation Techniques</h3>
+<p>While no published neurostimulator firmware exploits exist in the public literature (as of 2025), the following Cortex-M exploitation techniques are well-documented and directly applicable:</p>
+<p><strong>Stack buffer overflow:</strong> The classic attack. An unchecked copy into a stack-allocated buffer overwrites the return address, redirecting code execution. On Cortex-M, the return address is on the stack (no canary by default, though compilers can add them). The return address is popped into PC on function return (<code>BX LR</code> or <code>POP {PC}</code>).</p>
+<p><strong>Heap overflow:</strong> If dynamic allocation is used, overflowing a heap buffer corrupts the allocator's metadata (free list pointers). By corrupting a free list pointer, an attacker can cause a subsequent allocation to return a pointer to an arbitrary address ("unlink" attack, applicable to simple allocators without integrity checks).</p>
+<p><strong>Return-oriented programming (ROP):</strong> Even without injecting new code, an attacker can chain existing code fragments ("gadgets" ending in <code>BX LR</code>) to achieve arbitrary computation. On Cortex-M, ROP is straightforward because there is no ASLR (addresses are fixed at link time), no DEP (flash is typically both writable and executable, and the MPU's XN bit is often not configured for code regions), and no stack canaries (unless explicitly enabled by the compiler).</p>
+<p><strong>Format string attack:</strong> If the firmware uses <code>printf</code> or <code>sprintf</code> with user-controlled format strings, an attacker can read arbitrary memory (<code>%x</code>, <code>%s</code>) or write arbitrary memory (<code>%n</code>). Format string vulnerabilities are common in diagnostic logging code that formats error messages containing user input.</p>
+<h2 id="17-firmware-reverse-engineering-methodology">17. Firmware Reverse Engineering Methodology</h2>
+<h3 id="171-static-analysis">17.1 Static Analysis</h3>
+<p>Static analysis examines the firmware binary without executing it:</p>
+<ol>
+<li>
+<p><strong>File identification:</strong> Use <code>file</code>, <code>binwalk</code>, <code>binwalk -E</code> to identify the firmware image format, compression, and embedded components.</p>
+</li>
+<li>
+<p><strong>String extraction:</strong> <code>strings -n 6 firmware.bin</code> extracts readable strings — function names, error messages, debug strings, version strings. These provide immediate insight into the firmware's functionality and can reveal security-relevant strings (key material, URLs, debug interfaces).</p>
+</li>
+<li>
+<p><strong>Disassembly:</strong> Use Ghidra, IDA Pro, or Binary Ninja to disassemble the ARM binary. The disassembler identifies functions, basic blocks, and cross-references.</p>
+</li>
+<li>
+<p><strong>Function identification:</strong> Look for known function patterns:</p>
+</li>
+<li>AES: 256-byte S-box lookup table at offset 0x...</li>
+<li>SHA-256: 64-byte round constants (K)</li>
+<li>CRC: Lookup table with 256 entries of polynomial evaluations</li>
+<li>
+<p>Signal processing: Arrays of filter coefficients (recognizable spectral shapes)</p>
+</li>
+<li>
+<p><strong>Control flow reconstruction:</strong> Identify the RTOS task structure by looking for the RTOS's task creation API calls (e.g., <code>xTaskCreate</code> for FreeRTOS). This reveals the task architecture described in Section 4.2.</p>
+</li>
+<li>
+<p><strong>Security function audit:</strong> Identify and audit all functions that handle: wireless input, parameter validation, cryptographic operations, memory allocation, and safety checks.</p>
+</li>
+</ol>
+<h3 id="172-dynamic-analysis">17.2 Dynamic Analysis</h3>
+<p>Dynamic analysis examines the firmware's behavior during execution:</p>
+<ol>
+<li>
+<p><strong>Emulation:</strong> Run the firmware binary in an emulator (QEMU for ARM, or VIREON's digital twin). This allows single-stepping, breakpoint setting, and memory inspection without physical hardware.</p>
+</li>
+<li>
+<p><strong>Fault injection simulation:</strong> Simulate fault injection by modifying registers or memory at specific points during execution. For example, flip a bit in the stimulation amplitude register and observe whether the safety monitor detects the modification.</p>
+</li>
+<li>
+<p><strong>Fuzzing:</strong> Provide random or semi-random inputs to the wireless command parser and observe whether the firmware crashes, hangs, or behaves unexpectedly. Fuzzing is the most effective technique for finding parser vulnerabilities.</p>
+</li>
+<li>
+<p><strong>Timing analysis:</strong> Measure the execution time of security-critical operations (signature verification, decryption) to detect timing side-channels.</p>
+</li>
+</ol>
+<h3 id="173-vireon-firmware-analysis-integration">17.3 VIREON Firmware Analysis Integration</h3>
+<p>VIREON's firmware analysis capabilities should provide:</p>
+<ul>
+<li><strong>Automated function identification:</strong> Pattern matching for known cryptographic and DSP functions.</li>
+<li><strong>Control flow graph extraction:</strong> Automated extraction of the firmware's function call graph and basic block structure.</li>
+<li><strong>Security annotation overlay:</strong> Map the firmware's functions to the security-critical operations described in this module.</li>
+<li><strong>Compliance checking:</strong> Verify that the firmware implements the security measures described in IEC 62304 Annex C (security recommendations).</li>
+</ul>
+<h2 id="18-firmware-hardening-techniques">18. Firmware Hardening Techniques</h2>
+<h3 id="181-compile-time-hardening">18.1 Compile-Time Hardening</h3>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Description</th>
+<th>Applicability to IPG</th>
+<th>Overhead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stack canaries</td>
+<td>Compiler-inserted integrity check before function return</td>
+<td>High — detects stack overflows</td>
+<td>1-2% code size, minimal CPU</td>
+</tr>
+<tr>
+<td>NX/DEP (XN bit)</td>
+<td>MPU execute-never regions prevent code execution from data areas</td>
+<td>High — prevents shellcode injection</td>
+<td>None (hardware feature)</td>
+</tr>
+<tr>
+<td>ASLR</td>
+<td>Randomize code/data addresses at each boot</td>
+<td>Limited — no MMU on Cortex-M, only MPU with fixed regions</td>
+<td>None</td>
+</tr>
+<tr>
+<td>RELRO</td>
+<td>Read-only relocations, prevent GOT/PLT overwrite</td>
+<td>Medium — prevents some ROP gadgets</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>FORTIFY_SOURCE</td>
+<td>Replace unsafe C functions with bounds-checked versions</td>
+<td>High — prevents many buffer overflows</td>
+<td>1-3% code size</td>
+</tr>
+<tr>
+<td>Control flow integrity (CFI)</td>
+<td>Verify that indirect branches target valid call sites</td>
+<td>Medium — prevents ROP</td>
+<td>5-15% code size, 5-10% CPU</td>
+</tr>
+<tr>
+<td>Bounds checking</td>
+<td>Compiler-inserted array bounds checks</td>
+<td>High — prevents out-of-bounds access</td>
+<td>10-30% code size, 10-20% CPU</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Security analysis for IPG constraints:</strong> The CPU overhead of bounds checking (10-20%) may be unacceptable for time-critical code paths (stimulation timing, DSP processing). The recommended approach is to use hardening selectively: full hardening for non-real-time code (wireless stack, diagnostic logger) and selective hardening for real-time code (DSP, stimulation timing). The safety monitor should have the highest level of hardening since it is the last line of defense.</p>
+<h3 id="182-runtime-hardening">18.2 Runtime Hardening</h3>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Description</th>
+<th>Applicability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Watchdog timer</td>
+<td>Hardware timer that resets the MCU if not serviced periodically</td>
+<td>Essential — detects firmware hangs</td>
+</tr>
+<tr>
+<td>Memory fill patterns</td>
+<td>Fill freed memory with a known pattern (0xDEAD...) to detect use-after-free</td>
+<td>Useful for debugging, minimal runtime cost</td>
+</tr>
+<tr>
+<td>Stack fill patterns</td>
+<td>Fill stack with a pattern to detect stack overflow after task switch</td>
+<td>Essential — detects stack overflows</td>
+</tr>
+<tr>
+<td>Double-buffering</td>
+<td>Use two buffers for shared data, atomically swap</td>
+<td>Essential — prevents torn reads/writes</td>
+</tr>
+<tr>
+<td>Input validation</td>
+<td>Validate ALL external inputs (wireless commands, ADC values)</td>
+<td>Essential — first line of defense</td>
+</tr>
+<tr>
+<td>Fail-safe defaults</td>
+<td>If validation fails, use the safest default value</td>
+<td>Essential — safety-critical systems</td>
+</tr>
+<tr>
+<td>Redundant computation</td>
+<td>Compute critical values twice using different methods and compare</td>
+<td>High overhead, use only for safety-critical computations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="183-architecture-level-hardening">18.3 Architecture-Level Hardening</h3>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Description</th>
+<th>Applicability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MPU region isolation</td>
+<td>Separate firmware subsystems into isolated MPU regions</td>
+<td>Essential — hardware-enforced isolation</td>
+</tr>
+<tr>
+<td>TrustZone (M33)</td>
+<td>Separate secure/non-secure worlds with hardware boundary</td>
+<td>Strongest software-level isolation on Cortex-M</td>
+</tr>
+<tr>
+<td>Separate safety core</td>
+<td>Use a dual-core MCU with the safety monitor on a separate core</td>
+<td>Strongest isolation, highest cost</td>
+</tr>
+<tr>
+<td>Secure boot</td>
+<td>Verify firmware integrity before execution</td>
+<td>Essential — prevents firmware tampering</td>
+</tr>
+<tr>
+<td>Secure debug</td>
+<td>Disable JTAG/SWD after manufacturing, or require authentication</td>
+<td>Essential — prevents physical debug access</td>
+</tr>
+<tr>
+<td>Flash protection</td>
+<td>Set flash read/write protection bits after programming</td>
+<td>Essential — prevents firmware extraction/modification</td>
+</tr>
+<tr>
+<td>Bus encryption</td>
+<td>Encrypt data on the internal bus between MCU and peripherals</td>
+<td>Emerging — prevents bus probing</td>
+</tr>
+</tbody>
+</table>
+<p><strong>VIREON validation:</strong> For each hardening technique, VIREON should verify that it is correctly implemented and that it cannot be bypassed. This requires analyzing the firmware's initialization code (to verify MPU configuration), the linker script (to verify memory layout), and the RTOS configuration (to verify task isolation).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

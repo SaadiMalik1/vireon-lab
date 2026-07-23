@@ -1,0 +1,366 @@
+{
+  "mode": "attack_test",
+  "session_report": {
+    "device_addr": "0x1",
+    "state": "IDLE",
+    "session_id": 1,
+    "vulnerable_mode": true,
+    "session_auth_level": "HOME",
+    "duration_s": 0,
+    "energy": {
+      "total_energy_uj": 305.01,
+      "total_energy_mj": 0.000305,
+      "rx_packets": 10,
+      "tx_packets": 10,
+      "crypto_ops": 8,
+      "state_transitions": 4,
+      "rx_energy_uj": 26.35,
+      "tx_energy_uj": 153.1,
+      "crypto_energy_uj": 5.56,
+      "state_energy_uj": 120.0
+    },
+    "packets_received": 10,
+    "packets_sent": 10,
+    "security_events": 14,
+    "auth_failures": 0,
+    "replay_detected": 0,
+    "commands_executed": 7,
+    "auth_rejections": 0
+  },
+  "security_log": [
+    {
+      "time_ms": 1784781769810.21,
+      "event": "STATE_TRANSITION",
+      "state": "IDLE",
+      "session_id": 0,
+      "vulnerable_mode": true,
+      "details": {
+        "from": "SLEEP",
+        "to": "IDLE"
+      }
+    },
+    {
+      "time_ms": 1784781769810.22,
+      "event": "STATE_TRANSITION",
+      "state": "AUTH",
+      "session_id": 0,
+      "vulnerable_mode": true,
+      "details": {
+        "from": "IDLE",
+        "to": "AUTH"
+      }
+    },
+    {
+      "time_ms": 1784781769810.23,
+      "event": "SESSION_INIT",
+      "state": "AUTH",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "session_id": 1,
+        "challenge_preview": "05025345abf8dd9c"
+      }
+    },
+    {
+      "time_ms": 1784781769810.29,
+      "event": "STATE_TRANSITION",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "from": "AUTH",
+        "to": "ACTIVE"
+      }
+    },
+    {
+      "time_ms": 1784781769810.29,
+      "event": "AUTH_SUCCESS",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "session_id": 1
+      }
+    },
+    {
+      "time_ms": 1784781769810.36,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 0,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769810.41,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0x4",
+        "cmd_name": "SET_AMPLITUDE",
+        "seq": 1,
+        "params_size": 4,
+        "params_preview": "40e00000"
+      }
+    },
+    {
+      "time_ms": 1784781769810.44,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0x5",
+        "cmd_name": "SET_FREQUENCY",
+        "seq": 2,
+        "params_size": 2,
+        "params_preview": "00fa"
+      }
+    },
+    {
+      "time_ms": 1784781769810.47,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0x8",
+        "cmd_name": "START_THERAPY",
+        "seq": 3,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769810.5,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0xc",
+        "cmd_name": "OTA_UPDATE",
+        "seq": 4,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769810.52,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 5,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769810.54,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 6,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769810.56,
+      "event": "SESSION_END",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "session_id": 1,
+        "duration_s": 0.0,
+        "energy_uj": 239.85
+      }
+    },
+    {
+      "time_ms": 1784781769810.57,
+      "event": "STATE_TRANSITION",
+      "state": "IDLE",
+      "session_id": 1,
+      "vulnerable_mode": true,
+      "details": {
+        "from": "ACTIVE",
+        "to": "IDLE"
+      }
+    }
+  ],
+  "packet_record": [
+    {
+      "dir": "rx",
+      "ptype": 0,
+      "ptype_name": "SESSION_REQ",
+      "seq": 0,
+      "size": 5,
+      "has_auth_tag": false,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 2,
+      "ptype_name": "AUTH_RESPONSE",
+      "seq": 0,
+      "size": 21,
+      "has_auth_tag": false,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 0,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 1,
+      "size": 18,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 2,
+      "size": 16,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 3,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 4,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 5,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 6,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 6,
+      "ptype_name": "SESSION_END",
+      "seq": 7,
+      "size": 5,
+      "has_auth_tag": false,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    }
+  ],
+  "commands_executed": [
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 0,
+      "auth_level": "HOME"
+    },
+    {
+      "cmd_id": 4,
+      "cmd_name": "SET_AMPLITUDE",
+      "params": "40e00000",
+      "seq": 1,
+      "auth_level": "HOME"
+    },
+    {
+      "cmd_id": 5,
+      "cmd_name": "SET_FREQUENCY",
+      "params": "00fa",
+      "seq": 2,
+      "auth_level": "HOME"
+    },
+    {
+      "cmd_id": 8,
+      "cmd_name": "START_THERAPY",
+      "params": "",
+      "seq": 3,
+      "auth_level": "HOME"
+    },
+    {
+      "cmd_id": 12,
+      "cmd_name": "OTA_UPDATE",
+      "params": "",
+      "seq": 4,
+      "auth_level": "HOME"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 5,
+      "auth_level": "HOME"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 6,
+      "auth_level": "HOME"
+    }
+  ],
+  "vulnerabilities": [
+    "no_auth_tag_verify",
+    "no_replay_protection",
+    "no_per_command_auth",
+    "no_battery_detection"
+  ]
+}

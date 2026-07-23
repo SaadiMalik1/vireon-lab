@@ -2,6 +2,7 @@ site_name: vireon-lab
 site_description: Educational Platform & Interactive Laboratory for Neurosecurity
 repo_url: https://github.com/SaadiMalik1/vireon-lab
 repo_name: SaadiMalik1/vireon-lab
+docs_dir: 'knowledge'
 
 theme:
   name: material
@@ -14,39 +15,39 @@ plugins:
   - search
 
 nav:
-  - Overview: README.md
-  - Architecture & Infrastructure: knowledge/architecture.md
-  - Package Reference: vireon_lab/README.md
+  - Overview: overview.md
+  - Architecture & Infrastructure: architecture.md
+  - Package Reference: package_reference.md
   - Neurosecurity Lessons:
     - NL-001 Neural Signals & Problem Space:
-      - Part 1 Foundations: knowledge/lessons/NL-001/part1_foundations.md
-      - Part 2 Deep Analysis: knowledge/lessons/NL-001/part2_deep_analysis.md
-      - Part 3 Synthesis: knowledge/lessons/NL-001/part3_synthesis.md
-      - Challenges: knowledge/lessons/NL-001/challenges.md
-      - References: knowledge/lessons/NL-001/references.md
+      - Part 1 Foundations: lessons/NL-001/part1_foundations.md
+      - Part 2 Deep Analysis: lessons/NL-001/part2_deep_analysis.md
+      - Part 3 Synthesis: lessons/NL-001/part3_synthesis.md
+      - Challenges: lessons/NL-001/challenges.md
+      - References: lessons/NL-001/references.md
     - NL-002 Neural Signal Processing:
-      - Part 1 Foundations: knowledge/lessons/NL-002/part1_foundations.md
-      - Part 2 Deep Analysis: knowledge/lessons/NL-002/part2_deep_analysis.md
-      - Part 3 Synthesis: knowledge/lessons/NL-002/part3_synthesis.md
-      - Challenges: knowledge/lessons/NL-002/challenges.md
-      - References: knowledge/lessons/NL-002/references.md
+      - Part 1 Foundations: lessons/NL-002/part1_foundations.md
+      - Part 2 Deep Analysis: lessons/NL-002/part2_deep_analysis.md
+      - Part 3 Synthesis: lessons/NL-002/part3_synthesis.md
+      - Challenges: lessons/NL-002/challenges.md
+      - References: lessons/NL-002/references.md
     - NL-003 Firmware Architecture & Security:
-      - Part 1 Foundations: knowledge/lessons/NL-003/part1_foundations.md
-      - Part 2 Deep Analysis: knowledge/lessons/NL-003/part2_deep_analysis.md
-      - Part 3 Synthesis: knowledge/lessons/NL-003/part3_synthesis.md
-      - Challenges: knowledge/lessons/NL-003/challenges.md
-      - References: knowledge/lessons/NL-003/references.md
+      - Part 1 Foundations: lessons/NL-003/part1_foundations.md
+      - Part 2 Deep Analysis: lessons/NL-003/part2_deep_analysis.md
+      - Part 3 Synthesis: lessons/NL-003/part3_synthesis.md
+      - Challenges: lessons/NL-003/challenges.md
+      - References: lessons/NL-003/references.md
     - NL-004 Wireless Protocol Security:
-      - Part 1 Foundations: knowledge/lessons/NL-004/part1_foundations.md
-      - Part 2 Deep Analysis: knowledge/lessons/NL-004/part2_deep_analysis.md
-      - Part 3 Synthesis: knowledge/lessons/NL-004/part3_synthesis.md
-      - Challenges: knowledge/lessons/NL-004/challenges.md
-      - References: knowledge/lessons/NL-004/references.md
+      - Part 1 Foundations: lessons/NL-004/part1_foundations.md
+      - Part 2 Deep Analysis: lessons/NL-004/part2_deep_analysis.md
+      - Part 3 Synthesis: lessons/NL-004/part3_synthesis.md
+      - Challenges: lessons/NL-004/challenges.md
+      - References: lessons/NL-004/references.md
     - NL-005 Closed-Loop System Security:
-      - Part 1 Foundations: knowledge/lessons/NL-005/part1_foundations.md
-      - Part 2 Deep Analysis: knowledge/lessons/NL-005/part2_deep_analysis.md
-      - Part 3 Synthesis: knowledge/lessons/NL-005/part3_synthesis.md
-      - Challenges: knowledge/lessons/NL-005/challenges.md
-      - References: knowledge/lessons/NL-005/references.md
+      - Part 1 Foundations: lessons/NL-005/part1_foundations.md
+      - Part 2 Deep Analysis: lessons/NL-005/part2_deep_analysis.md
+      - Part 3 Synthesis: lessons/NL-005/part3_synthesis.md
+      - Challenges: lessons/NL-005/challenges.md
+      - References: lessons/NL-005/references.md
   - Labs & Threat Models:
-    - STRIDE Threat Modeling: knowledge/labs/lab002_stride_threat_modeling.md
+    - STRIDE Threat Modeling: labs/lab002_stride_threat_modeling.md
