@@ -38,30 +38,50 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Theme-Adaptive CSS Design Token System (Supports both Light and Dark Modes)
+# FORCE PURE OBSIDIAN DARK MODE CSS
 st.markdown("""
 <style>
-    /* Global Adaptive Styling using CSS Variables */
-    .stApp {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Force Global Pure Dark Obsidian Background */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], .stApp {
+        background-color: #06090e !important;
+        background: radial-gradient(circle at 50% 0%, #0d1527 0%, #06090e 70%, #030508 100%) !important;
+        color: #e2e8f0 !important;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     }
 
-    /* Cyber Header Banner */
+    /* Force Sidebar Obsidian Dark Styling */
+    [data-testid="stSidebar"], section[data-testid="stSidebar"] > div {
+        background-color: #080d19 !important;
+        background: #080d19 !important;
+        border-right: 1px solid rgba(0, 242, 254, 0.15) !important;
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: #cbd5e1 !important;
+    }
+
+    [data-testid="stSidebar"] input, [data-testid="stSidebar"] select, [data-testid="stSidebar"] div[role="combobox"] {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border: 1px solid rgba(0, 242, 254, 0.25) !important;
+    }
+
+    /* Cyber Title Banner */
     .cyber-banner {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
-        border: 1px solid rgba(56, 189, 248, 0.25);
+        background: linear-gradient(135deg, rgba(13, 21, 39, 0.95) 0%, rgba(20, 31, 56, 0.9) 100%);
+        border: 1px solid rgba(0, 242, 254, 0.3);
         border-radius: 16px;
         padding: 24px 32px;
         margin-bottom: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 254, 0.08);
+        backdrop-filter: blur(16px);
     }
     
     .cyber-title {
-        font-size: 30px;
+        font-size: 32px;
         font-weight: 800;
         letter-spacing: -0.02em;
-        background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+        background: linear-gradient(90deg, #00f2fe 0%, #7000ff 50%, #00f5d4 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
@@ -74,69 +94,60 @@ st.markdown("""
         font-weight: 400;
     }
     
-    /* Theme Adaptive Cards */
+    /* Obsidian Metric Cards */
     .glass-metric {
-        background: var(--secondary-background-color, rgba(15, 23, 42, 0.7));
-        border: 1px solid rgba(148, 163, 184, 0.2);
+        background: rgba(13, 21, 39, 0.85);
+        border: 1px solid rgba(0, 242, 254, 0.18);
         border-radius: 14px;
         padding: 18px 22px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
         transition: transform 0.2s ease, border-color 0.2s ease;
     }
     
     .glass-metric:hover {
-        border-color: rgba(56, 189, 248, 0.4);
+        border-color: rgba(0, 242, 254, 0.45);
         transform: translateY(-2px);
     }
     
     .glass-metric-val {
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 800;
         margin-top: 4px;
-        color: var(--text-color, #e2e8f0);
+        color: #f8fafc;
     }
     
     .glass-metric-lbl {
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: var(--text-color, #64748b);
-        opacity: 0.75;
+        color: #64748b;
         font-weight: 600;
     }
 
-    /* Badges */
+    /* Status Badges */
     .badge-nominal {
-        background: rgba(34, 197, 94, 0.15);
-        color: #22c55e;
-        border: 1px solid rgba(34, 197, 94, 0.35);
+        background: rgba(0, 245, 212, 0.15);
+        color: #00f5d4;
+        border: 1px solid rgba(0, 245, 212, 0.4);
         padding: 6px 16px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.04em;
+        box-shadow: 0 0 14px rgba(0, 245, 212, 0.25);
     }
 
     .badge-hazard {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-        border: 1px solid rgba(239, 68, 68, 0.4);
+        background: rgba(255, 0, 85, 0.18);
+        color: #ff0055;
+        border: 1px solid rgba(255, 0, 85, 0.45);
         padding: 6px 16px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 700;
         letter-spacing: 0.04em;
-    }
-
-    /* Fix Light Mode Sidebar Controls & Input Visibility */
-    [data-testid="stSidebar"] {
-        background-color: var(--secondary-background-color, #0f172a);
-    }
-
-    .stButton > button {
-        font-weight: 600;
-        border-radius: 8px;
+        box-shadow: 0 0 14px rgba(255, 0, 85, 0.3);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -155,28 +166,45 @@ if "dbs_amplitude" not in st.session_state:
 if "dbs_frequency" not in st.session_state:
     st.session_state.dbs_frequency = 130.0
 if "live_stream_active" not in st.session_state:
-    st.session_state.live_stream_active = False
-if "time_shift" not in st.session_state:
-    st.session_state.time_shift = 0.0
+    st.session_state.live_stream_active = True
+if "selected_dataset" not in st.session_state:
+    st.session_state.selected_dataset = "Synthetic Live Stream (8-Channel)"
 
-# Sidebar Control Center
+# Sidebar Controls
 with st.sidebar:
     st.markdown("### 🧠 VIREON Control Center")
-    st.caption("Neurosecurity Hardware & Lab Orchestrator")
+    st.caption("Neurosecurity Hardware & Ring-Buffer Orchestrator")
     
     st.divider()
     
-    # Mode & Stream Controls
-    st.markdown("#### 🔄 Streaming Engine Mode")
+    # Telemetry Execution Mode & Window Duration
+    st.markdown("#### 🔄 Streaming Engine & Time Window")
     stream_mode = st.radio(
-        "Telemetry Execution Mode",
-        ["⚡ Live Real-Time Stream (Auto-Update)", "⏸️ Static Snapshot View"],
-        index=0 if st.session_state.live_stream_active else 1,
-        help="Toggle continuous real-time neural signal updates vs static snapshot mode."
+        "Execution Mode",
+        ["⚡ Live Real-Time Stream", "⏸️ Static Snapshot View"],
+        index=0 if st.session_state.live_stream_active else 1
     )
     st.session_state.live_stream_active = ("Live Real-Time" in stream_mode)
     
-    refresh_rate = st.slider("Live Stream Refresh Interval (s)", 0.3, 2.0, 0.8, 0.1)
+    window_choice = st.selectbox(
+        "Continuous Telemetry Time Window",
+        [
+            "2 seconds (Micro Spike / DBS View)",
+            "5 seconds (High Frequency View)",
+            "10 seconds (Standard EEG Montage)",
+            "30 seconds (Rhythm Burst View)",
+            "1 minute (Clinical Trend View)",
+            "2 minutes (Extended Trend)",
+            "5 minutes (Long-Term Monitoring)"
+        ],
+        index=2
+    )
+    
+    window_map = {
+        "2 seconds": 2.0, "5 seconds": 5.0, "10 seconds": 10.0,
+        "30 seconds": 30.0, "1 minute": 60.0, "2 minutes": 120.0, "5 minutes": 300.0
+    }
+    window_sec = next((val for key, val in window_map.items() if key in window_choice), 10.0)
     
     st.divider()
     
@@ -190,22 +218,26 @@ with st.sidebar:
             "Motor Imagery BCI Dataset (PhysioNet)",
             "Deep Brain Stimulation Subthalamic LFP"
         ],
-        index=0,
-        help="Select real clinical datasets or synthetic neural signal generators."
+        index=0
     )
+    
+    # Detect dataset profile switch
+    if data_source != st.session_state.selected_dataset:
+        st.session_state.selected_dataset = data_source
+        st.session_state.stream.load_dataset_profile(data_source)
+        st.toast(f"Loaded dataset profile: {data_source}", icon="📁")
     
     st.divider()
     
-    # Quick Action: Active Threat Mutator
-    st.markdown("#### ⚡ Hardware Physical Mutator")
+    # Active Threat Mutator
+    st.markdown("#### ⚡ Physical Threat Mutator")
     selected_attack = st.selectbox(
         "Inject Threat Vector",
         ["none", "Gaussian Noise Injection", "DC Offset Drift", "Denial of Service", "Session Replay", "Malicious DBS Pulse Train"],
-        index=0,
-        help="Select a physical threat vector to inject into the neural telemetry stream."
+        index=0
     )
     
-    intensity = st.slider("Threat Perturbation Factor", 0.1, 3.0, st.session_state.attack_intensity, 0.1)
+    intensity = st.slider("Perturbation Amplitude Factor", 0.1, 3.0, st.session_state.attack_intensity, 0.1)
     
     col_s1, col_s2 = st.columns(2)
     with col_s1:
@@ -217,7 +249,7 @@ with st.sidebar:
         if st.button("Reset Telemetry", use_container_width=True):
             st.session_state.active_attack = "none"
             st.session_state.attack_intensity = 1.0
-            st.toast("System telemetry restored to Nominal", icon="✅")
+            st.toast("Telemetry baseline restored to Nominal", icon="✅")
         
     st.divider()
     
@@ -232,9 +264,9 @@ with st.sidebar:
     st.session_state.dbs_frequency = dbs_freq
     
     st.divider()
-    st.caption("VIREON Platform v1.1.0 | ISO 14971 Class III Compliant")
+    st.caption("VIREON Platform v1.1.0 | Pure Obsidian Dark Engine")
 
-# Top Header Cyber Banner
+# Top Cyber Banner
 is_attack = st.session_state.active_attack != "none"
 banner_badge = f"""<span class="badge-hazard">🚨 THREAT ACTIVE: {st.session_state.active_attack.upper()}</span>""" if is_attack else """<span class="badge-nominal">✅ HARDWARE TELEMETRY NOMINAL</span>"""
 
@@ -243,7 +275,7 @@ st.markdown(f"""
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 class="cyber-title">VIREON Neurosecurity Interactive Platform</h1>
-            <div class="cyber-subtitle">Real-time Closed-Loop Neural Signal Telemetry, Physical Threat Mutators & Forensic Compliance</div>
+            <div class="cyber-subtitle">Phase-Continuous Ring-Buffer Telemetry, Physical Threat Mutators & Clinical Compliance</div>
         </div>
         <div>
             {banner_badge}
@@ -252,18 +284,17 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Advance time shift if Live Mode is active
+# Advance Ring Buffer if Live Real-Time Stream is active
 if st.session_state.live_stream_active:
-    st.session_state.time_shift += refresh_rate
+    st.session_state.stream.update_ring_buffer(
+        step_samples=15,
+        data_source=data_source,
+        attack_type=st.session_state.active_attack,
+        attack_intensity=st.session_state.attack_intensity
+    )
 
-# Generate Live Signal Data Chunk
-t, signals = st.session_state.stream.generate_chunk(
-    duration_sec=2.0,
-    data_source=data_source,
-    attack_type=st.session_state.active_attack,
-    attack_intensity=st.session_state.attack_intensity,
-    time_shift=st.session_state.time_shift
-)
+# Extract requested time window from phase-continuous ring buffer
+t, signals = st.session_state.stream.get_window(window_sec)
 
 # Compute Real-time Anomaly Metrics
 band_powers = st.session_state.stream.compute_band_powers(signals)
@@ -274,16 +305,16 @@ clinical_status = "HAZARD DETECTED" if (is_attack or (dbs_enable and dbs_amp > 7
 # Top Metric Row
 m1, m2, m3, m4, m5 = st.columns(5)
 with m1:
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Battery Level</div><div class="glass-metric-val" style="color:#38bdf8;">98.5%</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Battery Level</div><div class="glass-metric-val" style="color:#00f2fe;">98.5%</div></div>""", unsafe_allow_html=True)
 with m2:
     coherence = 0.42 if is_attack else 0.96
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Neural Coherence</div><div class="glass-metric-val" style="color: {'#ef4444' if is_attack else '#22c55e'};">{coherence:.3f}</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Neural Coherence</div><div class="glass-metric-val" style="color: {'#ff0055' if is_attack else '#00f5d4'};">{coherence:.3f}</div></div>""", unsafe_allow_html=True)
 with m3:
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Beta Power</div><div class="glass-metric-val" style="color:#a855f7;">{band_powers['Beta (13-30Hz)']:.1f}%</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Beta Power</div><div class="glass-metric-val" style="color:#9d4edd;">{band_powers['Beta (13-30Hz)']:.1f}%</div></div>""", unsafe_allow_html=True)
 with m4:
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Anomaly Score</div><div class="glass-metric-val" style="color: {'#ef4444' if is_attack else '#38bdf8'};">{anomaly_score:.3f}</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Anomaly Score</div><div class="glass-metric-val" style="color: {'#ff0055' if is_attack else '#00f2fe'};">{anomaly_score:.3f}</div></div>""", unsafe_allow_html=True)
 with m5:
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">NISS Severity</div><div class="glass-metric-val" style="color: {'#ef4444' if niss_score > 50 else '#22c55e'};">{niss_score} / 100</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">NISS Severity</div><div class="glass-metric-val" style="color: {'#ff0055' if niss_score > 50 else '#00f5d4'};">{niss_score} / 100</div></div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -302,51 +333,53 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # ---------------------------------------------------------------------------
 with tab1:
     st.markdown("### 📊 Real-time 8-Channel EEG Waveform Monitor")
-    st.caption(f"Streaming continuous 100 Hz neural telemetry from **{data_source}** across scalp electrodes with Welch FFT spectral decomposition.")
+    st.caption(f"Phase-continuous 100 Hz neural telemetry ({window_sec:.0f}s window) from **{data_source}** with Welch FFT spectral power distribution.")
     
     col_chart, col_bands = st.columns([3, 1])
     
     with col_chart:
         fig_eeg = go.Figure()
-        neon_colors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#fb7185", "#34d399", "#fbbf24", "#a78bfa"]
+        obsidian_colors = ["#00f2fe", "#7000ff", "#00f5d4", "#ff007f", "#ffd166", "#38bdf8", "#c084fc", "#f472b6"]
         
         for ch in range(8):
-            # Offset channels vertically for multi-trace EEG view
             offset_signal = signals[ch, :] + (ch * 60.0)
             fig_eeg.add_trace(go.Scatter(
                 x=t, y=offset_signal,
                 mode="lines",
                 name=f"Channel {CHANNEL_NAMES[ch]}",
-                line=dict(color=neon_colors[ch % len(neon_colors)], width=1.5)
+                line=dict(color=obsidian_colors[ch % len(obsidian_colors)], width=1.5)
             ))
             
         fig_eeg.update_layout(
-            height=440,
+            height=450,
+            uirevision=data_source, # Keeps layout static during streaming of a dataset, smooth update when dataset changes!
             margin=dict(l=10, r=10, t=10, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(15, 23, 42, 0.5)",
-            xaxis=dict(title="Time (seconds)", showgrid=True, gridcolor="rgba(148,163,184,0.15)"),
-            yaxis=dict(title="EEG Electrode Trace (µV Offset)", showgrid=True, gridcolor="rgba(148,163,184,0.15)"),
-            legend=dict(orientation="h", y=1.12)
+            plot_bgcolor="rgba(6, 9, 14, 0.85)",
+            xaxis=dict(title="Time (seconds)", showgrid=True, gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            yaxis=dict(title="EEG Electrode Trace (µV Offset)", showgrid=True, gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            legend=dict(orientation="h", y=1.12, font=dict(color="#cbd5e1"))
         )
-        st.plotly_chart(fig_eeg, use_container_width=True)
+        st.plotly_chart(fig_eeg, use_container_width=True, key="live_eeg_waveform_chart", config={'displayModeBar': False})
         
     with col_bands:
         st.markdown("#### 🎵 Spectral Power Distribution")
         df_bands = pd.DataFrame(list(band_powers.items()), columns=["Band", "Power (%)"])
         fig_bar = px.bar(
             df_bands, x="Power (%)", y="Band", orientation="h",
-            color="Power (%)", color_continuous_scale="Viridis"
+            color="Power (%)", color_continuous_scale="Plasma"
         )
         fig_bar.update_layout(
-            height=400,
+            height=410,
+            uirevision=data_source,
             margin=dict(l=10, r=10, t=10, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(15, 23, 42, 0.5)",
-            xaxis=dict(range=[0, 100], gridcolor="rgba(148,163,184,0.15)"),
+            plot_bgcolor="rgba(6, 9, 14, 0.85)",
+            xaxis=dict(range=[0, 100], gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            yaxis=dict(tickfont=dict(color="#cbd5e1")),
             coloraxis_showscale=False
         )
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True, key="spectral_bar_chart", config={'displayModeBar': False})
 
 # ---------------------------------------------------------------------------
 # TAB 2: Signal Tampering & IDS Anomaly Lab
@@ -377,21 +410,22 @@ with tab2:
             
     with col_tamp_vis:
         st.markdown("#### Signal Mutation Comparison (Baseline vs Mutated)")
-        clean_t, clean_sig = SyntheticEEGStream(seed=42).generate_chunk(duration_sec=2.0, attack_type="none", time_shift=st.session_state.time_shift)
+        clean_t, clean_sig = SyntheticEEGStream(seed=42).get_window(window_sec)
         
         fig_comp = go.Figure()
-        fig_comp.add_trace(go.Scatter(x=clean_t, y=clean_sig[0, :], name="Baseline Channel F3", line=dict(color="#38bdf8", dash="dash", width=1.5)))
-        fig_comp.add_trace(go.Scatter(x=t, y=signals[0, :], name="Mutated Channel F3", line=dict(color="#ef4444", width=2)))
+        fig_comp.add_trace(go.Scatter(x=clean_t, y=clean_sig[0, :], name="Baseline Channel F3", line=dict(color="#00f2fe", dash="dash", width=1.5)))
+        fig_comp.add_trace(go.Scatter(x=t, y=signals[0, :], name="Mutated Channel F3", line=dict(color="#ff0055", width=2)))
         
         fig_comp.update_layout(
             height=420,
+            uirevision=data_source,
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(15, 23, 42, 0.5)",
-            xaxis=dict(title="Time (seconds)", gridcolor="rgba(148,163,184,0.15)"),
-            yaxis=dict(title="Amplitude (µV)", gridcolor="rgba(148,163,184,0.15)"),
-            legend=dict(orientation="h", y=1.12)
+            plot_bgcolor="rgba(6, 9, 14, 0.85)",
+            xaxis=dict(title="Time (seconds)", gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            yaxis=dict(title="Amplitude (µV)", gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            legend=dict(orientation="h", y=1.12, font=dict(color="#cbd5e1"))
         )
-        st.plotly_chart(fig_comp, use_container_width=True)
+        st.plotly_chart(fig_comp, use_container_width=True, key="tamper_comparison_chart", config={'displayModeBar': False})
 
 # ---------------------------------------------------------------------------
 # TAB 3: Closed-Loop DBS & Clinical Risk Simulator
@@ -431,18 +465,19 @@ with tab3:
             dbs_train = np.zeros_like(t_pulse)
             
         fig_dbs = go.Figure()
-        fig_dbs.add_trace(go.Scatter(x=t_pulse, y=lfp_treated, name="LFP Beta Rhythm (uV)", line=dict(color="#818cf8", width=2)))
-        fig_dbs.add_trace(go.Scatter(x=t_pulse, y=dbs_train, name="DBS Pulse Train (mA x 10)", line=dict(color="#f43f5e", width=1.5)))
+        fig_dbs.add_trace(go.Scatter(x=t_pulse, y=lfp_treated, name="LFP Beta Rhythm (uV)", line=dict(color="#7000ff", width=2)))
+        fig_dbs.add_trace(go.Scatter(x=t_pulse, y=dbs_train, name="DBS Pulse Train (mA x 10)", line=dict(color="#ff0055", width=1.5)))
         
         fig_dbs.update_layout(
             height=400,
+            uirevision="dbs_pulse_static",
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(15, 23, 42, 0.5)",
-            xaxis=dict(title="Time (seconds)", gridcolor="rgba(148,163,184,0.15)"),
-            yaxis=dict(title="Amplitude", gridcolor="rgba(148,163,184,0.15)"),
-            legend=dict(orientation="h", y=1.12)
+            plot_bgcolor="rgba(6, 9, 14, 0.85)",
+            xaxis=dict(title="Time (seconds)", gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            yaxis=dict(title="Amplitude", gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
+            legend=dict(orientation="h", y=1.12, font=dict(color="#cbd5e1"))
         )
-        st.plotly_chart(fig_dbs, use_container_width=True)
+        st.plotly_chart(fig_dbs, use_container_width=True, key="dbs_stimulation_chart", config={'displayModeBar': False})
 
 # ---------------------------------------------------------------------------
 # TAB 4: Wireless BLE & Telemetry Security Lab
@@ -505,9 +540,9 @@ with tab5:
                 [10, 11, 9, 20]
             ])
             
-        fig_cm = px.imshow(cm, x=labels, y=labels, color_continuous_scale="Viridis", text_auto=True)
-        fig_cm.update_layout(height=400, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(15, 23, 42, 0.5)")
-        st.plotly_chart(fig_cm, use_container_width=True)
+        fig_cm = px.imshow(cm, x=labels, y=labels, color_continuous_scale="Plasma", text_auto=True)
+        fig_cm.update_layout(height=400, uirevision="confusion_matrix_static", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(6, 9, 14, 0.85)")
+        st.plotly_chart(fig_cm, use_container_width=True, key="adv_confusion_matrix_chart", config={'displayModeBar': False})
 
 # ---------------------------------------------------------------------------
 # TAB 6: STIX 2.1 Threat Matrix & Forensic Audit Generator
@@ -555,7 +590,7 @@ with tab6:
             use_container_width=True
         )
 
-# Handle Real-time Auto-Refresh Rerun Loop if Live Mode is active
+# Controlled loop rerun for smooth live telemetry stream
 if st.session_state.live_stream_active:
-    time.sleep(refresh_rate)
+    time.sleep(0.15)
     st.rerun()
