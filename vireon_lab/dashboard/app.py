@@ -152,8 +152,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Session State Initialization
-if "stream" not in st.session_state:
+# Session State Initialization (With Safe Attribute Fallback)
+if "stream" not in st.session_state or not hasattr(st.session_state.stream, "load_dataset_profile"):
     st.session_state.stream = SyntheticEEGStream(sampling_rate=100, num_channels=8, seed=42)
 if "active_attack" not in st.session_state:
     st.session_state.active_attack = "none"
@@ -221,9 +221,11 @@ with st.sidebar:
         index=0
     )
     
-    # Detect dataset profile switch
+    # Safe dataset profile switch with attribute guard
     if data_source != st.session_state.selected_dataset:
         st.session_state.selected_dataset = data_source
+        if not hasattr(st.session_state.stream, "load_dataset_profile"):
+            st.session_state.stream = SyntheticEEGStream(sampling_rate=100, num_channels=8, seed=42)
         st.session_state.stream.load_dataset_profile(data_source)
         st.toast(f"Loaded dataset profile: {data_source}", icon="📁")
     
@@ -352,7 +354,7 @@ with tab1:
             
         fig_eeg.update_layout(
             height=450,
-            uirevision=data_source, # Keeps layout static during streaming of a dataset, smooth update when dataset changes!
+            uirevision=data_source,
             margin=dict(l=10, r=10, t=10, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(6, 9, 14, 0.85)",
