@@ -10,10 +10,16 @@
 
 - **Interactive Dashboard**: Streamlit browser UI (`vireon_lab/dashboard/app.py`) for demonstrating BCI attack scenarios (adversarial ML, signal spoofing, DBS closed-loop manipulation).
 - **Emulators**: Software emulators for OpenBCI Cyton, PiEEG SPI interface, BLE GATT, and DBS LFP generators (`tests/` matrix verified).
-- **Knowledge Base**: Curated reference articles covering neuroscience basics (`knowledge/neuroscience/`), BLE communication protocols (`knowledge/protocols/`), and cybersecurity guidance (`knowledge/standards/`).
-  - *Status Notice:* Regulatory subfolders (`knowledge/regulations/FDA`, `ISO`, `MDR`, `IEC`, `HIPAA`) are currently placeholder directories.
-- **Tutorials & Modules**: Hands-on lesson modules (`Module/`) covering signal simulation, attack detection, and firmware reverse engineering exercises.
+- **Integrated Knowledge Base**: 5 complete Neurosecurity curriculum modules (`knowledge/lessons/`):
+  - **NL-001**: Neural Signals & The Neurosecurity Problem Space (Foundations, Deep Analysis, Synthesis, CTF Challenges, References).
+  - **NL-002**: Neural Signal Processing for Security Analysts (Filtering, Feature Extraction, Failure Modes, Challenges, References).
+  - **NL-003**: Neurostimulator Firmware Architecture & Security (Cortex-M Execution, DSP Engines, STRIDE Analysis, Challenges, References).
+  - **NL-004**: Wireless Protocol Security for Neurostimulators (MICS/BLE Telemetry, Protocol Reverse Engineering, Challenges, References).
+  - **NL-005**: Closed-Loop System Security for Neurostimulators (Sensor Spoofing, Delay Injection, Benchmarks, Challenges, References).
+- **Hands-on Labs & Simulators**: Interactive Python simulation engines (`knowledge/simulators/`) for signal generation, DSP filtering, firmware reverse engineering, protocol attacks, and closed-loop control.
+- **Threat Modeling & Data Benchmarks**: STRIDE threat modeling lab templates (`knowledge/labs/`) and empirical benchmark datasets/session dumps (`knowledge/data/`).
 - **Test Suite Verification:** 59 Python tests passed (`pytest`).
+
 
 ---
 

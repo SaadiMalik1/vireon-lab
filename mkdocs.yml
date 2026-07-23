@@ -15,3 +15,37 @@ plugins:
 
 nav:
   - Overview: README.md
+  - Neurosecurity Lessons:
+    - NL-001 Neural Signals & Problem Space:
+      - Part 1 Foundations: knowledge/lessons/NL-001/part1_foundations.md
+      - Part 2 Deep Analysis: knowledge/lessons/NL-001/part2_deep_analysis.md
+      - Part 3 Synthesis: knowledge/lessons/NL-001/part3_synthesis.md
+      - Challenges: knowledge/lessons/NL-001/challenges.md
+      - References: knowledge/lessons/NL-001/references.md
+    - NL-002 Neural Signal Processing:
+      - Part 1 Foundations: knowledge/lessons/NL-002/part1_foundations.md
+      - Part 2 Deep Analysis: knowledge/lessons/NL-002/part2_deep_analysis.md
+      - Part 3 Synthesis: knowledge/lessons/NL-002/part3_synthesis.md
+      - Challenges: knowledge/lessons/NL-002/challenges.md
+      - References: knowledge/lessons/NL-002/references.md
+    - NL-003 Firmware Architecture & Security:
+      - Part 1 Foundations: knowledge/lessons/NL-003/part1_foundations.md
+      - Part 2 Deep Analysis: knowledge/lessons/NL-003/part2_deep_analysis.md
+      - Part 3 Synthesis: knowledge/lessons/NL-003/part3_synthesis.md
+      - Challenges: knowledge/lessons/NL-003/challenges.md
+      - References: knowledge/lessons/NL-003/references.md
+    - NL-004 Wireless Protocol Security:
+      - Part 1 Foundations: knowledge/lessons/NL-004/part1_foundations.md
+      - Part 2 Deep Analysis: knowledge/lessons/NL-004/part2_deep_analysis.md
+      - Part 3 Synthesis: knowledge/lessons/NL-004/part3_synthesis.md
+      - Challenges: knowledge/lessons/NL-004/challenges.md
+      - References: knowledge/lessons/NL-004/references.md
+    - NL-005 Closed-Loop System Security:
+      - Part 1 Foundations: knowledge/lessons/NL-005/part1_foundations.md
+      - Part 2 Deep Analysis: knowledge/lessons/NL-005/part2_deep_analysis.md
+      - Part 3 Synthesis: knowledge/lessons/NL-005/part3_synthesis.md
+      - Challenges: knowledge/lessons/NL-005/challenges.md
+      - References: knowledge/lessons/NL-005/references.md
+  - Labs & Threat Models:
+    - STRIDE Threat Modeling: knowledge/labs/lab002_stride_threat_modeling.md
+

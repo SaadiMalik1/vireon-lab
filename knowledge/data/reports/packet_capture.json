@@ -1,0 +1,614 @@
+{
+  "mode": "session",
+  "session_report": {
+    "device_addr": "0x1",
+    "state": "IDLE",
+    "session_id": 1,
+    "vulnerable_mode": false,
+    "session_auth_level": "CLINICAL",
+    "duration_s": 0,
+    "energy": {
+      "total_energy_uj": 450.55,
+      "total_energy_mj": 0.000451,
+      "rx_packets": 18,
+      "tx_packets": 18,
+      "crypto_ops": 31,
+      "state_transitions": 4,
+      "rx_energy_uj": 47.53,
+      "tx_energy_uj": 275.62,
+      "crypto_energy_uj": 7.4,
+      "state_energy_uj": 120.0
+    },
+    "packets_received": 18,
+    "packets_sent": 18,
+    "security_events": 22,
+    "auth_failures": 0,
+    "replay_detected": 0,
+    "commands_executed": 15,
+    "auth_rejections": 0
+  },
+  "security_log": [
+    {
+      "time_ms": 1784781769757.17,
+      "event": "STATE_TRANSITION",
+      "state": "IDLE",
+      "session_id": 0,
+      "vulnerable_mode": false,
+      "details": {
+        "from": "SLEEP",
+        "to": "IDLE"
+      }
+    },
+    {
+      "time_ms": 1784781769757.19,
+      "event": "STATE_TRANSITION",
+      "state": "AUTH",
+      "session_id": 0,
+      "vulnerable_mode": false,
+      "details": {
+        "from": "IDLE",
+        "to": "AUTH"
+      }
+    },
+    {
+      "time_ms": 1784781769757.19,
+      "event": "SESSION_INIT",
+      "state": "AUTH",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "session_id": 1,
+        "challenge_preview": "965544a8aafdec2e"
+      }
+    },
+    {
+      "time_ms": 1784781769757.25,
+      "event": "STATE_TRANSITION",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "from": "AUTH",
+        "to": "ACTIVE"
+      }
+    },
+    {
+      "time_ms": 1784781769757.25,
+      "event": "AUTH_SUCCESS",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "session_id": 1
+      }
+    },
+    {
+      "time_ms": 1784781769757.3,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 0,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.36,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x4",
+        "cmd_name": "SET_AMPLITUDE",
+        "seq": 1,
+        "params_size": 4,
+        "params_preview": "40200000"
+      }
+    },
+    {
+      "time_ms": 1784781769757.4,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x5",
+        "cmd_name": "SET_FREQUENCY",
+        "seq": 2,
+        "params_size": 2,
+        "params_preview": "0096"
+      }
+    },
+    {
+      "time_ms": 1784781769757.43,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x6",
+        "cmd_name": "SET_PULSE_WIDTH",
+        "seq": 3,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.46,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x7",
+        "cmd_name": "SET_ELECTRODE",
+        "seq": 4,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.48,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x8",
+        "cmd_name": "START_THERAPY",
+        "seq": 5,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.5,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 6,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.53,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 7,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.55,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 8,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.57,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0xb",
+        "cmd_name": "GET_NEURAL_DATA",
+        "seq": 9,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.59,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x3",
+        "cmd_name": "GET_DIAGNOSTICS",
+        "seq": 10,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.61,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x4",
+        "cmd_name": "SET_AMPLITUDE",
+        "seq": 11,
+        "params_size": 4,
+        "params_preview": "40200000"
+      }
+    },
+    {
+      "time_ms": 1784781769757.64,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x5",
+        "cmd_name": "SET_FREQUENCY",
+        "seq": 12,
+        "params_size": 2,
+        "params_preview": "0082"
+      }
+    },
+    {
+      "time_ms": 1784781769757.66,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 13,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.69,
+      "event": "COMMAND_RECEIVED",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "cmd_id": "0x1",
+        "cmd_name": "GET_STATUS",
+        "seq": 14,
+        "params_size": 0,
+        "params_preview": "(none)"
+      }
+    },
+    {
+      "time_ms": 1784781769757.7,
+      "event": "SESSION_END",
+      "state": "ACTIVE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "session_id": 1,
+        "duration_s": 0.0,
+        "energy_uj": 385.39
+      }
+    },
+    {
+      "time_ms": 1784781769757.71,
+      "event": "STATE_TRANSITION",
+      "state": "IDLE",
+      "session_id": 1,
+      "vulnerable_mode": false,
+      "details": {
+        "from": "ACTIVE",
+        "to": "IDLE"
+      }
+    }
+  ],
+  "packet_record": [
+    {
+      "dir": "rx",
+      "ptype": 0,
+      "ptype_name": "SESSION_REQ",
+      "seq": 0,
+      "size": 5,
+      "has_auth_tag": false,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 2,
+      "ptype_name": "AUTH_RESPONSE",
+      "seq": 0,
+      "size": 21,
+      "has_auth_tag": false,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 0,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 1,
+      "size": 18,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 2,
+      "size": 16,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 3,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 4,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 5,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 6,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 7,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 8,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 9,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 10,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 11,
+      "size": 18,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 12,
+      "size": 16,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 13,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 4,
+      "ptype_name": "DATA",
+      "seq": 14,
+      "size": 14,
+      "has_auth_tag": true,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    },
+    {
+      "dir": "rx",
+      "ptype": 6,
+      "ptype_name": "SESSION_END",
+      "seq": 15,
+      "size": 5,
+      "has_auth_tag": false,
+      "device_addr": "0x1",
+      "timestamp_ms": 0.0
+    }
+  ],
+  "commands_executed": [
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 0,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 4,
+      "cmd_name": "SET_AMPLITUDE",
+      "params": "40200000",
+      "seq": 1,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 5,
+      "cmd_name": "SET_FREQUENCY",
+      "params": "0096",
+      "seq": 2,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 6,
+      "cmd_name": "SET_PULSE_WIDTH",
+      "params": "",
+      "seq": 3,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 7,
+      "cmd_name": "SET_ELECTRODE",
+      "params": "",
+      "seq": 4,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 8,
+      "cmd_name": "START_THERAPY",
+      "params": "",
+      "seq": 5,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 6,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 7,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 8,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 11,
+      "cmd_name": "GET_NEURAL_DATA",
+      "params": "",
+      "seq": 9,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 3,
+      "cmd_name": "GET_DIAGNOSTICS",
+      "params": "",
+      "seq": 10,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 4,
+      "cmd_name": "SET_AMPLITUDE",
+      "params": "40200000",
+      "seq": 11,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 5,
+      "cmd_name": "SET_FREQUENCY",
+      "params": "0082",
+      "seq": 12,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 13,
+      "auth_level": "CLINICAL"
+    },
+    {
+      "cmd_id": 1,
+      "cmd_name": "GET_STATUS",
+      "params": "",
+      "seq": 14,
+      "auth_level": "CLINICAL"
+    }
+  ],
+  "session_key_hex": null,
+  "psk_hex": "a3bbc9526226e1b0bc7a6f9ff33cb766",
+  "device_addr": "0x1",
+  "session_id": 1,
+  "boot_nonce": 2810919659,
+  "challenge_hex": "965544a8aafdec2e4c34efc13976244a"
+}
