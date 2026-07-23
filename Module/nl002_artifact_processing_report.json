@@ -1,0 +1,108 @@
+{
+  "n_channels": 4,
+  "sampling_rate_hz": 250.0,
+  "duration_s": 10.0,
+  "global_alerts": [],
+  "channels": [
+    {
+      "channel_label": "CH_0",
+      "snr_db": 20.0,
+      "rms_uv": 35.14294279056676,
+      "clipping_pct": 0.0004,
+      "line_noise_pct": 0.01653446708851808,
+      "stationarity_ks_stat": 0.0304,
+      "stationarity_p_value": 0.6105583753502617,
+      "artifact_segments": [],
+      "band_powers": {
+        "delta": 17.527523831991072,
+        "theta": 34.403597566977794,
+        "alpha": 269.5843751811571,
+        "beta": 272.86885493219023,
+        "gamma": 486.3184592683219
+      },
+      "hjorth_activity": 1235.026427981048,
+      "hjorth_mobility": 1.192927379901206,
+      "hjorth_complexity": 1.4266991233067787,
+      "line_length": 83798.06738325515,
+      "spectral_edge_freq_50": 36.0,
+      "spectral_edge_freq_90": 106.4,
+      "spectral_entropy": 7.196750516011058,
+      "alerts": []
+    },
+    {
+      "channel_label": "CH_1",
+      "snr_db": 20.0,
+      "rms_uv": 34.11380576594394,
+      "clipping_pct": 0.0004,
+      "line_noise_pct": 0.02123799148525091,
+      "stationarity_ks_stat": 0.04,
+      "stationarity_p_value": 0.2700754592352246,
+      "artifact_segments": [],
+      "band_powers": {
+        "delta": 16.64223917811257,
+        "theta": 24.583855513557722,
+        "alpha": 244.1460398349367,
+        "beta": 219.83185945225333,
+        "gamma": 476.299972046849
+      },
+      "hjorth_activity": 1163.7517438365496,
+      "hjorth_mobility": 1.231036621893449,
+      "hjorth_complexity": 1.3919457376379998,
+      "line_length": 83501.06257404131,
+      "spectral_edge_freq_50": 39.2,
+      "spectral_edge_freq_90": 109.2,
+      "spectral_entropy": 7.26772725454611,
+      "alerts": []
+    },
+    {
+      "channel_label": "CH_2",
+      "snr_db": 20.0,
+      "rms_uv": 33.726423052467936,
+      "clipping_pct": 0.0008,
+      "line_noise_pct": 0.027821699069025197,
+      "stationarity_ks_stat": 0.0312,
+      "stationarity_p_value": 0.5771878092746201,
+      "artifact_segments": [],
+      "band_powers": {
+        "delta": 19.578174763239588,
+        "theta": 27.715150476426004,
+        "alpha": 192.59760317645555,
+        "beta": 241.5435522644765,
+        "gamma": 495.6923695055214
+      },
+      "hjorth_activity": 1137.4716119140407,
+      "hjorth_mobility": 1.2687957753511099,
+      "hjorth_complexity": 1.3632223930934264,
+      "line_length": 84877.9395096253,
+      "spectral_edge_freq_50": 44.0,
+      "spectral_edge_freq_90": 109.60000000000001,
+      "spectral_entropy": 7.545569317978144,
+      "alerts": []
+    },
+    {
+      "channel_label": "CH_3",
+      "snr_db": 20.0,
+      "rms_uv": 34.47449581297496,
+      "clipping_pct": 0.0004,
+      "line_noise_pct": 0.0293313330693919,
+      "stationarity_ks_stat": 0.0344,
+      "stationarity_p_value": 0.4504044904831289,
+      "artifact_segments": [],
+      "band_powers": {
+        "delta": 20.201172536623645,
+        "theta": 32.828761847889425,
+        "alpha": 225.40179814399482,
+        "beta": 216.2041386570088,
+        "gamma": 482.62286982808496
+      },
+      "hjorth_activity": 1188.4908615588276,
+      "hjorth_mobility": 1.2570107499565961,
+      "hjorth_complexity": 1.377456381438944,
+      "line_length": 86806.48081542595,
+      "spectral_edge_freq_50": 42.0,
+      "spectral_edge_freq_90": 109.60000000000001,
+      "spectral_entropy": 7.3804637393039325,
+      "alerts": []
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "firmware_config": {
+    "vulnerable_mode": true,
+    "seed": 42
+  },
+  "stim_parameters": {
+    "amplitude_ma": 2.0,
+    "pulse_width_us": 90.0,
+    "frequency_hz": 130.0,
+    "electrode_config": 0
+  },
+  "controller_state": {
+    "enabled": false,
+    "setpoint": 50.0,
+    "kp": 0.5,
+    "ki": 0.05,
+    "integral": 0.0
+  },
+  "safety_monitor": {
+    "halted": false,
+    "violations": 0,
+    "enabled": true
+  },
+  "boot_state": {
+    "current_version": 6,
+    "monotonic_counter": 6
+  },
+  "register_map": {
+    "STIM_CTRL": 1,
+    "STIM_AMPLITUDE": 2000,
+    "STIM_PW_CATH": 90,
+    "STIM_PW_ANOD": 99,
+    "STIM_FREQ": 130,
+    "STIM_ELECTRODE": 0,
+    "STIM_STATUS": 0
+  },
+  "security_events": [
+    {
+      "timestamp_ms": 1784743671127.4749,
+      "event_type": "BOOT_START",
+      "source": "SecureBoot",
+      "details": {},
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.48,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 0
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.4834,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 1
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.4846,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 2
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.492,
+      "event_type": "BOOT_START",
+      "source": "SecureBoot",
+      "details": {},
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.4934,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 0
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.4958,
+      "event_type": "BOOT_FAILED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 1,
+        "reason": "signature_mismatch"
+      },
+      "severity": "critical"
+    },
+    {
+      "timestamp_ms": 1784743671127.5007,
+      "event_type": "BOOT_START",
+      "source": "SecureBoot",
+      "details": {},
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.5017,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 0
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.5037,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 1
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.505,
+      "event_type": "BOOT_FAILED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 2,
+        "reason": "version_rollback",
+        "firmware_version": 2,
+        "min_version": 4
+      },
+      "severity": "critical"
+    },
+    {
+      "timestamp_ms": 1784743671127.5095,
+      "event_type": "BOOT_START",
+      "source": "SecureBoot",
+      "details": {},
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.5103,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 0
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.5117,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 1
+      },
+      "severity": "info"
+    },
+    {
+      "timestamp_ms": 1784743671127.5127,
+      "event_type": "BOOT_VERIFIED",
+      "source": "SecureBoot",
+      "details": {
+        "stage": 2
+      },
+      "severity": "info"
+    }
+  ],
+  "security_summary": {
+    "total_events": 15,
+    "critical_events": 2
+  }
+}
