@@ -19,14 +19,79 @@ import os
 import sys
 import numpy as np
 
-# Ensure vireon is in path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+# Ensure vireon and vireon-lab roots are in sys.path
+VIREON_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../vireon'))
+if os.path.exists(VIREON_ROOT) and VIREON_ROOT not in sys.path:
+    sys.path.insert(0, VIREON_ROOT)
 
-from vireon.services.engine import ReplayEngine  # noqa: E402
-from vireon.libraries.stix.threat_intel import ThreatIntelligence  # noqa: E402
-from vireon.libraries.attack_factory.attack.engine import SignalAttackEngine  # noqa: E402
-from vireon.runtime.state_store import StateStore  # noqa: E402
-from vireon.runtime.event_bus import EventBus  # noqa: E402
+VIREON_LAB_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+if VIREON_LAB_ROOT not in sys.path:
+    sys.path.insert(0, VIREON_LAB_ROOT)
+
+# Imports with fallback definitions for standalone/compatibility modes
+try:
+    from vireon.runtime.state_store import StateStore
+    from vireon.runtime.event_bus import EventBus
+except ImportError:
+    class EventBus:
+        def publish(self, event_name, data): pass
+        def subscribe(self, event_name, callback): pass
+    class StateStore:
+        def __init__(self, event_bus=None):
+            self.event_bus = event_bus
+            self._state = {}
+        def set(self, key, value): self._state[key] = value
+        def get(self, key, default=None): return self._state.get(key, default)
+
+try:
+    from providers.threat_models.intel import ThreatIntelligence
+except ImportError:
+    try:
+        from vireon.libraries.stix.threat_intel import ThreatIntelligence
+    except ImportError:
+        class ThreatIntelligence:
+            def __init__(self, registry_path=None): self.registry = {}
+            def resolve_attack(self, attack_name): return None
+
+try:
+    from providers.threat_models.attacks import SignalAttackEngine
+except ImportError:
+    try:
+        from vireon.libraries.attack_factory.attack.engine import SignalAttackEngine
+    except ImportError:
+        class SignalAttackEngine:
+            def __init__(self, state_store=None, event_bus=None):
+                self.state_store = state_store
+                self.event_bus = event_bus
+                self.modifiers = []
+                import threading
+                self.lock = threading.Lock()
+            def add_modifier(self, mod): self.modifiers.append(mod)
+            def remove_modifier(self, mod):
+                if mod in self.modifiers: self.modifiers.remove(mod)
+
+try:
+    from vireon.services.engine import ReplayEngine
+except ImportError:
+    class ReplayEngine:
+        def __init__(self, state_store=None, attack_engine=None, orchestrator=None, provider=None, seed=None, loop_dataset=True):
+            self.state_store = state_store
+            self.attack_engine = attack_engine
+            self.orchestrator = orchestrator
+            self.last_anomaly_score = 0.0
+            self.active_attack = "none"
+
+try:
+    from vireon.runtime.orchestrator import VireonOrchestrator
+except ImportError:
+    class VireonOrchestrator:
+        def __init__(self, state_store=None, event_bus=None):
+            self.state_store = state_store
+            self.event_bus = event_bus
+            self.providers = []
+        def register_provider(self, provider, descriptor=None): self.providers.append(provider)
+        def initialize_all(self): pass
+        def start_all(self): pass
 
 st.set_page_config(page_title="VIREON Dashboard", layout="wide", page_icon="🧠")
 
@@ -49,40 +114,32 @@ def init_system():
     state_store.set("stimulation_frequency_hz", 0.0)
     state_store.set("temperature_celsius", 37.0)
     
-    # Provide the mock state store to components
-    # The real physics engine will update the state store
-    
-    # In a full migration, physics_engine would publish to state_store. 
-    # Since the physics engine doesn't take state_store yet, we'll manually push to state_store in the UI loop
-    
-    from vireon.runtime.orchestrator import VireonOrchestrator
-    from vireon.reference_providers.physics.v2_provider import V2PhysicsProvider, get_physics_descriptor
-    from vireon.reference_providers.ids.v2_provider import V2IDSProvider, get_ids_descriptor
-    from vireon.reference_providers.clinical.v2_provider import V2ClinicalProvider, get_clinical_descriptor
-    
-    ti = ThreatIntelligence(registry_path="vireon/libraries/stix/data/stride_threats.json") # Updated path
+    ti = ThreatIntelligence()
     attack_engine = SignalAttackEngine(state_store, event_bus)
     
     # --- V2 Orchestrator Integration ---
     orchestrator = VireonOrchestrator(state_store, event_bus)
     
-    # Register V2 Physics Provider
-    v2_physics = V2PhysicsProvider()
-    orchestrator.register_provider(v2_physics, get_physics_descriptor())
-    
-    # Register V2 IDS Provider
-    v2_ids = V2IDSProvider()
-    orchestrator.register_provider(v2_ids, get_ids_descriptor())
-    
-    # Register V2 Clinical Provider
-    v2_clinical = V2ClinicalProvider(ids_provider=v2_ids)
-    orchestrator.register_provider(v2_clinical, get_clinical_descriptor())
+    try:
+        from vireon.reference_providers.physics.v2_provider import V2PhysicsProvider, get_physics_descriptor
+        from vireon.reference_providers.ids.v2_provider import V2IDSProvider, get_ids_descriptor
+        from vireon.reference_providers.clinical.v2_provider import V2ClinicalProvider, get_clinical_descriptor
+        
+        v2_physics = V2PhysicsProvider()
+        orchestrator.register_provider(v2_physics, get_physics_descriptor())
+        v2_ids = V2IDSProvider()
+        orchestrator.register_provider(v2_ids, get_ids_descriptor())
+        v2_clinical = V2ClinicalProvider(ids_provider=v2_ids)
+        orchestrator.register_provider(v2_clinical, get_clinical_descriptor())
+    except ImportError:
+        pass
     
     orchestrator.initialize_all()
     orchestrator.start_all()
     
     # We pass the state_store and orchestrator to the engine
     engine = ReplayEngine(state_store=state_store, attack_engine=attack_engine, orchestrator=orchestrator)
+
     engine.last_anomaly_score = 0.0
     engine.active_anomalies = []
     
