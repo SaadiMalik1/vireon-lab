@@ -15,10 +15,10 @@
 """
 Example showing how to create and register a custom VIREON attack plugin.
 """
-from vireon.core.attack import ISignalModifier
+from vireon.runtime.attack import ISignalModifier
 import numpy as np
 from typing import List, Optional
-from vireon.core.twin import DigitalTwin
+from vireon.runtime.twin import DigitalTwin
 
 class CustomBatteryDrainAttack(ISignalModifier):
     def __init__(self, drain_rate=50.0):

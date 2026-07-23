@@ -18,8 +18,8 @@ import sys
 # Ensure VIREON can be imported if run from the project root
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from vireon.core.config import load_config
-from vireon.core.coordinator import Coordinator
+from vireon.runtime.config import load_config
+from vireon.runtime.coordinator import Coordinator
 
 def main():
     # 1. Load the experiment TOML configuration
