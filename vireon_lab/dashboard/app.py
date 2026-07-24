@@ -29,6 +29,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 from live_signal_engine import SyntheticEEGStream, CHANNEL_NAMES
 from canvas_waveform import render_double_buffered_eeg_canvas
 from forensic_exporter import generate_stix_package, generate_html_audit_report
+from educational_academy import render_dsp_education_expander, render_dbs_education_expander, render_stride_mitre_atlas_matrix
+from ctf_challenges import render_ctf_challenge_suite
 
 # Page Configuration
 st.set_page_config(
@@ -321,13 +323,15 @@ with m5:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Main Navigation Tabs
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
     "📊 Live Neural Signals",
     "💉 Signal Tampering Lab",
     "⚡ Closed-Loop DBS Lab",
     "📡 Wireless & BLE Security",
     "🤖 Adversarial ML Lab",
-    "🛡️ Threat Matrix & Forensics"
+    "🛡️ Threat Matrix & Forensics",
+    "🎓 Neuro Academy",
+    "🚩 Neurosecurity CTF"
 ])
 
 # ---------------------------------------------------------------------------
@@ -360,6 +364,8 @@ with tab1:
             coloraxis_showscale=False
         )
         st.plotly_chart(fig_bar, use_container_width=True, key="spectral_bar_chart", config={'displayModeBar': False})
+
+    render_dsp_education_expander()
 
 # ---------------------------------------------------------------------------
 # TAB 2: Signal Tampering & IDS Anomaly Lab
@@ -452,6 +458,8 @@ with tab3:
             channel_colors=["#7000ff", "#ff0055"],
             title="⚡ Closed-Loop DBS Stimulation & LFP Telemetry"
         )
+        
+    render_dbs_education_expander()
 
 # ---------------------------------------------------------------------------
 # TAB 4: Wireless BLE & Telemetry Security Lab
@@ -563,6 +571,18 @@ with tab6:
             mime="text/html",
             use_container_width=True
         )
+
+# ---------------------------------------------------------------------------
+# TAB 7: VIREON Neurosecurity Academy
+# ---------------------------------------------------------------------------
+with tab7:
+    render_stride_mitre_atlas_matrix()
+
+# ---------------------------------------------------------------------------
+# TAB 8: Interactive Neurosecurity CTF Challenges
+# ---------------------------------------------------------------------------
+with tab8:
+    render_ctf_challenge_suite()
 
 # Controlled loop rerun for smooth live telemetry stream
 if st.session_state.live_stream_active:
