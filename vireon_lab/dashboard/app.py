@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from live_signal_engine import SyntheticEEGStream, CHANNEL_NAMES
+from canvas_waveform import render_double_buffered_eeg_canvas
 from forensic_exporter import generate_stix_package, generate_html_audit_report
 
 # Page Configuration
@@ -339,29 +340,7 @@ with tab1:
     col_chart, col_bands = st.columns([3, 1])
     
     with col_chart:
-        fig_eeg = go.Figure()
-        obsidian_colors = ["#00f2fe", "#7000ff", "#00f5d4", "#ff007f", "#ffd166", "#38bdf8", "#c084fc", "#f472b6"]
-        
-        for ch in range(8):
-            offset_signal = signals[ch, :] + (ch * 60.0)
-            fig_eeg.add_trace(go.Scatter(
-                x=t, y=offset_signal,
-                mode="lines",
-                name=f"Channel {CHANNEL_NAMES[ch]}",
-                line=dict(color=obsidian_colors[ch % len(obsidian_colors)], width=1.5)
-            ))
-            
-        fig_eeg.update_layout(
-            height=450,
-            uirevision=data_source,
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(6, 9, 14, 0.85)",
-            xaxis=dict(title="Time (seconds)", showgrid=True, gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
-            yaxis=dict(title="EEG Electrode Trace (µV Offset)", showgrid=True, gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
-            legend=dict(orientation="h", y=1.12, font=dict(color="#cbd5e1"))
-        )
-        st.plotly_chart(fig_eeg, use_container_width=True, key="live_eeg_waveform_chart", config={'displayModeBar': False})
+        render_double_buffered_eeg_canvas(signals, height=450)
         
     with col_bands:
         st.markdown("#### 🎵 Spectral Power Distribution")
