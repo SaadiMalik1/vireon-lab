@@ -444,20 +444,14 @@ with tab3:
             lfp_treated = lfp_pathological
             dbs_train = np.zeros_like(t_pulse)
             
-        fig_dbs = go.Figure()
-        fig_dbs.add_trace(go.Scatter(x=t_pulse, y=lfp_treated, name="LFP Beta Rhythm (uV)", line=dict(color="#7000ff", width=2)))
-        fig_dbs.add_trace(go.Scatter(x=t_pulse, y=dbs_train, name="DBS Pulse Train (mA x 10)", line=dict(color="#ff0055", width=1.5)))
-        
-        fig_dbs.update_layout(
+        dbs_signals = np.vstack([lfp_treated, dbs_train])
+        render_double_buffered_eeg_canvas(
+            dbs_signals,
             height=400,
-            uirevision="dbs_pulse_static",
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(6, 9, 14, 0.85)",
-            xaxis=dict(title="Time (seconds)", gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
-            yaxis=dict(title="Amplitude", gridcolor="rgba(0, 242, 254, 0.08)", tickfont=dict(color="#94a3b8")),
-            legend=dict(orientation="h", y=1.12, font=dict(color="#cbd5e1"))
+            channel_names=["LFP Beta", "DBS Pulse"],
+            channel_colors=["#7000ff", "#ff0055"],
+            title="⚡ Closed-Loop DBS Stimulation & LFP Telemetry"
         )
-        st.plotly_chart(fig_dbs, use_container_width=True, key="dbs_stimulation_chart", config={'displayModeBar': False})
 
 # ---------------------------------------------------------------------------
 # TAB 4: Wireless BLE & Telemetry Security Lab

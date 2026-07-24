@@ -21,30 +21,48 @@ import json
 import numpy as np
 import streamlit.components.v1 as components
 
+from typing import Optional, List
+
 CHANNEL_NAMES = ["Fp1", "Fp2", "C3", "C4", "P3", "P4", "O1", "O2"]
 CHANNEL_COLORS = ["#00f2fe", "#7000ff", "#00f5d4", "#ff007f", "#ffd166", "#38bdf8", "#c084fc", "#f472b6"]
 
-def render_double_buffered_eeg_canvas(signals: np.ndarray, height: int = 450) -> None:
+def render_double_buffered_eeg_canvas(
+    signals: np.ndarray,
+    height: int = 450,
+    channel_names: Optional[List[str]] = None,
+    channel_colors: Optional[List[str]] = None,
+    title: str = "⚡ 8-Channel Live EEG Telemetry (Double-Buffered 100 Hz)"
+) -> None:
     """
-    Renders an 8-channel EEG monitor using HTML5 Canvas with Double Buffering
+    Renders a multi-channel signal monitor using HTML5 Canvas with Double Buffering
     and requestAnimationFrame synchronization to eliminate UI flicker.
     
     Args:
-        signals (np.ndarray): Shape (8, N) array of voltage samples in microvolts.
+        signals (np.ndarray): Shape (num_channels, N) array of voltage samples.
         height (int): Height of the component in pixels.
+        channel_names (List[str], optional): Custom labels for each channel.
+        channel_colors (List[str], optional): Custom hex colors for each channel.
+        title (str): Header title for the canvas telemetry frame.
     """
-    # Downsample or serialize payload for smooth transfer
     num_channels, num_samples = signals.shape
-    # Normalize or scale for canvas display
+    names = channel_names if channel_names is not None else CHANNEL_NAMES[:num_channels]
+    colors = channel_colors if channel_colors is not None else CHANNEL_COLORS[:num_channels]
+    
+    # Fallbacks if shapes mismatch
+    if len(names) < num_channels:
+        names += [f"Ch{i+1}" for i in range(len(names), num_channels)]
+    if len(colors) < num_channels:
+        colors += [CHANNEL_COLORS[i % len(CHANNEL_COLORS)] for i in range(len(colors), num_channels)]
+
     data_payload = []
     for ch in range(num_channels):
-        # Convert float32/float64 to rounded floats for compact JSON serialization
         ch_data = np.round(signals[ch, :], 2).tolist()
         data_payload.append(ch_data)
 
     payload_json = json.dumps(data_payload)
-    channel_names_json = json.dumps(CHANNEL_NAMES)
-    channel_colors_json = json.dumps(CHANNEL_COLORS)
+    channel_names_json = json.dumps(names)
+    channel_colors_json = json.dumps(colors)
+    title_json = json.dumps(title)
 
     html_code = f"""
     <!DOCTYPE html>
@@ -99,7 +117,7 @@ def render_double_buffered_eeg_canvas(signals: np.ndarray, height: int = 450) ->
     <body>
         <div class="canvas-container">
             <div class="header-bar">
-                <span>⚡ 8-Channel Live EEG Telemetry (Double-Buffered 100 Hz)</span>
+                <span id="titleTag"></span>
                 <span class="status-tag">Status: Synced (rAF 60 FPS)</span>
             </div>
             <canvas id="visibleCanvas"></canvas>
@@ -107,6 +125,8 @@ def render_double_buffered_eeg_canvas(signals: np.ndarray, height: int = 450) ->
 
         <script>
             (function() {{
+                const titleText = {title_json};
+                document.getElementById('titleTag').textContent = titleText;
                 const rawData = {payload_json};
                 const channelNames = {channel_names_json};
                 const channelColors = {channel_colors_json};
