@@ -26,6 +26,19 @@ from datetime import datetime
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
+import importlib
+import live_signal_engine
+import canvas_waveform
+import forensic_exporter
+import educational_academy
+import ctf_challenges
+
+importlib.reload(live_signal_engine)
+importlib.reload(canvas_waveform)
+importlib.reload(forensic_exporter)
+importlib.reload(educational_academy)
+importlib.reload(ctf_challenges)
+
 from live_signal_engine import SyntheticEEGStream, CHANNEL_NAMES
 from canvas_waveform import render_double_buffered_eeg_canvas
 from forensic_exporter import generate_stix_package, generate_html_audit_report

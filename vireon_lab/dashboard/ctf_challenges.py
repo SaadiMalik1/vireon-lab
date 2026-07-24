@@ -45,7 +45,7 @@ def render_ctf_challenge_suite():
 
     # Challenge 1: Stealth Baseline Drift
     with st.expander("🚩 **Challenge 1: Detect Stealthy Baseline Drift (100 PTS)**", expanded=("ch1" not in st.session_state.solved_challenges)):
-        st.markdown("""
+        st.markdown(r"""
         **Scenario**: An attacker has injected a low-frequency $0.05\,\text{Hz}$ DC offset drift into electrode **F3**.
         The raw amplitude stays within range, but feature extraction filters are failing.
         
@@ -72,7 +72,7 @@ def render_ctf_challenge_suite():
 
     # Challenge 2: Shannon Charge Density Limit
     with st.expander("🚩 **Challenge 2: Clinical Over-Stimulation Mitigation (150 PTS)**", expanded=("ch2" not in st.session_state.solved_challenges)):
-        st.markdown("""
+        st.markdown(r"""
         **Scenario**: An unauthorized pulse train injection has raised DBS amplitude to **$8.5\,\text{mA}$** at **$180\,\text{Hz}$**.
         The calculated charge density exceeds the Shannon limit ($4.0\,\mu\text{C/phase}$), threatening local tissue necrosis.
         
