@@ -13,15 +13,10 @@
 # limitations under the License.
 
 import html
-import uuid
 from datetime import datetime, timezone
 
 try:
-    from stix2 import (
-        Bundle, Identity, ThreatActor, Malware, Indicator, 
-        ObservedData, Incident, CustomObservable, properties
-    )
-    from stix2.v21 import CustomObject
+    from stix2 import Bundle, Identity, ThreatActor, Indicator, Incident
 except ImportError:
     # Stix2 is not installed, fail gracefully or handle in caller
     pass
