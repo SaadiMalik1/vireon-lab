@@ -17,6 +17,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
+import html
 import time
 import os
 import sys
@@ -311,7 +312,8 @@ with st.sidebar:
 
 # Top Cyber Banner
 is_attack = st.session_state.active_attack != "none"
-banner_badge = f"""<span class="badge-hazard">THREAT ACTIVE: {st.session_state.active_attack.upper()}</span>""" if is_attack else """<span class="badge-nominal">HARDWARE TELEMETRY NOMINAL</span>"""
+safe_attack_name = html.escape(str(st.session_state.active_attack))
+banner_badge = f"""<span class="badge-hazard">THREAT ACTIVE: {safe_attack_name.upper()}</span>""" if is_attack else """<span class="badge-nominal">HARDWARE TELEMETRY NOMINAL</span>"""
 
 st.markdown(f"""
 <div class="cyber-banner">
@@ -423,13 +425,14 @@ with tab2:
         
         if st.button("Trigger Attack Vector", type="primary", use_container_width=True):
             st.session_state.active_attack = t_type
-            st.session_state.attack_intensity = t_scale / 35.0
+            st.session_state.attack_intensity = float(np.clip(t_scale / 35.0, 0.1, 3.0))
             st.rerun()
             
         st.divider()
         st.markdown("#### Real-time IDS Alert Engine")
         if is_attack:
-            st.error(f"IDS THREAT DETECTED: {st.session_state.active_attack}\n\n- Anomaly Score: `{anomaly_score:.3f}` (Threshold: `0.350`)\n- NISS Rating: `{niss_score} / 100` (HIGH SEVERITY)\n- ISO 14971 Status: `{clinical_status}`")
+            safe_alert_attack = html.escape(str(st.session_state.active_attack))
+            st.error(f"IDS THREAT DETECTED: {safe_alert_attack}\n\n- Anomaly Score: `{anomaly_score:.3f}` (Threshold: `0.350`)\n- NISS Rating: `{niss_score} / 100` (HIGH SEVERITY)\n- ISO 14971 Status: `{clinical_status}`")
         else:
             st.success("IDS BASELINE: Signal telemetry within nominal bounds.\n\n- Anomaly Score: `0.040` (Threshold: `0.350`)\n- NISS Rating: `4 / 100` (SAFE)")
             

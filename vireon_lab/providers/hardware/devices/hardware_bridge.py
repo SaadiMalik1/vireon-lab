@@ -163,11 +163,11 @@ class HardwareBridge(IDeviceWrapper):
         for i, s in enumerate(samples_to_return):
             out[:, i] = s
             
-        # Fill remainder with NaN if buffer starved, enforcing strict data provenance
+        # Fill remainder with 0.0 if buffer starved, preventing downstream FFT NaN contamination
         starve_count = n - len(samples_to_return)
         if starve_count > 0:
             offset = len(samples_to_return)
-            out[:, offset:] = np.full((self.num_channels, starve_count), np.nan)
+            out[:, offset:] = 0.0
             
         return out
 

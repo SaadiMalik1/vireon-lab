@@ -249,6 +249,17 @@ def render_double_buffered_eeg_canvas(
                     animFrameId = requestAnimationFrame(renderLoop);
                 }}
 
+                // Cleanup on unmount/unload to prevent orphaned requestAnimationFrame CPU loops
+                function cleanup() {{
+                    if (animFrameId) {{
+                        cancelAnimationFrame(animFrameId);
+                        animFrameId = null;
+                    }}
+                    window.removeEventListener('resize', resizeCanvases);
+                }}
+                window.addEventListener('unload', cleanup);
+                window.addEventListener('beforeunload', cleanup);
+
                 // Start render loop
                 renderLoop();
             }})();

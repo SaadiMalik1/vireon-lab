@@ -66,8 +66,8 @@ class LFPGenerator:
             f = np.fft.rfftfreq(n_samples)
             f[0] = 1e-10 # Avoid division by zero
             S = X_white / (f ** (alpha / 2.0))
-            # Normalize to preserve variance roughly
-            S = S / np.sqrt(np.mean(np.abs(S)**2))
+            # Normalize to preserve variance roughly (guarded against zero variance)
+            S = S / (np.sqrt(np.mean(np.abs(S)**2)) + 1e-12)
             return np.fft.irfft(S, n=n_samples)
             
         # Generate pink noise background

@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import html
 import json
+import uuid
 from datetime import datetime, timezone
 
 def generate_stix_package(active_attack: str, anomaly_score: float, niss_score: int, clinical_status: str) -> str:
@@ -20,10 +22,13 @@ def generate_stix_package(active_attack: str, anomaly_score: float, niss_score: 
     Generates a STIX 2.1 compliant JSON bundle for forensic neurosecurity evidence.
     """
     now = datetime.now(timezone.utc).isoformat()
+    bundle_uuid = str(uuid.uuid4())
+    indicator_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"vireon.stix.indicator.{active_attack}"))
+    observed_uuid = str(uuid.uuid4())
     
     stix_bundle = {
         "type": "bundle",
-        "id": f"bundle--{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        "id": f"bundle--{bundle_uuid}",
         "spec_version": "2.1",
         "objects": [
             {
@@ -36,7 +41,7 @@ def generate_stix_package(active_attack: str, anomaly_score: float, niss_score: 
             },
             {
                 "type": "indicator",
-                "id": f"indicator--{hash(active_attack)}",
+                "id": f"indicator--{indicator_uuid}",
                 "created": now,
                 "modified": now,
                 "name": f"Neurosecurity Anomaly Alert: {active_attack.upper()}",
@@ -48,7 +53,7 @@ def generate_stix_package(active_attack: str, anomaly_score: float, niss_score: 
             },
             {
                 "type": "observed-data",
-                "id": f"observed-data--{datetime.now().strftime('%S%f')}",
+                "id": f"observed-data--{observed_uuid}",
                 "created": now,
                 "modified": now,
                 "first_observed": now,
@@ -78,7 +83,10 @@ def generate_html_audit_report(active_attack: str, anomaly_score: float, niss_sc
     risk_level = "CRITICAL" if niss_score > 70 else ("HIGH" if niss_score > 40 else "NOMINAL")
     status_color = "#ff0844" if risk_level == "CRITICAL" else ("#f7b731" if risk_level == "HIGH" else "#2ed573")
     
-    html = f"""<!DOCTYPE html>
+    safe_attack = html.escape(active_attack.upper())
+    safe_status = html.escape(clinical_status)
+    
+    html_doc = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -103,10 +111,10 @@ def generate_html_audit_report(active_attack: str, anomaly_score: float, niss_sc
         <p>Overall Security Health Index: <span class="badge">{risk_level}</span></p>
         <table>
             <tr><th>Metric</th><th>Observed Value</th><th>Regulatory Target</th></tr>
-            <tr><td>Active Threat Vector</td><td><strong>{active_attack.upper()}</strong></td><td>NONE</td></tr>
+            <tr><td>Active Threat Vector</td><td><strong>{safe_attack}</strong></td><td>NONE</td></tr>
             <tr><td>Neurosecurity Anomaly Score</td><td>{anomaly_score:.4f}</td><td>&lt; 0.3500</td></tr>
             <tr><td>NISS (Neuro Severity Score)</td><td>{niss_score} / 100</td><td>0</td></tr>
-            <tr><td>Clinical State Machine</td><td>{clinical_status}</td><td>Nominal (Therapeutic)</td></tr>
+            <tr><td>Clinical State Machine</td><td>{safe_status}</td><td>Nominal (Therapeutic)</td></tr>
         </table>
     </div>
     <div class="card">
@@ -117,4 +125,4 @@ def generate_html_audit_report(active_attack: str, anomaly_score: float, niss_sc
     </div>
 </body>
 </html>"""
-    return html
+    return html_doc

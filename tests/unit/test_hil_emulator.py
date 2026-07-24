@@ -104,8 +104,9 @@ class TestHardwareBridge(unittest.TestCase):
         chunk = self.bridge.read_chunk(5)
         self.assertEqual(chunk.shape, (8, 5))
         
-        # Remainder should fill with nominal noise
-        self.assertNotEqual(np.sum(chunk), 0.0)
+        # Remainder should fill with 0.0 zero-fill (preventing NaN contamination)
+        self.assertFalse(np.isnan(chunk).any())
+        self.assertEqual(np.sum(chunk), 0.0)
 
 if __name__ == "__main__":
     unittest.main()

@@ -116,7 +116,7 @@ class CSVReader(IDatasetReader):
         if self.mock_reader:
             return self.mock_reader.read_chunk(start_sample, num_samples)
 
-        if self.data is None:
+        if self.data is None or self.data.shape[1] == 0:
             return np.zeros((self._num_channels, num_samples))
 
         total_samples = self.data.shape[1]
