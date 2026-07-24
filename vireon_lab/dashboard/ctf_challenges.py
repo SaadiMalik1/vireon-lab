@@ -22,7 +22,7 @@ import streamlit as st
 
 def render_ctf_challenge_suite():
     """Renders interactive CTF challenge scenarios in Streamlit."""
-    st.markdown("### 🚩 VIREON Neurosecurity CTF & Defense Challenges")
+    st.markdown("### VIREON Neurosecurity CTF & Defense Challenges")
     st.caption("Interactive hands-on scenarios to test your skills in detecting, diagnosing, and mitigating neurotech cyber-physical threats.")
     
     if "ctf_score" not in st.session_state:
@@ -44,7 +44,7 @@ def render_ctf_challenge_suite():
     st.divider()
 
     # Challenge 1: Stealth Baseline Drift
-    with st.expander("🚩 **Challenge 1: Detect Stealthy Baseline Drift (100 PTS)**", expanded=("ch1" not in st.session_state.solved_challenges)):
+    with st.expander("CHALLENGE 1: DETECT STEALTHY BASELINE DRIFT (100 PTS)", expanded=("ch1" not in st.session_state.solved_challenges)):
         st.markdown(r"""
         **Scenario**: An attacker has injected a low-frequency $0.05\,\text{Hz}$ DC offset drift into electrode **F3**.
         The raw amplitude stays within range, but feature extraction filters are failing.
@@ -66,12 +66,12 @@ def render_ctf_challenge_suite():
                 if "ch1" not in st.session_state.solved_challenges:
                     st.session_state.ctf_score += 100
                     st.session_state.solved_challenges.add("ch1")
-                st.success("🎉 **CORRECT!** (+100 PTS) DC offset drift manifests as ultra-low frequency spectral energy accumulation near 0 Hz.")
+                st.success("CORRECT (+100 PTS): DC offset drift manifests as ultra-low frequency spectral energy accumulation near 0 Hz.")
             else:
-                st.error("❌ Incorrect. Hint: Think about what frequency range a slow DC baseline drift occupies.")
+                st.error("INCORRECT: Hint: Think about what frequency range a slow DC baseline drift occupies.")
 
     # Challenge 2: Shannon Charge Density Limit
-    with st.expander("🚩 **Challenge 2: Clinical Over-Stimulation Mitigation (150 PTS)**", expanded=("ch2" not in st.session_state.solved_challenges)):
+    with st.expander("CHALLENGE 2: CLINICAL OVER-STIMULATION MITIGATION (150 PTS)", expanded=("ch2" not in st.session_state.solved_challenges)):
         st.markdown(r"""
         **Scenario**: An unauthorized pulse train injection has raised DBS amplitude to **$8.5\,\text{mA}$** at **$180\,\text{Hz}$**.
         The calculated charge density exceeds the Shannon limit ($4.0\,\mu\text{C/phase}$), threatening local tissue necrosis.
@@ -93,13 +93,13 @@ def render_ctf_challenge_suite():
                 if "ch2" not in st.session_state.solved_challenges:
                     st.session_state.ctf_score += 150
                     st.session_state.solved_challenges.add("ch2")
-                st.success("🎉 **CORRECT!** (+150 PTS) ISO 14708-3 requires immediate hardware interlock trip when Shannon safety limits are violated.")
+                st.success("CORRECT (+150 PTS): ISO 14708-3 requires immediate hardware interlock trip when Shannon safety limits are violated.")
             else:
-                st.error("❌ Incorrect. Hint: Safety interlocks must act autonomously without clinical delay.")
+                st.error("INCORRECT: Hint: Safety interlocks must act autonomously without clinical delay.")
 
     # Challenge 3: Session Replay Attack Detection
-    with st.expander("🚩 **Challenge 3: Spotting Neural Session Replay (150 PTS)**", expanded=("ch3" not in st.session_state.solved_challenges)):
-        st.markdown("""
+    with st.expander("CHALLENGE 3: SPOTTING NEURAL SESSION REPLAY (150 PTS)", expanded=("ch3" not in st.session_state.solved_challenges)):
+        st.markdown(r"""
         **Scenario**: An adversary intercepts a 10-second segment of motor imagery telemetry and replays it over BLE to spoof user intent.
         
         **Goal**: How does the VIREON Ring-Buffer engine detect session replay attacks?
@@ -119,13 +119,13 @@ def render_ctf_challenge_suite():
                 if "ch3" not in st.session_state.solved_challenges:
                     st.session_state.ctf_score += 150
                     st.session_state.solved_challenges.add("ch3")
-                st.success("🎉 **CORRECT!** (+150 PTS) Sequence counters combined with phase continuity checks prevent stale replay payloads.")
+                st.success("CORRECT (+150 PTS): Sequence counters combined with phase continuity checks prevent stale replay payloads.")
             else:
-                st.error("❌ Incorrect. Hint: Cryptographic freshness requires sequence numbering.")
+                st.error("INCORRECT: Hint: Cryptographic freshness requires sequence numbering.")
 
     # Challenge 4: Adversarial FGSM Evasion
-    with st.expander("🚩 **Challenge 4: Adversarial Machine Learning Defense (200 PTS)**", expanded=("ch4" not in st.session_state.solved_challenges)):
-        st.markdown("""
+    with st.expander("CHALLENGE 4: ADVERSARIAL MACHINE LEARNING DEFENSE (200 PTS)", expanded=("ch4" not in st.session_state.solved_challenges)):
+        st.markdown(r"""
         **Scenario**: An FGSM attack adds subtle perturbation ($\varepsilon = 0.15$) to EEG spectral power features, causing a motor imagery classifier to drop from 98% to 25% accuracy.
         
         **Goal**: What defense strategy hardens BCI decoders against adversarial gradient perturbations?
@@ -145,6 +145,6 @@ def render_ctf_challenge_suite():
                 if "ch4" not in st.session_state.solved_challenges:
                     st.session_state.ctf_score += 200
                     st.session_state.solved_challenges.add("ch4")
-                st.success("🎉 **CORRECT!** (+200 PTS) Adversarial training combined with Common Spatial Pattern (CSP) filtering neutralizes gradient perturbations!")
+                st.success("CORRECT (+200 PTS): Adversarial training combined with Common Spatial Pattern (CSP) filtering neutralizes gradient perturbations.")
             else:
-                st.error("❌ Incorrect. Hint: Robust ML requires multi-resolution spatial filtering and adversarial retraining.")
+                st.error("INCORRECT: Hint: Robust ML requires multi-resolution spatial filtering and adversarial retraining.")

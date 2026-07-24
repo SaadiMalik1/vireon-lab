@@ -31,7 +31,7 @@ def render_double_buffered_eeg_canvas(
     height: int = 450,
     channel_names: Optional[List[str]] = None,
     channel_colors: Optional[List[str]] = None,
-    title: str = "⚡ 8-Channel Live EEG Telemetry (Double-Buffered 100 Hz)"
+    title: str = "8-CHANNEL LIVE EEG TELEMETRY (DOUBLE-BUFFERED 100 HZ)"
 ) -> None:
     """
     Renders a multi-channel signal monitor using HTML5 Canvas with Double Buffering

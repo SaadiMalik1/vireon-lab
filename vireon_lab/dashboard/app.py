@@ -48,121 +48,147 @@ from ctf_challenges import render_ctf_challenge_suite
 # Page Configuration
 st.set_page_config(
     page_title="VIREON Neurosecurity Platform",
-    page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# FORCE PURE OBSIDIAN DARK MODE CSS
+# HIGH-AGENCY DESIGN SYSTEM (design-taste-frontend)
 st.markdown("""
 <style>
-    /* Force Global Pure Dark Obsidian Background */
+    /* Global Background & Typography */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], .stApp {
         background-color: #06090e !important;
-        background: radial-gradient(circle at 50% 0%, #0d1527 0%, #06090e 70%, #030508 100%) !important;
+        background: radial-gradient(circle at 50% 0%, #0c1424 0%, #06090e 75%, #030508 100%) !important;
         color: #e2e8f0 !important;
         font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
     }
 
-    /* Force Sidebar Obsidian Dark Styling */
+    /* Sidebar Styling */
     [data-testid="stSidebar"], section[data-testid="stSidebar"] > div {
-        background-color: #080d19 !important;
-        background: #080d19 !important;
+        background-color: #080d18 !important;
+        background: #080d18 !important;
         border-right: 1px solid rgba(0, 242, 254, 0.15) !important;
     }
     
     [data-testid="stSidebar"] * {
-        color: #cbd5e1 !important;
+        color: #94a3b8 !important;
     }
 
     [data-testid="stSidebar"] input, [data-testid="stSidebar"] select, [data-testid="stSidebar"] div[role="combobox"] {
         background-color: #0f172a !important;
         color: #f8fafc !important;
         border: 1px solid rgba(0, 242, 254, 0.25) !important;
+        font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+        font-size: 13px !important;
     }
 
-    /* Cyber Title Banner */
+    /* Liquid Glass Banner */
     .cyber-banner {
-        background: linear-gradient(135deg, rgba(13, 21, 39, 0.95) 0%, rgba(20, 31, 56, 0.9) 100%);
-        border: 1px solid rgba(0, 242, 254, 0.3);
-        border-radius: 16px;
-        padding: 24px 32px;
-        margin-bottom: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 254, 0.08);
+        background: linear-gradient(135deg, rgba(12, 20, 36, 0.95) 0%, rgba(8, 13, 24, 0.98) 100%);
+        border: 1px solid rgba(0, 242, 254, 0.25);
+        border-radius: 12px;
+        padding: 20px 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(16px);
     }
     
     .cyber-title {
-        font-size: 32px;
+        font-size: 26px;
         font-weight: 800;
-        letter-spacing: -0.02em;
-        background: linear-gradient(90deg, #00f2fe 0%, #7000ff 50%, #00f5d4 100%);
+        letter-spacing: -0.03em;
+        background: linear-gradient(90deg, #00f2fe 0%, #38bdf8 60%, #00f5d4 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
+        text-transform: uppercase;
     }
     
     .cyber-subtitle {
-        color: #94a3b8;
-        font-size: 14px;
-        margin-top: 6px;
-        font-weight: 400;
+        color: #64748b;
+        font-size: 13px;
+        margin-top: 4px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
     }
     
-    /* Obsidian Metric Cards */
+    /* Cockpit Monospace Metric Tiles */
     .glass-metric {
-        background: rgba(13, 21, 39, 0.85);
-        border: 1px solid rgba(0, 242, 254, 0.18);
-        border-radius: 14px;
-        padding: 18px 22px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        background: rgba(12, 20, 36, 0.85);
+        border: 1px solid rgba(0, 242, 254, 0.15);
+        border-radius: 10px;
+        padding: 16px 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(12px);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        transition: transform 0.15s ease, border-color 0.15s ease;
     }
     
     .glass-metric:hover {
-        border-color: rgba(0, 242, 254, 0.45);
-        transform: translateY(-2px);
+        border-color: rgba(0, 242, 254, 0.4);
+        transform: translateY(-1px);
     }
     
     .glass-metric-val {
-        font-size: 28px;
-        font-weight: 800;
+        font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+        font-size: 24px;
+        font-weight: 700;
         margin-top: 4px;
         color: #f8fafc;
+        letter-spacing: -0.02em;
     }
     
     .glass-metric-lbl {
-        font-size: 11px;
+        font-size: 10px;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.1em;
         color: #64748b;
-        font-weight: 600;
+        font-weight: 700;
     }
 
-    /* Status Badges */
+    /* System Status Badges */
     .badge-nominal {
-        background: rgba(0, 245, 212, 0.15);
+        background: rgba(0, 245, 212, 0.08);
         color: #00f5d4;
-        border: 1px solid rgba(0, 245, 212, 0.4);
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 12px;
+        border: 1px solid rgba(0, 245, 212, 0.3);
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 11px;
         font-weight: 700;
-        letter-spacing: 0.04em;
-        box-shadow: 0 0 14px rgba(0, 245, 212, 0.25);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
     }
 
     .badge-hazard {
-        background: rgba(255, 0, 85, 0.18);
+        background: rgba(255, 0, 85, 0.1);
         color: #ff0055;
-        border: 1px solid rgba(255, 0, 85, 0.45);
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 12px;
+        border: 1px solid rgba(255, 0, 85, 0.4);
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 11px;
         font-weight: 700;
-        letter-spacing: 0.04em;
-        box-shadow: 0 0 14px rgba(255, 0, 85, 0.3);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    /* Uppercase Navigation Tabs */
+    button[data-baseweb="tab"] {
+        font-family: 'Inter', system-ui, sans-serif !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+        color: #64748b !important;
+        border-radius: 6px !important;
+        padding: 8px 16px !important;
+        transition: all 0.15s ease !important;
+    }
+    
+    button[aria-selected="true"] {
+        color: #00f2fe !important;
+        background: rgba(0, 242, 254, 0.08) !important;
+        border: 1px solid rgba(0, 242, 254, 0.25) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -187,16 +213,16 @@ if "selected_dataset" not in st.session_state:
 
 # Sidebar Controls
 with st.sidebar:
-    st.markdown("### 🧠 VIREON Control Center")
+    st.markdown("### VIREON CONTROL CENTER")
     st.caption("Neurosecurity Hardware & Ring-Buffer Orchestrator")
     
     st.divider()
     
     # Telemetry Execution Mode & Window Duration
-    st.markdown("#### 🔄 Streaming Engine & Time Window")
+    st.markdown("#### STREAMING ENGINE & TIME WINDOW")
     stream_mode = st.radio(
         "Execution Mode",
-        ["⚡ Live Real-Time Stream", "⏸️ Static Snapshot View"],
+        ["Live Real-Time Stream", "Static Snapshot View"],
         index=0 if st.session_state.live_stream_active else 1
     )
     st.session_state.live_stream_active = ("Live Real-Time" in stream_mode)
@@ -224,7 +250,7 @@ with st.sidebar:
     st.divider()
     
     # Data Source Selector
-    st.markdown("#### 📁 Data Source Selector")
+    st.markdown("#### DATA SOURCE SELECTOR")
     data_source = st.selectbox(
         "Select Telemetry Dataset",
         [
@@ -242,12 +268,12 @@ with st.sidebar:
         if not hasattr(st.session_state.stream, "load_dataset_profile"):
             st.session_state.stream = SyntheticEEGStream(sampling_rate=100, num_channels=8, seed=42)
         st.session_state.stream.load_dataset_profile(data_source)
-        st.toast(f"Loaded dataset profile: {data_source}", icon="📁")
+        st.toast(f"Loaded dataset profile: {data_source}")
     
     st.divider()
     
     # Active Threat Mutator
-    st.markdown("#### ⚡ Physical Threat Mutator")
+    st.markdown("#### PHYSICAL THREAT MUTATOR")
     selected_attack = st.selectbox(
         "Inject Threat Vector",
         ["none", "Gaussian Noise Injection", "DC Offset Drift", "Denial of Service", "Session Replay", "Malicious DBS Pulse Train"],
@@ -261,17 +287,17 @@ with st.sidebar:
         if st.button("Apply Threat", type="primary", use_container_width=True):
             st.session_state.active_attack = selected_attack
             st.session_state.attack_intensity = intensity
-            st.toast(f"Applied threat vector: {selected_attack}", icon="🚨")
+            st.toast(f"Applied threat vector: {selected_attack}")
     with col_s2:
         if st.button("Reset Telemetry", use_container_width=True):
             st.session_state.active_attack = "none"
             st.session_state.attack_intensity = 1.0
-            st.toast("Telemetry baseline restored to Nominal", icon="✅")
+            st.toast("Telemetry baseline restored to Nominal")
         
     st.divider()
     
     # DBS Stimulation Control
-    st.markdown("#### ⚡ Closed-Loop DBS Controls")
+    st.markdown("#### CLOSED-LOOP DBS CONTROLS")
     dbs_enable = st.checkbox("Enable Deep Brain Pulse Generator", value=st.session_state.stimulation_enabled)
     dbs_amp = st.slider("Pulse Amplitude (mA)", 0.0, 10.0, st.session_state.dbs_amplitude, 0.1)
     dbs_freq = st.slider("Stimulation Frequency (Hz)", 10.0, 200.0, st.session_state.dbs_frequency, 5.0)
@@ -281,17 +307,17 @@ with st.sidebar:
     st.session_state.dbs_frequency = dbs_freq
     
     st.divider()
-    st.caption("VIREON Platform v1.1.0 | Pure Obsidian Dark Engine")
+    st.caption("VIREON Platform v1.1.0 | Pure Obsidian Engine")
 
 # Top Cyber Banner
 is_attack = st.session_state.active_attack != "none"
-banner_badge = f"""<span class="badge-hazard">🚨 THREAT ACTIVE: {st.session_state.active_attack.upper()}</span>""" if is_attack else """<span class="badge-nominal">✅ HARDWARE TELEMETRY NOMINAL</span>"""
+banner_badge = f"""<span class="badge-hazard">THREAT ACTIVE: {st.session_state.active_attack.upper()}</span>""" if is_attack else """<span class="badge-nominal">HARDWARE TELEMETRY NOMINAL</span>"""
 
 st.markdown(f"""
 <div class="cyber-banner">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-            <h1 class="cyber-title">VIREON Neurosecurity Interactive Platform</h1>
+            <h1 class="cyber-title">VIREON Neurosecurity Platform</h1>
             <div class="cyber-subtitle">Phase-Continuous Ring-Buffer Telemetry, Physical Threat Mutators & Clinical Compliance</div>
         </div>
         <div>
@@ -327,7 +353,7 @@ with m2:
     coherence = 0.42 if is_attack else 0.96
     st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Neural Coherence</div><div class="glass-metric-val" style="color: {'#ff0055' if is_attack else '#00f5d4'};">{coherence:.3f}</div></div>""", unsafe_allow_html=True)
 with m3:
-    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Beta Power</div><div class="glass-metric-val" style="color:#9d4edd;">{band_powers['Beta (13-30Hz)']:.1f}%</div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Beta Power</div><div class="glass-metric-val" style="color:#38bdf8;">{band_powers['Beta (13-30Hz)']:.1f}%</div></div>""", unsafe_allow_html=True)
 with m4:
     st.markdown(f"""<div class="glass-metric"><div class="glass-metric-lbl">Anomaly Score</div><div class="glass-metric-val" style="color: {'#ff0055' if is_attack else '#00f2fe'};">{anomaly_score:.3f}</div></div>""", unsafe_allow_html=True)
 with m5:
@@ -337,21 +363,21 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Main Navigation Tabs
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
-    "📊 Live Neural Signals",
-    "💉 Signal Tampering Lab",
-    "⚡ Closed-Loop DBS Lab",
-    "📡 Wireless & BLE Security",
-    "🤖 Adversarial ML Lab",
-    "🛡️ Threat Matrix & Forensics",
-    "🎓 Neuro Academy",
-    "🚩 Neurosecurity CTF"
+    "LIVE TELEMETRY",
+    "SIGNAL TAMPERING",
+    "CLOSED-LOOP DBS",
+    "WIRELESS SECURITY",
+    "ADVERSARIAL BCI",
+    "THREAT MATRIX",
+    "NEURO ACADEMY",
+    "CTF SUITE"
 ])
 
 # ---------------------------------------------------------------------------
 # TAB 1: Live Neural Signal Stream & Spectral Decomposition
 # ---------------------------------------------------------------------------
 with tab1:
-    st.markdown("### 📊 Real-time 8-Channel EEG Waveform Monitor")
+    st.markdown("### Real-time 8-Channel EEG Waveform Monitor")
     st.caption(f"Phase-continuous 100 Hz neural telemetry ({window_sec:.0f}s window) from **{data_source}** with Welch FFT spectral power distribution.")
     
     col_chart, col_bands = st.columns([3, 1])
@@ -360,7 +386,7 @@ with tab1:
         render_double_buffered_eeg_canvas(signals, height=450)
         
     with col_bands:
-        st.markdown("#### 🎵 Spectral Power Distribution")
+        st.markdown("#### Spectral Power Distribution")
         df_bands = pd.DataFrame(list(band_powers.items()), columns=["Band", "Power (%)"])
         fig_bar = px.bar(
             df_bands, x="Power (%)", y="Band", orientation="h",
@@ -384,7 +410,7 @@ with tab1:
 # TAB 2: Signal Tampering & IDS Anomaly Lab
 # ---------------------------------------------------------------------------
 with tab2:
-    st.markdown("### 💉 Physical Signal Tampering & Intrusion Detection Lab")
+    st.markdown("### Physical Signal Tampering & Intrusion Detection Lab")
     st.caption("Simulate hardware tampering vectors (Gaussian noise, baseline drift, grounding) and evaluate live Intrusion Detection System (IDS) alerts.")
     
     col_tamp_ctrl, col_tamp_vis = st.columns([1, 2])
@@ -403,9 +429,9 @@ with tab2:
         st.divider()
         st.markdown("#### Real-time IDS Alert Engine")
         if is_attack:
-            st.error(f"🚨 **IDS THREAT DETECTED**: {st.session_state.active_attack}\n\n- **Anomaly Score**: `{anomaly_score:.3f}` (Threshold: `0.350`)\n- **NISS Rating**: `{niss_score} / 100` (HIGH SEVERITY)\n- **ISO 14971 Status**: `{clinical_status}`")
+            st.error(f"IDS THREAT DETECTED: {st.session_state.active_attack}\n\n- Anomaly Score: `{anomaly_score:.3f}` (Threshold: `0.350`)\n- NISS Rating: `{niss_score} / 100` (HIGH SEVERITY)\n- ISO 14971 Status: `{clinical_status}`")
         else:
-            st.success("✅ **IDS BASELINE**: Signal telemetry within nominal bounds.\n\n- **Anomaly Score**: `0.040` (Threshold: `0.350`)\n- **NISS Rating**: `4 / 100` (SAFE)")
+            st.success("IDS BASELINE: Signal telemetry within nominal bounds.\n\n- Anomaly Score: `0.040` (Threshold: `0.350`)\n- NISS Rating: `4 / 100` (SAFE)")
             
     with col_tamp_vis:
         st.markdown("#### Signal Mutation Comparison (Baseline vs Mutated)")
@@ -430,7 +456,7 @@ with tab2:
 # TAB 3: Closed-Loop DBS & Clinical Risk Simulator
 # ---------------------------------------------------------------------------
 with tab3:
-    st.markdown("### ⚡ Closed-Loop DBS & Clinical Risk Control")
+    st.markdown("### Closed-Loop DBS & Clinical Risk Control")
     st.caption("Model Deep Brain Stimulation (DBS) pulse dynamics, Subthalamic Nucleus LFP suppression, and Shannon safety limits.")
     
     col_dbs_status, col_dbs_plot = st.columns([1, 2])
@@ -446,9 +472,9 @@ with tab3:
         st.metric("Tissue Heating Delta", f"+{thermal_delta:.2f} °C")
         
         if shannon_limit >= 4.0:
-            st.error("⚠️ **HAZARD ALARM**: Tissue charge density exceeds Shannon safety threshold (4.0 µC/phase). Risk of irreversible local neural tissue damage!")
+            st.error("HAZARD ALARM: Tissue charge density exceeds Shannon safety threshold (4.0 µC/phase). Risk of irreversible local neural tissue damage!")
         else:
-            st.success("✅ **SAFETY NOMINAL**: Charge density within therapeutic window.")
+            st.success("SAFETY NOMINAL: Charge density within therapeutic window.")
             
     with col_dbs_plot:
         st.markdown("#### Subthalamic Beta Rhythm Suppression & Pulse Overlay")
@@ -469,7 +495,7 @@ with tab3:
             height=400,
             channel_names=["LFP Beta", "DBS Pulse"],
             channel_colors=["#7000ff", "#ff0055"],
-            title="⚡ Closed-Loop DBS Stimulation & LFP Telemetry"
+            title="CLOSED-LOOP DBS STIMULATION & LFP TELEMETRY"
         )
         
     render_dbs_education_expander()
@@ -478,7 +504,7 @@ with tab3:
 # TAB 4: Wireless BLE & Telemetry Security Lab
 # ---------------------------------------------------------------------------
 with tab4:
-    st.markdown("### 📡 Wireless BLE Protocol & Telemetry Security")
+    st.markdown("### Wireless BLE Protocol & Telemetry Security")
     st.caption("Inspect GATT characteristics, encrypted payload sessions, and packet fragmentation resilience.")
     
     col_ble_pkt, col_ble_inspect = st.columns([2, 1])
@@ -502,7 +528,7 @@ with tab4:
 # TAB 5: Adversarial ML BCI Intent Classifier Lab
 # ---------------------------------------------------------------------------
 with tab5:
-    st.markdown("### 🤖 Adversarial ML & Decoder Evasion Lab")
+    st.markdown("### Adversarial ML & Decoder Evasion Lab")
     st.caption("Evaluate gradient-based FGSM and PGD adversarial perturbations against BCI motor imagery decoders.")
     
     col_ml_cfg, col_ml_plot = st.columns([1, 2])
@@ -543,7 +569,7 @@ with tab5:
 # TAB 6: STIX 2.1 Threat Matrix & Forensic Audit Generator
 # ---------------------------------------------------------------------------
 with tab6:
-    st.markdown("### 🛡️ STIX 2.1 Threat Matrix & Forensic Exporter")
+    st.markdown("### STIX 2.1 Threat Matrix & Forensic Exporter")
     st.caption("Generate clinical compliance evidence packages aligned with ISO 14971, CWE, and STIX 2.1 formats.")
     
     col_th_info, col_th_exp = st.columns([2, 1])
@@ -570,7 +596,7 @@ with tab6:
         )
         
         st.download_button(
-            "📥 Download STIX 2.1 JSON",
+            "Download STIX 2.1 JSON",
             data=stix_json,
             file_name=f"vireon_stix_bundle_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
             mime="application/json",
@@ -578,7 +604,7 @@ with tab6:
         )
         
         st.download_button(
-            "📄 Download HTML Executive Report",
+            "Download HTML Executive Report",
             data=html_report,
             file_name=f"vireon_audit_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html",
             mime="text/html",

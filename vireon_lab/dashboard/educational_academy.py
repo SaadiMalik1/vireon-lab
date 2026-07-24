@@ -25,9 +25,9 @@ DOCS_BASE_URL = "http://127.0.0.1:8008"
 
 def render_dsp_education_expander():
     """Renders interactive educational accordion for Digital Signal Processing."""
-    with st.expander("💡 **Educational Academy: Digital Signal Processing (DSP) & Welch PSD**", expanded=False):
+    with st.expander("ACADEMY: DIGITAL SIGNAL PROCESSING (DSP) & WELCH PSD", expanded=False):
         st.markdown(rf"""
-        ### 🧠 Understanding Neural Signal Telemetry
+        ### Understanding Neural Signal Telemetry
         
         Neural signals measured via Electroencephalography (EEG) or Local Field Potentials (LFP) represent 
         microvolt ($\mu\text{{V}}$) level fluctuations driven by synchronous post-synaptic activity in neuronal populations.
@@ -44,14 +44,14 @@ def render_dsp_education_expander():
         $$P_{{xx}}(f) = \frac{{1}}{{K \cdot U}} \sum_{{k=1}}^{{K}} \left| \sum_{{n=0}}^{{L-1}} x_k[n] w[n] e^{{-j 2 \pi f n}} \right|^2$$
         where $U = \frac{{1}}{{L}} \sum_{{n=0}}^{{L-1}} w^2[n]$ is the window normalization factor.
         
-        📖 **Learn More in VIREON Docs**: [NL-001 Fundamental Neuroanatomy & Signal Processing]({DOCS_BASE_URL}/lessons/NL-001/part1_concepts/)
+        **Learn More in VIREON Docs**: [NL-001 Fundamental Neuroanatomy & Signal Processing]({DOCS_BASE_URL}/lessons/NL-001/part1_concepts/)
         """)
 
 def render_dbs_education_expander():
     """Renders interactive educational accordion for Deep Brain Stimulation & Safety Limits."""
-    with st.expander("💡 **Educational Academy: Closed-Loop DBS & Clinical Safety Thresholds**", expanded=False):
+    with st.expander("ACADEMY: CLOSED-LOOP DBS & CLINICAL SAFETY THRESHOLDS", expanded=False):
         st.markdown(rf"""
-        ### ⚡ Deep Brain Stimulation (DBS) & Tissue Safety Limits
+        ### Deep Brain Stimulation (DBS) & Tissue Safety Limits
         
         Deep Brain Stimulation delivers high-frequency electrical pulses directly into basal ganglia structures 
         (e.g., Subthalamic Nucleus or Globus Pallidus Internus) to suppress pathological beta oscillations in Parkinson's disease.
@@ -65,12 +65,12 @@ def render_dbs_education_expander():
         - **Maximum Tissue Heating ($\Delta T$)**: Must not exceed $+1.0^\circ\text{{C}}$ during continuous stimulation.
         - **Direct Current Leakage**: Mandatory hardware blocking capacitors to prevent $DC < 1.0\,\mu\text{{A}}$ electrochemical lysis.
         
-        📖 **Learn More in VIREON Docs**: [NL-003 Neurostimulation & Closed-Loop Controls]({DOCS_BASE_URL}/lessons/NL-003/part1_concepts/)
+        **Learn More in VIREON Docs**: [NL-003 Neurostimulation & Closed-Loop Controls]({DOCS_BASE_URL}/lessons/NL-003/part1_concepts/)
         """)
 
 def render_stride_mitre_atlas_matrix():
     """Renders interactive STRIDE vs MITRE ATLAS threat mapping table."""
-    st.markdown("### 🛡️ STRIDE & MITRE ATLAS Neurosecurity Threat Matrix")
+    st.markdown("### STRIDE & MITRE ATLAS Neurosecurity Threat Matrix")
     st.caption("Cross-mapping of physical, wireless, and algorithmic threat vectors affecting neural implants and BCI decoders.")
     
     matrix_data = [
