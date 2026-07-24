@@ -43,7 +43,8 @@ target-version = "py310"
 exclude = [".venv", "venv", "__pycache__"]
 
 [tool.ruff.lint]
-ignore = ["E402"]
+select = ["E", "F"]
+ignore = ["E402", "E501"]
 
 
 [tool.mypy]
