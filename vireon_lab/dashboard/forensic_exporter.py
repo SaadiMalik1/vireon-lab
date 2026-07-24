@@ -13,67 +13,66 @@
 # limitations under the License.
 
 import html
-import json
 import uuid
 from datetime import datetime, timezone
 
+try:
+    from stix2 import (
+        Bundle, Identity, ThreatActor, Malware, Indicator, 
+        ObservedData, Incident, CustomObservable, properties
+    )
+    from stix2.v21 import CustomObject
+except ImportError:
+    # Stix2 is not installed, fail gracefully or handle in caller
+    pass
+
+
 def generate_stix_package(active_attack: str, anomaly_score: float, niss_score: int, clinical_status: str) -> str:
     """
-    Generates a STIX 2.1 compliant JSON bundle for forensic neurosecurity evidence.
+    Generates a STIX 2.1 compliant JSON bundle for forensic neurosecurity evidence using the official stix2 library.
     """
-    now = datetime.now(timezone.utc).isoformat()
-    bundle_uuid = str(uuid.uuid4())
-    indicator_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"vireon.stix.indicator.{active_attack}"))
-    observed_uuid = str(uuid.uuid4())
     
-    stix_bundle = {
-        "type": "bundle",
-        "id": f"bundle--{bundle_uuid}",
-        "spec_version": "2.1",
-        "objects": [
-            {
-                "type": "identity",
-                "id": "identity--vireon-neurosecurity-lab",
-                "created": now,
-                "modified": now,
-                "name": "VIREON Medical BCI Security Laboratory",
-                "identity_class": "system"
-            },
-            {
-                "type": "indicator",
-                "id": f"indicator--{indicator_uuid}",
-                "created": now,
-                "modified": now,
-                "name": f"Neurosecurity Anomaly Alert: {active_attack.upper()}",
-                "description": f"Real-time neurosecurity IDS anomaly score: {anomaly_score:.3f}. Clinical Status: {clinical_status}.",
-                "indicator_types": ["anomalous-activity"],
-                "pattern": f"[neuro-telemetry:anomaly_score > {anomaly_score:.2f}]",
-                "pattern_type": "stix",
-                "valid_from": now
-            },
-            {
-                "type": "observed-data",
-                "id": f"observed-data--{observed_uuid}",
-                "created": now,
-                "modified": now,
-                "first_observed": now,
-                "last_observed": now,
-                "number_observed": 1,
-                "objects": {
-                    "0": {
-                        "type": "x-vireon-telemetry",
-                        "active_attack": active_attack,
-                        "niss_score": niss_score,
-                        "anomaly_score": anomaly_score,
-                        "clinical_status": clinical_status,
-                        "iso_14971_risk_level": "CRITICAL" if niss_score > 70 else ("HIGH" if niss_score > 40 else "LOW")
-                    }
-                }
-            }
-        ]
-    }
+    # Create the author identity
+    author = Identity(
+        name="VIREON Medical BCI Security Laboratory",
+        identity_class="system",
+        allow_custom=True
+    )
     
-    return json.dumps(stix_bundle, indent=2)
+    # Create the Threat Actor
+    actor = ThreatActor(
+        name="Unknown BCI Attacker",
+        threat_actor_types=["hacker"],
+        description=f"Simulated attacker executing {active_attack}",
+        allow_custom=True
+    )
+    
+    # Create an Indicator for the anomaly
+    indicator = Indicator(
+        name=f"Neurosecurity Anomaly Alert: {active_attack.upper()}",
+        description=f"Real-time neurosecurity IDS anomaly score: {anomaly_score:.3f}. Clinical Status: {clinical_status}.",
+        indicator_types=["anomalous-activity"],
+        pattern=f"[neuro-telemetry:anomaly_score > {anomaly_score:.2f}]",
+        pattern_type="stix",
+        valid_from=datetime.now(timezone.utc),
+        allow_custom=True
+    )
+    
+    # Create an Incident
+    incident = Incident(
+        name="Unauthorized Neuro-Data Anomaly",
+        description=f"Detected anomaly in BCI telemetry stream. NISS Score: {niss_score}",
+        allow_custom=True
+    )
+
+    # Bundle all objects
+    bundle = Bundle(
+        objects=[author, actor, indicator, incident],
+        allow_custom=True
+    )
+    
+    return bundle.serialize(indent=2)
+
 
 def generate_html_audit_report(active_attack: str, anomaly_score: float, niss_score: int, clinical_status: str) -> str:
     """
